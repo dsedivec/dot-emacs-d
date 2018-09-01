@@ -92,3 +92,7 @@ for this command) must be an arrow key."
            ("C-x <down>" . my:delete-window-that-direction)
            ("C-x <left>" . my:delete-window-that-direction)
            ("C-x <right>" . my:delete-window-that-direction))
+
+
+;;; winner-mode
+(winner-mode 1)
