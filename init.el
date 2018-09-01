@@ -21,6 +21,8 @@
     bind-key
     counsel
     ivy
+    magit
+    paredit
     persp-mode
     swiper
     which-key
