@@ -20,6 +20,7 @@
   '(
     counsel
     ivy
+    persp-mode
     )
   "List of packages I want installed.")
 
@@ -50,3 +51,12 @@
 
 ;;; ivy
 (ivy-mode 1)
+
+
+;;; persp-mode
+
+;; Must set this before turning on persp-mode for it to have an effect
+;; at startup.
+(setq persp-auto-resume-time 0.1)
+
+(persp-mode 1)
