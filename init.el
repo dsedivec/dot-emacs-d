@@ -21,6 +21,7 @@
     counsel
     ivy
     persp-mode
+    swiper
     )
   "List of packages I want installed.")
 
@@ -60,3 +61,7 @@
 (setq persp-auto-resume-time 0.1)
 
 (persp-mode 1)
+
+
+;;; swiper
+(bind-key "s-s" 'swiper)
