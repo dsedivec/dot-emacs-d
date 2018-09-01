@@ -18,6 +18,7 @@
 
 (defvar my:packages
   '(
+    counsel
     )
   "List of packages I want installed.")
 
@@ -40,3 +41,7 @@
       (package-install pkg))))
 
 (my:package-sync)
+
+
+;;; counsel
+(counsel-mode 1)
