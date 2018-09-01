@@ -19,6 +19,7 @@
 (defvar my:packages
   '(
     counsel
+    ivy
     )
   "List of packages I want installed.")
 
@@ -45,3 +46,7 @@
 
 ;;; counsel
 (counsel-mode 1)
+
+
+;;; ivy
+(ivy-mode 1)
