@@ -18,6 +18,7 @@
 
 (defvar my:packages
   '(
+    bind-key
     counsel
     ivy
     persp-mode
@@ -70,3 +71,24 @@
 
 ;;; which-key
 (which-key-mode 1)
+
+
+;;; windmove
+(windmove-default-keybindings)
+
+(setq windmove-wrap-around t)
+
+(defun my:delete-window-that-direction ()
+  "Delete the window in that direction.
+The last keyboard event (i.e. the last part of this key binding
+for this command) must be an arrow key."
+  (interactive)
+  (let ((window-to-delete (windmove-find-other-window last-command-event)))
+    (when (and window-to-delete
+               (not (eq window-to-delete (selected-window))))
+      (delete-window window-to-delete))))
+
+(bind-keys ("C-x <up>" . my:delete-window-that-direction)
+           ("C-x <down>" . my:delete-window-that-direction)
+           ("C-x <left>" . my:delete-window-that-direction)
+           ("C-x <right>" . my:delete-window-that-direction))
