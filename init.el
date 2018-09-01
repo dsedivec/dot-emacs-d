@@ -22,6 +22,7 @@
     ivy
     persp-mode
     swiper
+    which-key
     )
   "List of packages I want installed.")
 
@@ -65,3 +66,7 @@
 
 ;;; swiper
 (bind-key "s-s" 'swiper)
+
+
+;;; which-key
+(which-key-mode 1)
