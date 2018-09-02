@@ -54,6 +54,7 @@
     paredit
     persp-mode
     swiper
+    undo-tree
     which-key
     )
   "List of packages I want installed.")
@@ -105,6 +106,11 @@
 ;;; swiper
 
 (bind-key "s-s" 'swiper)
+
+
+;;; undo-tree
+
+(global-undo-tree-mode)
 
 
 ;;; which-key
