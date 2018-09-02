@@ -5,6 +5,15 @@
 (setq load-prefer-newer t)
 
 
+;;; Recipes
+
+(defvar my:recipes-dir
+  (expand-file-name "recipes" (file-name-directory load-file-name)))
+
+(defun my:load-recipe (recipe)
+  (load (expand-file-name (symbol-name recipe) my:recipes-dir)))
+
+
 ;;; Spacemacs compatibility
 
 (defvar my:is-spacemacs (boundp 'dotspacemacs-directory))
