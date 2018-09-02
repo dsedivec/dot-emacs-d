@@ -139,6 +139,12 @@
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
 
+;;; imenu
+
+(my:unless-spacemacs
+  (bind-keys :map my:global-leader-jump-map ("i" . imenu)))
+
+
 ;;; ivy
 
 (ivy-mode 1)
