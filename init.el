@@ -1,8 +1,11 @@
-;;; Prologue
+;;;; Prologue
 
 ;; Prefer loading a newer .el to an older .elc.  Probably keeps me
 ;; from getting in trouble if I forget to byte compile.
 (setq load-prefer-newer t)
+
+
+;;; Customization
 
 ;; Set this early before I potentially install packages, which will
 ;; modify customizable variable `package-selected-packages'.
@@ -50,11 +53,17 @@
 (my:package-sync)
 
 
+
+
+;;;; Configure various packages
+
 ;;; counsel
+
 (counsel-mode 1)
 
 
 ;;; ivy
+
 (ivy-mode 1)
 
 
@@ -68,14 +77,17 @@
 
 
 ;;; swiper
+
 (bind-key "s-s" 'swiper)
 
 
 ;;; which-key
+
 (which-key-mode 1)
 
 
 ;;; windmove
+
 (windmove-default-keybindings)
 
 (setq windmove-wrap-around t)
@@ -97,4 +109,5 @@ for this command) must be an arrow key."
 
 
 ;;; winner-mode
+
 (winner-mode 1)
