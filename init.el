@@ -5,6 +5,28 @@
 (setq load-prefer-newer t)
 
 
+;;; Spacemacs compatibility
+
+(defvar my:is-spacemacs (boundp 'dotspacemacs-directory))
+
+(defmacro my:if-spacemacs (then &rest else)
+  `(if my:is-spacemacs
+       ,then
+     ,@else))
+
+(put 'my:if-spacemacs 'common-lisp-indent-function-for-elisp 1)
+
+(defmacro my:when-spacemacs (&rest body)
+  `(when my:is-spacemacs ,@body))
+
+(put 'my:when-spacemacs 'common-lisp-indent-function-for-elisp 0)
+
+(defmacro my:unless-spacemacs (&rest body)
+  `(unless my:is-spacemacs ,@body))
+
+(put 'my:unless-spacemacs 'common-lisp-indent-function-for-elisp 0)
+
+
 ;;; Customization
 
 ;; Set this early before I potentially install packages, which will
