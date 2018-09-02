@@ -82,8 +82,8 @@
   (dolist (pkg my:packages)
     (unless (package-installed-p pkg)
       (when (>= (- (float-time) my:package-last-refresh)
-	        my:package-max-age-before-refresh)
-	(package-refresh-contents))
+                my:package-max-age-before-refresh)
+        (package-refresh-contents))
       (package-install pkg))))
 
 (my:package-sync)
