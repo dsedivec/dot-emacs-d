@@ -89,6 +89,18 @@
 (my:package-sync)
 
 
+;;; "Leader" keys setup
+
+(my:if-spacemacs
+    (progn
+      (defvaralias 'my:global-leader-map 'spacemacs-cmds)
+      (defvar my:global-leader-jump-map
+        (lookup-key my:global-leader-map (kbd "j"))))
+
+  (define-prefix-command 'my:global-leader-map)
+  (bind-key "M-m" 'my:global-leader-map)
+  (define-prefix-command 'my:global-leader-jump-map)
+  (bind-key "M-m j" 'my:global-leader-jump-map))
 
 
 ;;;; Configure various packages
