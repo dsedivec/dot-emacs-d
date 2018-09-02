@@ -98,9 +98,48 @@
 (counsel-mode 1)
 
 
+;;; elisp-mode
+
+(add-hook 'emacs-lisp-mode-hook #'paredit-mode)
+;; XXX port this, remove conditional
+(my:when-spacemacs
+  (add-hook 'emacs-lisp-mode-hook #'my:warn-whitespace-mode))
+
+(defun my:emacs-lisp-mode-hook()
+  ;; Make name shorter in mode line.
+  (setq mode-name "ELisp")
+  (setq indent-tabs-mode nil)
+  (setq imenu-generic-expression
+        (append imenu-generic-expression
+                '(("Sections" "^;;;;?\\s-+\\(.*\\)" 1))))
+  (my:when-spacemacs
+    (smartparens-mode -1))
+  ;; XXX
+  ;; (add-hook 'completion-at-point-functions
+  ;;           #'my:elisp-feature-completion-at-point nil t)
+  ;; Trying out case-insensitive dabbrev-code completion in Emacs
+  ;; Lisp.  Would have saved me time figuring out why I couldn't
+  ;; complete "my:LaTex-" (note lower case "X"--oops).
+  (setq-local company-dabbrev-code-ignore-case t))
+
+(add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
+
+(my:load-recipe 'indent-elisp-like-common-lisp)
+
+
 ;;; ivy
 
 (ivy-mode 1)
+
+
+;;; lisp-mode
+
+(add-hook 'lisp-mode-hook #'paredit-mode)
+
+(defun my:lisp-mode-hook ()
+  (setq indent-tabs-mode nil))
+
+(add-hook 'lisp-mode-hook #'my:lisp-mode-hook)
 
 
 ;;; persp-mode
