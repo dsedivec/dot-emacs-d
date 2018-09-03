@@ -136,7 +136,14 @@
 
 (add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
 
+(bind-keys :map emacs-lisp-mode-map ("C-c C-r" . eval-region))
+
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; find-func
+
+(bind-key "M-m j f" 'find-function)
 
 
 ;;; imenu
@@ -147,6 +154,8 @@
 ;;; ivy
 
 (ivy-mode 1)
+
+(bind-key "<f6>" 'ivy-resume)
 
 
 ;;; lisp-mode
