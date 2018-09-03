@@ -168,6 +168,11 @@
 (add-hook 'lisp-mode-hook #'my:lisp-mode-hook)
 
 
+;;; magit
+
+(autoload 'magit "magit" nil t)
+
+
 ;;; persp-mode
 
 ;; Must set this before turning on persp-mode for it to have an effect
