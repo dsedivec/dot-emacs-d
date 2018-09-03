@@ -4,6 +4,9 @@
 ;; from getting in trouble if I forget to byte compile.
 (setq load-prefer-newer t)
 
+(add-to-list 'load-path
+             (expand-file-name "lisp" (file-name-directory load-file-name)))
+
 
 ;;; Recipes
 
@@ -58,6 +61,7 @@
   '(
     bind-key
     counsel
+    hydra
     ivy
     magit
     paredit
@@ -113,9 +117,7 @@
 ;;; elisp-mode
 
 (add-hook 'emacs-lisp-mode-hook #'paredit-mode)
-;; XXX port this, remove conditional
-(my:when-spacemacs
-  (add-hook 'emacs-lisp-mode-hook #'my:warn-whitespace-mode))
+(add-hook 'emacs-lisp-mode-hook #'my:warn-white-space-mode)
 
 (defun my:emacs-lisp-mode-hook()
   ;; Make name shorter in mode line.
@@ -189,6 +191,21 @@
 
 (which-key-mode 1)
 
+
+;;; whitespace
+
+;; This is the default value except when in space visualization mode
+;; (the car, not the cdr, used when indent-tabs-mode is non-nil); in
+;; that case, only visualize indentation that begins with spaces.
+;; Otherwise it'll visualize spaces after initial tabs, which is
+;; something I quite like ("smart tabs").
+(setq whitespace-indentation-regexp
+      '("^\\(\\( \\{%d\\}\\)+\\)[^\n\t]" . "^ *\\(\t+\\)[^\n]"))
+
+(require 'wspc-hydra)
+
+(defun my:warn-white-space-mode ()
+  (wspc-hydra-apply-style 'warn-white-space))
 
 ;;; windmove
 
