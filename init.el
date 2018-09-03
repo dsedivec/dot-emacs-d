@@ -95,16 +95,14 @@
 
 ;;; "Leader" keys setup
 
-(my:if-spacemacs
-    (progn
-      (defvaralias 'my:global-leader-map 'spacemacs-cmds)
-      (defvar my:global-leader-jump-map
-        (lookup-key my:global-leader-map (kbd "j"))))
-
+(my:unless-spacemacs
   (define-prefix-command 'my:global-leader-map)
-  (bind-key "M-m" 'my:global-leader-map)
-  (define-prefix-command 'my:global-leader-jump-map)
-  (bind-key "M-m j" 'my:global-leader-jump-map))
+  (bind-key "M-m" 'my:global-leader-map))
+
+(dolist (key (string-to-list "fj"))
+  (let ((kbd-str (format "M-m %c" key)))
+    (unless (global-key-binding (kbd kbd-str))
+      (bind-key kbd-str (make-sparse-keymap)))))
 
 
 ;;;; Configure various packages
@@ -143,8 +141,7 @@
 
 ;;; imenu
 
-(my:unless-spacemacs
-  (bind-keys :map my:global-leader-jump-map ("i" . imenu)))
+(bind-key "M-m j i" 'imenu)
 
 
 ;;; ivy
