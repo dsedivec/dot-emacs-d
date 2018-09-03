@@ -188,6 +188,11 @@
   (persp-mode 1))
 
 
+;;; prog-mode
+
+(add-hook 'prog-mode-hook #'show-paren-mode)
+
+
 ;;; swiper
 
 (bind-key "s-s" 'swiper)
