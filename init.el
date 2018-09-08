@@ -62,6 +62,7 @@
     avy
     bind-key
     counsel
+    expand-region
     hydra
     ivy
     magit
@@ -147,6 +148,11 @@
 (bind-keys :map emacs-lisp-mode-map ("C-c C-r" . eval-region))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; expand-region
+
+(bind-key "M-@" 'er/expand-region)
 
 
 ;;; find-func
