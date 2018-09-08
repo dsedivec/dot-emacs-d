@@ -231,6 +231,11 @@
 (bind-key "s-s" 'swiper)
 
 
+;;; tool-bar
+
+(tool-bar-mode -1)
+
+
 ;;; undo-tree
 
 (global-undo-tree-mode)
