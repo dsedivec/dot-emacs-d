@@ -59,6 +59,7 @@
 
 (defvar my:packages
   '(
+    avy
     bind-key
     counsel
     hydra
@@ -106,6 +107,13 @@
 
 
 ;;;; Configure various packages
+
+;;; avy
+
+(bind-keys ("C-'" . avy-goto-char)
+           ("M-g g" . avy-goto-line)
+           ("M-g M-g" . avy-goto-line))
+
 
 ;;; counsel
 

@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (hydra undo-tree company which-key persp-mode bind-key magit expand-region counsel ivy paredit))))
+    (avy hydra undo-tree company which-key persp-mode bind-key magit expand-region counsel ivy paredit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
