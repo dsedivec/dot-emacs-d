@@ -66,8 +66,10 @@
     hydra
     ivy
     magit
+    multiple-cursors
     paredit
     persp-mode
+    phi-search
     swiper
     undo-tree
     which-key
@@ -185,6 +187,23 @@
 ;;; magit
 
 (autoload 'magit "magit" nil t)
+
+
+;;; multiple-cursors
+
+(bind-keys ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("<s-mouse-1>" . mc/add-cursor-on-click)
+           ("C-?" . mc/mark-all-dwim))
+
+(with-eval-after-load 'multiple-cursors
+  (bind-keys :map mc/keymap
+             ;; Return should not end multiple-cursors-mode.
+             ("<return>" . nil)
+             ;; isearch doesn't work with multiple cursors, phi-search is
+             ;; the suggested substitute.
+             ("C-s" . phi-search)
+             ("C-r" . phi-search-backward)))
 
 
 ;;; persp-mode
