@@ -258,6 +258,11 @@
 (add-hook 'prog-mode-hook #'show-paren-mode)
 
 
+;;; simple
+
+(column-number-mode 1)
+
+
 ;;; smartparens
 
 ;; Need this so ' is configured in lisp modes correctly, so that my
