@@ -240,6 +240,11 @@
 (add-hook 'prog-mode-hook #'show-paren-mode)
 
 
+;;; startup
+
+(setq inhibit-startup-screen t)
+
+
 ;;; swiper
 
 (bind-key "s-s" 'swiper)
