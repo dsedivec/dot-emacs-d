@@ -104,8 +104,8 @@
   (define-prefix-command 'my:global-leader-map)
   (bind-key "M-m" 'my:global-leader-map))
 
-(dolist (key (string-to-list "fj"))
-  (let ((kbd-str (format "M-m %c" key)))
+(dolist (prefix (string-to-list '("f" "f e" "j")))
+  (let ((kbd-str (format "M-m %s" prefix)))
     (unless (global-key-binding (kbd kbd-str))
       (bind-key kbd-str (make-sparse-keymap)))))
 
@@ -160,7 +160,8 @@
 
 ;;; find-func
 
-(bind-key "M-m j f" 'find-function)
+(bind-keys ("M-m j f" . find-function)
+           ("M-m f e l" . find-library))
 
 
 ;;; imenu
