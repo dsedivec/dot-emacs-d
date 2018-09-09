@@ -71,6 +71,7 @@
     persp-mode
     phi-search
     popwin
+    smartparens
     swiper
     undo-tree
     which-key
@@ -222,6 +223,14 @@
               " windmove will be broken in org-mode buffers"))
 
 
+;;; paredit
+
+(require 'lisp-comment-dwim)
+
+(with-eval-after-load 'paredit
+  (bind-keys :map paredit-mode-map ("M-;" . lisp-comment-dwim)))
+
+
 ;;; persp-mode
 
 ;; Must set this before turning on persp-mode for it to have an effect
@@ -247,6 +256,14 @@
 ;;; prog-mode
 
 (add-hook 'prog-mode-hook #'show-paren-mode)
+
+
+;;; smartparens
+
+;; Need this so ' is configured in lisp modes correctly, so that my
+;; lisp-comment-dwim works.
+(with-eval-after-load 'smartparens
+  (require 'smartparens-config))
 
 
 ;;; startup
