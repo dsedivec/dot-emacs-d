@@ -213,6 +213,15 @@
              ("C-r" . phi-search-backward)))
 
 
+;;; org-mode
+
+;; Don't step on windmove keys.
+(setq org-replace-disputed-keys t)
+
+(warn (concat "org-mode loaded before `org-replace-disputed-keys' set,"
+              " windmove will be broken in org-mode buffers"))
+
+
 ;;; persp-mode
 
 ;; Must set this before turning on persp-mode for it to have an effect
