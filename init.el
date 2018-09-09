@@ -164,6 +164,11 @@
 (bind-key "M-@" 'er/expand-region)
 
 
+;;; files
+
+(setq make-backup-files nil)
+
+
 ;;; find-func
 
 (bind-keys ("M-m j f" . find-function)
