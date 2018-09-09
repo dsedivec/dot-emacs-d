@@ -70,6 +70,7 @@
     paredit
     persp-mode
     phi-search
+    popwin
     swiper
     undo-tree
     which-key
@@ -219,6 +220,13 @@
 ;; things.
 (unless persp-mode
   (persp-mode 1))
+
+
+;;; popwin
+
+;; popwin-mode is not autoloaded.
+(require 'popwin)
+(popwin-mode 1)
 
 
 ;;; prog-mode
