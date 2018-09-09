@@ -124,6 +124,11 @@
 (counsel-mode 1)
 
 
+;;; ediff
+
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+
 ;;; elisp-mode
 
 (add-hook 'emacs-lisp-mode-hook #'paredit-mode)
