@@ -87,13 +87,14 @@
     (:after (&rest args) my:note-last-refresh-time)
   (setq my:package-last-refresh (float-time)))
 
-(defun my:package-sync ()
+(defun my:package-sync (&optional force-refresh)
   "Install all packages listed by `my:packages'."
-  (interactive)
+  (interactive "p")
   (dolist (pkg my:packages)
     (unless (package-installed-p pkg)
-      (when (>= (- (float-time) my:package-last-refresh)
-                my:package-max-age-before-refresh)
+      (when (or force-refresh
+                (>= (- (float-time) my:package-last-refresh)
+                    my:package-max-age-before-refresh))
         (package-refresh-contents))
       (package-install pkg))))
 
