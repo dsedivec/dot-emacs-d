@@ -61,6 +61,7 @@
   '(
     avy
     bind-key
+    clean-aindent-mode
     counsel
     expand-region
     hydra
@@ -119,6 +120,10 @@
            ("M-g g" . avy-goto-line)
            ("M-g M-g" . avy-goto-line))
 
+
+;;; clean-aindent-mode
+
+(clean-aindent-mode 1)
 
 ;;; counsel
 
