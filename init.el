@@ -113,6 +113,11 @@
       (bind-key kbd-str (make-sparse-keymap)))))
 
 
+;;;; Emacs built-ins
+
+(setq ns-use-native-fullscreen nil)
+
+
 ;;;; Configure various packages
 
 ;;; avy
