@@ -186,6 +186,11 @@
            ("M-m f e l" . find-library))
 
 
+;;; frame
+
+(bind-key "<s-return>" 'toggle-frame-fullscreen)
+
+
 ;;; imenu
 
 (bind-key "M-m j i" 'imenu)
