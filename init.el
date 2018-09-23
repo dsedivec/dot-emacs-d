@@ -594,6 +594,11 @@
 (add-hook 'prog-mode-hook #'show-paren-mode)
 
 
+;;; scroll-bar-mode
+
+(scroll-bar-mode -1)
+
+
 ;;; simple
 
 (column-number-mode 1)
