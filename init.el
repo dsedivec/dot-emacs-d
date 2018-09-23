@@ -19,6 +19,10 @@
   (cl-assert (symbolp recipe) nil "expected symbol not %S" recipe)
   (load (expand-file-name (symbol-name recipe) my:recipes-dir)))
 
+(defun my:load-recipes (&rest recipes)
+  (dolist (recipe recipes)
+    (my:load-recipe recipe)))
+
 
 ;;; Spacemacs compatibility
 
@@ -61,7 +65,12 @@
 ;;; package.el
 
 (require 'package)
+
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+(add-to-list 'package-archives
+             '("my:org" . "/Users/dale/repositories/org-mode/"))
+(add-to-list 'package-pinned-packages '(org-plus-contrib . "my:org"))
 
 (package-initialize)
 
@@ -76,6 +85,7 @@
     ivy
     magit
     multiple-cursors
+    org-plus-contrib
     paredit
     persp-mode
     phi-search
@@ -243,13 +253,249 @@
              ("C-r" . phi-search-backward)))
 
 
-;;; org-mode
+;;; org
 
 ;; Don't step on windmove keys.
 (setq org-replace-disputed-keys t)
 
-(warn (concat "org-mode loaded before `org-replace-disputed-keys' set,"
-              " windmove will be broken in org-mode buffers"))
+(when (featurep 'org)
+  (warn (concat "org-mode loaded before `org-replace-disputed-keys' set,"
+                " windmove will be broken in org-mode buffers")))
+
+(add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
+
+(setq
+   ;; This is out of alphabetical order because I use it as part of
+   ;; another value, below.
+   org-default-notes-file "~/todo.org"
+   ;; Tricky: show blocked tasks, don't show sublevels of TODO
+   ;; items.  Might want to override this in a custom agenda view.
+   org-agenda-dim-blocked-tasks nil
+   org-agenda-todo-list-sublevels nil
+   org-agenda-show-future-repeats 'next
+   org-agenda-start-on-weekday 0
+   org-agenda-todo-ignore-deadlines 'far
+   org-agenda-todo-ignore-scheduled 1
+   ;; I don't want or like org creating bookmarks, especially since
+   ;; Bookmark+ then highlights the bookmarks.
+   org-bookmark-names-plist nil
+   ;; I never use this bookmark, and now with Bookmark+ I seem to be
+   ;; getting the last thing I capture visualized, which I actively
+   ;; don't want.
+   org-capture-bookmark nil
+   org-capture-templates '(("t" "Todo" entry
+                            (file+headline "~/todo.org" "Inbox")
+                            "* NEW %?" :prepend t)
+                           ("j" "Journal" entry
+                            (file "~/journal.org")
+                            "* %U %?" :prepend t)
+                           ("s" "Someday" entry
+                            (file+headline "~/someday.org" "Someday")
+                            "* %?\n  - Created on %U"
+                            :prepend t)
+                           ("b" "Blog" entry
+                            (file "~/Documents/blog/ideas.org")
+                            "* %?"
+                            :kill-buffer t))
+   org-clock-display-default-range 'untilnow
+   org-clock-out-remove-zero-time-clocks t
+   org-clock-report-include-clocking-task t
+   org-default-priority ?D
+   org-duration-format '(("h" . t) (special . 2))
+   org-enforce-todo-dependencies t
+   org-hide-leading-stars t
+   org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+   org-link-search-must-match-exact-headline nil
+   org-log-into-drawer t
+   org-mouse-1-follows-link nil
+   ;; Enable this if you want to complete like a path, or disable
+   ;; it if you want to use IDO.
+   org-outline-path-complete-in-steps nil
+   org-pretty-entities t
+   org-pretty-entities-include-sub-superscripts nil
+   org-refile-use-outline-path t
+   ;; Refile/capture to top of tree, not bottom.
+   org-reverse-note-order t
+   ;; Nice indentation.  Use with visual-line-mode.
+   org-startup-indented t
+   org-special-ctrl-a/e '(t . reversed)
+   org-speed-commands-user '(("a" . org-archive-subtree-default)
+                             ("P" . org-set-property)
+                             ("S" . widen)
+                             ("x" . org-cut-subtree))
+   org-use-speed-commands (lambda ()
+                            (and (org-at-heading-p)
+                                 (looking-back "^\\**"
+                                               (line-beginning-position))))
+   ;; I think I always want indentation preserved in my source
+   ;; blocks.
+   org-src-preserve-indentation t
+   org-src-window-setup 'other-window
+   org-tags-column -76)
+
+;; This actually visits org-default-notes-file, so we don't load this
+;; until we really have to.
+(with-eval-after-load 'org-agenda
+  (setq org-agenda-files (org-add-archive-files (list org-default-notes-file))))
+
+(my:when-spacemacs
+    (setq
+     ;; Spacemacs turns this on but I don't want/need it.  Plus it makes
+     ;; headlipes expand when I mark a task as DONE, which is
+     ;; irritating.
+     org-log-done nil))
+
+(bind-keys ("C-c r" . org-capture))
+
+(with-eval-after-load 'org
+  (bind-keys :map org-mode-map
+             ("C-c a" . org-agenda)
+             ;; This interferes with avy, and I don't use
+             ;; org-cycle-agenda-files anyway.
+             ("C-'" . nil)
+             ;; Org manual suggests setting this globally, but let's do
+             ;; locally in org-mode buffers for now.
+             ("C-c l" . org-store-link)
+             ;; Yasnippet overrides C-c &, which is the default shortcut
+             ;; for this command.  M-* not currently bound in my org-mode
+             ;; buffer.
+             ("M-*" . org-mark-ring-goto)
+             ;; org commit 68b076bf5238 stopped binding C-a/C-e in favor
+             ;; of replacing move-beginning-of-line/move-end-of-line
+             ;; (function remapping), but Spacemacs doesn't have C-a/C-e
+             ;; bound to those in the first place (uses mwim.el instead),
+             ;; so that basically breaks C-a/C-e in org.
+             ("C-a" . org-beginning-of-line)
+             ("C-e" . org-end-of-line))
+
+  (my:when-spacemacs
+    ;; M-RET stopped working after org-mode stopped binding M-<return>
+    ;; (in favor of M-RET directly) in upstream commit 80cbf909eab.
+    ;; Give me back my fucking M-RET, please.  To figure this out I
+    ;; had to dive into the bowels of bind-map, but see also/first
+    ;; spacemacs/set-leader-keys-for-major-mode, which is where the
+    ;; fun starts.  That function is the one called from
+    ;; layers/+emacs/org/packages.el.  See also
+    ;; https://github.com/syl20bnr/spacemacs/issues/9603.
+    (bind-key "M-RET" nil spacemacs-org-mode-map-root-map))
+
+  ;; Allow org-open-at-point (C-c C-o) to open OS X message: links.
+  (org-link-set-parameters "message"
+                           :follow (lambda (path)
+                                     (browse-url (concat "message:" path))))
+
+  ;; Must have org-id loaded if you want org-store-link to set up an
+  ;; ID, rather than making a link to the headline text (which is
+  ;; inclined to change often).
+  (add-to-list 'org-modules 'org-id)
+  ;; org-tempo now needed for things like "< e TAB" expanding to an
+  ;; example block.
+  (add-to-list 'org-modules 'org-tempo)
+  ;; This seems to be the most robust way to trigger modules to be
+  ;; loaded if they haven't already been loaded, rather than calling
+  ;; into what I perceive to be org-mode internals.
+  (customize-set-variable 'org-modules org-modules)
+
+  ;; Add a few languages I occasionally want to evaluate in org-mode
+  ;; buffers.
+  (dolist (language '(shell sql python))
+    (setf (alist-get language org-babel-load-languages) t))
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               org-babel-load-languages))
+
+(add-hook 'org-mode-hook #'visual-line-mode)
+
+(defun my:org-mode-hook ()
+  ;; Don't know why Spacemacs isn't turning this on for me?
+  ;;XXX (setq-local show-trailing-whitespace t)
+  ;; Spacemacs turns on hl-todo-mode in text-mode-hook, but that
+  ;; totally fucks up my TODO and DONE keywords in org-mode buffers.
+  (my:when-spacemacs
+    (if (and (boundp 'hl-todo-mode) hl-todo-mode)
+        (hl-todo-mode -1)
+      (warn (concat "Spacemacs did not turn on hl-todo-mode, maybe"
+                    " update my configuration")))))
+
+(add-hook 'org-mode-hook #'my:org-mode-hook)
+
+(my:when-spacemacs
+  ;; Spacemacs turns on company-mode in org-mode buffers, which I
+  ;; don't like.
+  (spacemacs|disable-company org-mode)
+
+  ;; *Org Agenda* buffers are important Spacemacs, let me easily
+  ;; switch back to them with C-x b.
+  (add-to-list 'spacemacs-useful-buffers-regexp "\\*Org Agenda\\*"))
+
+;; Clock persistence between restarts.
+(setq org-clock-persist t
+      org-clock-persist-query-resume nil)
+
+(org-clock-persistence-insinuate)
+
+;; Change task state to PENDING when clocking in on a task not already
+;; in PENDING.
+(defun my:org-switch-state-on-clock-in (current-state)
+  (when (and (member current-state '("NEW" "WAITING" "HOLD" "DONE"
+                                     "CANCELLED"))
+             (member "PENDING" org-not-done-keywords))
+    "PENDING"))
+
+(setq org-clock-in-switch-to-state #'my:org-switch-state-on-clock-in)
+
+;; As of 45048eb78 I guess org-end-of-line started working, and now
+;; C-e is bringing me to the end of my headline with collapsed
+;; content, i.e. before the ellipsis.  This infurates me when I
+;; usually want to "C-e M-RET" to add a new sibling headline to the
+;; collapsed one.  (Maybe I should come up with a new key
+;; combination for that.)  Give me back the old behavior: move to
+;; after the ellipsis.
+;;
+;; Further hack required if you want the 'special behavior of
+;; org-special-ctrl-a/e to work right: if we are at end of line
+;; you'll never be toggled back over to the end of the headline text
+;; if you keep hitting C-e.  This is because org-end-of-line only
+;; toggles if you're at the end of the line and not the end of the
+;; *visible* line (which, for a collapsed headline, means you're
+;; actually some lines further on).  So as a *hack*, move back to
+;; the real EOL, before the ellipsis, before executing
+;; org-end-of-line.
+(define-advice org-end-of-line
+    (:around (orig-fun &rest args) my:end-of-line-move-past-ellipsis)
+  (when (and (eq this-command last-command)
+             (= (point) (save-excursion
+                          (end-of-visible-line)
+                          (point))))
+    (beginning-of-visual-line)
+    (end-of-line))
+  (prog1
+      (apply orig-fun args)
+    (when (and (eolp) (org-invisible-p))
+      (end-of-visual-line))))
+
+(my:load-recipes 'org-property-drawer-fixes
+                 'org-fix-faces-after-goto
+                 'org-babel-read-table-in-dblock
+                 'org-daily-time-summary
+                 'org-columns-delete-property)
+
+;; You can use this as a :formatter in clocktables where you've
+;; forcibly narrowed headlines and don't want bracketed links to be
+;; truncated, as they often are since the link target (e.g. a URI
+;; which doesn't have any spaces) comes first in such a construct.
+;; This just converts the link to its descriptive text.
+(defun my:org-clocktable-formatter-strip-links (ipos tables params)
+  ;; I *think* it's OK to destructively modify TABLES.  I think the
+  ;; formatter is the one and only user of this value.  See
+  ;; org-dblock-write:clocktable.
+  (mapc (lambda (file)
+          (mapc (lambda (entry)
+                  (setf (nth 1 entry)
+                        (replace-regexp-in-string org-bracket-link-regexp
+                                                  "\\3" (nth 1 entry))))
+                (nth 2 file)))
+        tables)
+  (funcall org-clock-clocktable-formatter ipos tables params))
 
 
 ;;; paredit
