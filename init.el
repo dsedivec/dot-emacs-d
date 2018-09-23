@@ -89,11 +89,11 @@
     paredit
     persp-mode
     phi-search
-    popwin
     smartparens
     swiper
     undo-tree
     which-key
+    window-purpose
     )
   "List of packages I want installed.")
 
@@ -582,13 +582,6 @@
   (persp-mode 1))
 
 
-;;; popwin
-
-;; popwin-mode is not autoloaded.
-(require 'popwin)
-(popwin-mode 1)
-
-
 ;;; prog-mode
 
 (add-hook 'prog-mode-hook #'show-paren-mode)
@@ -672,6 +665,23 @@ for this command) must be an arrow key."
            ("C-x <down>" . my:delete-window-that-direction)
            ("C-x <left>" . my:delete-window-that-direction)
            ("C-x <right>" . my:delete-window-that-direction))
+
+
+;;; window-purpose
+
+(purpose-mode 1)
+
+;; Extensions.
+;;
+;; Note that window-purpose provides an extension for
+;; *perspective.el*, not persp-mode.el.  I'm using the latter, so the
+;; extension in window-purpose doesn't apply to me.
+
+(require 'window-purpose-x)
+(purpose-x-magit-single-on)
+;; This gives popwin-like functionality, but better default popup
+;; window heights.
+(purpose-x-popwin-setup)
 
 
 ;;; winner-mode
