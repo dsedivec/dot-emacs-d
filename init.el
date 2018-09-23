@@ -202,6 +202,13 @@
 (counsel-mode 1)
 
 
+;;; dired-x
+
+;; Binds C-x C-j.  Probably does other stuff I care about.
+
+(require 'dired-x)
+
+
 ;;; ediff
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
