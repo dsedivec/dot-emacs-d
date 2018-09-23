@@ -118,6 +118,10 @@
 
 (my:package-sync)
 
+(my:unless-spacemacs
+  (setq package-selected-packages my:packages)
+  (package-autoremove))
+
 
 ;;; "Leader" keys setup
 
