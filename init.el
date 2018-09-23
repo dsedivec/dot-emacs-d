@@ -142,6 +142,10 @@
 
 ;;;; Configure various packages
 
+;;; autorevert
+
+(global-auto-revert-mode 1)
+
 ;;; avy
 
 (bind-keys ("C-'" . avy-goto-char)
