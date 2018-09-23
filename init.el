@@ -16,6 +16,7 @@
   (expand-file-name "recipes" (file-name-directory load-file-name)))
 
 (defun my:load-recipe (recipe)
+  (cl-assert (symbolp recipe) nil "expected symbol not %S" recipe)
   (load (expand-file-name (symbol-name recipe) my:recipes-dir)))
 
 
