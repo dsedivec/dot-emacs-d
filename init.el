@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;;;; Prologue
 
 ;; Prefer loading a newer .el to an older .elc.  Probably keeps me
