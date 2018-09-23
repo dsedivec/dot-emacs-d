@@ -43,13 +43,18 @@
 
 ;;; Customization
 
-;; Set this early before I potentially install packages, which will
-;; modify customizable variable `package-selected-packages'.
-(setq custom-file (expand-file-name "customizations.el"
-                                    (my:if-spacemacs
-                                        dotspacemacs-directory
-                                      user-emacs-directory)))
-(load custom-file)
+(let ((this-emacs-dir (my:if-spacemacs
+                          dotspacemacs-directory
+                        user-emacs-directory)))
+
+  ;; Set this early before I potentially install packages, which will
+  ;; modify customizable variable `package-selected-packages'.
+  (setq custom-file (expand-file-name "customizations.el" this-emacs-dir))
+  (load custom-file)
+
+  (add-to-list 'custom-theme-load-path
+               (expand-file-name "themes" this-emacs-dir))
+  (load-theme 'dsedivec t))
 
 
 ;;; package.el
