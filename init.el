@@ -248,6 +248,12 @@
 (bind-key "M-@" 'er/expand-region)
 
 
+;;; faces
+
+(dolist (frame '(t nil))
+  (set-face-attribute 'default frame :font "Fira Mono 8"))
+
+
 ;;; files
 
 (setq make-backup-files nil)
