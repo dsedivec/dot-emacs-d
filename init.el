@@ -153,6 +153,46 @@
            ("M-g M-g" . avy-goto-line))
 
 
+;;; bs
+
+(bind-key "C-x C-b" 'bs-show)
+
+(defun my:bs-show-persp-aware (arg)
+  "`bs-show' wrapped with `with-persp-buffer-list'."
+  (interactive "P")
+  (with-persp-buffer-list () (bs-show arg)))
+
+(with-eval-after-load 'persp-mode
+  (bind-key "C-x C-b" 'my:bs-show-persp-aware))
+
+(defun my:visits-non-dired-non-file (buffer)
+  "Returns T if buffer is neither a file nor a Dired buffer."
+  (and (bs-visits-non-file buffer)
+       (not (eq (buffer-local-value 'major-mode buffer) 'dired-mode))))
+
+(with-eval-after-load 'bs
+  (bind-keys :map bs-mode-map
+             ("k" . bs-up)
+             ("j" . bs-down)
+             ;; t is bound to bs-visit-tags-table by default.  I manage to
+             ;; hit this often enough when I hit C-x C-b by accident
+             ;; instead of C-x b, then start typing "todo" to switch to my
+             ;; to-do list.  The result is that I unwittingly have turned
+             ;; off undo in the buffer, since bs-visit-tags-table seems to
+             ;; set buffer-undo-list to t.  I never use this
+             ;; functionality, so let's just stop me from hurting myself.
+             ("t" . nil))
+  ;; Dired+ names buffers differently, have to tell bs about these names.
+  (add-to-list 'bs-mode-font-lock-keywords
+               '("..\\(.*Dired/.*\\)$" 1 font-lock-function-name-face))
+
+  (add-to-list 'bs-configurations
+               '("files-and-dirs" nil nil nil my:visits-non-dired-non-file
+                 bs-sort-buffer-interns-are-last)))
+
+(setq bs-default-configuration "files-and-dirs")
+
+
 ;;; clean-aindent-mode
 
 (clean-aindent-mode 1)
