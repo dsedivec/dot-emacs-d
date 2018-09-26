@@ -119,7 +119,7 @@
 (my:package-sync)
 
 (my:unless-spacemacs
-  (setq package-selected-packages my:packages)
+  (customize-save-variable 'package-selected-packages my:packages)
   (package-autoremove))
 
 
