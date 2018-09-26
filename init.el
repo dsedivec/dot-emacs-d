@@ -299,6 +299,7 @@
 ;;; find-func
 
 (bind-keys ("M-m j f" . find-function)
+           ("M-m j v" . find-variable)
            ("M-m f e l" . find-library))
 
 
