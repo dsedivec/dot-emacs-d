@@ -87,6 +87,7 @@
     highlight-symbol
     hydra
     ivy
+    macrostep
     magit
     multiple-cursors
     org-plus-contrib
