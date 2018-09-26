@@ -223,6 +223,16 @@
 
 (counsel-mode 1)
 
+(defun my:counsel-trace-function-toggle (func-name)
+  (let ((func (intern func-name)))
+    (if (trace-is-traced 'func)
+        (untrace-function func)
+      (trace-function func))))
+
+(ivy-add-actions
+ 'counsel-describe-function
+ '(("t" my:counsel-trace-function-toggle "toggle tracing")))
+
 
 ;;; dired-x
 
