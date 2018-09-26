@@ -25,10 +25,10 @@
          (org-agenda-columns)))
       (t
        (let ((inhibit-read-only t))
-         (org-with-silent-modifications
-          (remove-text-properties (max (point-min) (1- bol))
-                                  (line-end-position)
-                                  '(read-only t)))
+         (with-silent-modifications
+           (remove-text-properties (max (point-min) (1- bol))
+                                   (line-end-position)
+                                   '(read-only t)))
          (org-columns--call action))
        (let ((org-columns-inhibit-recalculation))
          (org-columns-redo))
