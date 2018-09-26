@@ -587,6 +587,13 @@
 (add-hook 'prog-mode-hook #'show-paren-mode)
 
 
+;;; recentf-mode
+
+(setq recentf-max-saved-items 1000)
+
+(recentf-mode 1)
+
+
 ;;; scroll-bar-mode
 
 (scroll-bar-mode -1)
