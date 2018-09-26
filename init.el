@@ -142,6 +142,26 @@
 
 ;;;; Configure various packages
 
+;;; wspc-hydra
+
+;; This package is out of order because I use
+;; `my:warn-white-space-mode' all over the place.
+
+(autoload 'wspc-hydra-apply-style "wspc-hydra")
+(autoload 'wspc-hydra/body "wspc-hydra" nil t)
+
+(defun my:warn-white-space-mode ()
+  (wspc-hydra-apply-style 'warn-white-space))
+
+(defun my:warn-whitespace-mode (&optional on)
+  (cl-assert (or (null on) (numberp on)))
+  (if (or (null on) (> on 0))
+      (my:warn-white-space-mode)
+    (whitespace-mode -1)))
+
+(make-obsolete 'my:warn-whitespace-mode 'my:warn-white-space-mode "2018-09-23")
+
+
 ;;; autorevert
 
 (global-auto-revert-mode 1)
@@ -647,10 +667,6 @@
 (setq whitespace-indentation-regexp
       '("^\\(\\( \\{%d\\}\\)+\\)[^\n\t]" . "^ *\\(\t+\\)[^\n]"))
 
-(require 'wspc-hydra)
-
-(defun my:warn-white-space-mode ()
-  (wspc-hydra-apply-style 'warn-white-space))
 
 ;;; windmove
 
