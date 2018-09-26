@@ -656,6 +656,11 @@
   (bind-keys :map paredit-mode-map ("M-;" . lisp-comment-dwim)))
 
 
+;;; paren
+
+(add-hook 'prog-mode-hook #'show-paren-mode)
+
+
 ;;; persp-mode
 
 ;; Must set this before turning on persp-mode for it to have an effect
@@ -669,11 +674,6 @@
 ;; things.
 (unless persp-mode
   (persp-mode 1))
-
-
-;;; prog-mode
-
-(add-hook 'prog-mode-hook #'show-paren-mode)
 
 
 ;;; recentf-mode
