@@ -81,6 +81,7 @@
     clean-aindent-mode
     counsel
     expand-region
+    highlight-parentheses
     hydra
     ivy
     magit
@@ -300,6 +301,11 @@
 ;;; frame
 
 (bind-key "<s-return>" 'toggle-frame-fullscreen)
+
+
+;;; highlight-parentheses
+
+(add-hook 'prog-mode-hook #'highlight-parentheses-mode)
 
 
 ;;; imenu
