@@ -82,6 +82,7 @@
     counsel
     expand-region
     highlight-parentheses
+    highlight-symbol
     hydra
     ivy
     magit
@@ -306,6 +307,11 @@
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
+
+
+;;; highlight-symbol
+
+(setq highlight-symbol-idle-delay 0.5)
 
 
 ;;; imenu
