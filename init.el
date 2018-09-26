@@ -76,11 +76,13 @@
 
 (defvar my:packages
   '(
+    amx
     avy
     bind-key
     clean-aindent-mode
     counsel
     expand-region
+    flx
     highlight-parentheses
     highlight-symbol
     hydra
@@ -323,7 +325,48 @@
 
 (ivy-mode 1)
 
-(bind-key "<f6>" 'ivy-resume)
+(bind-keys ("<f6>" . ivy-resume)
+           :map ivy-minibuffer-map
+           ("<next>" . ivy-scroll-up-command)
+           ("<prior>" . ivy-scroll-down-command)
+           ;; Move ivy-restrict-to-matches to C-SPC because that's
+           ;; where I think I'm used to it from ido-mode, and also
+           ;; because I apparently sometimes hold down the space
+           ;; modifier when typing the space in something like "foo: "
+           ;; and then I wonder "WTF where did my input go?"
+           ("C-SPC" . ivy-restrict-to-matches)
+           ("S-SPC" . nil))
+
+;; For some reason, ivy can't load flx on load?  Or something?
+;; Spacemacs thing?  Not sure.  Workaround:
+(when (and (not ivy--flx-featurep)
+           (require 'flx nil t))
+  (warn "flx is available but ivy couldn't load it?  fixing")
+  (setq ivy--flx-featurep t))
+
+;; ivy-initial-inputs-alist makes "^" the default for a bunch of
+;; commands, like counsel-M-x, which I generally dislike.
+(setq ivy-initial-inputs-alist nil)
+
+;; I switch between ivy--regex-fuzzy (rarely) and
+;; ivy--regex-ignore-order, but as you'll see below, I'm currently
+;; using my own "hybrid" matcher.
+;;(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+;;(setq ivy-re-builders-alist '((t . ivy--regex-plus)))
+;;(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+
+(setq ivy-use-virtual-buffers t
+      ivy-virtual-abbreviate 'full
+      ivy-magic-tilde nil
+      ;; Trying this for a while, helps when you have long matches
+      ;; from something like counsel-ag.  Better fix might be to show
+      ;; the matching portion (somehow), or bind some kind of "scroll
+      ;; right"?  Below is fast and easy to try before those more
+      ;; involved ideas.
+      ivy-truncate-lines nil)
+
+(my:load-recipes 'ivy-special-switch-buffers
+                 'ivy-fuzzy-regex-combo-matcher)
 
 
 ;;; lisp-mode
