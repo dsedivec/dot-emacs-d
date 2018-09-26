@@ -29,7 +29,21 @@
 (require 'cl-lib)
 (require 'hydra)
 
-(defvar wspc-hydra-)
+(defvar wspc-hydra-buffer-local-whitespace-style nil
+  "When true, `whitespace-style' will be made buffer local if we change it.
+This applies to changing individual options or to applying styles.
+
+This is particularly useful if you toggle whitespace-mode on/off
+in the buffer and want your changes to options, or styles, to
+persist.  Or if you use Spacemacs, which seems to interfere with
+my hooks that apply a whitespace style, which is blown away by
+default when Spacemacs apparently toggles whitespace-mode
+off/on.")
+
+(define-advice whitespace-toggle-options
+    (:after (&rest args) wspc-hydra-make-changes-to-local-whitespace-style)
+  (when wspc-hydra-buffer-local-whitespace-style
+    (setq-local whitespace-style whitespace-active-style)))
 
 (defun wspc-hydra--option-p (option)
   (memq option (if whitespace-mode whitespace-active-style whitespace-style)))
@@ -88,11 +102,13 @@
    (list
     (intern (completing-read "Style: "
                              (mapcar #'car wspc-hydra-style-alist)))))
-  (let ((style (or (alist-get style-name wspc-hydra-style-alist)
+  (let ((style (or (assq style-name wspc-hydra-style-alist)
                    (error "unknown style %S" style-name))))
     (whitespace-mode -1)
-    (let ((whitespace-style style))
-      (whitespace-mode 1))))
+    (let ((whitespace-style (cdr style)))
+      (whitespace-mode 1))
+    (when wspc-hydra-buffer-local-whitespace-style
+      (setq-local whitespace-style whitespace-active-style))))
 
 (defhydra wspc-hydra ()
   "

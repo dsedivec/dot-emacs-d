@@ -150,6 +150,8 @@
 (autoload 'wspc-hydra-apply-style "wspc-hydra")
 (autoload 'wspc-hydra/body "wspc-hydra" nil t)
 
+(setq wspc-hydra-buffer-local-whitespace-style t)
+
 (defun my:warn-white-space-mode ()
   (wspc-hydra-apply-style 'warn-white-space))
 
