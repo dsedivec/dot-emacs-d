@@ -69,7 +69,7 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 (add-to-list 'package-archives
-             '("my:org" . "/Users/dale/repositories/org-mode/"))
+             '("my:org" . "~/repositories/org-mode/"))
 (add-to-list 'package-pinned-packages '(org-plus-contrib . "my:org"))
 
 (package-initialize)
