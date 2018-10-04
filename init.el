@@ -76,6 +76,10 @@
 
 (defvar my:packages
   '(
+    ;; Best to make sure quelpa is here at the top, before any
+    ;; following quelpa recipes which will require quelpa, naturally.
+    quelpa
+
     amx
     avy
     bind-key
@@ -100,7 +104,7 @@
     which-key
     window-purpose
     )
-  "List of packages I want installed.")
+  "List of packages I want installed.  Will be installed in order.")
 
 (defvar my:package-last-refresh 0)
 
@@ -110,22 +114,35 @@
     (:after (&rest args) my:note-last-refresh-time)
   (setq my:package-last-refresh (float-time)))
 
+(defun my:package-ensure-installed (pkg force-refresh)
+  "Install a package.  pkg may be a symbol or a quelpa recipe."
+  (let ((pkg-name (if (consp pkg) (car pkg) pkg)))
+    (unless (package-installed-p pkg-name)
+      (if (consp pkg)
+          (quelpa pkg)
+        (when (or force-refresh
+                  (>= (- (float-time) my:package-last-refresh)
+                      my:package-max-age-before-refresh))
+          (package-refresh-contents))
+        (package-install pkg-name)))
+    pkg-name))
+
 (defun my:package-sync (&optional force-refresh)
-  "Install all packages listed by `my:packages'."
+  "Install packages listed by `my:packages' and remove all others (I hope).
+Package removal is suppressed when running Spacemacs.  Spacemacs
+probably takes care of that for us, and I don't want to interfere
+with it."
   (interactive "p")
-  (dolist (pkg my:packages)
-    (unless (package-installed-p pkg)
-      (when (or force-refresh
-                (>= (- (float-time) my:package-last-refresh)
-                    my:package-max-age-before-refresh))
-        (package-refresh-contents))
-      (package-install pkg))))
+  (let ((pkg-names (mapcar (lambda (pkg)
+                             (my:package-ensure-installed pkg force-refresh))
+                            my:packages)))
+    (my:unless-spacemacs
+      ;; Is it bad to put names from quelpa recipes in here?  It makes
+      ;; package-autoremove work real nice!
+      (customize-save-variable 'package-selected-packages pkg-names)
+      (package-autoremove))))
 
 (my:package-sync)
-
-(my:unless-spacemacs
-  (customize-save-variable 'package-selected-packages my:packages)
-  (package-autoremove))
 
 
 ;;; "Leader" keys setup
