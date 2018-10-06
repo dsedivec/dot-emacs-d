@@ -257,6 +257,9 @@ with it."
  'counsel-describe-function
  '(("t" my:counsel-trace-function-toggle "toggle tracing")))
 
+;; Include directory in prompt when searching.
+(ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
+
 
 ;;; delsel
 
