@@ -662,12 +662,6 @@ with it."
     (when (and (eolp) (org-invisible-p))
       (end-of-visual-line))))
 
-(my:load-recipes 'org-property-drawer-fixes
-                 'org-fix-faces-after-goto
-                 'org-babel-read-table-in-dblock
-                 'org-daily-time-summary
-                 'org-columns-delete-property)
-
 ;; You can use this as a :formatter in clocktables where you've
 ;; forcibly narrowed headlines and don't want bracketed links to be
 ;; truncated, as they often are since the link target (e.g. a URI
@@ -685,6 +679,12 @@ with it."
                 (nth 2 file)))
         tables)
   (funcall org-clock-clocktable-formatter ipos tables params))
+
+(my:load-recipes 'org-property-drawer-fixes
+                 'org-fix-faces-after-goto
+                 'org-babel-read-table-in-dblock
+                 'org-daily-time-summary
+                 'org-columns-delete-property)
 
 
 ;;; paredit
