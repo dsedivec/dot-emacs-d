@@ -113,6 +113,7 @@
     magit
     minions
     multiple-cursors
+    mwim
     org-plus-contrib
     paredit
     persp-mode
@@ -442,6 +443,12 @@ with it."
 (setq minions-mode-line-lighter "🄼")
 
 (minions-mode 1)
+
+
+;;; mwim
+
+(bind-keys ("C-a" . mwim-beginning-of-code-or-line)
+           ("C-e" . mwim-end-of-code-or-line))
 
 
 ;;; multiple-cursors
