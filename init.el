@@ -153,7 +153,7 @@ with it."
   (define-prefix-command 'my:global-leader-map)
   (bind-key "M-m" 'my:global-leader-map))
 
-(dolist (prefix (string-to-list '("f" "f e" "j")))
+(dolist (prefix (string-to-list '("f" "f e" "j" "s")))
   (let ((kbd-str (format "M-m %s" prefix)))
     (unless (global-key-binding (kbd kbd-str))
       (bind-key kbd-str (make-sparse-keymap)))))
@@ -260,6 +260,10 @@ with it."
 
 ;; Include directory in prompt when searching.
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
+
+(bind-keys :map counsel-mode-map
+           ("M-m /" . counsel-auto-grep-maybe-projectile)
+           ("M-m s f" . counsel-auto-grep-ask-dir))
 
 
 ;;; delsel
