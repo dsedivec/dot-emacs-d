@@ -10,7 +10,7 @@
              (expand-file-name "lisp" (file-name-directory load-file-name)))
 
 
-;;; Recipes
+;;; "Recipes"
 
 (defvar my:recipes-dir
   (expand-file-name "recipes" (file-name-directory load-file-name)))
