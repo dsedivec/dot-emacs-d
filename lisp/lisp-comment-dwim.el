@@ -183,6 +183,7 @@
           (comment-region start (point)))))))
 
 ;; This is a bit inspired by `paredit-comment-dwim'.
+;;;###autoload
 (defun lisp-comment-dwim (&optional arg)
   "Try to DWIM WRT comments."
   (interactive "P")

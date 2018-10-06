@@ -6,8 +6,10 @@
 ;; from getting in trouble if I forget to byte compile.
 (setq load-prefer-newer t)
 
-(add-to-list 'load-path
-             (expand-file-name "lisp" (file-name-directory load-file-name)))
+(defvar my:local-packages-dir
+  (expand-file-name "lisp" (file-name-directory load-file-name)))
+
+(add-to-list 'load-path my:local-packages-dir)
 
 
 ;;; "Recipes"
@@ -22,6 +24,22 @@
 (defun my:load-recipes (&rest recipes)
   (dolist (recipe recipes)
     (my:load-recipe recipe)))
+
+
+;;; Local packages
+
+(defvar my:local-packages-autoload-file
+  (expand-file-name "autoloads.el" my:local-packages-dir))
+
+(defun my:update-local-package-autoloads ()
+  (interactive)
+  (let ((generated-autoload-file my:local-packages-autoload-file))
+    (update-directory-autoloads my:local-packages-dir))
+  (load my:local-packages-autoload-file))
+
+(if (file-exists-p my:local-packages-autoload-file)
+    (load my:local-packages-autoload-file)
+  (my:update-local-package-autoloads))
 
 
 ;;; Spacemacs compatibility
