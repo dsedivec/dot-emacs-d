@@ -99,6 +99,7 @@
     paredit
     persp-mode
     phi-search
+    projectile
     smartparens
     swiper
     undo-tree
@@ -708,6 +709,13 @@ with it."
 ;; things.
 (unless persp-mode
   (persp-mode 1))
+
+
+;;; projectile
+
+(projectile-mode 1)
+
+(bind-key "C-c C-p" 'projectile-command-map)
 
 
 ;;; recentf-mode
