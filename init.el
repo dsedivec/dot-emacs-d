@@ -93,6 +93,7 @@
     ivy
     macrostep
     magit
+    minions
     multiple-cursors
     org-plus-contrib
     paredit
@@ -407,6 +408,13 @@ with it."
 ;;; magit
 
 (autoload 'magit "magit" nil t)
+
+
+;;; minions
+
+(setq minions-mode-line-lighter "🄼")
+
+(minions-mode 1)
 
 
 ;;; multiple-cursors
