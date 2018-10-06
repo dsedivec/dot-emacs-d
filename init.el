@@ -256,6 +256,11 @@ with it."
  '(("t" my:counsel-trace-function-toggle "toggle tracing")))
 
 
+;;; delsel
+
+(delete-selection-mode 1)
+
+
 ;;; dired-x
 
 ;; Binds C-x C-j.  Probably does other stuff I care about.
