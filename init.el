@@ -810,7 +810,24 @@ for this command) must be an arrow key."
 
 (purpose-mode 1)
 
-;; Extensions.
+(with-eval-after-load 'ivy
+  (require 'ivy-switch-with-purpose))
+
+;; Docs for window-purpose don't really mention users modifying
+;; `purpose-action-sequences` to suit their tastes, but Spacemacs is
+;; doing it to get the behavior I want: do *not* try to reuse an
+;; existing window when C-x b is invoked.  Some day perhaps I should
+;; make a PR to document this modification.  (Huh: and this variable.
+;; It has no doc string.)
+;;
+;; An alternative to this would be modifying the advice here which
+;; removes force-same-window rather forcibly:
+;; https://github.com/bmag/emacs-purpose/blob/a302340e183d20baa4445858d321f43449298829/window-purpose-switch.el#L957-L962
+(let ((stb-actions (assq 'switch-to-buffer purpose-action-sequences))
+      (action 'purpose-display-maybe-same-window))
+  (setcdr stb-actions (cons action (delq action (cdr stb-actions)))))
+
+;; Purpose extensions
 ;;
 ;; Note that window-purpose provides an extension for
 ;; *perspective.el*, not persp-mode.el.  I'm using the latter, so the
