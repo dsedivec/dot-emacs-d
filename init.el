@@ -684,7 +684,8 @@ with it."
                  'org-fix-faces-after-goto
                  'org-babel-read-table-in-dblock
                  'org-daily-time-summary
-                 'org-columns-delete-property)
+                 'org-columns-delete-property
+                 'org-insert-heading-ignore-invisibility)
 
 
 ;;; paredit
