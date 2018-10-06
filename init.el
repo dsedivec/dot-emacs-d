@@ -123,6 +123,7 @@
     undo-tree
     which-key
     window-purpose
+    winum
     )
   "List of packages I want installed.  Will be installed in order.")
 
@@ -861,3 +862,21 @@ for this command) must be an arrow key."
 ;;; winner-mode
 
 (winner-mode 1)
+
+
+;;; winum
+
+(winum-mode)
+
+(with-eval-after-load 'winum
+  (bind-keys :map winum-keymap
+             ("C-0" . winum-select-window-0-or-10)
+             ("C-1" . winum-select-window-1)
+             ("C-2" . winum-select-window-2)
+             ("C-3" . winum-select-window-3)
+             ("C-4" . winum-select-window-4)
+             ("C-5" . winum-select-window-5)
+             ("C-6" . winum-select-window-6)
+             ("C-7" . winum-select-window-7)
+             ("C-8" . winum-select-window-8)
+             ("C-9" . winum-select-window-9)))
