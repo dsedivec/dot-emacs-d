@@ -467,7 +467,7 @@ with it."
 ;;; mwim
 
 (bind-keys ("C-a" . mwim-beginning-of-code-or-line)
-           ("C-e" . mwim-end-of-code-or-line))
+           ("C-e" . mwim-end-of-line-or-code))
 
 
 ;;; multiple-cursors
