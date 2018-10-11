@@ -425,6 +425,11 @@ of that for us, and I don't want to interfere with it."
 (setq highlight-symbol-idle-delay 0.5)
 
 
+;;; ielm
+
+(add-hook 'ielm-mode-hook 'paredit-mode)
+
+
 ;;; imenu
 
 (bind-key "M-m j i" 'imenu)
