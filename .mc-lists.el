@@ -4,6 +4,9 @@
 (setq mc/cmds-to-run-for-all
       '(
         org-self-insert-command
+        paredit-backward-kill-word
+        paredit-forward
+        paredit-semicolon
         ))
 
 (setq mc/cmds-to-run-once
