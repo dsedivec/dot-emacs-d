@@ -579,7 +579,10 @@ with it."
      ;; irritating.
      org-log-done nil))
 
-(bind-keys ("C-c r" . org-capture))
+(bind-keys ("C-c r" . org-capture)
+           ("M-m a o k i" . org-clock-in)
+           ("M-m a o k o" . org-clock-out)
+           ("M-m a o k g" . org-clock-goto))
 
 (with-eval-after-load 'org
   (bind-keys :map org-mode-map
