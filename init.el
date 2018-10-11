@@ -40,9 +40,14 @@
 
 (defun my:update-local-package-autoloads ()
   (interactive)
-  (let ((generated-autoload-file my:local-packages-autoload-file))
-    (update-directory-autoloads my:local-packages-dir))
-  (load my:local-packages-autoload-file))
+  (let ((kill-buffer-after
+         (not (get-file-buffer my:local-packages-autoload-file))))
+    (let* ((generated-autoload-file my:local-packages-autoload-file))
+      (update-directory-autoloads my:local-packages-dir))
+    (load my:local-packages-autoload-file)
+    (when-let ((buf (and kill-buffer-after
+                         (get-file-buffer my:local-packages-autoload-file))))
+      (kill-buffer buf))))
 
 (if (file-exists-p my:local-packages-autoload-file)
     (load my:local-packages-autoload-file)
