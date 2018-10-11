@@ -139,6 +139,7 @@
     which-key
     window-purpose
     winum
+    zop-to-char
     )
   "List of packages I want installed.  Will be installed in order.")
 
@@ -950,3 +951,8 @@ for this command) must be an arrow key."
              ("C-7" . winum-select-window-7)
              ("C-8" . winum-select-window-8)
              ("C-9" . winum-select-window-9)))
+
+
+;;; zop-to-char
+
+(bind-keys ("M-z" . zop-up-to-char))
