@@ -97,6 +97,7 @@ off/on.")
     (warn-white-space . (face trailing lines-tail empty space-before-tab
                          indentation))))
 
+;;;###autoload
 (defun wspc-hydra-apply-style (style-name)
   (interactive
    (list
@@ -110,6 +111,7 @@ off/on.")
     (when wspc-hydra-buffer-local-whitespace-style
       (setq-local whitespace-style whitespace-active-style))))
 
+;;;###autoload (autoload 'wspc-hydra/body "wspc-hydra" nil t)
 (defhydra wspc-hydra ()
   "
 _w_hitespace mode: ?w?

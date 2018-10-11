@@ -203,9 +203,6 @@ with it."
 ;; This package is out of order because I use
 ;; `my:warn-white-space-mode' all over the place.
 
-(autoload 'wspc-hydra-apply-style "wspc-hydra")
-(autoload 'wspc-hydra/body "wspc-hydra" nil t)
-
 (setq wspc-hydra-buffer-local-whitespace-style t)
 
 (defun my:warn-white-space-mode ()
