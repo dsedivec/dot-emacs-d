@@ -221,6 +221,14 @@ of that for us, and I don't want to interfere with it."
 
 ;;;; Emacs built-ins
 
+(defun my:show-trailing-white-space ()
+  ;; setq-local instead of setq superfluous!
+  (setq-local show-trailing-whitespace t))
+
+(add-hook 'text-mode-hook #'my:show-trailing-white-space)
+
+(add-hook 'prog-mode-hook #'my:show-trailing-white-space)
+
 (setq ns-use-native-fullscreen nil)
 
 
