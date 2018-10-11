@@ -92,7 +92,7 @@
   (load-theme 'dsedivec t))
 
 
-;;; package.el
+;;; package.el with auto-package-update
 
 (require 'package)
 
@@ -111,6 +111,7 @@
     quelpa
 
     amx
+    auto-package-update
     avy
     bind-key
     clean-aindent-mode
@@ -149,35 +150,60 @@
     (:after (&rest args) my:note-last-refresh-time)
   (setq my:package-last-refresh (float-time)))
 
-(defun my:package-ensure-installed (pkg force-refresh)
-  "Install a package.  pkg may be a symbol or a quelpa recipe."
-  (let ((pkg-name (if (consp pkg) (car pkg) pkg)))
-    (unless (package-installed-p pkg-name)
-      (if (consp pkg)
-          (quelpa pkg)
-        (when (or force-refresh
-                  (>= (- (float-time) my:package-last-refresh)
-                      my:package-max-age-before-refresh))
-          (package-refresh-contents))
-        (package-install pkg-name)))
-    pkg-name))
+(defun my:package-refresh-maybe (&optional force-refresh)
+  (when (or force-refresh
+            (>= (- (float-time) my:package-last-refresh)
+                my:package-max-age-before-refresh))
+    (package-refresh-contents)))
 
-(defun my:package-sync (&optional force-refresh)
-  "Install packages listed by `my:packages' and remove all others (I hope).
-Package removal is suppressed when running Spacemacs.  Spacemacs
-probably takes care of that for us, and I don't want to interfere
-with it."
-  (interactive "p")
-  (let ((pkg-names (mapcar (lambda (pkg)
-                             (my:package-ensure-installed pkg force-refresh))
-                            my:packages)))
+(defun my:packages-install (&optional pkgs)
+  "Install packages listed in `my:packages'.
+pkgs is a list of either package names as symbols, or else quelpa
+recipes.  Returns list of package names as symbols (even for
+quelpa recipes)."
+  (interactive)
+  (mapcar (lambda (pkg) (let ((pkg-name (if (consp pkg) (car pkg) pkg)))
+                          (unless (package-installed-p pkg-name)
+                            (if (consp pkg)
+                                (quelpa pkg)
+                              (my:package-refresh-maybe)
+                              (package-install pkg-name)))
+                          pkg-name))
+          (or pkgs my:packages)))
+
+(defun my:packages-sync (&optional upgrade)
+  "Install, (maybe) upgrade, and remove packages according to `my:packages'.
+
+Upgrading happens by default if called interactively; supply
+negative prefix argument to skip upgrading.  Non-interactive
+calls will only upgrade packages if upgrade is true.
+
+Packages not in `my:packages' are removed.  Package removal is
+suppressed when running Spacemacs.  Spacemacs probably takes care
+of that for us, and I don't want to interfere with it."
+  (interactive (list (>= (prefix-numeric-value current-prefix-arg) 0)))
+  ;; `auto-package-update-now' calls `package-refresh-contents', so we
+  ;; call that first and let our advice update
+  ;; `my:package-last-refresh', so that following calls to
+  ;; `my:package-refresh-maybe' may end up being a no-op.  But if
+  ;; `auto-package-update-now' isn't called here then we'll (maybe!)
+  ;; need to refresh packages ourselves.
+  (when upgrade
+    (auto-package-update-now))
+  (let ((pkg-names (my:packages-install)))
     (my:unless-spacemacs
       ;; Is it bad to put names from quelpa recipes in here?  It makes
       ;; package-autoremove work real nice!
       (customize-save-variable 'package-selected-packages pkg-names)
       (package-autoremove))))
 
-(my:package-sync)
+;; Don't show the package update buffer if nothing was updated.
+(define-advice apu--write-results-buffer
+    (:around (orig-fun contents &rest args) my:suppress-empty-results-buffer)
+  (when (string-match-p "\n" contents)
+    (apply orig-fun contents args)))
+
+(my:packages-sync)
 
 
 ;;; "Leader" keys setup
