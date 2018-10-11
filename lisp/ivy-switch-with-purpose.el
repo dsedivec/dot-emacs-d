@@ -93,10 +93,10 @@ set."
     switch-to-buffer ido-switch-buffer)
 
 (ivy-swp--make-switch-overload-command
-    switch-buffer-other-window ido-switch-buffer-other-window)
+    switch-to-buffer-other-window ido-switch-buffer-other-window)
 
 (ivy-swp--make-switch-overload-command
-    switch-buffer-other-frame ido-switch-buffer-other-frame)
+    switch-to-buffer-other-frame ido-switch-buffer-other-frame)
 
 ;; Using command remapping here lets me get all of Purpose's own
 ;; mappings in one fell swoop, because it does define two or three
