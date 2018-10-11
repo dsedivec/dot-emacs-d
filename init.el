@@ -26,6 +26,13 @@
     (my:load-recipe recipe)))
 
 
+;;; Add time stamps to *Messages*
+
+;; Loading this early because it can be very useful to see time stamps
+;; on messages.
+(my:load-recipe 'timestamp-messages)
+
+
 ;;; Local packages
 
 (defvar my:local-packages-autoload-file
