@@ -305,6 +305,11 @@ with it."
 (delete-selection-mode 1)
 
 
+;;; descr-text
+
+(bind-keys ("M-m h d c" . describe-char))
+
+
 ;;; dired-x
 
 ;; Binds C-x C-j.  Probably does other stuff I care about.
