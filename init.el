@@ -268,6 +268,11 @@ with it."
 (setq bs-default-configuration "files-and-dirs")
 
 
+;;; carousel
+
+(carousel-mode 1)
+
+
 ;;; clean-aindent-mode
 
 (clean-aindent-mode 1)
