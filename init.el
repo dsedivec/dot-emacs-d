@@ -134,6 +134,7 @@
     smartparens
     swiper
     undo-tree
+    unicode-fonts
     which-key
     window-purpose
     winum
@@ -814,6 +815,20 @@ with it."
 ;;; undo-tree
 
 (global-undo-tree-mode)
+
+
+;;; unicode-fonts
+
+(require 'unicode-fonts)
+
+;; I build Emacs NeXTStep with the color fonts patch (for Apple Color
+;; Emoji, natch).  Must override unicode-fonts turning said color
+;; fonts off.
+(when (memq window-system '(ns mac))
+  (setq unicode-fonts-skip-font-groups (delq 'multicolor
+                                             unicode-fonts-skip-font-groups)))
+
+(unicode-fonts-setup)
 
 
 ;;; which-key
