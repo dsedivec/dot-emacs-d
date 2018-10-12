@@ -164,6 +164,8 @@ NEW-ELEMENT."
     bind-key
     clean-aindent-mode
     counsel
+    (eltu :fetcher github :repo "dsedivec/eltu"
+          :files (:defaults "eltu_update_tags.py"))
     exec-path-from-shell
     expand-region
     flx
