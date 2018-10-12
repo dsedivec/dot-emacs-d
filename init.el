@@ -492,9 +492,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; flycheck
 
 (setq flycheck-mode-line-prefix "✓"
-      ;; flycheck feedback in elisp buffers is not really helpful, and
-      ;; far too noisy (though it is occasionally very useful).
-      flycheck-global-modes '(not emacs-lisp-mode))
+      flycheck-global-modes '(not
+                              ;; flycheck feedback in elisp buffers is
+                              ;; not really helpful, and far too noisy
+                              ;; (though it is occasionally very
+                              ;; useful).
+                              emacs-lisp-mode
+                              org-mode))
 
 (global-flycheck-mode 1)
 
