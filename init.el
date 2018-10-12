@@ -944,6 +944,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (scroll-bar-mode -1)
 
 
+;;; server
+
+(server-start)
+
+
 ;;; simple
 
 (column-number-mode 1)
