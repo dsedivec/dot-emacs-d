@@ -712,7 +712,7 @@ surround \"foo\" with (in this example) parentheses.  I want
      org-log-done nil))
 
 (bind-keys ("C-c r" . org-capture)
-           ("M-m a o k i" . org-clock-in)
+           ("M-m a o k i" . org-clock-in-last)
            ("M-m a o k o" . org-clock-out)
            ("M-m a o k g" . org-clock-goto))
 
