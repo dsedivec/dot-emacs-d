@@ -116,6 +116,7 @@
     bind-key
     clean-aindent-mode
     counsel
+    exec-path-from-shell
     expand-region
     flx
     highlight-parentheses
@@ -385,6 +386,12 @@ of that for us, and I don't want to interfere with it."
 (bind-keys :map emacs-lisp-mode-map ("C-c C-r" . eval-region))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; exec-path-from-shell
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 
 
 ;;; expand-region
