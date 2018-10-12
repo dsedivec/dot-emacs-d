@@ -845,6 +845,11 @@ of that for us, and I don't want to interfere with it."
 (recentf-mode 1)
 
 
+;;; saveplace
+
+(save-place-mode 1)
+
+
 ;;; scroll-bar-mode
 
 (scroll-bar-mode -1)
