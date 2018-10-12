@@ -812,6 +812,28 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq org-clock-in-switch-to-state #'my:org-switch-state-on-clock-in)
 
+;; More compact clock display in mode line.
+(define-advice org-clock-get-clock-string
+    (:around (orig-fun) my:compact-clock-in-mode-line)
+  (if org-clock-effort
+      (funcall orig-fun)
+    (let ((clocked-time (org-clock-get-clocked-time)))
+      (concat (propertize "⏱" 'face '(:family "Apple Color Emoji"))
+              (org-duration-from-minutes clocked-time)))))
+
+;; Force update of clock display in mode line after starting/stopping
+;; clock.  Can't just put `force-mode-line-update' into the hooks for
+;; some reason?  It doesn't force the addition/removal of the clock
+;; to/from the mode line.  Maybe clock not yet "stopped" from the
+;; perspective of the mode line drawing functions when that hook is
+;; run?
+
+(defun my:org-clock-in-out-update-mode-line ()
+  (run-at-time 0 nil #'force-mode-line-update))
+
+(add-hook 'org-clock-in-hook #'my:org-clock-in-out-update-mode-line)
+(add-hook 'org-clock-out-hook #'my:org-clock-in-out-update-mode-line)
+
 ;; As of 45048eb78 I guess org-end-of-line started working, and now
 ;; C-e is bringing me to the end of my headline with collapsed
 ;; content, i.e. before the ellipsis.  This infurates me when I
