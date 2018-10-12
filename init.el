@@ -119,6 +119,8 @@
     exec-path-from-shell
     expand-region
     flx
+    flycheck
+    flycheck-pos-tip
     highlight-parentheses
     highlight-symbol
     hydra
@@ -422,6 +424,18 @@ of that for us, and I don't want to interfere with it."
 (bind-key "<s-return>" 'toggle-frame-fullscreen)
 
 
+;;; flycheck
+
+(setq flycheck-mode-line-prefix "✓"
+      ;; flycheck feedback in elisp buffers is not really helpful, and
+      ;; far too noisy (though it is occasionally very useful).
+      flycheck-global-modes '(not emacs-lisp-mode))
+
+(global-flycheck-mode 1)
+
+(flycheck-pos-tip-mode 1)
+
+
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
@@ -507,7 +521,8 @@ of that for us, and I don't want to interfere with it."
 
 ;;; minions
 
-(setq minions-mode-line-lighter "🄼")
+(setq minions-mode-line-lighter "🄼"
+      minions-direct '(flycheck-mode))
 
 (minions-mode 1)
 
