@@ -135,6 +135,8 @@
     persp-mode
     phi-search
     projectile
+    smart-mode-line
+    smart-mode-line-powerline-theme
     smartparens
     swiper
     undo-tree
@@ -849,6 +851,43 @@ of that for us, and I don't want to interfere with it."
 ;;; simple
 
 (column-number-mode 1)
+
+
+;;; smart-mode-line
+
+(when (memq window-system '(mac ns))
+  (when (featurep 'powerline-separators)
+    (warn (concat "`powerline-separators' already loaded,"
+                  " Apple SRGB setting may have no effect")))
+
+  (setq powerline-image-apple-rgb t))
+
+(setq sml/theme 'light-powerline
+      ;; Note: always make sure the default font is set before you get
+      ;; here, eh?
+      ;;
+      ;; This calculation was totally made up based on tinkering.  My
+      ;; guess is that it doesn't work.  Point is: Fira Mono 8 pt
+      ;; wants this to be 14.  With that font on my Mac,
+      ;; `frame-char-height' is returning 9.
+      powerline-height (ceiling (* (frame-char-height) 1.5))
+      ;; Good ones: alternate, arrow, box
+      powerline-default-separator 'box)
+
+(defun my:sml/after-setup-hook ()
+  (setq sml/pre-modes-separator
+        '("" (:propertize " " face powerline-active2)
+          (:eval (propertize " " 'display
+                  (funcall (intern (format "powerline-%s-left"
+                                           (powerline-current-separator)))
+                           'sml/modes
+                           'sml/global)))
+          (:propertize " " face sml/global))
+        sml/name-width 0))
+
+(add-hook 'sml/after-setup-hook #'my:sml/after-setup-hook)
+
+(sml/setup)
 
 
 ;;; smartparens
