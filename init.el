@@ -806,7 +806,9 @@ of that for us, and I don't want to interfere with it."
 (require 'lisp-comment-dwim)
 
 (with-eval-after-load 'paredit
-  (bind-keys :map paredit-mode-map ("M-;" . lisp-comment-dwim)))
+  (bind-keys :map paredit-mode-map
+             ("M-;" . lisp-comment-dwim)
+             ("M-m j s" . paredit-split-sexp)))
 
 
 ;;; paren
