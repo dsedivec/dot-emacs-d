@@ -3,9 +3,12 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        dabbrev-expand
+        mwim-end-of-line-or-code
         org-self-insert-command
         paredit-backward-kill-word
         paredit-forward
+        paredit-forward-kill-word
         paredit-semicolon
         ))
 
