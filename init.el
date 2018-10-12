@@ -11,6 +11,8 @@
 
 (add-to-list 'load-path my:local-packages-dir)
 
+(require 'cl-lib)
+
 
 ;;; "Recipes"
 
@@ -74,6 +76,52 @@
   `(unless my:is-spacemacs ,@body))
 
 (put 'my:unless-spacemacs 'common-lisp-indent-function-for-elisp 0)
+
+
+;;; Utility functions
+
+(defun my:add-to-list-before (list-var new-element before-element)
+  "Conditionally add NEW-ELEMENT to LIST-VAR before BEFORE-ELEMENT.
+
+If NEW-ELEMENT is already in the list then no changes are made,
+even if NEW-ELEMENT occurs after BEFORE-ELEMENT.  If
+BEFORE-ELEMENT occurs multiple times, NEW-ELEMENT is added before
+the first occurrence.  If neither NEW-ELEMENT nor BEFORE-ELEMENT
+are in the list, NEW-ELEMENT is added at the end of the list.  If
+LIST-VAR is null then it is set to a list containing only
+NEW-ELEMENT."
+  (let ((list-val (symbol-value list-var))
+        target-cell
+        last-cell)
+    (unless
+        (catch 'done
+          (while list-val
+            (cond
+              ((equal (car list-val) new-element)
+               (throw 'done t))
+              ((and (null target-cell)
+                    (equal (car list-val) before-element))
+               (setq target-cell list-val)))
+            (setq last-cell list-val
+                  list-val (cdr list-val))))
+      (cond
+        (target-cell
+         (setf (cdr target-cell) (cons (car target-cell) (cdr target-cell))
+               (car target-cell) new-element))
+        (last-cell
+         (cl-assert (null (cdr last-cell)))
+         (setf (cdr last-cell) (list new-element null)))
+        (t
+         (set list-var (list new-element)))))))
+
+(defmacro my:setq-local (&rest bindings)
+  "Like setq for BINDINGS, and make all variables buffer-local."
+  (when (= (mod (length bindings) 2) 1)
+    (error "`my:setq-local' needs pairs but got odd number of args"))
+  `(progn
+     ,@(cl-loop for next-binding on bindings by #'cddr
+          collect `(set (make-local-variable ',(car next-binding))
+                        ,(cadr next-binding)))))
 
 
 ;;; Customization
@@ -361,6 +409,19 @@ of that for us, and I don't want to interfere with it."
 ;;; ediff
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+
+;;; elec-pair
+
+
+(defun my:electric-pair-default-plus-before-word-inhibit (char)
+  "Default inhibit behavior on CHAR, plus don't pair before a word.
+This is because I'm often typing the first character of some pair
+like \"(\" with point just before \"foo\" because I am about to
+surround \"foo\" with (in this example) parentheses.  I want
+\"(foo\" not \"()foo\"."
+  (or (electric-pair-default-inhibit char)
+      (eq (char-syntax (following-char)) ?w)))
 
 
 ;;; elisp-mode
@@ -908,6 +969,153 @@ of that for us, and I don't want to interfere with it."
 ;;; startup
 
 (setq inhibit-startup-screen t)
+
+
+;;; sql
+
+(defun my:insert-tab-or-spaces (&optional count)
+  (interactive "p")
+  (let* ((num-chars (* (or count 1) (if indent-tabs-mode 1 tab-width))))
+    (insert-char (if indent-tabs-mode ?\t ?\s) num-chars)))
+
+(cl-defun my:remove-some-indentation (&optional (levels 1))
+  "Remove LEVELS of indentation on current line or in region.
+Does not move point.  When not operating on a region, will remove
+alignment spaces after tabs and treat those spaces as a single
+level of indentation."
+  (interactive "p")
+  (when (> levels 0)
+    (let ((backward-delete-char-untabify-method 'untabify))
+      (save-excursion
+        (cond
+          ((use-region-p)
+           (let ((end (copy-marker (region-end))))
+             (goto-char (region-beginning))
+             (cl-loop
+                do
+                  (back-to-indentation)
+                  (when indent-tabs-mode
+                    ;; Don't delete spaces after tabs ("alignment
+                    ;; spaces").
+                    (skip-chars-backward " "))
+                  (backward-delete-char-untabify (min (current-column)
+                                                      (* tab-width levels)))
+                while (and (zerop (forward-line 1)) (< (point) end)))))
+          (t
+           (back-to-indentation)
+           (let ((indent-start (point))
+                 (levels levels))
+             ;; When operating on a single line instead of a region,
+             ;; delete alignment spaces if they exist and count them
+             ;; as a single indentation level.
+             (when (not (zerop (skip-chars-backward " ")))
+               (delete-region (point) indent-start)
+               (cl-decf levels))
+             (backward-delete-char-untabify (min (current-column)
+                                                 (* tab-width levels))))))))))
+
+(with-eval-after-load 'sql
+  (bind-keys :map sql-mode-map
+             ("TAB" . my:insert-tab-or-spaces)
+             ("C-c C-z" . sql-product-interactive)
+             ("<backtab>" . my:remove-some-indentation)))
+
+;; Set the default to my most commonly-used RDBMS.
+(setq sql-product 'postgres)
+
+;; PostgreSQL connections should ask for the port.
+(with-eval-after-load 'sql
+  (add-to-list 'sql-postgres-login-params 'port t))
+
+(my:when-spacemacs
+  (with-eval-after-load 'smartparens
+    (sp-local-pair
+     '(sql-mode sql-interactive-mode) "(" ")"
+     ;; (|), hit RET, should insert a newline
+     :post-handlers '(:add
+                      (spacemacs/smartparens-pair-newline-and-indent "RET"))
+     ;; Don't pair when looking at some SQL, just insert ( please
+     :unless '(:add sp-point-before-word-p))))
+
+;; Used by my expand-region setup, see below.
+(defun my:sql-mark-statement ()
+  (interactive)
+  (sql-end-of-statement 1)
+  (push-mark nil t t)
+  (sql-beginning-of-statement 1))
+
+(my:load-recipes 'indent-match-last-line)
+
+(defun my:sql-mode-hook ()
+  (my:setq-local tab-width 4
+                 ;; This is necessary starting ca. 24.3.91 because
+                 ;; indent-according-to-mode now nukes white space
+                 ;; after a blank line, so if you try to put a blank
+                 ;; line in the middle of, say, an indented
+                 ;; transaction body, you lose your indent.  See git
+                 ;; commit 39c6030a.
+                 indent-line-function #'my:indent-match-last-line
+
+                 electric-pair-inhibit-predicate
+                 #'my:electric-pair-default-plus-before-word-inhibit)
+  (my:warn-white-space-mode)
+  ;; Spacemacs's sql layer currently doesn't enable completion.
+  (my:when-spacemacs
+    (if company-backends
+        (warn (concat "Looks like Spacemacs started configuring company-mode"
+                      " in the SQL layer, update your config"))
+      (company-mode 1)
+      (setq company-backends spacemacs-default-company-backends)))
+  (my:add-to-list-before (make-local-variable 'er/try-expand-list)
+                         'my:sql-mark-statement 'er/mark-next-accessor))
+
+(add-hook 'sql-mode-hook #'my:sql-mode-hook)
+
+;; sql-mode installs hook(s) that will screw up things like
+;; column-marker or whitespace-mode initially in a buffer, and also
+;; (I think) whenever you change products.  This is here to
+;; reinitialize whitespace-mode after changing products (which, to
+;; reiterate, happens during creating a new sql-mode buffer).
+;;
+;; BTW, I think the hooks in question are either the one going in to
+;; hack-local-variables-hook or else font-lock-mode-hook.
+(define-advice sql-product-font-lock
+    (:around (orig-fun &rest args) my:restore-whitespace-mode activate)
+  (let ((whitespace-mode-was-active (and (boundp 'whitespace-mode)
+                                         whitespace-mode)))
+    (when whitespace-mode-was-active
+      (whitespace-mode -1))
+    (prog1
+        (apply orig-fun args)
+      (when whitespace-mode-was-active
+        (whitespace-mode 1)))))
+
+(my:when-spacemacs
+  ;; Spacemacs shouldn't try to auto-indent my SQL yanks, Emacs
+  ;; doesn't have (my) auto-indentation for SQL.
+  (add-to-list 'spacemacs-indent-sensitive-modes 'sql-mode)
+
+  ;; Without this, C-x b won't suggest switching back to *SQL*.  I
+  ;; should probably push this upstream.
+  (add-to-list 'spacemacs-useful-buffers-regexp "\\*SQL\\*")
+
+  (defun my:sql-interactive-mode-hook ()
+    (if (or company-backends company-mode)
+        (warn (concat "`company-mode' already on in SQLi buffer,"
+                      " did Spacemacs change?"))
+      (setq-local company-backends '((company-dabbrev-code :with company-capf)))
+      (company-mode 1))
+    ;; Spacemacs adds a *fucking lambda* to sql-interactive-mode-hook
+    ;; that turns truncate-lines on.  I hate this.  I should push
+    ;; upstream to get this as a named function, if not a setting as
+    ;; well.
+    (if truncate-lines
+        (toggle-truncate-lines nil)
+      (warn "`truncate-lines' not on in SQLi buffer, did Spacemacs change?")))
+
+  ;; Must append this hook so we turn off truncate-lines after
+  ;; Spacemacs turns it on.
+  (add-hook 'sql-interactive-mode-hook #'my:sql-interactive-mode-hook t))
 
 
 ;;; swiper
