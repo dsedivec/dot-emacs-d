@@ -123,6 +123,27 @@ NEW-ELEMENT."
           collect `(set (make-local-variable ',(car next-binding))
                         ,(cadr next-binding)))))
 
+(defun my:add-hooks (hook-var &rest hook-funcs)
+  (dolist (hook-func hook-funcs)
+    (add-hook hook-var hook-func)))
+
+(defmacro my:with-spacemacs-company-backends-mode-var (mode temp-backends-var
+                                                       &rest body)
+  "Do something with the Spacemacs company-backends variable for a mode.
+
+I needed this because it seems like Spacemacs has now introduced
+more than one variable that holds the backends for a given mode,
+and I guess I need to modify them both.  For now.  In the future
+I can theoretically just change this macro if/when Spacemacs
+changes underneath me, which should be convenient."
+  (declare (indent 2))
+  (let* ((raw-backends-var (intern (format "company-backends-%S-raw" mode)))
+         (backends-var (intern (format "company-backends-%S" mode))))
+    `(let ((,temp-backends-var ,raw-backends-var))
+       ,@body
+       (setq ,raw-backends-var ,temp-backends-var
+             ,backends-var ,temp-backends-var))))
+
 
 ;;; Customization
 
@@ -159,6 +180,7 @@ NEW-ELEMENT."
     quelpa
 
     amx
+    auctex
     auto-package-update
     avy
     bind-key
@@ -306,6 +328,152 @@ of that for us, and I don't want to interfere with it."
     (whitespace-mode -1)))
 
 (make-obsolete 'my:warn-whitespace-mode 'my:warn-white-space-mode "2018-09-23")
+
+
+;;; AUCTeX, RefTeX, and other LaTeX-related stuff
+
+(setq TeX-newline-function 'newline-and-indent)
+
+(setq LaTeX-includegraphics-read-file
+      #'LaTeX-includegraphics-read-file-relative)
+
+(setq font-latex-fontify-sectioning 1.3)
+
+(with-eval-after-load 'font-latex
+  (font-latex-update-sectioning-faces))
+
+(defun my:LaTeX-insert-combining-acute-accent ()
+  (interactive)
+  (insert ?\u0301))
+
+(defun my:LaTeX-convert-to-gls (&optional start end num-words)
+  "Put region between START and END, or NUM-WORDS forward, in \gls or \glspl."
+  (interactive (if (use-region-p)
+                   (list (region-beginning) (region-end) nil)
+                 (list nil nil (or current-prefix-arg 1))))
+  (assert (or (and start end (null num-words))
+              (and (null start) (null end) num-words)))
+  (unless (null num-words)
+    (save-excursion
+      (forward-word num-words)
+      (setq end (point))
+      (backward-word num-words)
+      (setq start (point))))
+  (when (string-match (rx "'s" eos) (buffer-substring start end))
+    (setq end (- end 2)))
+  (atomic-change-group
+    (let ((end (copy-marker end))
+          (is-plural (string-match (rx "s" (0+ space) eos)
+                                   (buffer-substring start end))))
+      (goto-char start)
+      (insert (let ((case-fold-search nil))
+                (cond ((looking-at (rx upper))
+                       (prog1
+                           (if (looking-at (rx (>= 2 upper)))
+                               "\\gls"
+                             "\\Gls")
+                         (downcase-region start end)))
+                      (t "\\gls"))))
+      (when is-plural (insert "pl"))
+      (insert "{")
+      (while (re-search-forward (rx (1+ (any "\n" space))) end t)
+        (replace-match "-"))
+      (goto-char end)
+      (when is-plural (delete-char -1))
+      (insert "}")
+      (fill-paragraph)
+      (undo-boundary))))
+
+(defun my:LaTeX-backward-convert-to-gls (&optional num-words)
+  "Put NUM-WORDS before cursor in \gls or \glspl."
+  (interactive "p")
+  (atomic-change-group
+    (backward-word num-words)
+    (my:LaTeX-convert-to-gls nil nil num-words)))
+
+;; Teach AUCTeX how to insert glossaries-related commands.
+(defun my:LaTeX-arg-glossary-entry (optional &rest args)
+  (assert (not optional))
+  (insert TeX-grop "name=")
+  (insert (read-string (TeX-argument-prompt nil "Entry name" "")))
+  (insert ",\ndescription=" TeX-grop)
+  (set-marker exit-mark (point))
+  (insert TeX-grcl TeX-grcl)
+  (LaTeX-indent-line))
+
+(with-eval-after-load 'tex
+  (TeX-add-style-hook "glossaries"
+                      (lambda ()
+                        (TeX-add-symbols
+                         '("newacronym" "Key" "Acronym" "Expansion")
+                         '("newglossaryentry" "Key" my:LaTeX-arg-glossary-entry)
+                         '("gls" "Key")
+                         '("glsdisp" "Key" "Text")))))
+
+(with-eval-after-load 'latex
+  (bind-keys :map LaTeX-mode-map
+             ;; Spacemacs overrides the default LaTeX-insert-item binding
+             ;; on M-RET, but we can put it on <M-S-return>.
+             ("<M-S-return>" . LaTeX-insert-item)
+             ;; I use the combining acute accent a lot when typing up
+             ;; Russian coursework.
+             ("M-'" . my:LaTeX-insert-combining-acute-accent)
+             ;; I don't actually use glossaries that much these days, but
+             ;; I'm keeping these utility functions and their bindings
+             ;; around for future reference, I guess.
+             ("C-c g" . my:LaTeX-convert-to-gls)
+             ("C-c M-g" . my:LaTeX-backward-convert-to-gls)))
+
+(defun my:LaTeX-mode-hook ()
+  (my:setq-local er/try-expand-list (append er/try-expand-list
+                                            '(mark-sentence mark-paragraph))
+
+                 electric-pair-inhibit-predicate
+                 #'my:electric-pair-default-plus-before-word-inhibit))
+
+(add-hook 'LaTeX-mode-hook #'my:LaTeX-mode-hook)
+
+(my:add-hooks 'LaTeX-mode-hook
+              #'electric-pair-local-mode
+              #'flycheck-mode
+              #'show-paren-mode
+              #'my:warn-white-space-mode)
+
+(my:when-spacemacs
+  ;; smartparens drives me nuts, Spacemacs.  Try typing just " twice,
+  ;; which generates ``''|'' with cursor at the |.
+  (remove-hook 'LaTeX-mode-hook 'smartparens-mode)
+
+  ;; Spacemacs leaves company-dabbrev in its default backend list.
+  ;; This makes typing in LaTeX kind of annoying, as it tries to
+  ;; complete while I'm writing if I just pause for a bit.
+  (my:with-spacemacs-company-backends-mode-var LaTeX-mode backends
+    (setq backends (delq 'company-dabbrev backends))))
+
+(my:load-recipe 'auctex-aggressively-load-styles)
+
+;; This may be a problem if reftex gets loaded after AUCTeX.
+(setq reftex-plug-into-AUCTeX t)
+
+;; Change RefTeX's parameters for generating labels from
+;; e.g. section titles.  List of articles and prepositions are
+;; RefTeX's defaults.
+(setq reftex-derive-label-parameters
+      '(100 80 t nil "-"
+        ("the" "on" "in" "off" "a" "for" "by" "of" "and" "is" "to")
+        t))
+
+(with-eval-after-load 'reftex
+  ;; Teach RefTeX about hyperref's \nameref command.  (Really in the
+  ;; nameref package now, but I have yet to load nameref explicitly,
+  ;; letting hyperref do it for me.  Plus RefTeX already has commands
+  ;; for hyperref, as you can see.)
+  (let ((hyperref-commands (nth 2 (assoc "Hyperref" reftex-ref-style-alist))))
+    (unless (assoc "\\nameref" hyperref-commands)
+      ;; I'm being lazy here.
+      (unless (> (length hyperref-commands) 1)
+        (error "Oops, can't throw away `nconc' result anymore"))
+      (nconc hyperref-commands '(("\\nameref" ?n))))))
 
 
 ;;; autorevert
