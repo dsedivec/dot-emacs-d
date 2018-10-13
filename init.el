@@ -903,7 +903,11 @@ surround \"foo\" with (in this example) parentheses.  I want
              ;; bound to those in the first place (uses mwim.el instead),
              ;; so that basically breaks C-a/C-e in org.
              ("C-a" . org-beginning-of-line)
-             ("C-e" . org-end-of-line))
+             ("C-e" . org-end-of-line)
+             ;; Somewhere along the lines I think the default binding
+             ;; for `org-priority' got superceded by one of my other
+             ;; modes/mods/settings (`org-replace-disputed-keys'?).
+             ("C-M-," . org-priority))
 
   (my:when-spacemacs
     ;; M-RET stopped working after org-mode stopped binding M-<return>
