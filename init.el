@@ -272,7 +272,14 @@ of that for us, and I don't want to interfere with it."
   ;; `auto-package-update-now' isn't called here then we'll (maybe!)
   ;; need to refresh packages ourselves.
   (when upgrade
-    (auto-package-update-now))
+    ;; Do a dance to take quelpa packages out of
+    ;; `package-activated-list' so that `auto-package-upate-now'
+    ;; doesn't bitch about being unable to update it.
+    (let* ((quelpa-packages (mapcar #'car (seq-filter #'listp my:packages)))
+           (package-activated-list (seq-remove (lambda (pkg)
+                                                 (memq pkg quelpa-packages))
+                                               package-activated-list)))
+      (auto-package-update-now)))
   (let ((pkg-names (my:packages-install)))
     (my:unless-spacemacs
       ;; Is it bad to put names from quelpa recipes in here?  It makes
