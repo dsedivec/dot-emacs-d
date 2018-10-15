@@ -1173,6 +1173,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (projectile-mode 1)
 
+(setq projectile-completion-system 'ivy)
+
 (bind-key "C-c C-p" 'projectile-command-map)
 
 
