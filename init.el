@@ -187,6 +187,7 @@ changes underneath me, which should be convenient."
     bind-key
     clean-aindent-mode
     counsel
+    deft
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
     exec-path-from-shell
@@ -558,6 +559,18 @@ of that for us, and I don't want to interfere with it."
 (bind-keys :map counsel-mode-map
            ("M-m /" . counsel-auto-grep-maybe-projectile)
            ("M-m s f" . counsel-auto-grep-ask-dir))
+
+
+;;; deft
+
+(setq deft-directory "~/Dropbox/dropsync/Notes"
+      deft-recursive t
+      deft-default-extension "md"
+      deft-use-filename-as-title t
+      deft-use-filter-string-for-filename t)
+
+(my:when-spacemacs
+  (add-to-list 'spacemacs-useful-buffers-regexp "\\*Deft\\*"))
 
 
 ;;; delsel
