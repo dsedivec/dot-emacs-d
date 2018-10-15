@@ -12,6 +12,28 @@
 (add-to-list 'load-path my:local-packages-dir)
 
 (require 'cl-lib)
+(require 'subr-x)
+
+
+;;; Local packages
+
+(defvar my:local-packages-autoload-file
+  (expand-file-name "autoloads.el" my:local-packages-dir))
+
+(defun my:update-local-package-autoloads ()
+  (interactive)
+  (let ((kill-buffer-after
+         (not (get-file-buffer my:local-packages-autoload-file))))
+    (let* ((generated-autoload-file my:local-packages-autoload-file))
+      (update-directory-autoloads my:local-packages-dir))
+    (when-let ((buf (and kill-buffer-after
+                         (get-file-buffer my:local-packages-autoload-file))))
+      (kill-buffer buf))
+    (load my:local-packages-autoload-file)))
+
+(if (file-exists-p my:local-packages-autoload-file)
+    (load my:local-packages-autoload-file)
+  (my:update-local-package-autoloads))
 
 
 ;;; "Recipes"
@@ -33,27 +55,6 @@
 ;; Loading this early because it can be very useful to see time stamps
 ;; on messages.
 (my:load-recipe 'timestamp-messages)
-
-
-;;; Local packages
-
-(defvar my:local-packages-autoload-file
-  (expand-file-name "autoloads.el" my:local-packages-dir))
-
-(defun my:update-local-package-autoloads ()
-  (interactive)
-  (let ((kill-buffer-after
-         (not (get-file-buffer my:local-packages-autoload-file))))
-    (let* ((generated-autoload-file my:local-packages-autoload-file))
-      (update-directory-autoloads my:local-packages-dir))
-    (load my:local-packages-autoload-file)
-    (when-let ((buf (and kill-buffer-after
-                         (get-file-buffer my:local-packages-autoload-file))))
-      (kill-buffer buf))))
-
-(if (file-exists-p my:local-packages-autoload-file)
-    (load my:local-packages-autoload-file)
-  (my:update-local-package-autoloads))
 
 
 ;;; Spacemacs compatibility
