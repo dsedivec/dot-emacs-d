@@ -1204,6 +1204,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (column-number-mode 1)
 
+(setq set-mark-command-repeat-pop t)
+
 
 ;;; smart-mode-line
 
