@@ -702,6 +702,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (flycheck-pos-tip-mode 1)
 
 
+;;; flyspell
+
+(add-hook 'text-mode-hook #'flyspell-mode)
+
+(add-hook 'prog-mode-hook #'flyspell-prog-mode)
+
+
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
