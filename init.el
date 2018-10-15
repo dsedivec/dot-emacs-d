@@ -180,6 +180,7 @@ changes underneath me, which should be convenient."
     ;; following quelpa recipes which will require quelpa, naturally.
     quelpa
 
+    adaptive-wrap
     amx
     auctex
     auto-package-update
@@ -477,6 +478,11 @@ of that for us, and I don't want to interfere with it."
       (unless (> (length hyperref-commands) 1)
         (error "Oops, can't throw away `nconc' result anymore"))
       (nconc hyperref-commands '(("\\nameref" ?n))))))
+
+
+;;; adaptive-wrap
+
+(add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode)
 
 
 ;;; autorevert
