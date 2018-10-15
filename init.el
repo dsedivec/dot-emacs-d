@@ -217,6 +217,7 @@ changes underneath me, which should be convenient."
     swiper
     undo-tree
     unicode-fonts
+    wgrep
     which-key
     window-purpose
     winum
