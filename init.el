@@ -201,6 +201,7 @@ changes underneath me, which should be convenient."
     ivy
     macrostep
     magit
+    markdown-mode
     minions
     multiple-cursors
     mwim
@@ -768,6 +769,45 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; magit
 
 (autoload 'magit "magit" nil t)
+
+
+;;; markdown-mode
+
+(with-eval-after-load 'markdown-mode
+  (bind-keys :map gfm-mode-map
+             ("C-c '" . my:gfm-fcb-edit))
+
+  (my:when-spacemacs
+    ;; Spacemacs overrides M-l!  WTH!  I remove this whole set of
+    ;; bindings, since I want M-l back, but if I started using the
+    ;; others it would be reasonable for my fingers to expect M-l to
+    ;; keep working like Spacemacs intended.
+    (bind-keys :map markdown-mode-map
+               ("M-h" . nil)
+               ("M-j" . nil)
+               ("M-k" . nil)
+               ("M-l" . nil))))
+
+(setq markdown-command "pandoc -f markdown -t html --standalone"
+      markdown-header-scaling t)
+
+(my:when-spacemacs
+  ;; Spacemacs turns on smartparens-mode, but I don't like it.
+  ;; (Combined with show-smartparens-mode it also seems to lock up the
+  ;; whole buffer.)
+  (remove-hook 'markdown-mode-hook 'smartparens-mode))
+
+(defun my:markdown-mode-hook ()
+  (my:setq-local indent-tabs-mode nil)
+  (visual-line-mode 1))
+
+(add-hook 'markdown-mode-hook 'my:markdown-mode-hook)
+
+;; I give up, GitHub Flavored Markdown is popular and treats line feed
+;; characters like <br>.  Default to visual-line-mode.
+(add-hook 'markdown-mode-hook #'visual-line-mode)
+
+(my:load-recipes 'markdown-mode-edit-gfm-code-blocks)
 
 
 ;;; minions
