@@ -791,6 +791,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (autoload 'magit "magit" nil t)
 
+(setq magit-diff-refine-hunk 'all)
+
 
 ;;; markdown-mode
 
