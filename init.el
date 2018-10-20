@@ -137,6 +137,7 @@
     flycheck-pos-tip
     highlight-parentheses
     highlight-symbol
+    (hl-line+ :fetcher wiki)
     hydra
     ivy
     macrostep
@@ -883,6 +884,18 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; highlight-symbol
 
 (setq highlight-symbol-idle-delay 0.5)
+
+
+;;; hl-line+
+
+(with-eval-after-load 'hl-line
+  (require 'hl-line+)
+
+  ;; This makes hl-line appear above org-mode columns view, which is
+  ;; the effect I was going for.  I'm setting this globally for now,
+  ;; but this might turn out to be a bad idea, and instead I should
+  ;; set it only in org-mode or something like that.
+  (setq hl-line-overlay-priority 1))
 
 
 ;;; ielm
