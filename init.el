@@ -79,73 +79,6 @@
 (put 'my:unless-spacemacs 'common-lisp-indent-function-for-elisp 0)
 
 
-;;; Utility functions
-
-(defun my:add-to-list-before (list-var new-element before-element)
-  "Conditionally add NEW-ELEMENT to LIST-VAR before BEFORE-ELEMENT.
-
-If NEW-ELEMENT is already in the list then no changes are made,
-even if NEW-ELEMENT occurs after BEFORE-ELEMENT.  If
-BEFORE-ELEMENT occurs multiple times, NEW-ELEMENT is added before
-the first occurrence.  If neither NEW-ELEMENT nor BEFORE-ELEMENT
-are in the list, NEW-ELEMENT is added at the end of the list.  If
-LIST-VAR is null then it is set to a list containing only
-NEW-ELEMENT."
-  (let ((list-val (symbol-value list-var))
-        target-cell
-        last-cell)
-    (unless
-        (catch 'done
-          (while list-val
-            (cond
-              ((equal (car list-val) new-element)
-               (throw 'done t))
-              ((and (null target-cell)
-                    (equal (car list-val) before-element))
-               (setq target-cell list-val)))
-            (setq last-cell list-val
-                  list-val (cdr list-val))))
-      (cond
-        (target-cell
-         (setf (cdr target-cell) (cons (car target-cell) (cdr target-cell))
-               (car target-cell) new-element))
-        (last-cell
-         (cl-assert (null (cdr last-cell)))
-         (setf (cdr last-cell) (list new-element null)))
-        (t
-         (set list-var (list new-element)))))))
-
-(defmacro my:setq-local (&rest bindings)
-  "Like setq for BINDINGS, and make all variables buffer-local."
-  (when (= (mod (length bindings) 2) 1)
-    (error "`my:setq-local' needs pairs but got odd number of args"))
-  `(progn
-     ,@(cl-loop for next-binding on bindings by #'cddr
-          collect `(set (make-local-variable ',(car next-binding))
-                        ,(cadr next-binding)))))
-
-(defun my:add-hooks (hook-var &rest hook-funcs)
-  (dolist (hook-func hook-funcs)
-    (add-hook hook-var hook-func)))
-
-(defmacro my:with-spacemacs-company-backends-mode-var (mode temp-backends-var
-                                                       &rest body)
-  "Do something with the Spacemacs company-backends variable for a mode.
-
-I needed this because it seems like Spacemacs has now introduced
-more than one variable that holds the backends for a given mode,
-and I guess I need to modify them both.  For now.  In the future
-I can theoretically just change this macro if/when Spacemacs
-changes underneath me, which should be convenient."
-  (declare (indent 2))
-  (let* ((raw-backends-var (intern (format "company-backends-%S-raw" mode)))
-         (backends-var (intern (format "company-backends-%S" mode))))
-    `(let ((,temp-backends-var ,raw-backends-var))
-       ,@body
-       (setq ,raw-backends-var ,temp-backends-var
-             ,backends-var ,temp-backends-var))))
-
-
 ;;; Customization
 
 (let ((this-emacs-dir (my:if-spacemacs
@@ -294,6 +227,73 @@ of that for us, and I don't want to interfere with it."
     (apply orig-fun contents args)))
 
 (my:packages-sync)
+
+
+;;; Utility functions
+
+(defun my:add-to-list-before (list-var new-element before-element)
+  "Conditionally add NEW-ELEMENT to LIST-VAR before BEFORE-ELEMENT.
+
+If NEW-ELEMENT is already in the list then no changes are made,
+even if NEW-ELEMENT occurs after BEFORE-ELEMENT.  If
+BEFORE-ELEMENT occurs multiple times, NEW-ELEMENT is added before
+the first occurrence.  If neither NEW-ELEMENT nor BEFORE-ELEMENT
+are in the list, NEW-ELEMENT is added at the end of the list.  If
+LIST-VAR is null then it is set to a list containing only
+NEW-ELEMENT."
+  (let ((list-val (symbol-value list-var))
+        target-cell
+        last-cell)
+    (unless
+        (catch 'done
+          (while list-val
+            (cond
+              ((equal (car list-val) new-element)
+               (throw 'done t))
+              ((and (null target-cell)
+                    (equal (car list-val) before-element))
+               (setq target-cell list-val)))
+            (setq last-cell list-val
+                  list-val (cdr list-val))))
+      (cond
+        (target-cell
+         (setf (cdr target-cell) (cons (car target-cell) (cdr target-cell))
+               (car target-cell) new-element))
+        (last-cell
+         (cl-assert (null (cdr last-cell)))
+         (setf (cdr last-cell) (list new-element null)))
+        (t
+         (set list-var (list new-element)))))))
+
+(defmacro my:setq-local (&rest bindings)
+  "Like setq for BINDINGS, and make all variables buffer-local."
+  (when (= (mod (length bindings) 2) 1)
+    (error "`my:setq-local' needs pairs but got odd number of args"))
+  `(progn
+     ,@(cl-loop for next-binding on bindings by #'cddr
+          collect `(set (make-local-variable ',(car next-binding))
+                        ,(cadr next-binding)))))
+
+(defun my:add-hooks (hook-var &rest hook-funcs)
+  (dolist (hook-func hook-funcs)
+    (add-hook hook-var hook-func)))
+
+(defmacro my:with-spacemacs-company-backends-mode-var (mode temp-backends-var
+                                                       &rest body)
+  "Do something with the Spacemacs company-backends variable for a mode.
+
+I needed this because it seems like Spacemacs has now introduced
+more than one variable that holds the backends for a given mode,
+and I guess I need to modify them both.  For now.  In the future
+I can theoretically just change this macro if/when Spacemacs
+changes underneath me, which should be convenient."
+  (declare (indent 2))
+  (let* ((raw-backends-var (intern (format "company-backends-%S-raw" mode)))
+         (backends-var (intern (format "company-backends-%S" mode))))
+    `(let ((,temp-backends-var ,raw-backends-var))
+       ,@body
+       (setq ,raw-backends-var ,temp-backends-var
+             ,backends-var ,temp-backends-var))))
 
 
 ;;; "Leader" keys setup
