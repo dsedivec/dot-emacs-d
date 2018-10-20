@@ -114,6 +114,10 @@
     quelpa
 
     adaptive-wrap
+    ;; Until https://github.com/domtronn/all-the-icons.el/pull/106 gets merged:
+    ;; all-the-icons
+    (all-the-icons :fetcher github :repo "ubolonton/all-the-icons.el"
+                   :branch "font-lock-fix" :files (:defaults "data"))
     amx
     auctex
     auto-package-update
@@ -121,6 +125,7 @@
     bind-key
     clean-aindent-mode
     counsel
+    dash
     deft
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
@@ -148,6 +153,7 @@
     smart-mode-line-powerline-theme
     smartparens
     swiper
+    treepy
     undo-tree
     unicode-fonts
     wgrep
@@ -295,6 +301,67 @@ changes underneath me, which should be convenient."
        (setq ,raw-backends-var ,temp-backends-var
              ,backends-var ,temp-backends-var))))
 
+;; Utilities to edit the mode line using treepy zippers.
+
+(require 'treepy)
+(require 'dash)
+
+(cl-defun my:treepy-mode-line-zip (mode-line-spec
+                                   &key
+                                     visit-eval
+                                     visit-properties
+                                     (visit-conditional t)
+                                     (visit-width t))
+  (let ((branchp (lambda (node)
+                   (when (listp node)
+                     (pcase (car node)
+                       (:eval visit-eval)
+                       ((pred symbolp) visit-conditional)
+                       ((pred integerp) visit-width)
+                       (_ t)))))
+        (children (lambda (node)
+                    (if (and (not visit-properties)
+                             (eq (car node) :propertize))
+                        (seq-subseq node 0 2)
+                      node)))
+        (make-node (lambda (old-node children)
+                     (if (and (not visit-properties)
+                              (eq (car children) :propertize))
+                         (append children (seq-subseq old-node 2))
+                       children))))
+    (treepy-zipper branchp children make-node mode-line-spec)))
+
+(cl-defmacro my:treepy-edit-mode-line-var
+    ((mode-line-place zip-var &rest make-zip-args)
+                                test-form edit-form
+     &optional (result-form nil result-form-p))
+  "Edit MODE-LINE-PLACE with a treepy zipper in ZIP-VAR.
+The mode line spec at MODE-LINE-PLACE is walked over using
+preorder depth-first traversal using treepy.  TEST-FORM is
+evaluated with a treepy loc bound to ZIP-VAR at each step.  If
+TEST-FORM evaluates to a true value, EDIT-FORM is evaluated, with
+the same loc from TEST-FORM still bound to ZIP-VAR.  EDIT-FORM
+must result in a new treepy loc, which will then be used to set
+the value of MODE-LINE-PLACE (via `setf').  If a match is made
+then the result is either RESULT-FORM, if given, or else the
+result of `treepy-node' on the current loc after TEST-FORM
+returns true, but before EDIT-FORM is evaluated (in other words,
+it returns the node that your EDIT-FORM changed)."
+  (declare (indent 1))
+  (let ((break-sym (gensym)))
+    `(let ((,zip-var (my:treepy-mode-line-zip ,mode-line-place
+                                              ,@make-zip-args)))
+       (catch ',break-sym
+         (while (not (treepy-end-p ,zip-var))
+           (when ,test-form
+             (throw ',break-sym
+               (prog1 ,(if result-form-p
+                           result-form
+                         (list 'treepy-node zip-var))
+                 (setf ,mode-line-place
+                       (treepy-root ,edit-form)))))
+           (setq ,zip-var (treepy-next ,zip-var)))))))
+
 
 ;;; "Leader" keys setup
 
@@ -319,6 +386,92 @@ changes underneath me, which should be convenient."
 (add-hook 'prog-mode-hook #'my:show-trailing-white-space)
 
 (setq ns-use-native-fullscreen nil)
+
+(my:unless-spacemacs
+  ;; Mode line mods
+
+  ;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
+  (unless
+      (my:treepy-edit-mode-line-var
+          ((default-value 'mode-line-mule-info) zip)
+        (equal (treepy-node zip) "%z")
+        (treepy-replace zip
+                        `(:eval (let ((coding-info (format-mode-line
+                                                    ,(treepy-node zip))))
+                                  (unless (string-match-p "^[-U]$" coding-info)
+                                    coding-info)))))
+    (warn "couldn't make \"%%z\" conditional in `mode-line-mule-info'"))
+
+  ;; Same with EOL, don't need to see it unless it's weird.
+  (unless
+      (my:treepy-edit-mode-line-var
+          ((default-value 'mode-line-mule-info) zip)
+        (equal (treepy-node zip) '(:eval (mode-line-eol-desc)))
+        (treepy-replace zip
+                        '(:eval (let ((eol-desc (mode-line-eol-desc)))
+                                  (unless (equal eol-desc ":")
+                                    eol-desc)))))
+    (warn "couldn't make EOL info conditional in `mode-line-mule-info'"))
+
+  ;; Don't take up mode line space if current file is local.  (BTW, %@
+  ;; seems to be undocumented?  Read src/xdisp.c.)
+  (unless
+      (my:treepy-edit-mode-line-var
+          ((default-value 'mode-line-remote) zip)
+        (equal (treepy-node zip) "%1@")
+        (treepy-replace zip
+                        ;; FYI this is approximately the same logic as
+                        ;; src/xdisp.c uses.
+                        `(:eval (when (and (stringp default-directory)
+                                           (file-remote-p default-directory))
+                                  ,(treepy-node zip)))))
+    (warn "couldn't make remote indicator conditional in `mode-line-remote'"))
+
+  ;; Move the buffer percentage way over to the right on the mode line.
+  (let ((percent-spec
+         (my:treepy-edit-mode-line-var
+             (mode-line-position zip)
+           (pcase (treepy-node zip)
+             (`(:propertize mode-line-percent-position . ,_) t))
+           (treepy-remove zip))))
+    (if (not percent-spec)
+        (warn (concat "couldn't find `mode-line-percent-position'"
+                      " in `mode-line-position'"))
+      (unless (my:treepy-edit-mode-line-var
+                  ((default-value 'mode-line-format) zip)
+                (eq (treepy-node zip) 'mode-line-end-spaces)
+                (treepy-insert-left zip percent-spec))
+        (warn (concat "couldn't find `mode-line-end-spaces',"
+                      " appending percentage to mode line"))
+        ;; We already removed it from `mode-line-position', above.
+        ;; Need to put it somewhere so it's not totally lost.
+        (nconc mode-line-format (list percent-spec)))))
+
+  ;; Remove extra spaces between buffer ID and position.
+  (unless
+      (my:treepy-edit-mode-line-var
+          ((default-value 'mode-line-format) zip)
+        (let ((node (treepy-node zip)))
+          (and (stringp node)
+               (string-match-p "^ \\{2,\\}$" node)
+               (eq (-some-> zip
+                            treepy-right
+                            treepy-node)
+                   'mode-line-position)))
+        (treepy-replace zip " "))
+    (warn "couldn't remove spaces before buffer position in mode line"))
+
+  ;; Remove fixed width for position output, causes too much extra space
+  ;; after (line,col) in mode line.
+  (unless
+      (my:treepy-edit-mode-line-var
+          (mode-line-position zip)
+        ;; Note there is also a %C variant which I don't use.
+        (and (equal (treepy-node zip) " (%l,%c)")
+             (treepy-up zip)
+             (-some-> zip treepy-left treepy-node numberp))
+        (treepy-replace (treepy-up zip) (treepy-node zip)))
+    (warn "couldn't remove width specification from `mode-line-position'")))
 
 
 ;;;; Configure various packages
@@ -491,6 +644,13 @@ changes underneath me, which should be convenient."
 ;;; adaptive-wrap
 
 (add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode)
+
+
+;;; all-the-icons
+
+;; These apparently don't get autoloaded.
+(autoload 'all-the-icons-alltheicon "all-the-icons")
+(autoload 'all-the-icons-fileicon "all-the-icons")
 
 
 ;;; autorevert
