@@ -148,6 +148,7 @@
     mwim
     org-plus-contrib
     orgtbl-aggregate
+    osx-dictionary
     paredit
     persp-mode
     phi-search
@@ -1317,6 +1318,11 @@ surround \"foo\" with (in this example) parentheses.  I want
                  'org-daily-time-summary
                  'org-columns-delete-property
                  'org-insert-heading-ignore-invisibility)
+
+
+;;; osx-dictionary
+
+(bind-keys ("C-$" . osx-dictionary-search-pointer))
 
 
 ;;; paredit
