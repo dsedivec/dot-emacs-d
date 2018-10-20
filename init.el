@@ -124,6 +124,7 @@
     avy
     bind-key
     clean-aindent-mode
+    comment-dwim-2
     counsel
     dash
     deft
@@ -712,6 +713,11 @@ it returns the node that your EDIT-FORM changed)."
 ;;; clean-aindent-mode
 
 (clean-aindent-mode 1)
+
+;;; comment-dwim-2
+
+(bind-keys ("M-;" . comment-dwim-2))
+
 
 
 ;;; counsel
