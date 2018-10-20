@@ -147,6 +147,7 @@
     multiple-cursors
     mwim
     org-plus-contrib
+    orgtbl-aggregate
     paredit
     persp-mode
     phi-search
