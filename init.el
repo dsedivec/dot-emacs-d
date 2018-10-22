@@ -373,11 +373,6 @@ it returns the node that your EDIT-FORM changed)."
   (define-prefix-command 'my:global-leader-map)
   (bind-key "M-m" 'my:global-leader-map))
 
-(dolist (prefix (string-to-list '("f" "f e" "j" "s")))
-  (let ((kbd-str (format "M-m %s" prefix)))
-    (unless (global-key-binding (kbd kbd-str))
-      (bind-key kbd-str (make-sparse-keymap)))))
-
 
 ;;;; Emacs built-ins
 
