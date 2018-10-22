@@ -4,12 +4,16 @@
 (setq mc/cmds-to-run-for-all
       '(
         dabbrev-expand
+        delete-horizontal-space
+        kill-sexp
+        mwim-beginning-of-code-or-line
         mwim-end-of-line-or-code
         org-self-insert-command
         paredit-backward-kill-word
         paredit-forward
         paredit-forward-kill-word
         paredit-semicolon
+        paredit-splice-sexp
         ))
 
 (setq mc/cmds-to-run-once
