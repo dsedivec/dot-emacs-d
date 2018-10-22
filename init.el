@@ -284,6 +284,7 @@ NEW-ELEMENT."
                         ,(cadr next-binding)))))
 
 (defun my:add-hooks (hook-var &rest hook-funcs)
+  (declare (indent 1))
   (dolist (hook-func hook-funcs)
     (add-hook hook-var hook-func)))
 
@@ -602,10 +603,10 @@ it returns the node that your EDIT-FORM changed)."
 (add-hook 'LaTeX-mode-hook #'my:LaTeX-mode-hook)
 
 (my:add-hooks 'LaTeX-mode-hook
-              #'electric-pair-local-mode
-              #'flycheck-mode
-              #'show-paren-mode
-              #'my:warn-white-space-mode)
+  #'electric-pair-local-mode
+  #'flycheck-mode
+  #'show-paren-mode
+  #'my:warn-white-space-mode)
 
 (my:when-spacemacs
   ;; smartparens drives me nuts, Spacemacs.  Try typing just " twice,
