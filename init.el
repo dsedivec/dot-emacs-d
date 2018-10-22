@@ -128,6 +128,7 @@
     counsel
     dash
     deft
+    dtrt-indent
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
     exec-path-from-shell
@@ -772,6 +773,22 @@ it returns the node that your EDIT-FORM changed)."
 ;; Binds C-x C-j.  Probably does other stuff I care about.
 
 (require 'dired-x)
+
+
+;;; dtrt-indent
+
+;; Do this before dtrt-indent gets loaded, hopefully.
+(setq dtrt-indent-active-mode-line-info nil)
+
+(dtrt-indent-global-mode 1)
+
+;; If dtrt-indent changed buffer settings like indent-tabs-mode,
+;; whitespace-mode may/probably will need to be reset.
+(define-advice dtrt-indent-try-set-offset
+    (:after (&rest args) my:dtrt-indent-reset-whitespace-mode)
+  (when (and (boundp 'whitespace-mode) whitespace-mode)
+    (whitespace-mode -1)
+    (whitespace-mode 1)))
 
 
 ;;; ediff
