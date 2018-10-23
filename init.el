@@ -907,6 +907,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 
 
+;;; goto-addr
+
+;; `goto-address-mode' "[buttonizes] URLs and e-mail addresses".
+
+(add-hook 'prog-mode-hook #'goto-address-mode)
+(add-hook 'text-mode-hook #'goto-address-mode)
+
+
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
