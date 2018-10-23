@@ -946,6 +946,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-key "M-m j i" 'imenu)
 
+(setq imenu-auto-rescan t)
+
 
 ;;; ivy
 
