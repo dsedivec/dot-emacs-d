@@ -652,7 +652,12 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; adaptive-wrap
 
-(add-hook 'text-mode-hook #'adaptive-wrap-prefix-mode)
+(defun my:turn-on-adaptive-wrap-prefix-mode ()
+  ;; This mode screws up `org-indent-mode'.
+  (unless (memq major-mode '(org-mode))
+    (adaptive-wrap-prefix-mode 1)))
+
+(add-hook 'text-mode-hook #'my:turn-on-adaptive-wrap-prefix-mode)
 
 
 ;;; all-the-icons
