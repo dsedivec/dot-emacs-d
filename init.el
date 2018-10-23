@@ -727,6 +727,10 @@ it returns the node that your EDIT-FORM changed)."
 
 (clean-aindent-mode 1)
 
+(bind-keys :map clean-aindent-mode--keymap
+           ([remap backward-kill-word] . nil))
+
+
 ;;; comment-dwim-2
 
 (bind-keys ("M-;" . comment-dwim-2))
