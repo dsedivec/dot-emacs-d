@@ -851,6 +851,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
 
+;;; etags
+
+(setq tags-revert-without-query t)
+
+
 ;;; expand-region
 
 (bind-key "M-@" 'er/expand-region)
