@@ -494,6 +494,16 @@ it returns the node that your EDIT-FORM changed)."
 (make-obsolete 'my:warn-whitespace-mode 'my:warn-white-space-mode "2018-09-23")
 
 
+;;; exec-path-from-shell
+
+;; This package is out of alphabetical order in this file because it's
+;; probably important to get `exec-path' set early before you, for
+;; example, try to launch a spelling checker via `flyspell-mode'.
+
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
 
 (setq TeX-newline-function 'newline-and-indent)
@@ -830,12 +840,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-keys :map emacs-lisp-mode-map ("C-c C-r" . eval-region))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
-
-
-;;; exec-path-from-shell
-
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
 
 
 ;;; expand-region
