@@ -214,10 +214,15 @@ of that for us, and I don't want to interfere with it."
   ;; `auto-package-update-now' isn't called here then we'll (maybe!)
   ;; need to refresh packages ourselves.
   (when upgrade
-    ;; Do a dance to take quelpa packages out of
-    ;; `package-activated-list' so that `auto-package-upate-now'
-    ;; doesn't bitch about being unable to update it.
-    (let* ((quelpa-packages (mapcar #'car (seq-filter #'listp my:packages)))
+    ;; First upgrade quelpa packages.
+    (let* ((quelpa-packages (mapcar (lambda (pkg)
+                                      (quelpa pkg :upgrade t)
+                                      (car pkg))
+                                    (seq-filter #'listp my:packages)))
+           ;; Now do a dance to take quelpa packages out of
+           ;; `package-activated-list' so that
+           ;; `auto-package-upate-now' doesn't bitch about being
+           ;; unable to update it.
            (package-activated-list (seq-remove (lambda (pkg)
                                                  (memq pkg quelpa-packages))
                                                package-activated-list)))
