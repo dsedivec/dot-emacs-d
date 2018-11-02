@@ -3,11 +3,16 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        backward-sexp
         dabbrev-expand
         delete-horizontal-space
+        delete-indentation
+        forward-sexp
         kill-sexp
         mwim-beginning-of-code-or-line
         mwim-end-of-line-or-code
+        my:insert-tab-or-spaces
+        org-beginning-of-line
         org-self-insert-command
         paredit-backward-kill-word
         paredit-forward
