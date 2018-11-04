@@ -161,6 +161,7 @@
     projectile
     smartparens
     swiper
+    transpose-frame
     treepy
     undo-tree
     unicode-fonts
