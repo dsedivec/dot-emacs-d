@@ -928,6 +928,15 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 
 
+;;; git-commit
+
+(with-eval-after-load 'git-commit
+  (add-to-list 'git-commit-style-convention-checks
+               'overlong-summary-line))
+
+(setq git-commit-summary-max-length 50)
+
+
 ;;; goto-addr
 
 ;; `goto-address-mode' "[buttonizes] URLs and e-mail addresses".
