@@ -138,6 +138,7 @@
     flx
     flycheck
     flycheck-pos-tip
+    graphviz-dot-mode
     highlight-parentheses
     highlight-symbol
     (hl-line+ :fetcher wiki)
