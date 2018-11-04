@@ -1817,3 +1817,10 @@ for this command) must be an arrow key."
 ;;; zop-to-char
 
 (bind-keys ("M-z" . zop-up-to-char))
+
+
+;;; Epilogue
+
+;; Sometimes init.el doesn't get to load all the way to the end, but
+;; errors get swallowed and don't appear in *Messages*?  WTF.
+(message "init.el loaded successfully")
