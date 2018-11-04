@@ -687,6 +687,11 @@ it returns the node that your EDIT-FORM changed)."
 
 (global-auto-revert-mode 1)
 
+;; Don't need an echo area message every time a buffer (including
+;; "TAGS"!) is reverted.
+(setq auto-revert-verbose nil)
+
+
 ;;; avy
 
 (bind-keys ("C-'" . avy-goto-char)
