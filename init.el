@@ -1449,7 +1449,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq projectile-completion-system 'ivy)
 
-(bind-key "C-c C-p" 'projectile-command-map)
+(bind-keys ("C-c C-p" . projectile-command-map)
+           ;; Spacemacs bindings, particularly useful when comint
+           ;; binds something to C-c C-p.
+           ("M-m p" . projectile-command-map))
 
 
 ;;; recentf-mode
