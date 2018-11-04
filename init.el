@@ -678,6 +678,11 @@ it returns the node that your EDIT-FORM changed)."
 (autoload 'all-the-icons-fileicon "all-the-icons")
 
 
+;;; amx
+
+(setq amx-history-length 500)
+
+
 ;;; autorevert
 
 (global-auto-revert-mode 1)
