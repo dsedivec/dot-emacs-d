@@ -1492,6 +1492,17 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'smartparens
   (require 'smartparens-config))
 
+;; `sp-split-sexp' is handy even when I'm not using
+;; `smartparens-mode', such as when I want to split a string across
+;; multiple lines in SQL or Python.  Bindings stolen from Spacemacs.
+(bind-keys ("M-m j s" . sp-split-sexp))
+
+;; This one is actually not a Spacemacs binding.  But it should be.
+;; If I'm going to bind up `sp-split-sexp', might as well bind its
+;; inverse as well.  Useful for basically the same situations
+;; mentioned in the comment above, but inverted.
+(bind-keys ("M-m j j" . sp-join-sexp))
+
 
 ;;; startup
 
