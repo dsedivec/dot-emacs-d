@@ -130,6 +130,7 @@
     dash
     deft
     dtrt-indent
+    edit-indirect
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
     exec-path-from-shell
