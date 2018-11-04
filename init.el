@@ -126,6 +126,7 @@
     clean-aindent-mode
     comment-dwim-2
     counsel
+    csv-mode
     dash
     deft
     dtrt-indent
