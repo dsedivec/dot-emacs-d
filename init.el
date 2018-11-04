@@ -1145,73 +1145,73 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-to-list 'auto-mode-alist '("\\.org_archive\\'" . org-mode))
 
 (setq
-   ;; This is out of alphabetical order because I use it as part of
-   ;; another value, below.
-   org-default-notes-file "~/todo.org"
-   ;; Tricky: show blocked tasks, don't show sublevels of TODO
-   ;; items.  Might want to override this in a custom agenda view.
-   org-agenda-dim-blocked-tasks nil
-   org-agenda-todo-list-sublevels nil
-   org-agenda-show-future-repeats 'next
-   org-agenda-start-on-weekday 0
-   org-agenda-todo-ignore-deadlines 'far
-   org-agenda-todo-ignore-scheduled 1
-   ;; I don't want or like org creating bookmarks, especially since
-   ;; Bookmark+ then highlights the bookmarks.
-   org-bookmark-names-plist nil
-   ;; I never use this bookmark, and now with Bookmark+ I seem to be
-   ;; getting the last thing I capture visualized, which I actively
-   ;; don't want.
-   org-capture-bookmark nil
-   org-capture-templates '(("t" "Todo" entry
-                            (file+headline "~/todo.org" "Inbox")
-                            "* NEW %?" :prepend t)
-                           ("j" "Journal" entry
-                            (file "~/journal.org")
-                            "* %U %?" :prepend t)
-                           ("s" "Someday" entry
-                            (file+headline "~/someday.org" "Someday")
-                            "* %?\n  - Created on %U"
-                            :prepend t)
-                           ("b" "Blog" entry
-                            (file "~/Documents/blog/ideas.org")
-                            "* %?"
-                            :kill-buffer t))
-   org-clock-display-default-range 'untilnow
-   org-clock-out-remove-zero-time-clocks t
-   org-clock-report-include-clocking-task t
-   org-default-priority ?D
-   org-duration-format '(("h" . t) (special . 2))
-   org-enforce-todo-dependencies t
-   org-hide-leading-stars t
-   org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-   org-link-search-must-match-exact-headline nil
-   org-log-into-drawer t
-   org-mouse-1-follows-link nil
-   ;; Enable this if you want to complete like a path, or disable
-   ;; it if you want to use IDO.
-   org-outline-path-complete-in-steps nil
-   org-pretty-entities t
-   org-pretty-entities-include-sub-superscripts nil
-   org-refile-use-outline-path t
-   ;; Refile/capture to top of tree, not bottom.
-   org-reverse-note-order t
-   ;; Nice indentation.  Use with visual-line-mode.
-   org-startup-indented t
-   org-special-ctrl-a/e '(t . reversed)
-   org-speed-commands-user '(("a" . org-archive-subtree-default)
-                             ("P" . org-set-property)
-                             ("S" . widen)
-                             ("x" . org-cut-subtree))
-   org-use-speed-commands (lambda ()
-                            (and (org-at-heading-p)
-                                 (looking-back "^\\**"
-                                               (line-beginning-position))))
-   ;; I think I always want indentation preserved in my source
-   ;; blocks.
-   org-src-preserve-indentation t
-   org-src-window-setup 'other-window
-   org-tags-column -76)
+ ;; This is out of alphabetical order because I use it as part of
+ ;; another value, below.
+ org-default-notes-file "~/todo.org"
+ ;; Tricky: show blocked tasks, don't show sublevels of TODO
+ ;; items.  Might want to override this in a custom agenda view.
+ org-agenda-dim-blocked-tasks nil
+ org-agenda-todo-list-sublevels nil
+ org-agenda-show-future-repeats 'next
+ org-agenda-start-on-weekday 0
+ org-agenda-todo-ignore-deadlines 'far
+ org-agenda-todo-ignore-scheduled 1
+ ;; I don't want or like org creating bookmarks, especially since
+ ;; Bookmark+ then highlights the bookmarks.
+ org-bookmark-names-plist nil
+ ;; I never use this bookmark, and now with Bookmark+ I seem to be
+ ;; getting the last thing I capture visualized, which I actively
+ ;; don't want.
+ org-capture-bookmark nil
+ org-capture-templates '(("t" "Todo" entry
+                          (file+headline "~/todo.org" "Inbox")
+                          "* NEW %?" :prepend t)
+                         ("j" "Journal" entry
+                          (file "~/journal.org")
+                          "* %U %?" :prepend t)
+                         ("s" "Someday" entry
+                          (file+headline "~/someday.org" "Someday")
+                          "* %?\n  - Created on %U"
+                          :prepend t)
+                         ("b" "Blog" entry
+                          (file "~/Documents/blog/ideas.org")
+                          "* %?"
+                          :kill-buffer t))
+ org-clock-display-default-range 'untilnow
+ org-clock-out-remove-zero-time-clocks t
+ org-clock-report-include-clocking-task t
+ org-default-priority ?D
+ org-duration-format '(("h" . t) (special . 2))
+ org-enforce-todo-dependencies t
+ org-hide-leading-stars t
+ org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+ org-link-search-must-match-exact-headline nil
+ org-log-into-drawer t
+ org-mouse-1-follows-link nil
+ ;; Enable this if you want to complete like a path, or disable
+ ;; it if you want to use IDO.
+ org-outline-path-complete-in-steps nil
+ org-pretty-entities t
+ org-pretty-entities-include-sub-superscripts nil
+ org-refile-use-outline-path t
+ ;; Refile/capture to top of tree, not bottom.
+ org-reverse-note-order t
+ ;; Nice indentation.  Use with visual-line-mode.
+ org-startup-indented t
+ org-special-ctrl-a/e '(t . reversed)
+ org-speed-commands-user '(("a" . org-archive-subtree-default)
+                           ("P" . org-set-property)
+                           ("S" . widen)
+                           ("x" . org-cut-subtree))
+ org-use-speed-commands (lambda ()
+                          (and (org-at-heading-p)
+                               (looking-back "^\\**"
+                                             (line-beginning-position))))
+ ;; I think I always want indentation preserved in my source
+ ;; blocks.
+ org-src-preserve-indentation t
+ org-src-window-setup 'other-window
+ org-tags-column -76)
 
 ;; This actually visits org-default-notes-file, so we don't load this
 ;; until we really have to.
@@ -1219,11 +1219,11 @@ surround \"foo\" with (in this example) parentheses.  I want
   (setq org-agenda-files (org-add-archive-files (list org-default-notes-file))))
 
 (my:when-spacemacs
-    (setq
-     ;; Spacemacs turns this on but I don't want/need it.  Plus it makes
-     ;; headlipes expand when I mark a task as DONE, which is
-     ;; irritating.
-     org-log-done nil))
+  (setq
+   ;; Spacemacs turns this on but I don't want/need it.  Plus it makes
+   ;; headlipes expand when I mark a task as DONE, which is
+   ;; irritating.
+   org-log-done nil))
 
 (bind-keys ("C-c r" . org-capture)
            ("M-m a o k i" . org-clock-in-last)
