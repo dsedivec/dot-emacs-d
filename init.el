@@ -1675,6 +1675,10 @@ level of indentation."
 
 (global-undo-tree-mode)
 
+(bind-keys :map undo-tree-map
+           ;; I want to use this for multiple-cursors.
+           ("C-?" . nil))
+
 
 ;;; unicode-fonts
 
