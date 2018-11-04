@@ -1561,8 +1561,13 @@ level of indentation."
 ;; Set the default to my most commonly-used RDBMS.
 (setq sql-product 'postgres)
 
-;; PostgreSQL connections should ask for the port.
 (with-eval-after-load 'sql
+  ;; With readline on (or libedit on macOS?) things like
+  ;; `sql-send-buffer' will sometimes apparently corrupt the data sent
+  ;; to psql.
+  (add-to-list 'sql-postgres-options "--no-readline")
+
+  ;; PostgreSQL connections should ask for the port.
   (add-to-list 'sql-postgres-login-params 'port t))
 
 (my:when-spacemacs
