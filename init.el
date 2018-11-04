@@ -143,6 +143,7 @@
     highlight-symbol
     (hl-line+ :fetcher wiki)
     hydra
+    imenu-list
     ivy
     macrostep
     magit
@@ -955,6 +956,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-key "M-m j i" 'imenu)
 
 (setq imenu-auto-rescan t)
+
+
+;;; imenu-list
+
+(bind-keys ("M-m b i" . imenu-list-smart-toggle))
+
+(setq imenu-list-auto-resize t)
 
 
 ;;; ivy
