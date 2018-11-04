@@ -145,6 +145,7 @@
     hydra
     imenu-list
     ivy
+    ivy-xref
     macrostep
     magit
     markdown-mode
@@ -1011,6 +1012,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (my:load-recipes 'ivy-special-switch-buffers
                  'ivy-fuzzy-regex-combo-matcher)
+
+
+;;; ivy-xref
+
+(setq xref-show-xrefs-function #'ivy-xref-show-xrefs
+      ivy-xref-use-file-path t)
 
 
 ;;; lisp-mode
