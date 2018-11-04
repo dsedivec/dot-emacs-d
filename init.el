@@ -1481,7 +1481,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (column-number-mode 1)
 
-(setq set-mark-command-repeat-pop t)
+(setq set-mark-command-repeat-pop t
+      backward-delete-char-untabify-method nil)
 
 
 ;;; smartparens
