@@ -1040,6 +1040,12 @@ surround \"foo\" with (in this example) parentheses.  I want
       ivy-xref-use-file-path t)
 
 
+;;; lisp
+
+;; This is apparently only on ESC <C-backspace> by default?  WTF.
+(bind-keys ("<C-M-backspace>" . backward-kill-sexp))
+
+
 ;;; lisp-mode
 
 (add-hook 'lisp-mode-hook #'paredit-mode)
