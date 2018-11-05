@@ -125,6 +125,8 @@
     bind-key
     clean-aindent-mode
     comment-dwim-2
+    company
+    company-statistics
     counsel
     csv-mode
     dash
@@ -756,6 +758,123 @@ it returns the node that your EDIT-FORM changed)."
 
 (bind-keys ("M-;" . comment-dwim-2))
 
+
+;;; company
+
+(add-hook 'prog-mode-hook #'company-mode)
+
+(with-eval-after-load 'company
+  (bind-keys :map company-mode-map
+             ("<C-return>" . company-complete))
+
+  ;; Among a few other things this makes it so TAB completes, not RET,
+  ;; which I really need because it's annoying to hit enter at EOL to
+  ;; insert a newline and instead a completion slips in instead.
+  (company-tng-configure-default)
+
+  ;; C-<digit> to select a completion
+  (dotimes (n 10)
+    (bind-key (kbd (format "C-%d" n)) 'company-complete-number
+              company-active-map)))
+
+(setq company-selection-wrap-around t
+      company-show-numbers t
+      company-tooltip-align-annotations t
+      company-minimum-prefix-length 2
+      company-idle-delay 0.2
+      ;; Pretty sure I want company-dabbrev-code to search all
+      ;; buffers, not even just buffers of the same major mode.
+      ;; (Consider, for example, sql-interactive-mode vs. sql-mode.)
+      company-dabbrev-code-other-buffers 'all
+
+      company-occurrence-weight-function
+      'company-occurrence-prefer-any-closest)
+
+;; The default for `company-backends' seems a bit insane.  It includes
+;; things like `company-bbdb' (I don't use BBDB) and `company-eclim'
+;; (sorry, JetBrains IDE is too good for Java compared to Emacs) that
+;; I will never care to use.  I'm sure they're fast to skip, but why
+;; leave them there at all?  Going to take some out.  Put them back in
+;; as buffer-local values if/where needed.
+(with-eval-after-load 'company
+  (setq company-backends
+        (cl-delete-if (lambda (elt)
+                        (member elt '(company-bbdb company-eclim
+                                      company-semantic company-clang
+                                      company-xcode company-cmake
+                                      company-oddmuse)))
+                      company-backends)))
+
+(my:load-recipes 'company-dont-complete-numbers
+                 'company-dabbrev-code-defer-prefix
+                 'company-remove-dabbrev-code-duplicates)
+
+(cl-defun my:company-splice-backend (new-backend target-backends
+                                     &key
+                                       (warn-not-found :all)
+                                       (backends-var 'company-backends)
+                                       (make-backends-local t))
+  "Combine NEW-BACKEND together with all TARGET-BACKENDS in BACKENDS-VAR.
+TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
+`company-backends'."
+  (let* (found
+         changed
+         (backends
+          (mapcar (lambda (backend)
+                    (cond
+                      ((member backend target-backends)
+                       (cl-pushnew backend found :test #'equal)
+                       (setq changed t)
+                       (if (listp backend)
+                           (append backend (list new-backend))
+                         (list backend new-backend)))
+                      ((and (listp backend)
+                            (memq new-backend backend))
+                       (let ((unspliced-backend
+                              (remq new-backend backend)))
+                         (cond
+                           ((and (null (cdr unspliced-backend))
+                                 ;; unspliced-backend has only a
+                                 ;; single element, so it's probably
+                                 ;; in the backends list as just 'foo.
+                                 ;; (If it is in there as '(foo) then
+                                 ;; we'll get it on the next
+                                 ;; condition.
+                                 (member (car unspliced-backend)
+                                         target-backends))
+                            (cl-pushnew (car unspliced-backend) found
+                                        :test #'equal))
+                           ((member unspliced-backend target-backends)
+                            (cl-pushnew unspliced-backend found
+                                        :test #'equal))))
+                       backend)
+                      (t
+                       backend)))
+                  (symbol-value backends-var))))
+    (cl-assert (if changed found t))
+    (when changed
+      (when make-backends-local
+        (make-local-variable backends-var))
+      (set backends-var backends))
+    (when-let ((missing (and warn-not-found
+                             (cond ((not found)
+                                    target-backends)
+                                   ((eq warn-not-found :all)
+                                    (seq-difference target-backends found))))))
+      (warn "Could not splice %S into %s backends: %S"
+            new-backend (if (not found) "any" "some") missing))))
+
+;; More than one mode hook wants to use this.
+(defun my:company-splice-dabbrev-code-into-capf ()
+  (my:company-splice-backend 'company-dabbrev-code '(company-capf)))
+
+(add-hook 'prog-mode-hook #'my:company-splice-dabbrev-code-into-capf t)
+
+
+;;; company-statistics
+
+(with-eval-after-load 'company
+  (company-statistics-mode 1))
 
 
 ;;; counsel
