@@ -228,7 +228,8 @@ of that for us, and I don't want to interfere with it."
   (when upgrade
     ;; First upgrade quelpa packages.
     (let* ((quelpa-packages (mapcar (lambda (pkg)
-                                      (quelpa pkg :upgrade t)
+                                      (with-demoted-errors
+                                          (quelpa pkg :upgrade t))
                                       (car pkg))
                                     (seq-filter #'listp my:packages)))
            ;; Now do a dance to take quelpa packages out of
