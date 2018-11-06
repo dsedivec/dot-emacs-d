@@ -1143,6 +1143,14 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m r f" . importmagic-fix-symbol-at-point)))
 
 
+;;; isearch
+
+(my:load-recipes 'isearch-exit-at-beginning-of-match)
+
+(bind-keys :map isearch-mode-map
+           ("C-'" . my:avy-isearch))
+
+
 ;;; ivy
 
 (ivy-mode 1)
