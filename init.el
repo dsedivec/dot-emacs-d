@@ -402,7 +402,14 @@ it returns the node that your EDIT-FORM changed)."
 
 (add-hook 'prog-mode-hook #'my:show-trailing-white-space)
 
-(setq ns-use-native-fullscreen nil)
+(when (eq window-system 'ns)
+  (setq ns-use-native-fullscreen nil
+        ;; This defaults to '(t) which tries to use appropriate icons
+        ;; from the system in the title bar.  Unfortunately lots of
+        ;; these icons on my system are the icon of a blank page, and
+        ;; this makes it hard to pick out Emacs in e.g. Witch or other
+        ;; application switchers.  Let's just disable file type icons.
+        ns-icon-type-alist nil))
 
 (my:unless-spacemacs
   ;; Mode line mods
