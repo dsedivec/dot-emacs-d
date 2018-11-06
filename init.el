@@ -212,14 +212,13 @@ quelpa recipes)."
 (defun my:packages-sync (&optional upgrade)
   "Install, (maybe) upgrade, and remove packages according to `my:packages'.
 
-Upgrading happens by default if called interactively; supply
-negative prefix argument to skip upgrading.  Non-interactive
-calls will only upgrade packages if upgrade is true.
+Only upgrade if UPGRADE is true, or invoked with a prefix
+argument when called interactively.
 
 Packages not in `my:packages' are removed.  Package removal is
 suppressed when running Spacemacs.  Spacemacs probably takes care
 of that for us, and I don't want to interfere with it."
-  (interactive (list (>= (prefix-numeric-value current-prefix-arg) 0)))
+  (interactive "P")
   ;; `auto-package-update-now' calls `package-refresh-contents', so we
   ;; call that first and let our advice update
   ;; `my:package-last-refresh', so that following calls to
