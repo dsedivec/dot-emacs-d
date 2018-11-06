@@ -1787,6 +1787,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 (recentf-mode 1)
 
 
+;;; rect
+
+(my:load-recipes 'emacs-yank-rectangle-to-new-lines)
+
 ;;; saveplace
 
 (save-place-mode 1)
