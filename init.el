@@ -253,6 +253,9 @@ of that for us, and I don't want to interfere with it."
   (when (string-match-p "\n" contents)
     (apply orig-fun contents args)))
 
+;; Delete old versions of packages.
+(setq auto-package-update-delete-old-versions t)
+
 (my:packages-sync)
 
 
