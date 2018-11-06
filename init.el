@@ -1608,6 +1608,20 @@ surround \"foo\" with (in this example) parentheses.  I want
 (unless persp-mode
   (persp-mode 1))
 
+;; Perspective-aware buffer switching with Ivy, courtesy
+;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el.
+;; That Gist is linked from persp-mode.el project. Only a modified subset
+;; of it is used here.
+
+(defun my:persp-mode-ivy-filter-buffers (buffer)
+  (when-let ((persp (and persp-mode (get-current-persp))))
+    (not (persp-contain-buffer-p buffer persp))))
+
+(with-eval-after-load 'ivy
+  (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
+
+(my:load-recipes 'persp-mode-save-load-frame-configuration)
+
 
 ;;; projectile
 
