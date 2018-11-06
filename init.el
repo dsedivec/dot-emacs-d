@@ -1270,7 +1270,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; minions
 
 (setq minions-mode-line-lighter "🄼"
-      minions-direct '(flycheck-mode))
+      minions-direct '(flycheck-mode persp-mode))
 
 (minions-mode 1)
 
