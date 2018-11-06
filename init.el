@@ -1020,6 +1020,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; expand-region
 
+;; I'm loading this up front because I have several mode hooks that
+;; want to frob at `er/try-expand-list', and putting modification of
+;; buffer-local variables in an `with-eval-after-load' would
+;; be... weird.
+(require 'expand-region)
+
 (bind-key "M-@" 'er/expand-region)
 
 
