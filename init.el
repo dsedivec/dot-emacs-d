@@ -1461,8 +1461,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'org-mode-hook #'visual-line-mode)
 
 (defun my:org-mode-hook ()
-  ;; Don't know why Spacemacs isn't turning this on for me?
-  ;;XXX (setq-local show-trailing-whitespace t)
   ;; Spacemacs turns on hl-todo-mode in text-mode-hook, but that
   ;; totally fucks up my TODO and DONE keywords in org-mode buffers.
   (my:when-spacemacs
