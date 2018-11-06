@@ -1125,7 +1125,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-key "M-m j i" 'imenu)
 
-(setq imenu-auto-rescan t)
+(setq imenu-auto-rescan t
+      imenu-auto-rescan-maxout (* 1024 1024 10))
 
 
 ;;; imenu-list
