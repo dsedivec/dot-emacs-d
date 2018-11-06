@@ -126,6 +126,7 @@
     clean-aindent-mode
     comment-dwim-2
     company
+    company-anaconda
     company-statistics
     counsel
     csv-mode
@@ -146,6 +147,7 @@
     (hl-line+ :fetcher wiki)
     hydra
     imenu-list
+    importmagic
     ivy
     ivy-xref
     macrostep
@@ -161,6 +163,9 @@
     persp-mode
     phi-search
     projectile
+    (python :fetcher github :repo "dsedivec/python-el")
+    pyvenv
+    (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
     smartparens
     swiper
     transpose-frame
@@ -685,6 +690,16 @@ it returns the node that your EDIT-FORM changed)."
 (setq amx-history-length 500)
 
 
+;;; anaconda-mode
+
+(with-eval-after-load 'anaconda-mode
+  ;; anaconda-mode can't navigate around my (messy) code base nearly
+  ;; as well as just using tags, so tell it to get off the xref
+  ;; bindings.
+  (dolist (key '("M-." "M-," "M-*"))
+    (unbind-key key anaconda-mode-map)))
+
+
 ;;; autorevert
 
 (global-auto-revert-mode 1)
@@ -1039,6 +1054,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (flycheck-pos-tip-mode 1)
 
+(my:load-recipes 'flycheck-python-pylint-disable-switch)
+
 
 ;;; flyspell
 
@@ -1103,6 +1120,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-keys ("M-m b i" . imenu-list-smart-toggle))
 
 (setq imenu-list-auto-resize t)
+
+
+;;; importmagic
+
+(with-eval-after-load 'importmagic
+  (bind-keys :map importmagic-mode-map
+             ("M-m m r f" . importmagic-fix-symbol-at-point)))
 
 
 ;;; ivy
@@ -1572,6 +1596,151 @@ surround \"foo\" with (in this example) parentheses.  I want
            ;; Spacemacs bindings, particularly useful when comint
            ;; binds something to C-c C-p.
            ("M-m p" . projectile-command-map))
+
+
+;;; python
+
+;; dtrt-indent does this for us, everywhere.
+(setq python-indent-guess-indent-offset nil)
+
+(defun my:python-mode-inhibit-electric-indent (char)
+  "Don't indent when CHAR is : and we're already at a plausible indent."
+  ;; I have a more generous comment about this below.
+  (python-indent-calculate-levels)
+  (when (and (eq char ?:)
+             (memq (current-indentation) (python-indent-calculate-levels)))
+    'no-indent))
+
+;; Double quotes don't work right in comments when
+;; electric-pair-mode is on.  Try:
+;;
+;;     # foo's "bar|
+;;
+;; You want one " but instead you get a pair "".  I think this
+;; happens because electric-pair thinks the preceding ' is the
+;; start of a string and that " in front of bar is the end of the
+;; string.  This is hard as fuck to fix, just don't pair quotes in
+;; comments.
+;;
+;; Eventually I would like to switch from electric-pair-mode to
+;; smartparens-mode, which holds the promise of working better, but
+;; first I have to find a solution to
+;; https://github.com/Fuco1/smartparens/issues/731.
+(defun my:python-electric-pair-inhibit (char)
+  (or
+   ;; Don't pair quotes inside a comment.
+   (and (memq char '(?\" ?\'))
+        (nth 4 (syntax-ppss)))
+   ;; Don't pair when wrapping a string in () or [] or {}.  This
+   ;; accompanies the logic I'm currently already getting by virtue
+   ;; of calling the default predicate, below, which as of this
+   ;; writing includes `electric-pair-conservative-inhibit', which
+   ;; will not pair before a word.
+   (and (memq char '(?\( ?\[ ?\{))
+        (looking-at-p "[\"']"))
+   ;; This inhibit function right here is local to python-mode
+   ;; buffers.  Also give our default predicate function a chance to
+   ;; inhibit pairing.
+   (let ((default-predicate
+          (when (default-boundp 'electric-pair-inhibit-predicate)
+            (default-value 'electric-pair-inhibit-predicate))))
+     (when (functionp default-predicate)
+       (funcall default-predicate char)))))
+
+(defun my:python-electric-pair-skip-whitespace-p ()
+  (let ((string-start
+         (nth 8 (syntax-ppss))))
+    (and (not (and string-start
+                   (save-excursion
+                     (goto-char string-start)
+                     (looking-at "[\"']\\{3\\}"))))
+         'chomp)))
+
+(defun my:python-mode-hook ()
+  (my:setq-local indent-tabs-mode nil
+                 tab-width 4
+                 ;; No space inserted when I use M-(.
+                 parens-require-spaces nil
+
+                 ;; python.el's default forward-sexp-function
+                 ;; behavior is not acceptable to me.  Also, it
+                 ;; makes autopair very slow.
+                 ;;
+                 ;; Test case, point at |:
+                 ;;
+                 ;;     |x, y, z = [], [], []
+                 ;;
+                 ;; Hit `forward-sexp' or `kill-sexp'.  It ends up
+                 ;; moving over/killing the entire line!
+                 forward-sexp-function nil
+
+                 electric-pair-inhibit-predicate
+                 #'my:python-electric-pair-inhibit
+
+                 electric-pair-skip-whitespace
+                 #'my:python-electric-pair-skip-whitespace-p)
+  ;; Must toggle `whitespace-mode' if we just changed `tab-width'.
+  ;; (In case you're wondering, this is how `whitespace-mode' itself
+  ;; enacts any options you change with `whitespace-toggle-options'.)
+  (when whitespace-mode
+    (whitespace-mode -1)
+    (whitespace-mode 1))
+
+  (set (make-local-variable 'company-backends)
+       (cons '(company-anaconda company-dabbrev-code) company-backends))
+
+  ;; Don't reindent if we're already at an acceptable level.  For
+  ;; example:
+  ;;
+  ;;     if True:
+  ;;         if False:
+  ;;             print("foo")
+  ;;     else|
+  ;;
+  ;; With point at "|", typing ":" moves the "else" to be in the "if
+  ;; False" block, rather than the "if True" block *where you
+  ;; manually de-indented to*.
+  (add-hook 'electric-indent-functions
+            #'my:python-mode-inhibit-electric-indent nil t)
+
+  (when (flycheck-find-checker-executable 'python-pylint)
+    (my:setq-local flycheck-checker 'python-pylint
+                   ;; Note: flycheck-pylint-disabled-messages is my
+                   ;; own creation, see my (use-package flycheck).
+                   ;;
+                   ;; C0301: Don't warn about long lines, I use
+                   ;; whitespace-mode for that.
+                   ;;
+                   ;; C0330: As of 1.3.1 this check for incorrect
+                   ;; hanging and/or continued indentation is
+                   ;; totally off, at least in our code base.  See
+                   ;; also:
+                   ;; https://github.com/PyCQA/pylint/issues/232
+                   ;; https://github.com/PyCQA/pylint/issues/289
+                   flycheck-pylint-disabled-messages "C0301,C0330")))
+
+(my:add-hooks 'python-mode-hook
+  #'my:python-mode-hook
+  #'my:warn-white-space-mode
+  #'electric-indent-local-mode
+  #'electric-pair-local-mode
+  #'anaconda-mode
+  #'anaconda-eldoc-mode
+  #'importmagic-mode
+  #'smart-tabs-mode)
+
+(smart-tabs-advise 'python-indent-line 'python-indent-offset)
+(smart-tabs-advise 'python-indent-region 'python-indent-offset)
+(smart-tabs-advise 'python-indent-shift-left 'python-indent-offset)
+(smart-tabs-advise 'python-indent-shift-right 'python-indent-offset)
+(smart-tabs-advise 'python-indent-calculate-levels 'python-indent-offset)
+(smart-tabs-advise 'python-indent-post-self-insert-function
+                   'python-indent-offset)
+
+(my:load-recipes 'python-magic-quotes
+                 'python-fix-dead-shell-font-lock-buffer)
+
+(add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
 
 ;;; recentf-mode
