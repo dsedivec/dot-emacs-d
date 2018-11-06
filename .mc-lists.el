@@ -17,10 +17,12 @@
         paredit-backward-kill-word
         paredit-forward
         paredit-forward-kill-word
+        paredit-raise-sexp
         paredit-semicolon
         paredit-splice-sexp
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        ivy-swp-switch-to-buffer-overload
         ))
