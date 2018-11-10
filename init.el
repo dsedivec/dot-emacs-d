@@ -2009,6 +2009,14 @@ level of indentation."
       (when whitespace-mode-was-active
         (whitespace-mode 1)))))
 
+(my:add-hooks 'sql-interactive-mode-hook
+  ;; Reverse order to make sure company gets loaded first.
+  #'my:company-splice-dabbrev-code-into-capf
+  #'company-mode)
+
+(with-eval-after-load 'company-dabbrev-code
+  (add-to-list 'company-dabbrev-code-modes 'sql-interactive-mode))
+
 (my:when-spacemacs
   ;; Spacemacs shouldn't try to auto-indent my SQL yanks, Emacs
   ;; doesn't have (my) auto-indentation for SQL.
@@ -2019,11 +2027,6 @@ level of indentation."
   (add-to-list 'spacemacs-useful-buffers-regexp "\\*SQL\\*")
 
   (defun my:sql-interactive-mode-hook ()
-    (if (or company-backends company-mode)
-        (warn (concat "`company-mode' already on in SQLi buffer,"
-                      " did Spacemacs change?"))
-      (setq-local company-backends '((company-dabbrev-code :with company-capf)))
-      (company-mode 1))
     ;; Spacemacs adds a *fucking lambda* to sql-interactive-mode-hook
     ;; that turns truncate-lines on.  I hate this.  I should push
     ;; upstream to get this as a named function, if not a setting as
