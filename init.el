@@ -179,6 +179,7 @@
     which-key
     window-purpose
     winum
+    yaml-mode
     zop-to-char
     )
   "List of packages I want installed.  Will be installed in order.")
