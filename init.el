@@ -133,6 +133,7 @@
     csv-mode
     dash
     deft
+    dired-narrow
     dtrt-indent
     edit-indirect
     (eltu :fetcher github :repo "dsedivec/eltu"
@@ -946,6 +947,38 @@ TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
 ;;; descr-text
 
 (bind-keys ("M-m h d c" . describe-char))
+
+
+;;; dired-narrow
+
+;; I think this is how you expect dired-narrow--regexp-filter to work.
+;; I should push this upstream.
+;;
+;; Use `string-match-p' instead of `re-search-forward', because in the
+;; latter case ^ doesn't work like you'd expect since you're never
+;; matching the file name at start of line (unless you have a unique
+;; dired configuration, perhaps).
+;;
+;; Catch `invalid-regexp' and just return T in that case, so that
+;; nothing is filtered if you have an invalid regexp.
+(define-advice dired-narrow--regexp-filter
+    (:override (filter) my:better-regexp-filter)
+  (condition-case err
+      (string-match-p filter (buffer-substring (point) (line-end-position)))
+    (invalid-regexp t)))
+
+;; Without removing the :dired-narrow text property as well as the
+;; invisibility we set, narrowing with regexp like "{" (where that
+;; char doesn't occur in a file name) but then hitting backspace and
+;; then just hitting return will actually narrow away *all* files,
+;; which is almost certainly not what you want.
+;;
+;; I should probably push this upstream, but need to test that this
+;; isn't something unique to my Emacs config first.
+(define-advice dired-narrow--restore
+    (:before (&rest args) my:remove-dired-narrow-text-property)
+  (let ((inhibit-read-only t))
+    (remove-text-properties (point-min) (point-max) '(:dired-narrow))))
 
 
 ;;; dired-x
