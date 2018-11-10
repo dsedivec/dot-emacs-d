@@ -1661,6 +1661,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 (my:load-recipes 'persp-mode-save-load-frame-configuration)
 
 
+;;; prog-mode
+
+;; This may be a bad idea.
+(with-eval-after-load 'prog-mode
+  (bind-keys :map prog-mode-map
+             ("RET" . newline-and-indent)))
+
+
 ;;; projectile
 
 (projectile-mode 1)
