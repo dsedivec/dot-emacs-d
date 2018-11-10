@@ -113,6 +113,7 @@
     ;; following quelpa recipes which will require quelpa, naturally.
     quelpa
 
+    ace-window
     adaptive-wrap
     ;; Until https://github.com/domtronn/all-the-icons.el/pull/106 gets merged:
     ;; all-the-icons
