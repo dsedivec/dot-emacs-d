@@ -1881,7 +1881,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; startup
 
-(setq inhibit-startup-screen t)
+(setq inhibit-startup-screen t
+      user-mail-address "dale@codefu.org")
 
 
 ;;; sql
