@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2018  Dale Sedivec
 
-;; Author: Dale Sedivec <dale@dale.caliginous.net>
+;; Author: Dale Sedivec <dale@codefu.org>
 ;; Keywords: convenience
 ;; Package-Requires: (hydra)
 
