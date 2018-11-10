@@ -172,6 +172,7 @@
     treepy
     undo-tree
     unicode-fonts
+    webpaste
     wgrep
     which-key
     window-purpose
