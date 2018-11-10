@@ -2073,6 +2073,11 @@ level of indentation."
 (unicode-fonts-setup)
 
 
+;;; vc
+
+(my:load-recipes 'vc-use-icons-in-mode-line)
+
+
 ;;; which-key
 
 (which-key-mode 1)
