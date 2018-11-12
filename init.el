@@ -1049,7 +1049,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
 
-(bind-keys :map emacs-lisp-mode-map ("C-c C-r" . eval-region))
+(bind-keys :map emacs-lisp-mode-map
+           ("C-c C-r" . eval-region)
+           ("C-c C-b" . eval-buffer))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
