@@ -169,6 +169,7 @@
     pyvenv
     (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
     smartparens
+    (sticky-region :fetcher github :repo "dsedivec/sticky-region")
     swiper
     transpose-frame
     treepy
@@ -1883,6 +1884,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq inhibit-startup-screen t
       user-mail-address "dale@codefu.org")
+
+
+;;; sticky-region
+
+(sticky-region-mode 1)
 
 
 ;;; sql
