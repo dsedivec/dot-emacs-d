@@ -2249,6 +2249,41 @@ for this command) must be an arrow key."
              ("C-9" . winum-select-window-9)))
 
 
+;;; xref
+
+;; These are versions of `xref-next-line' and `xref-prev-line' that
+;; just move the cursor to the next/previous location without also
+;; actually jumping to that location.
+
+(defun my:xref-next-line-without-showing ()
+  "Move to next xref item (without showing that match)."
+  (interactive)
+  (xref--search-property 'xref-item))
+
+(defun my:xref-prev-line-without-showing ()
+  "Move to previous xref item (without showing that match)."
+  (interactive)
+  (xref--search-property 'xref-item t))
+
+(with-eval-after-load 'xref
+  (bind-keys :map xref--xref-buffer-mode-map
+             ;; I don't want n/p to show the match I'm moving to, just
+             ;; move there and let me show it with RET/TAB if I want.
+             ("n" . my:xref-next-line-without-showing)
+             ("p" . my:xref-prev-line-without-showing)
+             ;; Reverse these bindings from the default
+             ("RET" . xref-quit-and-goto-xref)
+             ("TAB" . xref-goto-xref)
+             ;; And this is a map, set using text properties on
+             ;; matches you can jump to in the *xref* buffer.  It also
+             ;; binds RET (well, C-m I guess).
+             :map xref--button-map
+             ([(control ?m)] . xref-quit-and-goto-xref)
+             ;; Shit, it doesn't explicitly bind RET but let's just
+             ;; make sure.
+             ("RET" . xref-quit-and-goto-xref)))
+
+
 ;;; zop-to-char
 
 (bind-keys ("M-z" . zop-up-to-char))
