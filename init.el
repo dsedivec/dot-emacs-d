@@ -1260,6 +1260,15 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-keys ("<C-M-backspace>" . backward-kill-sexp))
 
 
+;;; lisp-comment-dwim
+
+(require 'lisp-comment-dwim)
+
+(with-eval-after-load 'paredit
+  (bind-keys :map paredit-mode-map
+             ("M-;" . lisp-comment-dwim)))
+
+
 ;;; lisp-mode
 
 (add-hook 'lisp-mode-hook #'paredit-mode)
@@ -1627,11 +1636,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; paredit
 
-(require 'lisp-comment-dwim)
-
 (with-eval-after-load 'paredit
   (bind-keys :map paredit-mode-map
-             ("M-;" . lisp-comment-dwim)
              ("M-m j s" . paredit-split-sexp)))
 
 (my:load-recipes 'paredit-kill-whole-line)
