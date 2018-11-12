@@ -117,4 +117,6 @@
                       (eq syn-after  ?\" ))       ;   pairs,
                  (and (memq syn-before '(?_ ?w))  ; or word or symbol
                       (memq syn-after  '(?_ ?w))))) ;   constituents.
-           (insert " ")))))
+           (insert " "))))
+
+  (el-patch-validate 'paredit-kill-sexps-on-whole-line 'defun t))
