@@ -6,17 +6,35 @@
 ;; parens balanced.
 
 (defun my:paredit-kill-whole-line (&optional arg)
+  "Like `kill-whole-line', but avoids breaking matched paredit pairs."
   (interactive "p")
   (when (null arg) (setq arg 1))
   (unless (zerop arg)
     (save-excursion
       (if (>= arg 0)
+          ;; Move point to BOL.
           (forward-line 0)
+        ;; arg is negative.  Go backwards arg - 1 lines.  Note that
+        ;; this matches the behavior of `kill-whole-line', which kills
+        ;; the current line and then arg - 1 lines backward when given
+        ;; a negative argument.  We will then kill (abs arg) lines
+        ;; forward from our new point.  Starting from the highest line
+        ;; and killing forward nicely handles the case where, for
+        ;; example, a preceding line is actually a multi-line list
+        ;; that we're going to kill, where the number of lines
+        ;; occupied by that list is >= (abs arg).
         (forward-line (1+ arg))
         (setq arg (abs arg)))
       (let ((target-line (save-excursion
                            (forward-line arg)
+                           ;; Using a marker, rather than a position
+                           ;; (a number), so that we can see how many
+                           ;; lines `paredit-kill' is deleting each
+                           ;; time.
                            (point-marker)))
+            ;; This tells `paredit-kill' (as well as `kill-line',
+            ;; incidentally) to kill everything on a line including
+            ;; the newline, rather than everything up to the newline.
             (kill-whole-line t))
         (catch 'exit
           (while t
@@ -24,7 +42,13 @@
               (paredit-kill)
               (let ((target-line-after (line-number-at-pos target-line)))
                 (when (or
+                       ;; Have we now deleted at least as many lines
+                       ;; as we set out to delete?
                        (>= (line-number-at-pos) target-line-after)
+                       ;; Did our last delete option fail to delete at
+                       ;; least one line?  If so we've probably
+                       ;; reached the end of an enclosing sexp, so we
+                       ;; should stop.
                        (= target-line-before target-line-after))
                   (throw 'exit nil))))))))))
 
