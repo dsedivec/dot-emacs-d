@@ -1650,6 +1650,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 (unless persp-mode
   (persp-mode 1))
 
+(bind-keys :map persp-mode-map
+           ("M-m l l" . persp-frame-switch))
+
 ;; Perspective-aware buffer switching with Ivy, courtesy
 ;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el.
 ;; That Gist is linked from persp-mode.el project. Only a modified subset
