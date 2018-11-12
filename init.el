@@ -1013,6 +1013,7 @@ TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
 
 ;;; elec-pair
 
+(add-hook 'prog-mode-hook #'electric-pair-local-mode)
 
 (defun my:electric-pair-default-plus-before-word-inhibit (char)
   "Default inhibit behavior on CHAR, plus don't pair before a word.
