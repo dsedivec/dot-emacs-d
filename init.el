@@ -417,7 +417,12 @@ it returns the node that your EDIT-FORM changed)."
         ;; these icons on my system are the icon of a blank page, and
         ;; this makes it hard to pick out Emacs in e.g. Witch or other
         ;; application switchers.  Let's just disable file type icons.
-        ns-icon-type-alist nil))
+        ns-icon-type-alist nil)
+
+  ;; Saving/restoring frames via persp-mode seems to affect this
+  ;; somehow.  Setting this seems to put us back where we belong,
+  ;; without a friggin' white title bar (WTF).
+  (setf (alist-get 'ns-transparent-titlebar default-frame-alist) nil))
 
 (my:unless-spacemacs
   ;; Mode line mods
