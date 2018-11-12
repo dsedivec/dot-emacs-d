@@ -26,5 +26,7 @@
 
 (setq mc/cmds-to-run-once
       '(
+        describe-key-briefly
         ivy-swp-switch-to-buffer-overload
+        minions-minor-modes-menu
         ))
