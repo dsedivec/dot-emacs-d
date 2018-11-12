@@ -136,6 +136,7 @@
     dired-narrow
     dtrt-indent
     edit-indirect
+    el-patch
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
     exec-path-from-shell
@@ -1632,6 +1633,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   (bind-keys :map paredit-mode-map
              ("M-;" . lisp-comment-dwim)
              ("M-m j s" . paredit-split-sexp)))
+
+(my:load-recipes 'paredit-kill-whole-line)
 
 
 ;;; paren
