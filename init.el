@@ -1640,7 +1640,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   (bind-keys :map paredit-mode-map
              ("M-m j s" . paredit-split-sexp)))
 
-(my:load-recipes 'paredit-kill-whole-line)
+(my:load-recipes 'paredit-delsel
+                 'paredit-kill-whole-line)
 
 
 ;;; paren
