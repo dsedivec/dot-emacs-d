@@ -2235,6 +2235,11 @@ level of indentation."
 (setq whitespace-indentation-regexp
       '("^\\(\\( \\{%d\\}\\)+\\)[^\n\t]" . "^ *\\(\t+\\)[^\n]"))
 
+(with-eval-after-load 'whitespace
+  (face-spec-set 'whitespace-line '((t (:background "#ffe7e7"
+                                        :foreground nil
+                                        :distant-foreground "black")))))
+
 
 ;;; windmove
 
