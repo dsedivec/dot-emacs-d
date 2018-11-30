@@ -2132,6 +2132,16 @@ level of indentation."
   ;; Spacemacs turns it on.
   (add-hook 'sql-interactive-mode-hook #'my:sql-interactive-mode-hook t))
 
+(defun my:sql-format-region (start end)
+  (interactive "r")
+  (let* ((exec-path (cons (expand-file-name "~/bin") exec-path))
+         (sqlformat (executable-find "sqlformat")))
+    (unless sqlformat
+      (error "Can't find sqlformat program"))
+    (call-process-region start end sqlformat t t nil
+                         "-r" "--indent_width" "4" "-a" "-s"
+                         "--wrap_after" "79" "-k" "upper" "-")))
+
 
 ;;; swiper
 
