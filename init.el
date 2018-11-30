@@ -1717,7 +1717,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;; Must set this before turning on persp-mode for it to have an effect
 ;; at startup.
-(setq persp-auto-resume-time 0.1)
+(if (featurep 'persp-mode)
+    (warn "Set `persp-auto-resume-time' too late, persp-mode already loaded")
+  (setq persp-auto-resume-time 0.1))
 
 (require 'persp-mode)
 
