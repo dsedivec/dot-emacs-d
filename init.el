@@ -703,6 +703,14 @@ it returns the node that your EDIT-FORM changed)."
       (nconc hyperref-commands '(("\\nameref" ?n))))))
 
 
+;;; ace-window
+
+(with-eval-after-load 'ace-window
+  (set-face-attribute 'aw-leading-char-face nil :height 10.0))
+
+(bind-key "C-x o" 'ace-window)
+
+
 ;;; adaptive-wrap
 
 (defun my:turn-on-adaptive-wrap-prefix-mode ()
