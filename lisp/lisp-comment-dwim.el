@@ -167,10 +167,15 @@
         ;; point.
         (sp-split-sexp nil))
       (save-excursion
-        ;; Hit this at the end of line and we comment the whole
-        ;; line.
-        (when (eolp)
-          (back-to-indentation))
+        (cond
+          ((eolp)
+           ;; When run at end of line, we comment the whole line.
+           (back-to-indentation))
+          ((looking-at-p "\\sw\\|\\s_\\|\\s'")
+           ;; We're possibly in the middle of a symbol/number, move to
+           ;; its start.  We usually don't want to comment out half of
+           ;; a symbol.
+           (skip-syntax-backward "w_'")))
         (let ((start (point))
               (line-end (line-end-position)))
           ;; Skip past white space and sexps on this line.  We stop
