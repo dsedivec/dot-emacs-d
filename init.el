@@ -1600,6 +1600,26 @@ surround \"foo\" with (in this example) parentheses.  I want
       (concat (propertize "⏱" 'face '(:family "Apple Color Emoji"))
               (org-duration-from-minutes clocked-time)))))
 
+;; Put the name of the clocked item in the tooltip (help-echo
+;; property).  Note that this doesn't take `org-clock-string-limit'
+;; into account, which is a bit of a deficiency, though looking at
+;; `org-clock-update-mode-line' source I will say that your tooltip
+;; will look stupi dif `org-clock-string-limit' kicks in, so I don't
+;; feel that bad about ignoring it.
+(define-advice org-clock-update-mode-line
+    (:after (&rest args) my:add-task-name-to-clock-help-echo)
+  (let* ((start-idx (if (and org-clock-task-overrun-text
+                             (string-prefix-p org-clock-task-overrun-text
+                                              org-mode-line-string))
+                        (length org-clock-task-overrun-text)
+                      0))
+         (old-help-echo (get-text-property start-idx 'help-echo
+                                           org-mode-line-string)))
+    (put-text-property start-idx (- (length org-mode-line-string) start-idx)
+                       'help-echo (concat "Task: " org-clock-heading "\n"
+                                          old-help-echo)
+                       org-mode-line-string)))
+
 ;; Force update of clock display in mode line after starting/stopping
 ;; clock.  Can't just put `force-mode-line-update' into the hooks for
 ;; some reason?  It doesn't force the addition/removal of the clock
