@@ -1175,6 +1175,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq highlight-symbol-idle-delay 0.5)
 
+(add-hook 'prog-mode-hook #'highlight-symbol-mode)
+
 
 ;;; hl-line+
 
