@@ -2303,6 +2303,11 @@ for this command) must be an arrow key."
 ;; window heights.
 (purpose-x-popwin-setup)
 
+(if (get 'purpose-set-extension-configuration 'lisp-indent-function)
+    (warn (concat "`purpose-set-extension-configuration'"
+                  " now sets `lisp-indent-function'"))
+  (put 'purpose-set-extension-configuration 'lisp-indent-function 1))
+
 
 ;;; winner-mode
 
