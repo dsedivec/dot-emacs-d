@@ -41,7 +41,7 @@ default when Spacemacs apparently toggles whitespace-mode
 off/on.")
 
 (define-advice whitespace-toggle-options
-    (:after (&rest args) wspc-hydra-make-changes-to-local-whitespace-style)
+    (:after (&rest _) wspc-hydra-make-changes-to-local-whitespace-style)
   (when wspc-hydra-buffer-local-whitespace-style
     (setq-local whitespace-style whitespace-active-style)))
 
@@ -99,6 +99,8 @@ off/on.")
 
 ;;;###autoload
 (defun wspc-hydra-apply-style (style-name)
+  "Apply whitespace-mode style named STYLE-NAME.
+Will turn on `whitespace-mode' if necessary."
   (interactive
    (list
     (intern (completing-read "Style: "

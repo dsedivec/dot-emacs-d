@@ -5,7 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (quelpa ace-window adaptive-wrap all-the-icons amx auctex auto-package-update avy bind-key clean-aindent-mode comment-dwim-2 company company-anaconda company-statistics counsel csv-mode dash deft dired-narrow dtrt-indent edit-indirect el-patch eltu exec-path-from-shell expand-region flx flycheck flycheck-pos-tip graphviz-dot-mode highlight-parentheses highlight-symbol hl-line+ hydra imenu-list importmagic ivy ivy-xref macrostep magit markdown-mode minions multiple-cursors mwim org-plus-contrib orgtbl-aggregate osx-dictionary paredit persp-mode phi-search projectile python pyvenv smart-tabs smartparens sticky-region swiper transpose-frame treepy undo-tree unicode-fonts webpaste wgrep which-key window-purpose winum yaml-mode zop-to-char)))
+    (quelpa ace-window adaptive-wrap all-the-icons amx auctex auto-compile auto-package-update avy bind-key clean-aindent-mode comment-dwim-2 company company-anaconda company-statistics counsel csv-mode dash deft dired-narrow dtrt-indent edit-indirect el-patch eltu exec-path-from-shell expand-region flx flycheck flycheck-pos-tip graphviz-dot-mode highlight-parentheses highlight-symbol hl-line+ hydra imenu-list importmagic ivy ivy-xref macrostep magit markdown-mode minions multiple-cursors mwim org-plus-contrib orgtbl-aggregate osx-dictionary paredit persp-mode phi-search projectile python pyvenv smart-tabs smartparens sticky-region swiper transpose-frame treepy undo-tree unicode-fonts webpaste wgrep which-key window-purpose winum yaml-mode zop-to-char)))
  '(safe-local-variable-values
    (quote
     ((eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript")))))

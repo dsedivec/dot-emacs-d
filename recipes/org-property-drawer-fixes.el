@@ -67,6 +67,9 @@
 ;; So if you just deleted the property drawer and now your
 ;; headline/subtree ends with an invisible newline, we're going to
 ;; make that visible for you.
+
+(declare-function org-inlinetask-in-task-p "org-inlinetask")
+
 (define-advice org-entry-delete (:around
                                  (orig-fun pom &rest args)
                                  my:fix-newline-after-deleting-property-drawer)

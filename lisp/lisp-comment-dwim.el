@@ -175,7 +175,7 @@
               (line-end (line-end-position)))
           ;; Skip past white space and sexps on this line.  We stop
           ;; if we hit a scan-error due to unbalanced sexp.
-          (condition-case err
+          (condition-case _
               (while (< (point) line-end)
                 (or (plusp (skip-syntax-forward " " line-end))
                     (forward-sexp 1)))

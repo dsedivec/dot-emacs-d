@@ -1,6 +1,15 @@
 ;; -*- lexical-binding: t; -*-
 
 ;; Delete property in columns mode
+
+(defvar org-agenda-overriding-columns-format)
+(defvar org-columns-inhibit-recalculation)
+(defvar org-columns-current-fmt)
+(defvar org-columns-map)
+(declare-function org-columns--call "org-colview")
+(declare-function org-columns-redo "org-colview")
+(declare-function org-columns-update "org-colview")
+
 (defun my:org-columns-delete-property (&rest key)
   "Delete property value for the current column in columns mode."
   (interactive)

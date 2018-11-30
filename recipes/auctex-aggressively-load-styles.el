@@ -25,6 +25,10 @@
       (when temp-buffer
         (kill-buffer temp-buffer)))))
 
+(defvar TeX-parse-self)
+(defvar TeX-style-hook-list)
+(declare-function TeX-auto-write "tex")
+
 (define-advice TeX-load-style
     (:around (orig-fun style &rest args) my:find-styles-and-auto-parse)
   ;; I have witnessed STYLE having a trailing space.  Should maybe

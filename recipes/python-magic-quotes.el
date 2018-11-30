@@ -70,6 +70,8 @@ Only works when electric-pair-mode is on."
     (t
      (self-insert-command times))))
 
+(defvar python-mode-map)
+
 (with-eval-after-load 'python
   (bind-keys :map python-mode-map
              ("'" . my:python-magic-single-quote)

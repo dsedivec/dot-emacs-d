@@ -16,7 +16,10 @@
 ;; `python-shell--font-lock-buffer' is live, and make sure they get
 ;; inserted before the relevant python-mode hooks.
 
-(defun my:python-shell-ensure-font-lock-buffer-is-live (&rest args)
+(defvar python-shell--font-lock-buffer)
+(declare-function python-shell-font-lock-turn-on "python")
+
+(defun my:python-shell-ensure-font-lock-buffer-is-live (&rest _)
   (unless (or (null python-shell--font-lock-buffer)
               (buffer-live-p python-shell--font-lock-buffer))
     ;; This should set `python-shell--font-lock-buffer' to nil, which

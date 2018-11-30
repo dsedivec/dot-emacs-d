@@ -37,5 +37,5 @@ Meant to be used by the my:daily-time-summary dblock (or at least :step day)."
   (let ((time-on-day (apply '+ (mapcar 'cadr tables))))
     (goto-char ipos)
     (insert "|" (plist-get params :tstart) "|"
-            (org-minutes-to-clocksum-string time-on-day) "|\n")
+            (org-duration-from-minutes time-on-day) "|\n")
     (org-table-align)))

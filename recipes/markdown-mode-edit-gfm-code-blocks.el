@@ -76,8 +76,7 @@ Should be an alist of (\"IDENTIFIER\" . major-mode-function).")
 
 (defun my:gfm-fcb-edit ()
   (interactive)
-  (let ((state (syntax-ppss))
-        start end lang mode-func buffer-name buffer content)
+  (let (start end lang mode-func buffer-name buffer content)
     (save-excursion
       ;; End of line doesn't have the text property we want.
       (forward-line 0)

@@ -4,10 +4,14 @@
 ;; ivy--regex-ignore-order, otherwise it's ivy--regex-fuzzy.
 
 (defcustom my:ivy-regular-re-builder #'ivy--regex-ignore-order
-  "Non-fuzzy RE builder to use in `my:ivy--regex-regular-or-fuzzy'.")
+  "Non-fuzzy RE builder to use in `my:ivy--regex-regular-or-fuzzy'."
+  :group 'ivy
+  :type 'function)
 
 (defcustom my:ivy-fuzzy-re-builder #'ivy--regex-fuzzy
-  "Fuzzy RE builder to use in `my:ivy--regex-regular-or-fuzzy'.")
+  "Fuzzy RE builder to use in `my:ivy--regex-regular-or-fuzzy'."
+  :group 'ivy
+  :type 'function)
 
 (defun my:ivy--regular-or-fuzzy-re-builder-for-input (&optional input)
   "Return fuzzy RE builder or regular RE builder based on INPUT.
@@ -55,6 +59,9 @@ will return either the regular or fuzzy RE builders."
 (setf (alist-get 'my:ivy--regex-regular-or-fuzzy
                  ivy-highlight-functions-alist)
       #'my:ivy--highlight-regular-or-fuzzy)
+
+;; Defined in counsel.el.
+(defvar smex-initialized-p)
 
 ;; Note that Swiper uses swiper--re-builder, which will not engage flx
 ;; sorting here--but flx sorting with Swiper and ivy--regex-fuzzy

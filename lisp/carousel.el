@@ -27,7 +27,8 @@
 
 (require 'subr-x)
 
-(defgroup carousel nil "Delete old buffers")
+(defgroup carousel nil "Delete old buffers"
+  :group 'convenience)
 
 (defcustom carousel-non-file-buffer-max-age 3600
   "How old a non-file buffer can be before it's killed."

@@ -107,6 +107,15 @@
 
 (package-initialize)
 
+;; May not be installed yet.
+(require 'auto-compile nil t)
+
+;; We will require 'auto-compile again after we install packages, so
+;; this may not run until then.
+(with-eval-after-load 'auto-compile
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode))
+
 (defvar my:packages
   '(
     ;; Best to make sure quelpa is here at the top, before any
@@ -121,6 +130,7 @@
                    :branch "font-lock-fix" :files (:defaults "data"))
     amx
     auctex
+    auto-compile
     auto-package-update
     avy
     bind-key
@@ -263,6 +273,10 @@ of that for us, and I don't want to interfere with it."
 (setq auto-package-update-delete-old-versions t)
 
 (my:packages-sync)
+
+;; In case it didn't get loaded before, presumably because it wasn't
+;; installed:
+(require 'auto-compile)
 
 
 ;;; Utility functions

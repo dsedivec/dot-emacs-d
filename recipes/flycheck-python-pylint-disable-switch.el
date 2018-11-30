@@ -4,7 +4,8 @@
 ;; the checker.  Maybe I should see about pushing these changes
 ;; upstream.
 (flycheck-def-option-var flycheck-pylint-disabled-messages nil python-pylint
-  "String to be passed to pylint's --disable option.")
+  "String to be passed to pylint's --disable option."
+  :type 'string)
 ;; TODO: Add custom args for completeness!
 
 (put 'python-pylint 'flycheck-command

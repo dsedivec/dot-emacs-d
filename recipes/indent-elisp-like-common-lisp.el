@@ -37,7 +37,7 @@
 ;; slime-cl-indent.el, which is an old fork of Emacs's cl-indent.el.
 
 (defun common-lisp-to-lisp-indent-function-adapter
-    (path state indent-point sexp-column normal-indent)
+    (_path state indent-point _sexp-column _normal-indent)
   "Adapter for `common-lisp-indent-call-method' to `lisp-indent-function'.
 Useful when you want to make a symbol, like pcase, indented by
 `lisp-indent-function' rather than `common-lisp-indent-function'."
@@ -64,6 +64,10 @@ Useful when you want to make a symbol, like pcase, indented by
 
 
 ;; And these bits are only if you're using SLIME's slime-cl-indent.el.
+
+(defvar common-lisp-style)
+(declare-function common-lisp-active-style-methods "slime-cl-indent")
+(declare-function common-lisp-get-indentation "slime-cl-indent")
 
 ;; Note that Emacs's own cl-indent.el does not define this function,
 ;; so we don't need to condition this advice on e.g.
