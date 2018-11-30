@@ -1314,6 +1314,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq magit-diff-refine-hunk 'all)
 
+;; truncate-lines does not work well for me when viewing diffs and such.
+
+(defun my:magit-mode-hook ()
+  (setq truncate-lines nil))
+
+(add-hook 'magit-mode-hook #'my:magit-mode-hook)
+
 
 ;;; markdown-mode
 
