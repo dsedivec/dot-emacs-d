@@ -7,6 +7,7 @@
         dabbrev-expand
         delete-horizontal-space
         delete-indentation
+        electric-newline-and-maybe-indent
         forward-sexp
         kill-sexp
         mwim-beginning-of-code-or-line
@@ -22,6 +23,7 @@
         paredit-raise-sexp
         paredit-semicolon
         paredit-splice-sexp
+        paredit-split-sexp
         ))
 
 (setq mc/cmds-to-run-once
