@@ -1306,6 +1306,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; magit
 
+;; I want this everywhere (recommended by the Magit manual's "Getting
+;; Started" section).
+(bind-key "C-x g" 'magit-status)
+
 (autoload 'magit "magit" nil t)
 
 (setq magit-diff-refine-hunk 'all)
