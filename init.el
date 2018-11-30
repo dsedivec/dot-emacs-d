@@ -1321,6 +1321,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'magit-mode-hook #'my:magit-mode-hook)
 
+(which-key-add-major-mode-key-based-replacements 'magit-status-mode
+    "j p" "unpushed"
+    "j f" "unpulled")
+
 
 ;;; markdown-mode
 
