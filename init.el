@@ -2263,6 +2263,13 @@ for this command) must be an arrow key."
            ("C-x <right>" . my:delete-window-that-direction))
 
 
+;;; window-hydra
+
+;; This is normally `split-line' which I have never knowingly used and
+;; doubt I ever would.
+(bind-key "C-M-o" 'window-hydra/body)
+
+
 ;;; window-purpose
 
 (purpose-mode 1)
