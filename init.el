@@ -1086,7 +1086,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; etags
 
-(setq tags-revert-without-query t)
+(setq tags-revert-without-query t
+      tags-case-fold-search nil)
 
 
 ;;; expand-region
