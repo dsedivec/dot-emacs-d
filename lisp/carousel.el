@@ -37,7 +37,7 @@
 
 (defcustom carousel-safe-buffer-regexps
   '("\\`\\*\\(?:scratch\\|Messages\\|Warnings\\|ielm\\|spacemacs\\)\\*\\'"
-    "\\` \\*Minibuf-")
+    "\\` \\*\\(?:Minibuf-[[:digit:]]+\\|Echo Area [[:digit:]]+\\)\\*\\'")
   "List of regular expressions of buffers that will never be auto-killed."
   :type '(set regexp)
   :group 'carousel)
