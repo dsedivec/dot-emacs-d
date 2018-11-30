@@ -1693,6 +1693,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys ("C-$" . osx-dictionary-search-pointer))
 
+(with-eval-after-load 'window-purpose-x
+  (add-to-list 'purpose-x-popwin-major-modes 'osx-dictionary-mode)
+  (purpose-x-popwin-update-conf))
+
 
 ;;; paredit
 
