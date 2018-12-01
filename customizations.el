@@ -24,6 +24,7 @@
      company-shell
      company-statistics
      counsel
+     counsel-css
      csv-mode
      dash
      deft

@@ -214,6 +214,7 @@
     company-shell
     company-statistics
     counsel
+    counsel-css
     csv-mode
     dash
     deft
@@ -1038,6 +1039,11 @@ TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
 (bind-keys :map counsel-mode-map
            ("M-m /" . counsel-auto-grep-maybe-projectile)
            ("M-m s f" . counsel-auto-grep-ask-dir))
+
+
+;;; counsel-css
+
+(add-hook 'css-mode-hook #'counsel-css-imenu-setup)
 
 
 ;;; deft
