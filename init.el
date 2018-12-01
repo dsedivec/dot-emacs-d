@@ -189,7 +189,7 @@
   (auto-compile-on-save-mode))
 
 (defvar my:packages
-  '(
+  `(
     ;; Best to make sure quelpa is here at the top, before any
     ;; following quelpa recipes which will require quelpa, naturally.
     quelpa
@@ -241,6 +241,9 @@
     minions
     multiple-cursors
     mwim
+    (ns-copy-html :fetcher git
+                  :url ,(concat "file://" (expand-file-name
+                                           "~/repositories/ns-copy-html/")))
     org-plus-contrib
     orgtbl-aggregate
     osx-dictionary

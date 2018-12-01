@@ -50,6 +50,7 @@
      minions
      multiple-cursors
      mwim
+     ns-copy-html
      org-plus-contrib
      orgtbl-aggregate
      osx-dictionary
