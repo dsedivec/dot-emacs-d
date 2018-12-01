@@ -229,6 +229,7 @@
     expand-region
     flx
     flycheck
+    flycheck-package
     flycheck-pos-tip
     graphviz-dot-mode
     highlight-parentheses
@@ -1237,6 +1238,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (flycheck-pos-tip-mode 1)
 
 (my:load-recipes 'flycheck-python-pylint-disable-switch)
+
+
+;;; flycheck-package
+
+(with-eval-after-load 'flycheck
+  (flycheck-package-setup))
 
 
 ;;; flyspell

@@ -38,6 +38,7 @@
      expand-region
      flx
      flycheck
+     flycheck-package
      flycheck-pos-tip
      graphviz-dot-mode
      highlight-parentheses
