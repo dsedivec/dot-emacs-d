@@ -244,6 +244,7 @@
     ivy-xref
     ivy-yasnippet
     key-chord
+    loccur
     macrostep
     magit
     markdown-mode
@@ -1473,6 +1474,12 @@ surround \"foo\" with (in this example) parentheses.  I want
   (setq indent-tabs-mode nil))
 
 (add-hook 'lisp-mode-hook #'my:lisp-mode-hook)
+
+
+;;; loccur
+
+;; This should be autoloaded.  Maybe push upstream.
+(autoload 'loccur "loccur" nil t)
 
 
 ;;; magit

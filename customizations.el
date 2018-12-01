@@ -53,6 +53,7 @@
      ivy-xref
      ivy-yasnippet
      key-chord
+     loccur
      macrostep
      magit
      markdown-mode
