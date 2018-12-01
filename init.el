@@ -908,6 +908,11 @@ it returns the node that your EDIT-FORM changed)."
   ;; insert a newline and instead a completion slips in instead.
   (company-tng-configure-default)
 
+  ;; But now I'm starving for a key that means "complete the selected
+  ;; one".
+  (bind-keys :map company-active-map
+             ("<C-return>" . company-complete-selection))
+
   ;; C-<digit> to select a completion
   (dotimes (n 10)
     (bind-key (kbd (format "C-%d" n)) 'company-complete-number
