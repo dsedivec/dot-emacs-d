@@ -1823,6 +1823,11 @@ surround \"foo\" with (in this example) parentheses.  I want
   (purpose-x-popwin-update-conf))
 
 
+;;; package-build
+
+(setq package-build-recipes-dir "~/repositories/melpa/recipes")
+
+
 ;;; paredit
 
 (with-eval-after-load 'paredit

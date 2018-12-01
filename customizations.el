@@ -68,6 +68,7 @@
      org-plus-contrib
      orgtbl-aggregate
      osx-dictionary
+     package-build
      paradox
      paredit
      persp-mode
