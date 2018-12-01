@@ -28,6 +28,7 @@
      counsel-css
      csv-mode
      dash
+     dockerfile-mode
      deft
      dired-narrow
      dtrt-indent
