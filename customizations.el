@@ -53,6 +53,7 @@
      org-plus-contrib
      orgtbl-aggregate
      osx-dictionary
+     paradox
      paredit
      persp-mode
      phi-search
@@ -75,6 +76,7 @@
      yaml-mode
      zop-to-char
      )))
+ '(paradox-github-token t)
  '(safe-local-variable-values
    (quote
     ((eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript")))))

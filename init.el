@@ -244,6 +244,7 @@
     org-plus-contrib
     orgtbl-aggregate
     osx-dictionary
+    paradox
     paredit
     persp-mode
     phi-search
