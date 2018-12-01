@@ -241,6 +241,7 @@
     importmagic
     ivy
     ivy-xref
+    ivy-yasnippet
     key-chord
     macrostep
     magit
@@ -275,6 +276,8 @@
     window-purpose
     winum
     yaml-mode
+    yasnippet
+    yasnippet-snippets
     zop-to-char
     )
   "List of packages I want installed.  Will be installed in order.")
@@ -1330,6 +1333,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq highlight-symbol-idle-delay 0.5)
 
 (add-hook 'prog-mode-hook #'highlight-symbol-mode)
+
+
+;;; hippie-exp
+
+(bind-key "M-/" 'hippie-expand)
 
 
 ;;; hl-line+
@@ -2583,6 +2591,33 @@ for this command) must be an arrow key."
              ;; Shit, it doesn't explicitly bind RET but let's just
              ;; make sure.
              ("RET" . xref-quit-and-goto-xref)))
+
+
+;;; yasnippet
+
+(yas-global-mode 1)
+
+;; Always prompt with (I hope) Ivy.
+(setq yas-prompt-functions '(yas-completing-prompt))
+
+;; Don't use TAB to expand snippets.  Then I do stuff like type
+;; (cursor at |) "inseringd|foo", hit TAB to reindent my Python line,
+;; and end up expanding a docstring (WTF).
+;;
+;; Instead we'll set up something under my "leader key" to emulate
+;; Spacemacs bindings.
+(bind-keys :map yas-minor-mode-map
+           ("<tab>" . nil)
+           ("TAB" . nil)
+           ("M-m i s" . ivy-yasnippet))
+
+;; Also let hippie-expand expand snippets.
+(with-eval-after-load 'hippie-exp
+  (add-to-list 'hippie-expand-try-functions-list #'yas-hippie-try-expand))
+
+(with-eval-after-load 'which-key
+  (add-to-list 'which-key-replacement-alist
+               '(("C-c &" . "Prefix Command") . (nil . "yasnippet") )))
 
 
 ;;; zop-to-char

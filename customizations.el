@@ -50,6 +50,7 @@
      importmagic
      ivy
      ivy-xref
+     ivy-yasnippet
      key-chord
      macrostep
      magit
@@ -82,6 +83,8 @@
      window-purpose
      winum
      yaml-mode
+     yasnippet
+     yasnippet-snippets
      zop-to-char
      )))
  '(paradox-github-token t)
