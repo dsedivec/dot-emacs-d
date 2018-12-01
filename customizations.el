@@ -23,6 +23,7 @@
      company-anaconda
      company-shell
      company-statistics
+     company-web
      counsel
      counsel-css
      csv-mode
@@ -34,6 +35,7 @@
      edit-indirect
      el-patch
      eltu
+     emmet-mode
      exec-path-from-shell
      expand-region
      flx
@@ -79,6 +81,7 @@
      treepy
      undo-tree
      unicode-fonts
+     web-mode
      webpaste
      wgrep
      which-key

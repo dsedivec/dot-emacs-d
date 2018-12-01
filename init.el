@@ -272,6 +272,7 @@
     treepy
     undo-tree
     unicode-fonts
+    web-mode
     webpaste
     wgrep
     which-key
@@ -416,6 +417,17 @@ NEW-ELEMENT."
   (declare (indent 1))
   (dolist (hook-func hook-funcs)
     (add-hook hook-var hook-func)))
+
+;; When you're truly reluctant to type `(current-buffer)' as that last
+;; arg to `buffer-local-value', here's a version that defaults to the
+;; current buffer.  It's a generalized variable, too.
+
+(defun my:buffer-local-value (variable &optional buffer)
+  "Like `buffer-local-value' but BUFFER defaults to the current buffer."
+  (buffer-local-value variable (or buffer (current-buffer))))
+
+(gv-define-setter my:buffer-local-value (val variable &optional buffer)
+  `(set (make-local-variable ,variable) ,val))
 
 (defmacro my:with-spacemacs-company-backends-mode-var (mode temp-backends-var
                                                        &rest body)
@@ -1189,6 +1201,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
 
+;;; emmet-mode
+
+(setq emmet-preview-default t)
+
+
 ;;; etags
 
 (setq tags-revert-without-query t
@@ -1232,11 +1249,23 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; flycheck
 
 (setq flycheck-mode-line-prefix "✓"
-      ;; flycheck feedback in elisp buffers is not really helpful, and
-      ;; far too noisy (though it is occasionally very useful).
       flycheck-global-modes '(not
+                              ;; flycheck feedback in elisp buffers is
+                              ;; not really helpful, and far too noisy
+                              ;; (though it is occasionally very
+                              ;; useful).
                               emacs-lisp-mode
-                              org-mode)
+                              org-mode
+                              ;; flycheck doesn't really support
+                              ;; `web-mode', and anyway you might not
+                              ;; know what language (including
+                              ;; template languages) your `web-mode'
+                              ;; buffer is really using.  flycheck
+                              ;; maintainer says that there used to be
+                              ;; an HTML Tidy checker, I believe, but
+                              ;; it croaks badly on anything like a
+                              ;; template.
+                              web-mode)
       ;; Defaults to 400, sadly too few for some of my files at work.
       flycheck-checker-error-threshold 2000)
 
@@ -2401,6 +2430,110 @@ level of indentation."
 ;;; vc
 
 (my:load-recipes 'vc-use-icons-in-mode-line)
+
+
+;;; web-mode
+
+(setq web-mode-enable-auto-expanding t
+      ;; This will indent, like, all HTML in the vicinity when you
+      ;; yank, which is often kind of awful.
+      ;; https://github.com/fxbois/web-mode/issues/894
+      web-mode-enable-auto-indentation nil
+      web-mode-auto-close-style 2
+      web-mode-extra-expanders '(("o/" . "<code>|</code>")))
+
+;; `web-mode-use-tabs' sets up offset variables globally (and it will
+;; use the current value of `tab-width' to do so).
+(with-eval-after-load 'web-mode
+  (let ((tab-width 4))
+    (web-mode-use-tabs)))
+
+(smart-tabs-advise 'web-mode-indent-line
+                   ;; List of vars taken from `web-mode-use-tabs'.
+                   'web-mode-attr-indent-offset
+                   'web-mode-code-indent-offset
+                   'web-mode-css-indent-offset
+                   'web-mode-markup-indent-offset
+                   'web-mode-sql-indent-offset)
+
+;; Copied from http://web-mode.org/
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+;; We're "special" at work.
+(add-to-list 'auto-mode-alist '("\\.html\\.translate\\'" . web-mode))
+
+;; Open all HTML-looking files with `web-mode', not [m]html-mode.
+;; BTW, can't `setf' the cdr of these pairs, I think the cons cells
+;; are in "pure memory," because attempting to modify them with setf
+;; fails saying they're read-only.  See use of purecopy in files.el,
+;; where `magic-fallback-mode-alist' and `auto-mode-alist' are set.
+(setq magic-fallback-mode-alist (mapcar (lambda (pair)
+                                          (if (memq (cdr pair) '(html-mode
+                                                                 mhtml-mode))
+                                              (cons (car pair) 'web-mode)
+                                            pair))
+                                        magic-fallback-mode-alist))
+
+(defun my:web-mode-hook ()
+  (setq indent-tabs-mode t
+        tab-width 4)
+  (push '(company-web-html company-dabbrev-code)
+        (my:buffer-local-value 'company-backends)))
+
+(my:add-hooks 'web-mode-hook
+  #'my:web-mode-hook
+  #'smart-tabs-mode
+  #'emmet-mode
+  #'my:warn-white-space-mode)
+
+;; For future reference, here's an alternative way to define
+;; per-directory-tree engines, as opposed to my file/dir local
+;; variable hook, below.
+;; (add-to-list 'web-mode-engines-alist
+;;              (cons "cheetah"
+;;                    (format "\\`%s/.*\\.html\\(\\.translate\\)?\\'"
+;;                            (expand-file-name "~/git/pippin"))))
+
+(defvar my:web-mode-local-html-engine nil
+  "This can be set as a file or directory local variable and
+`my:web-mode-set-html-engine-from-local-variable' will use it to
+set the engine for the file upon loading.")
+
+(put 'my:web-mode-local-html-engine 'safe-local-variable #'stringp)
+
+(defun my:web-mode-set-html-engine-from-local-variable ()
+  "Set web-mode engine from `my:web-mode-local-html-engine', if set."
+  (when (and (boundp 'my:web-mode-local-html-engine)
+             (stringp my:web-mode-local-html-engine))
+    (web-mode-set-engine
+     (web-mode-engine-canonical-name my:web-mode-local-html-engine))))
+
+(defun my:web-mode-set-hook-to-set-engine-from-local-variable ()
+  "Set up engine from file-local variable after local variables are loaded."
+  (add-hook 'hack-local-variables-hook
+            #'my:web-mode-set-html-engine-from-local-variable nil t))
+
+(add-hook 'web-mode-hook
+          #'my:web-mode-set-hook-to-set-engine-from-local-variable)
+
+(with-eval-after-load 'web-mode
+  (bind-keys :map web-mode-map
+             ("C-M-u" . web-mode-element-parent)
+             ("C-M-d" . web-mode-element-child)
+             ("C-M-n" . web-mode-element-end)))
+
+(which-key-add-major-mode-key-based-replacements 'web-mode
+    "C-c C-a" "attribute"
+    "C-c C-b" "block"
+    "C-c C-d" "dom"
+    "C-c C-e" "element"
+    "C-c C-t" "tag")
 
 
 ;;; which-func
