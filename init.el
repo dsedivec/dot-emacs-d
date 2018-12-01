@@ -220,6 +220,7 @@
     deft
     dired-narrow
     dtrt-indent
+    dumb-jump
     edit-indirect
     el-patch
     (eltu :fetcher github :repo "dsedivec/eltu"
@@ -1121,6 +1122,13 @@ TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
   (when (and (boundp 'whitespace-mode) whitespace-mode)
     (whitespace-mode -1)
     (whitespace-mode 1)))
+
+
+;;; dumb-jump
+
+(setq dumb-jump-selector 'ivy)
+
+(bind-keys ("C-M-." . dumb-jump-go))
 
 
 ;;; ediff

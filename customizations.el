@@ -30,6 +30,7 @@
      deft
      dired-narrow
      dtrt-indent
+     dumb-jump
      edit-indirect
      el-patch
      eltu
