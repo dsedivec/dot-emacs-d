@@ -84,6 +84,7 @@
      treepy
      undo-tree
      unicode-fonts
+     web-beautify
      web-mode
      webpaste
      wgrep
