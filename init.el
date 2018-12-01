@@ -188,104 +188,6 @@
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
-(defvar my:packages
-  `(
-    ;; Best to make sure quelpa is here at the top, before any
-    ;; following quelpa recipes which will require quelpa, naturally.
-    quelpa
-
-    ace-window
-    adaptive-wrap
-    ;; Until https://github.com/domtronn/all-the-icons.el/pull/106 gets merged:
-    ;; all-the-icons
-    (all-the-icons :fetcher github :repo "ubolonton/all-the-icons.el"
-                   :branch "font-lock-fix" :files (:defaults "data"))
-    amx
-    auctex
-    auto-compile
-    auto-package-update
-    avy
-    bind-key
-    clean-aindent-mode
-    command-log-mode
-    comment-dwim-2
-    company
-    company-anaconda
-    company-shell
-    company-statistics
-    counsel
-    counsel-css
-    csv-mode
-    dash
-    deft
-    dired-narrow
-    dtrt-indent
-    dumb-jump
-    edit-indirect
-    el-patch
-    (eltu :fetcher github :repo "dsedivec/eltu"
-          :files (:defaults "eltu_update_tags.py"))
-    exec-path-from-shell
-    expand-region
-    flx
-    flycheck
-    flycheck-package
-    flycheck-pos-tip
-    god-mode
-    graphviz-dot-mode
-    highlight-parentheses
-    highlight-symbol
-    (hl-line+ :fetcher wiki)
-    hl-todo
-    hydra
-    imenu-list
-    impatient-mode
-    importmagic
-    ivy
-    ivy-xref
-    ivy-yasnippet
-    key-chord
-    loccur
-    macrostep
-    magit
-    markdown-mode
-    minions
-    multiple-cursors
-    mwim
-    (ns-copy-html :fetcher git
-                  :url ,(concat "file://" (expand-file-name
-                                           "~/repositories/ns-copy-html/")))
-    org-plus-contrib
-    orgtbl-aggregate
-    osx-dictionary
-    paradox
-    paredit
-    persp-mode
-    phi-search
-    projectile
-    (python :fetcher github :repo "dsedivec/python-el")
-    pyvenv
-    (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
-    smartparens
-    (sticky-region :fetcher github :repo "dsedivec/sticky-region")
-    swiper
-    transpose-frame
-    treepy
-    undo-tree
-    unicode-fonts
-    web-mode
-    webpaste
-    wgrep
-    which-key
-    window-purpose
-    winum
-    yaml-mode
-    yasnippet
-    yasnippet-snippets
-    zop-to-char
-    )
-  "List of packages I want installed.  Will be installed in order.")
-
 (defvar my:package-last-refresh 0)
 
 (defvar my:package-max-age-before-refresh 3600)
@@ -300,58 +202,73 @@
                 my:package-max-age-before-refresh))
     (package-refresh-contents)))
 
-(defun my:packages-install (&optional pkgs)
-  "Install packages listed in `my:packages'.
-pkgs is a list of either package names as symbols, or else quelpa
-recipes.  Returns list of package names as symbols (even for
-quelpa recipes)."
-  (interactive)
-  (mapcar (lambda (pkg) (let ((pkg-name (if (consp pkg) (car pkg) pkg)))
-                          (unless (package-installed-p pkg-name)
-                            (if (consp pkg)
-                                (quelpa pkg)
-                              (my:package-refresh-maybe)
-                              (package-install pkg-name)))
-                          pkg-name))
-          (or pkgs my:packages)))
+(defvar my:quelpa-packages
+  `(
+    ;; Until https://github.com/domtronn/all-the-icons.el/pull/106 gets merged:
+    ;; all-the-icons
+    (all-the-icons :fetcher github :repo "ubolonton/all-the-icons.el"
+                   :branch "font-lock-fix" :files (:defaults "data"))
+    (eltu :fetcher github :repo "dsedivec/eltu"
+          :files (:defaults "eltu_update_tags.py"))
+    (ns-copy-html :fetcher git
+                  :url ,(concat "file://" (expand-file-name
+                                           "~/repositories/ns-copy-html/")))
+    (hl-line+ :fetcher wiki)
+    (python :fetcher github :repo "dsedivec/python-el")
+    (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
+    (sticky-region :fetcher github :repo "dsedivec/sticky-region")
+    ))
 
 (defun my:packages-sync (&optional upgrade)
-  "Install, (maybe) upgrade, and remove packages according to `my:packages'.
+  "Install, (maybe) upgrade, and remove packages.
 
-Only upgrade if UPGRADE is true, or invoked with a prefix
-argument when called interactively.
+Selected but missing packages are installed.  Missing packages
+from `my:quelpa-packages' are installed.  Packages that are
+neither selected nor in `my:quelpa-packages' are removed via
+`package-autoremove'.
 
-Packages not in `my:packages' are removed.  Package removal is
-suppressed when running Spacemacs.  Spacemacs probably takes care
-of that for us, and I don't want to interfere with it."
+Package removal is suppressed when running Spacemacs.  Spacemacs
+probably takes care of that for us, and I don't want to interfere
+with it.
+
+If UPGRADE is true, or if this command is invoked with a prefix
+argument, packages (both package.el and Quelpa) are
+upgraded."
   (interactive "P")
-  ;; `auto-package-update-now' calls `package-refresh-contents', so we
-  ;; call that first and let our advice update
-  ;; `my:package-last-refresh', so that following calls to
-  ;; `my:package-refresh-maybe' may end up being a no-op.  But if
-  ;; `auto-package-update-now' isn't called here then we'll (maybe!)
-  ;; need to refresh packages ourselves.
+  (unless (package-installed-p 'quelpa)
+    (package-install 'quelpa))
+  (let* ((quelpa-pkg-names
+          (mapcar (lambda (pkg)
+                    (let ((pkg-name (car pkg)))
+                      (condition-case-unless-debug err
+                          (quelpa pkg :upgrade upgrade)
+                        (t
+                         (warn "Quelpa error %s %s: %S"
+                               (if upgrade
+                                   "installing/upgrading"
+                                 "installing")
+                               pkg-name
+                               err)))
+                      pkg-name))
+                  my:quelpa-packages))
+         ;; Must remove Quelpa packages from `package-activated-list'
+         ;; so that `auto-package-update-now' doesn't bitch about not
+         ;; recognizing them.
+         (package-activated-list (seq-remove (lambda (pkg)
+                                               (memq pkg quelpa-pkg-names))
+                                             package-activated-list)))
   (when upgrade
-    ;; First upgrade quelpa packages.
-    (let* ((quelpa-packages (mapcar (lambda (pkg)
-                                      (with-demoted-errors
-                                          (quelpa pkg :upgrade t))
-                                      (car pkg))
-                                    (seq-filter #'listp my:packages)))
-           ;; Now do a dance to take quelpa packages out of
-           ;; `package-activated-list' so that
-           ;; `auto-package-upate-now' doesn't bitch about being
-           ;; unable to update it.
-           (package-activated-list (seq-remove (lambda (pkg)
-                                                 (memq pkg quelpa-packages))
-                                               package-activated-list)))
+    ;; Make sure we have the latest packages when we're upgrading.
+    (my:package-refresh-maybe t))
+  (package-install-selected-packages)
+    (when upgrade
       (auto-package-update-now)))
-  (let ((pkg-names (my:packages-install)))
-    (my:unless-spacemacs
-      ;; Is it bad to put names from quelpa recipes in here?  It makes
-      ;; package-autoremove work real nice!
-      (customize-save-variable 'package-selected-packages pkg-names)
-      (package-autoremove))))
+  (my:unless-spacemacs
+    ;; Interestingly this will not remove Quelpa packages because
+    ;; Quelpa puts our requested packages into
+    ;; `package-selected-packages'.  I don't know if that's sane, but
+    ;; it works for me right now.
+    (package-autoremove)))
 
 ;; Don't show the package update buffer if nothing was updated.
 (define-advice apu--write-results-buffer
