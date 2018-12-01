@@ -45,6 +45,7 @@
      highlight-parentheses
      highlight-symbol
      hl-line+
+     hl-todo
      hydra
      imenu-list
      importmagic

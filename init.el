@@ -236,6 +236,7 @@
     highlight-parentheses
     highlight-symbol
     (hl-line+ :fetcher wiki)
+    hl-todo
     hydra
     imenu-list
     importmagic
@@ -1350,6 +1351,14 @@ surround \"foo\" with (in this example) parentheses.  I want
   ;; but this might turn out to be a bad idea, and instead I should
   ;; set it only in org-mode or something like that.
   (setq hl-line-overlay-priority 1))
+
+
+;;; hl-todo
+
+(global-hl-todo-mode 1)
+
+(setf (cdr (assoc "XXX" hl-todo-keyword-faces))
+      '(:inherit hl-todo :foreground "yellow" :background "red"))
 
 
 ;;; ielm
