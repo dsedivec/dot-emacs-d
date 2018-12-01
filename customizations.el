@@ -21,6 +21,7 @@
      comment-dwim-2
      company
      company-anaconda
+     company-shell
      company-statistics
      counsel
      csv-mode

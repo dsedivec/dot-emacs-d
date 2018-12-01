@@ -211,6 +211,7 @@
     comment-dwim-2
     company
     company-anaconda
+    company-shell
     company-statistics
     counsel
     csv-mode
@@ -2015,6 +2016,45 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; server
 
 (server-start)
+
+
+;;; sh-script
+
+(defun my:sh-mode-hook ()
+  (my:setq-local indent-tabs-mode t
+                 tab-width 4)
+  (setq-local company-backends (cons '(company-shell
+                                       company-keywords
+                                       company-dabbrev-code)
+                                     company-backends)))
+
+;; Probably do want `my:warn-white-space-mode' to come after
+;; `my:sh-mode-hook' which sets `tab-width'.
+(my:add-hooks 'sh-mode-hook
+  #'my:warn-white-space-mode
+  #'smart-tabs-mode
+  #'my:sh-mode-hook)
+
+;; XXX This is a bad idea, since it potentially steps on any other
+;; modes that use smie.  Need to find a better way.
+(smart-tabs-advise 'smie-indent-line 'sh-basic-offset)
+
+;; I wasn't getting completions for "then" and "fi".  "fi" was
+;; really screwing me up since a short pause let company-mode kick
+;; in and I end up hitting RET and turning my intended "fi" into
+;; "finish_some_other_stuff" or something equally ridiculous.  This
+;; fixes that.  I am also worried that I am somehow overriding
+;; normal completions, which may not be to my benefit.  May also
+;; want/need to not complete in strings/comments, not sure.
+
+(defun my:sh-add-company-keywords ()
+  (set (make-local-variable 'company-keywords-alist)
+       (list (cons 'sh-mode (seq-mapcat #'sh-feature
+                                        (list sh-builtins
+                                              sh-leading-keywords
+                                              sh-other-keywords))))))
+
+(add-hook 'sh-set-shell-hook #'my:sh-add-company-keywords)
 
 
 ;;; simple
