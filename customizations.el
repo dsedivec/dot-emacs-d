@@ -50,6 +50,7 @@
      hl-todo
      hydra
      imenu-list
+     impatient-mode
      importmagic
      ivy
      ivy-xref
