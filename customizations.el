@@ -40,6 +40,7 @@
      flycheck
      flycheck-package
      flycheck-pos-tip
+     god-mode
      graphviz-dot-mode
      highlight-parentheses
      highlight-symbol
@@ -49,6 +50,7 @@
      importmagic
      ivy
      ivy-xref
+     key-chord
      macrostep
      magit
      markdown-mode

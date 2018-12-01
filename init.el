@@ -231,6 +231,7 @@
     flycheck
     flycheck-package
     flycheck-pos-tip
+    god-mode
     graphviz-dot-mode
     highlight-parentheses
     highlight-symbol
@@ -240,6 +241,7 @@
     importmagic
     ivy
     ivy-xref
+    key-chord
     macrostep
     magit
     markdown-mode
@@ -1260,6 +1262,54 @@ surround \"foo\" with (in this example) parentheses.  I want
                'overlong-summary-line))
 
 (setq git-commit-summary-max-length 50)
+
+
+;;; god-mode
+
+(defun my:get-standard-value (var)
+  (eval (car (get var 'standard-value))))
+
+(defun my:revert-to-standard-value (&rest vars)
+  (dolist (var vars)
+    (set var (my:get-standard-value var))))
+
+;; `global' just makes it easy for me to toggle how I want to manage
+;; god-mode, since I vacillate.
+(let ((global t))
+  (key-chord-mode 1)
+  ;; Turn off god-mode in all buffers.  (Turn it on here, then call
+  ;; `god-mode-all' which toggles in all buffers including this one.)
+  (god-local-mode 1)
+  (god-mode-all)
+  (key-chord-define-global "fj" (if global 'god-mode-all 'god-local-mode))
+  (if global
+      (setq god-exempt-major-modes nil
+            god-exempt-predicates nil)
+    (my:revert-to-standard-value 'god-exempt-major-modes
+                                 'god-exempt-predicates)))
+
+(with-eval-after-load 'god-mode
+  (bind-keys :map god-local-mode-map ("." . repeat)))
+
+(defface my:god-mode-enabled-mode-line-face '((t (:inherit mode-line
+                                                  :background "#060")))
+  "Replacement for the mode-line face when god-mode is active in a buffer.")
+
+(defun my:god-mode-enabled-hook ()
+  (setq cursor-type 'hbar)
+  (set (make-local-variable 'face-remapping-alist)
+       (cons '(mode-line . my:god-mode-enabled-mode-line-face)
+             face-remapping-alist)))
+
+(add-hook 'god-mode-enabled-hook #'my:god-mode-enabled-hook)
+
+(defun my:god-mode-disabled-hook ()
+  (setq cursor-type 'box)
+  (setq face-remapping-alist
+        (rassq-delete-all 'my:god-mode-enabled-mode-line-face
+                          face-remapping-alist)))
+
+(add-hook 'god-mode-disabled-hook #'my:god-mode-disabled-hook)
 
 
 ;;; goto-addr
