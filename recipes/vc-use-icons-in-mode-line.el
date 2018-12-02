@@ -27,7 +27,5 @@
                  (set-text-properties 0 icon-len match-props icon)
                  (add-text-properties 0 icon-len icon-props icon)
                  (concat (match-string 1 match) icon)))
-             vc-mode))
-      ;; Superfluous?
-      (force-mode-line-update))
+             vc-mode)))
     backend))
