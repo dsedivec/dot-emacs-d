@@ -95,7 +95,7 @@
   (load-theme 'dsedivec t))
 
 ;; Re-write `package-selected-packages' in `custom-file' with one
-;; package per line.  This way, when I've added a bunch of new
+;; package per line, sorted.  This way, when I've added a bunch of new
 ;; packages to my init.el, and I want to commit each addition in its
 ;; own logical commit, I don't have to edit the staged version of
 ;; `package-selected-packages': now I can just select the lines that
@@ -103,7 +103,7 @@
 ;; less error prone, and all at the low low cost of a little
 ;; moderately-gross advice!
 (define-advice custom-save-variables
-    (:after (&rest _) my:selected-packages-one-per-line)
+    (:after (&rest _) my:selected-packages-one-per-line-sorted)
   (save-excursion
     (let ((err-fmt "In `my:selected-packages-one-per-line' advice: %S")
           (this-buf (current-buffer))
@@ -154,7 +154,7 @@
          ;; Insert the package list with one package per line
          (insert "(")
          (newline-and-indent)
-         (dolist (package packages)
+         (dolist (package (cl-sort packages #'string< :key #'symbol-name))
            (prin1 package this-buf)
            (newline-and-indent))
          (insert ")")

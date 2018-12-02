@@ -6,7 +6,6 @@
  '(package-selected-packages
    (quote
     (
-     quelpa
      ace-window
      adaptive-wrap
      all-the-icons
@@ -28,9 +27,9 @@
      counsel-css
      csv-mode
      dash
-     dockerfile-mode
      deft
      dired-narrow
+     dockerfile-mode
      dtrt-indent
      dumb-jump
      edit-indirect
@@ -76,6 +75,7 @@
      projectile
      python
      pyvenv
+     quelpa
      smart-tabs
      smartparens
      sticky-region
