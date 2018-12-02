@@ -57,42 +57,16 @@
 (my:load-recipe 'timestamp-messages)
 
 
-;;; Spacemacs compatibility
-
-(defvar my:is-spacemacs (boundp 'dotspacemacs-directory))
-
-(defmacro my:if-spacemacs (then &rest else)
-  `(if my:is-spacemacs
-       ,then
-     ,@else))
-
-(put 'my:if-spacemacs 'common-lisp-indent-function-for-elisp 1)
-
-(defmacro my:when-spacemacs (&rest body)
-  `(when my:is-spacemacs ,@body))
-
-(put 'my:when-spacemacs 'common-lisp-indent-function-for-elisp 0)
-
-(defmacro my:unless-spacemacs (&rest body)
-  `(unless my:is-spacemacs ,@body))
-
-(put 'my:unless-spacemacs 'common-lisp-indent-function-for-elisp 0)
-
-
 ;;; Customization
 
-(let ((this-emacs-dir (my:if-spacemacs
-                          dotspacemacs-directory
-                        user-emacs-directory)))
+;; Set this early before I potentially install packages, which will
+;; modify customizable variable `package-selected-packages'.
+(setq custom-file (expand-file-name "customizations.el" user-emacs-directory))
+(load custom-file)
 
-  ;; Set this early before I potentially install packages, which will
-  ;; modify customizable variable `package-selected-packages'.
-  (setq custom-file (expand-file-name "customizations.el" this-emacs-dir))
-  (load custom-file)
-
-  (add-to-list 'custom-theme-load-path
-               (expand-file-name "themes" this-emacs-dir))
-  (load-theme 'dsedivec t))
+(add-to-list 'custom-theme-load-path
+             (expand-file-name "themes" user-emacs-directory))
+(load-theme 'dsedivec t)
 
 ;; Re-write `package-selected-packages' in `custom-file' with one
 ;; package per line, sorted.  This way, when I've added a bunch of new
@@ -227,10 +201,6 @@ from `my:quelpa-packages' are installed.  Packages that are
 neither selected nor in `my:quelpa-packages' are removed via
 `package-autoremove'.
 
-Package removal is suppressed when running Spacemacs.  Spacemacs
-probably takes care of that for us, and I don't want to interfere
-with it.
-
 If UPGRADE is true, or if this command is invoked with a prefix
 argument, packages (both package.el and Quelpa) are
 upgraded."
@@ -263,12 +233,10 @@ upgraded."
   (package-install-selected-packages)
     (when upgrade
       (auto-package-update-now)))
-  (my:unless-spacemacs
-    ;; Interestingly this will not remove Quelpa packages because
-    ;; Quelpa puts our requested packages into
-    ;; `package-selected-packages'.  I don't know if that's sane, but
-    ;; it works for me right now.
-    (package-autoremove)))
+  ;; Interestingly this will not remove Quelpa packages because Quelpa
+  ;; puts our requested packages into `package-selected-packages'.  I
+  ;; don't know if that's sane, but it works for me right now.
+  (package-autoremove))
 
 ;; Don't show the package update buffer if nothing was updated.
 (define-advice apu--write-results-buffer
@@ -347,23 +315,6 @@ NEW-ELEMENT."
 (gv-define-setter my:buffer-local-value (val variable &optional buffer)
   `(set (make-local-variable ,variable) ,val))
 
-(defmacro my:with-spacemacs-company-backends-mode-var (mode temp-backends-var
-                                                       &rest body)
-  "Do something with the Spacemacs company-backends variable for a mode.
-
-I needed this because it seems like Spacemacs has now introduced
-more than one variable that holds the backends for a given mode,
-and I guess I need to modify them both.  For now.  In the future
-I can theoretically just change this macro if/when Spacemacs
-changes underneath me, which should be convenient."
-  (declare (indent 2))
-  (let* ((raw-backends-var (intern (format "company-backends-%S-raw" mode)))
-         (backends-var (intern (format "company-backends-%S" mode))))
-    `(let ((,temp-backends-var ,raw-backends-var))
-       ,@body
-       (setq ,raw-backends-var ,temp-backends-var
-             ,backends-var ,temp-backends-var))))
-
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
@@ -428,9 +379,10 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; "Leader" keys setup
 
-(my:unless-spacemacs
-  (define-prefix-command 'my:global-leader-map)
-  (bind-key "M-m" 'my:global-leader-map))
+;; Inspired by Spacemacs.
+
+(define-prefix-command 'my:global-leader-map)
+(bind-key "M-m" 'my:global-leader-map)
 
 
 ;;;; Emacs built-ins
@@ -457,91 +409,90 @@ it returns the node that your EDIT-FORM changed)."
   ;; without a friggin' white title bar (WTF).
   (setf (alist-get 'ns-transparent-titlebar default-frame-alist) nil))
 
-(my:unless-spacemacs
-  ;; Mode line mods
+;; Mode line mods
 
-  ;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
-  (unless
-      (my:treepy-edit-mode-line-var
-          ((default-value 'mode-line-mule-info) zip)
-        (equal (treepy-node zip) "%z")
-        (treepy-replace zip
-                        `(:eval (let ((coding-info (format-mode-line
-                                                    ,(treepy-node zip))))
-                                  (unless (string-match-p "^[-U]$" coding-info)
-                                    coding-info)))))
-    (warn "couldn't make \"%%z\" conditional in `mode-line-mule-info'"))
+;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
+(unless
+    (my:treepy-edit-mode-line-var
+        ((default-value 'mode-line-mule-info) zip)
+      (equal (treepy-node zip) "%z")
+      (treepy-replace zip
+                      `(:eval (let ((coding-info (format-mode-line
+                                                  ,(treepy-node zip))))
+                                (unless (string-match-p "^[-U]$" coding-info)
+                                  coding-info)))))
+  (warn "couldn't make \"%%z\" conditional in `mode-line-mule-info'"))
 
-  ;; Same with EOL, don't need to see it unless it's weird.
-  (unless
-      (my:treepy-edit-mode-line-var
-          ((default-value 'mode-line-mule-info) zip)
-        (equal (treepy-node zip) '(:eval (mode-line-eol-desc)))
-        (treepy-replace zip
-                        '(:eval (let ((eol-desc (mode-line-eol-desc)))
-                                  (unless (equal eol-desc ":")
-                                    eol-desc)))))
-    (warn "couldn't make EOL info conditional in `mode-line-mule-info'"))
+;; Same with EOL, don't need to see it unless it's weird.
+(unless
+    (my:treepy-edit-mode-line-var
+        ((default-value 'mode-line-mule-info) zip)
+      (equal (treepy-node zip) '(:eval (mode-line-eol-desc)))
+      (treepy-replace zip
+                      '(:eval (let ((eol-desc (mode-line-eol-desc)))
+                                (unless (equal eol-desc ":")
+                                  eol-desc)))))
+  (warn "couldn't make EOL info conditional in `mode-line-mule-info'"))
 
-  ;; Don't take up mode line space if current file is local.  (BTW, %@
-  ;; seems to be undocumented?  Read src/xdisp.c.)
-  (unless
-      (my:treepy-edit-mode-line-var
-          ((default-value 'mode-line-remote) zip)
-        (equal (treepy-node zip) "%1@")
-        (treepy-replace zip
-                        ;; FYI this is approximately the same logic as
-                        ;; src/xdisp.c uses.
-                        `(:eval (when (and (stringp default-directory)
-                                           (file-remote-p default-directory))
-                                  ,(treepy-node zip)))))
-    (warn "couldn't make remote indicator conditional in `mode-line-remote'"))
+;; Don't take up mode line space if current file is local.  (BTW, %@
+;; seems to be undocumented?  Read src/xdisp.c.)
+(unless
+    (my:treepy-edit-mode-line-var
+        ((default-value 'mode-line-remote) zip)
+      (equal (treepy-node zip) "%1@")
+      (treepy-replace zip
+                      ;; FYI this is approximately the same logic as
+                      ;; src/xdisp.c uses.
+                      `(:eval (when (and (stringp default-directory)
+                                         (file-remote-p default-directory))
+                                ,(treepy-node zip)))))
+  (warn "couldn't make remote indicator conditional in `mode-line-remote'"))
 
-  ;; Move the buffer percentage way over to the right on the mode line.
-  (let ((percent-spec
-         (my:treepy-edit-mode-line-var
-             (mode-line-position zip)
-           (pcase (treepy-node zip)
-             (`(:propertize mode-line-percent-position . ,_) t))
-           (treepy-remove zip))))
-    (if (not percent-spec)
-        (warn (concat "couldn't find `mode-line-percent-position'"
-                      " in `mode-line-position'"))
-      (unless (my:treepy-edit-mode-line-var
-                  ((default-value 'mode-line-format) zip)
-                (eq (treepy-node zip) 'mode-line-end-spaces)
-                (treepy-insert-left zip percent-spec))
-        (warn (concat "couldn't find `mode-line-end-spaces',"
-                      " appending percentage to mode line"))
-        ;; We already removed it from `mode-line-position', above.
-        ;; Need to put it somewhere so it's not totally lost.
-        (nconc mode-line-format (list percent-spec)))))
+;; Move the buffer percentage way over to the right on the mode line.
+(let ((percent-spec
+       (my:treepy-edit-mode-line-var
+           (mode-line-position zip)
+         (pcase (treepy-node zip)
+           (`(:propertize mode-line-percent-position . ,_) t))
+         (treepy-remove zip))))
+  (if (not percent-spec)
+      (warn (concat "couldn't find `mode-line-percent-position'"
+                    " in `mode-line-position'"))
+    (unless (my:treepy-edit-mode-line-var
+                ((default-value 'mode-line-format) zip)
+              (eq (treepy-node zip) 'mode-line-end-spaces)
+              (treepy-insert-left zip percent-spec))
+      (warn (concat "couldn't find `mode-line-end-spaces',"
+                    " appending percentage to mode line"))
+      ;; We already removed it from `mode-line-position', above.
+      ;; Need to put it somewhere so it's not totally lost.
+      (nconc mode-line-format (list percent-spec)))))
 
-  ;; Remove extra spaces between buffer ID and position.
-  (unless
-      (my:treepy-edit-mode-line-var
-          ((default-value 'mode-line-format) zip)
-        (let ((node (treepy-node zip)))
-          (and (stringp node)
-               (string-match-p "^ \\{2,\\}$" node)
-               (eq (-some-> zip
-                            treepy-right
-                            treepy-node)
-                   'mode-line-position)))
-        (treepy-replace zip " "))
-    (warn "couldn't remove spaces before buffer position in mode line"))
+;; Remove extra spaces between buffer ID and position.
+(unless
+    (my:treepy-edit-mode-line-var
+        ((default-value 'mode-line-format) zip)
+      (let ((node (treepy-node zip)))
+        (and (stringp node)
+             (string-match-p "^ \\{2,\\}$" node)
+             (eq (-some-> zip
+                          treepy-right
+                          treepy-node)
+                 'mode-line-position)))
+      (treepy-replace zip " "))
+  (warn "couldn't remove spaces before buffer position in mode line"))
 
-  ;; Remove fixed width for position output, causes too much extra space
-  ;; after (line,col) in mode line.
-  (unless
-      (my:treepy-edit-mode-line-var
-          (mode-line-position zip)
-        ;; Note there is also a %C variant which I don't use.
-        (and (equal (treepy-node zip) " (%l,%c)")
-             (treepy-up zip)
-             (-some-> zip treepy-left treepy-node numberp))
-        (treepy-replace (treepy-up zip) (treepy-node zip)))
-    (warn "couldn't remove width specification from `mode-line-position'")))
+;; Remove fixed width for position output, causes too much extra space
+;; after (line,col) in mode line.
+(unless
+    (my:treepy-edit-mode-line-var
+        (mode-line-position zip)
+      ;; Note there is also a %C variant which I don't use.
+      (and (equal (treepy-node zip) " (%l,%c)")
+           (treepy-up zip)
+           (-some-> zip treepy-left treepy-node numberp))
+      (treepy-replace (treepy-up zip) (treepy-node zip)))
+  (warn "couldn't remove width specification from `mode-line-position'"))
 
 
 ;;;; Configure various packages
@@ -683,17 +634,6 @@ it returns the node that your EDIT-FORM changed)."
   #'flycheck-mode
   #'show-paren-mode
   #'my:warn-white-space-mode)
-
-(my:when-spacemacs
-  ;; smartparens drives me nuts, Spacemacs.  Try typing just " twice,
-  ;; which generates ``''|'' with cursor at the |.
-  (remove-hook 'LaTeX-mode-hook 'smartparens-mode)
-
-  ;; Spacemacs leaves company-dabbrev in its default backend list.
-  ;; This makes typing in LaTeX kind of annoying, as it tries to
-  ;; complete while I'm writing if I just pause for a bit.
-  (my:with-spacemacs-company-backends-mode-var LaTeX-mode backends
-    (setq backends (delq 'company-dabbrev backends))))
 
 (my:load-recipe 'auctex-aggressively-load-styles)
 
@@ -993,9 +933,6 @@ TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
       deft-use-filename-as-title t
       deft-use-filter-string-for-filename t)
 
-(my:when-spacemacs
-  (add-to-list 'spacemacs-useful-buffers-regexp "\\*Deft\\*"))
-
 
 ;;; delsel
 
@@ -1100,8 +1037,6 @@ surround \"foo\" with (in this example) parentheses.  I want
   (setq imenu-generic-expression
         (append imenu-generic-expression
                 '(("Sections" "^;;;;?\\s-+\\(.*\\)" 1))))
-  (my:when-spacemacs
-    (smartparens-mode -1))
   ;; XXX
   ;; (add-hook 'completion-at-point-functions
   ;;           #'my:elisp-feature-completion-at-point nil t)
@@ -1360,13 +1295,6 @@ surround \"foo\" with (in this example) parentheses.  I want
            ("C-SPC" . ivy-restrict-to-matches)
            ("S-SPC" . nil))
 
-;; For some reason, ivy can't load flx on load?  Or something?
-;; Spacemacs thing?  Not sure.  Workaround:
-(when (and (not ivy--flx-featurep)
-           (require 'flx nil t))
-  (warn "flx is available but ivy couldn't load it?  fixing")
-  (setq ivy--flx-featurep t))
-
 ;; ivy-initial-inputs-alist makes "^" the default for a bunch of
 ;; commands, like counsel-M-x, which I generally dislike.
 (setq ivy-initial-inputs-alist nil)
@@ -1455,27 +1383,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (with-eval-after-load 'markdown-mode
   (bind-keys :map gfm-mode-map
-             ("C-c '" . my:gfm-fcb-edit))
-
-  (my:when-spacemacs
-    ;; Spacemacs overrides M-l!  WTH!  I remove this whole set of
-    ;; bindings, since I want M-l back, but if I started using the
-    ;; others it would be reasonable for my fingers to expect M-l to
-    ;; keep working like Spacemacs intended.
-    (bind-keys :map markdown-mode-map
-               ("M-h" . nil)
-               ("M-j" . nil)
-               ("M-k" . nil)
-               ("M-l" . nil))))
+             ("C-c '" . my:gfm-fcb-edit)))
 
 (setq markdown-command "pandoc -f markdown -t html --standalone"
       markdown-header-scaling t)
-
-(my:when-spacemacs
-  ;; Spacemacs turns on smartparens-mode, but I don't like it.
-  ;; (Combined with show-smartparens-mode it also seems to lock up the
-  ;; whole buffer.)
-  (remove-hook 'markdown-mode-hook 'smartparens-mode))
 
 (defun my:markdown-mode-hook ()
   (my:setq-local indent-tabs-mode nil)
@@ -1606,13 +1517,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'org-agenda
   (setq org-agenda-files (org-add-archive-files (list org-default-notes-file))))
 
-(my:when-spacemacs
-  (setq
-   ;; Spacemacs turns this on but I don't want/need it.  Plus it makes
-   ;; headlipes expand when I mark a task as DONE, which is
-   ;; irritating.
-   org-log-done nil))
-
 (bind-keys ("C-c r" . org-capture)
            ("M-m a o k i" . org-clock-in-last)
            ("M-m a o k o" . org-clock-out)
@@ -1643,17 +1547,6 @@ surround \"foo\" with (in this example) parentheses.  I want
              ;; modes/mods/settings (`org-replace-disputed-keys'?).
              ("C-M-," . org-priority))
 
-  (my:when-spacemacs
-    ;; M-RET stopped working after org-mode stopped binding M-<return>
-    ;; (in favor of M-RET directly) in upstream commit 80cbf909eab.
-    ;; Give me back my fucking M-RET, please.  To figure this out I
-    ;; had to dive into the bowels of bind-map, but see also/first
-    ;; spacemacs/set-leader-keys-for-major-mode, which is where the
-    ;; fun starts.  That function is the one called from
-    ;; layers/+emacs/org/packages.el.  See also
-    ;; https://github.com/syl20bnr/spacemacs/issues/9603.
-    (bind-key "M-RET" nil spacemacs-org-mode-map-root-map))
-
   ;; Allow org-open-at-point (C-c C-o) to open OS X message: links.
   (org-link-set-parameters "message"
                            :follow (lambda (path)
@@ -1679,26 +1572,6 @@ surround \"foo\" with (in this example) parentheses.  I want
                                org-babel-load-languages))
 
 (add-hook 'org-mode-hook #'visual-line-mode)
-
-(defun my:org-mode-hook ()
-  ;; Spacemacs turns on hl-todo-mode in text-mode-hook, but that
-  ;; totally fucks up my TODO and DONE keywords in org-mode buffers.
-  (my:when-spacemacs
-    (if (and (boundp 'hl-todo-mode) hl-todo-mode)
-        (hl-todo-mode -1)
-      (warn (concat "Spacemacs did not turn on hl-todo-mode, maybe"
-                    " update my configuration")))))
-
-(add-hook 'org-mode-hook #'my:org-mode-hook)
-
-(my:when-spacemacs
-  ;; Spacemacs turns on company-mode in org-mode buffers, which I
-  ;; don't like.
-  (spacemacs|disable-company org-mode)
-
-  ;; *Org Agenda* buffers are important Spacemacs, let me easily
-  ;; switch back to them with C-x b.
-  (add-to-list 'spacemacs-useful-buffers-regexp "\\*Org Agenda\\*"))
 
 ;; Clock persistence between restarts.
 (setq org-clock-persist t
@@ -2226,16 +2099,6 @@ level of indentation."
   ;; PostgreSQL connections should ask for the port.
   (add-to-list 'sql-postgres-login-params 'port t))
 
-(my:when-spacemacs
-  (with-eval-after-load 'smartparens
-    (sp-local-pair
-     '(sql-mode sql-interactive-mode) "(" ")"
-     ;; (|), hit RET, should insert a newline
-     :post-handlers '(:add
-                      (spacemacs/smartparens-pair-newline-and-indent "RET"))
-     ;; Don't pair when looking at some SQL, just insert ( please
-     :unless '(:add sp-point-before-word-p))))
-
 ;; Used by my expand-region setup, see below.
 (defun my:sql-mark-statement ()
   (interactive)
@@ -2258,13 +2121,6 @@ level of indentation."
                  electric-pair-inhibit-predicate
                  #'my:electric-pair-default-plus-before-word-inhibit)
   (my:warn-white-space-mode)
-  ;; Spacemacs's sql layer currently doesn't enable completion.
-  (my:when-spacemacs
-    (if company-backends
-        (warn (concat "Looks like Spacemacs started configuring company-mode"
-                      " in the SQL layer, update your config"))
-      (company-mode 1)
-      (setq company-backends spacemacs-default-company-backends)))
   (my:add-to-list-before (make-local-variable 'er/try-expand-list)
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
@@ -2296,28 +2152,6 @@ level of indentation."
 
 (with-eval-after-load 'company-dabbrev-code
   (add-to-list 'company-dabbrev-code-modes 'sql-interactive-mode))
-
-(my:when-spacemacs
-  ;; Spacemacs shouldn't try to auto-indent my SQL yanks, Emacs
-  ;; doesn't have (my) auto-indentation for SQL.
-  (add-to-list 'spacemacs-indent-sensitive-modes 'sql-mode)
-
-  ;; Without this, C-x b won't suggest switching back to *SQL*.  I
-  ;; should probably push this upstream.
-  (add-to-list 'spacemacs-useful-buffers-regexp "\\*SQL\\*")
-
-  (defun my:sql-interactive-mode-hook ()
-    ;; Spacemacs adds a *fucking lambda* to sql-interactive-mode-hook
-    ;; that turns truncate-lines on.  I hate this.  I should push
-    ;; upstream to get this as a named function, if not a setting as
-    ;; well.
-    (if truncate-lines
-        (toggle-truncate-lines nil)
-      (warn "`truncate-lines' not on in SQLi buffer, did Spacemacs change?")))
-
-  ;; Must append this hook so we turn off truncate-lines after
-  ;; Spacemacs turns it on.
-  (add-hook 'sql-interactive-mode-hook #'my:sql-interactive-mode-hook t))
 
 (defun my:sql-format-region (start end)
   (interactive "r")
