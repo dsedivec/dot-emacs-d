@@ -830,66 +830,35 @@ it returns the node that your EDIT-FORM changed)."
                  'company-dabbrev-code-defer-prefix
                  'company-remove-dabbrev-code-duplicates)
 
-(cl-defun my:company-splice-backend (new-backend target-backends
-                                     &key
-                                       (warn-not-found :all)
-                                       (backends-var 'company-backends)
-                                       (make-backends-local t))
-  "Combine NEW-BACKEND together with all TARGET-BACKENDS in BACKENDS-VAR.
-TARGET-BACKENDS must be a list.  BACKENDS-VAR defaults to
-`company-backends'."
-  (let* (found
-         changed
-         (backends
-          (mapcar (lambda (backend)
-                    (cond
-                      ((member backend target-backends)
-                       (cl-pushnew backend found :test #'equal)
-                       (setq changed t)
-                       (if (listp backend)
-                           (append backend (list new-backend))
-                         (list backend new-backend)))
-                      ((and (listp backend)
-                            (memq new-backend backend))
-                       (let ((unspliced-backend
-                              (remq new-backend backend)))
-                         (cond
-                           ((and (null (cdr unspliced-backend))
-                                 ;; unspliced-backend has only a
-                                 ;; single element, so it's probably
-                                 ;; in the backends list as just 'foo.
-                                 ;; (If it is in there as '(foo) then
-                                 ;; we'll get it on the next
-                                 ;; condition.
-                                 (member (car unspliced-backend)
-                                         target-backends))
-                            (cl-pushnew (car unspliced-backend) found
-                                        :test #'equal))
-                           ((member unspliced-backend target-backends)
-                            (cl-pushnew unspliced-backend found
-                                        :test #'equal))))
-                       backend)
-                      (t
-                       backend)))
-                  (symbol-value backends-var))))
-    (cl-assert (if changed found t))
-    (when changed
-      (when make-backends-local
-        (make-local-variable backends-var))
-      (set backends-var backends))
-    (when-let ((missing (and warn-not-found
-                             (cond ((not found)
-                                    target-backends)
-                                   ((eq warn-not-found :all)
-                                    (seq-difference target-backends found))))))
-      (warn "Could not splice %S into %s backends: %S"
-            new-backend (if (not found) "any" "some") missing))))
+(defun my:company-group-existing-backend (backend other-backends
+                                          &optional globally no-warn)
+  (let* ((backends (copy-tree company-backends))
+         (cell (memq backend backends)))
+    (if (not cell)
+        (unless (or no-warn
+                    (seq-some (lambda (group)
+                                (and (consp group)
+                                     (memq backend group)
+                                     (seq-every-p (lambda (other-backend)
+                                                    (memq other-backend group))
+                                                  other-backends)))
+                              backends))
+          (warn "Couldn't group %S with %S" other-backends backend))
+      (setf (car cell) (cons backend other-backends))
+      (unless globally
+        (make-local-variable 'company-backends))
+      (setq company-backends backends))))
+
+(defvar my:company-generally-useful-prog-mode-backends
+  '(company-dabbrev-code company-files))
 
 ;; More than one mode hook wants to use this.
-(defun my:company-splice-dabbrev-code-into-capf ()
-  (my:company-splice-backend 'company-dabbrev-code '(company-capf)))
+(defun my:company-group-useful-backends-with-capf ()
+  (my:company-group-existing-backend
+   'company-capf
+   my:company-generally-useful-prog-mode-backends))
 
-(add-hook 'prog-mode-hook #'my:company-splice-dabbrev-code-into-capf t)
+(add-hook 'prog-mode-hook #'my:company-group-useful-backends-with-capf t)
 
 
 ;;; company-statistics
@@ -2147,7 +2116,7 @@ level of indentation."
 
 (my:add-hooks 'sql-interactive-mode-hook
   ;; Reverse order to make sure company gets loaded first.
-  #'my:company-splice-dabbrev-code-into-capf
+  #'my:company-group-useful-backends-with-capf
   #'company-mode)
 
 (with-eval-after-load 'company-dabbrev-code
