@@ -2173,7 +2173,8 @@ level of indentation."
 
 ;;; vc
 
-(my:load-recipes 'vc-use-icons-in-mode-line)
+(my:load-recipes 'vc-use-icons-in-mode-line
+                 'vc-truncate-long-branch-names)
 
 
 ;;; web-mode
