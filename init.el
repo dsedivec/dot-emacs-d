@@ -1878,6 +1878,24 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (my:load-recipes 'persp-mode-save-load-frame-configuration)
 
+;; Don't save buffers that aren't backed by a file, lest you get a
+;; bunch of useless Magit and EPC buffers in `fundamental-mode' after
+;; loading the last saved perspective.  We insert this just before the
+;; last built-in persp-mode handler, which is the default that tries
+;; to save every buffer.  This way we let things like TRAMP and
+;; `dired-mode' buffers get handled by the earlier (and also built-in)
+;; handlers.
+
+(defun my:persp-mode-dont-save-buffers-without-files (b)
+  (unless (buffer-file-name b)
+    'skip))
+
+(unless (memq #'my:persp-mode-dont-save-buffers-without-files
+              persp-save-buffer-functions)
+  (let ((last-cell (last persp-save-buffer-functions)))
+    (setf (cdr last-cell) (list (car last-cell))
+          (car last-cell) #'my:persp-mode-dont-save-buffers-without-files)))
+
 
 ;;; prog-mode
 
