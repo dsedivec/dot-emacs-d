@@ -1985,6 +1985,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq set-mark-command-repeat-pop t
       backward-delete-char-untabify-method nil)
 
+;; My Moom (macOS) configuration will maximize window on M-=, the
+;; default binding for `count-words-region'.  Put it elsewhere so I
+;; can use it.
+(bind-key "C-M-=" 'count-words-region)
+
+
 
 ;;; smartparens
 
