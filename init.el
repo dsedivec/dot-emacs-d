@@ -1908,6 +1908,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
 
+;;; pyvenv
+
+(exec-path-from-shell-copy-envs '("PYTHONPATH"  "WORKON_HOME"))
+
+
 ;;; recentf-mode
 
 (setq recentf-max-saved-items 1000)
