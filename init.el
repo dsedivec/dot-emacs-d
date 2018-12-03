@@ -2174,6 +2174,10 @@ level of indentation."
 
 ;;; unicode-fonts
 
+;; The alternative:
+;; (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") nil
+;;                   'prepend)
+
 (require 'unicode-fonts)
 
 ;; I build Emacs NeXTStep with the color fonts patch (for Apple Color
