@@ -809,6 +809,8 @@ it returns the node that your EDIT-FORM changed)."
       ;; buffers, not even just buffers of the same major mode.
       ;; (Consider, for example, sql-interactive-mode vs. sql-mode.)
       company-dabbrev-code-other-buffers 'all
+      ;; Also search *SQL* buffers, damn it.
+      company-dabbrev-ignore-buffers "\\` "
 
       company-occurrence-weight-function
       'company-occurrence-prefer-any-closest)
