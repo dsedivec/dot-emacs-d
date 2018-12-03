@@ -66,6 +66,7 @@
 
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
+
 (load-theme 'dsedivec t)
 
 ;; Re-write `package-selected-packages' in `custom-file' with one
