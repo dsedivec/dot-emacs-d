@@ -228,13 +228,12 @@ upgraded."
          (package-activated-list (seq-remove (lambda (pkg)
                                                (memq pkg quelpa-pkg-names))
                                              package-activated-list)))
-    (if upgrade
-        ;; This calls `package-refresh-contents'.
-        (auto-package-update-now)
-      ;; Not upgrading, make sure we have recent-enough manifests for
-      ;; installing any missing packages.
-      (my:package-refresh-maybe))
-    (package-install-selected-packages))
+    (when upgrade
+      ;; This calls `package-refresh-contents'.
+      (auto-package-update-now))
+    (unless (seq-every-p #'package-installed-p package-selected-packages)
+      (my:package-refresh-maybe)
+      (package-install-selected-packages)))
   ;; Interestingly this will not remove Quelpa packages because Quelpa
   ;; puts our requested packages into `package-selected-packages'.  I
   ;; don't know if that's sane, but it works for me right now.
