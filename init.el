@@ -831,7 +831,7 @@ it returns the node that your EDIT-FORM changed)."
                       company-backends)))
 
 (my:load-recipes 'company-dont-complete-numbers
-                 'company-dabbrev-code-defer-prefix
+                 'company-dabbrev-code-work-with-other-prefixes
                  'company-remove-dabbrev-code-duplicates)
 
 (defun my:company-group-existing-backend (backend other-backends
