@@ -56,6 +56,7 @@
      ivy-xref
      ivy-yasnippet
      key-chord
+     link-hint
      loccur
      macrostep
      magit
