@@ -1171,9 +1171,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'god-mode-disabled-hook #'my:god-mode-disabled-hook)
 
 
-;;; goto-addr
+;;; goto-addr --- Keywords: link url follow open
 
 ;; `goto-address-mode' "[buttonizes] URLs and e-mail addresses".
+;;
+;; I can never remember the name of this fucking mode, nor its
+;; bindings.  Its key mapping is done with an overlay, so point must
+;; be on a link for e.g. `counsel-descbinds' to even see this binding.
 
 (add-hook 'prog-mode-hook #'goto-address-mode)
 (add-hook 'text-mode-hook #'goto-address-mode)
