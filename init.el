@@ -185,10 +185,10 @@
                    :branch "font-lock-fix" :files (:defaults "data"))
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
+    (hl-line+ :fetcher wiki)
     (ns-copy-html :fetcher git
                   :url ,(concat "file://" (expand-file-name
                                            "~/repositories/ns-copy-html/")))
-    (hl-line+ :fetcher wiki)
     (python :fetcher github :repo "dsedivec/python-el")
     (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
     (sticky-region :fetcher github :repo "dsedivec/sticky-region")
