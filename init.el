@@ -183,6 +183,11 @@
     ;; all-the-icons
     (all-the-icons :fetcher github :repo "ubolonton/all-the-icons.el"
                    :branch "font-lock-fix" :files (:defaults "data"))
+    (bookmark+ :fetcher wiki
+               :files ,(cons "bookmark+.el"
+                             (mapcar (lambda (suffix)
+                                       (format "bookmark+-%s.el" suffix))
+                                     '(mac bmu 1 key lit))))
     (eltu :fetcher github :repo "dsedivec/eltu"
           :files (:defaults "eltu_update_tags.py"))
     (hl-line+ :fetcher wiki)
@@ -716,6 +721,70 @@ it returns the node that your EDIT-FORM changed)."
 (bind-keys ("C-'" . avy-goto-char)
            ("M-g g" . avy-goto-line)
            ("M-g M-g" . avy-goto-line))
+
+
+;;; bookmark
+
+;; Saving bookmarks after every change (ex. value of "1" here) works
+;; poorly, particularly with auto-named bookmarks in bookmark+ where
+;; things like *moving to the next/previous bookmark* will end up
+;; calling `bmkp-maybe-save-bookmarks' *twice* for each movement (from
+;; `bookmark-rename' and later `bmkp-update-autonamed-bookmark'
+;; itself).  Therefore we set only to save when exiting Emacs, but
+;; also with `auto-save-hook'.
+(setq bookmark-save-flag t)
+
+(defun my:bookmark-maybe-auto-save ()
+  (when (and bookmark-save-flag
+             (> bookmark-alist-modification-count 0))
+    (bookmark-save)))
+
+(add-hook 'auto-save-hook #'my:bookmark-maybe-auto-save)
+
+
+;;; bookmark+
+
+;; Doing this to get the keys loaded, but there might be a better way.
+(require 'bookmark+)
+
+(setq bmkp-auto-light-when-set 'all-in-buffer
+      bmkp-auto-light-when-jump 'any-bookmark)
+
+(with-eval-after-load 'which-key
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x p c" . "Prefix Command") . (nil . "create")))
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x p t" . "Prefix Command") . (nil . "tags"))))
+
+(defvar my:bookmark--in-bookmark-save nil
+  "Set to true only within a call to `bookmark-save'.")
+
+;; Maybe I should submit this upstream.
+(define-advice customize-save-variable
+    (:before-until (variable value &rest args) my:speed-up-bookmark-save)
+  "Within `bookmark-save', only save when VARIABLE != VALUE.
+This speeds up bookmark+ which tries to save this variable within
+`bookmark-save' when `bmkp-last-as-first-bookmark-file' is
+non-nil."
+  (and my:bookmark--in-bookmark-save
+       (boundp variable)
+       (equal (symbol-value variable) value)))
+
+(define-advice bookmark-save
+    (:around (orig-fun &rest args) my:speed-up-bookmark-save)
+  "Hacks to speed up `bookmark-save'.
+This is all very brittle, but makes saving bookmarks maybe ~14x
+faster, in my testing."
+  ;; Neuter `vc-mode' and `magit-auto-revert-mode' `find-file-hook's
+  ;; for a file we are (presumably) only opening transiently, that
+  ;; being our bookmarks file.  They are slow, relatively speaking.
+  (cl-letf ((vc-handled-backends nil)
+            ;; This is really a fairly offensive way to turn
+            ;; `magit-auto-revert-mode-enable-in-buffers' into a noop.
+            ;; I should do better.
+            ((default-value 'auto-revert-mode-set-explicitly) t)
+            (my:bookmark--in-bookmark-save t))
+    (apply orig-fun args)))
 
 
 ;;; bs
