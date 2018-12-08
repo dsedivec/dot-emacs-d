@@ -1068,8 +1068,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; elisp-mode
 
-(add-hook 'emacs-lisp-mode-hook #'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook #'my:warn-white-space-mode)
+(my:add-hooks 'emacs-lisp-mode-hook
+  #'paredit-mode
+  #'aggressive-indent-mode
+  #'my:warn-white-space-mode)
 
 (defun my:emacs-lisp-mode-hook()
   ;; Make name shorter in mode line.

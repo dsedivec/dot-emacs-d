@@ -9,6 +9,7 @@
     (
      ace-window
      adaptive-wrap
+     aggressive-indent
      all-the-icons
      amx
      auctex
