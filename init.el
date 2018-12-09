@@ -532,6 +532,14 @@ it returns the node that your EDIT-FORM changed)."
   (exec-path-from-shell-initialize))
 
 
+;;; el-patch
+
+;; This is out of alphabetical order so it gets installed before
+;; anyone potentially starts using el-patch.
+
+(my:load-recipe 'el-patch-clean-up-buffers-after-validation)
+
+
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
 
 (setq TeX-newline-function 'newline-and-indent)
