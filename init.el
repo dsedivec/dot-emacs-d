@@ -1942,7 +1942,7 @@ the selected link instead of opening it."
       persp-init-new-frame-behaviour-override nil)
 
 ;; Don't attempt to reactivate persp-mode if it's already active
-;; (Spacemacs will have it enabled I believe).  Doing so does weird
+;; (Spacemacs will have it enabled, I believe).  Doing so does weird
 ;; things.
 (unless persp-mode
   (persp-mode 1))
