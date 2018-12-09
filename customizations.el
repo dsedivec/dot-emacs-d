@@ -48,6 +48,7 @@
      flycheck
      flycheck-package
      flycheck-pos-tip
+     free-keys
      god-mode
      graphviz-dot-mode
      highlight-parentheses

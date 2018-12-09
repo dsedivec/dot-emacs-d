@@ -1172,6 +1172,19 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-key "<s-return>" 'toggle-frame-fullscreen)
 
 
+;;; free-keys
+
+(with-eval-after-load 'free-keys
+  ;; Add function keys.
+  (setq free-keys-keys (nconc (split-string free-keys-keys "" t)
+                              (mapcar (lambda (n) (format "<f%d>" n))
+                                      (number-sequence 1 12))))
+
+  ;; Add super modifier.
+  (dolist (mod '("s" "C-s" "M-s" "C-M-s"))
+    (add-to-list 'free-keys-modifiers mod t)))
+
+
 ;;; flycheck
 
 (setq flycheck-mode-line-prefix "✓"
