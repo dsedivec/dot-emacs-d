@@ -1619,6 +1619,11 @@ the selected link instead of opening it."
 (move-text-default-bindings)
 
 
+;;; multi-line
+
+(bind-key "C-c d" 'multi-line)
+
+
 ;;; mwim
 
 (bind-keys ("C-a" . mwim-beginning-of-code-or-line)

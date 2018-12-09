@@ -77,6 +77,7 @@
      markdown-mode
      minions
      move-text
+     multi-line
      multiple-cursors
      mwim
      ns-copy-html
