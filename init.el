@@ -2231,7 +2231,6 @@ the selected link instead of opening it."
 (bind-key "C-M-=" 'count-words-region)
 
 
-
 ;;; smartparens
 
 ;; Need this so ' is configured in lisp modes correctly, so that my
