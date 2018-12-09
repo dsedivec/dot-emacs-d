@@ -1930,11 +1930,10 @@ the selected link instead of opening it."
 
 ;; Must set this before turning on persp-mode for it to have an effect
 ;; at startup.
-(if (featurep 'persp-mode)
-    (warn "Set `persp-auto-resume-time' too late, persp-mode already loaded")
-  (setq persp-auto-resume-time 0.1))
+(setq persp-auto-resume-time 0.1)
 
-(require 'persp-mode)
+(when (bound-and-true-p persp-mode)
+  (warn "Set `persp-auto-resume-time' too late, persp-mode already loaded"))
 
 (setq persp-add-buffer-on-after-change-major-mode 'free)
 
