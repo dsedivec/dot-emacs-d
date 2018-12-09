@@ -1121,7 +1121,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys :map emacs-lisp-mode-map
            ("C-c C-r" . eval-region)
-           ("C-c C-b" . eval-buffer))
+           ("C-c C-b" . eval-buffer)
+           ("M-m m d m" . macrostep-expand))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
