@@ -1599,6 +1599,11 @@ the selected link instead of opening it."
 (minions-mode 1)
 
 
+;;; move-text
+
+(move-text-default-bindings)
+
+
 ;;; mwim
 
 (bind-keys ("C-a" . mwim-beginning-of-code-or-line)

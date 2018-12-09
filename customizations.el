@@ -73,6 +73,7 @@
      magit
      markdown-mode
      minions
+     move-text
      multiple-cursors
      mwim
      ns-copy-html
