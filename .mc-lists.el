@@ -16,6 +16,7 @@
         my:python-magic-single-quote
         org-beginning-of-line
         org-self-insert-command
+        paredit-backslash
         paredit-backward-kill-word
         paredit-forward
         paredit-forward-delete
