@@ -1547,6 +1547,21 @@ the selected link instead of opening it."
 (autoload 'loccur "loccur" nil t)
 
 
+;;; lua-mode
+
+;; There doesn't seem to be a great deal of consensus over how to
+;; indent Lua.
+
+(setq lua-indent-level 4)
+
+(defun my:lua-mode-hook ()
+  (my:setq-local tab-width lua-indent-level))
+
+(add-hook 'lua-mode-hook #'my:lua-mode-hook)
+
+(smart-tabs-advise 'lua-indent-line 'lua-indent-level)
+
+
 ;;; magit
 
 ;; I want this everywhere (recommended by the Magit manual's "Getting

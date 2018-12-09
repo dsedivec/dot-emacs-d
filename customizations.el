@@ -71,6 +71,7 @@
      link-hint
      loccur
      lorem-ipsum
+     lua-mode
      macrostep
      magit
      markdown-mode
