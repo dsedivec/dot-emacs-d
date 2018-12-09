@@ -1935,7 +1935,11 @@ the selected link instead of opening it."
 (when (bound-and-true-p persp-mode)
   (warn "Set `persp-auto-resume-time' too late, persp-mode already loaded"))
 
-(setq persp-add-buffer-on-after-change-major-mode 'free)
+(setq persp-add-buffer-on-after-change-major-mode 'free
+      ;; C-x 5 2 shouldn't copy e.g. window layout.  I hope this still
+      ;; means additional frames will be saved with the perspective!
+      ;; (If not, perhaps see `persp-ignore-wconf-once' here?)
+      persp-init-new-frame-behaviour-override nil)
 
 ;; Don't attempt to reactivate persp-mode if it's already active
 ;; (Spacemacs will have it enabled I believe).  Doing so does weird
