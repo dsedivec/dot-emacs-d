@@ -70,6 +70,7 @@
      key-chord
      link-hint
      loccur
+     lorem-ipsum
      macrostep
      magit
      markdown-mode
