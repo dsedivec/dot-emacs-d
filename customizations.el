@@ -51,6 +51,7 @@
      free-keys
      god-mode
      graphviz-dot-mode
+     highlight-indent-guides
      highlight-parentheses
      highlight-symbol
      hl-line+

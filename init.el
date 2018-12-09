@@ -1303,6 +1303,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq help-window-select t)
 
 
+;;; highlight-indent-guides
+
+(setq highlight-indent-guides-method 'character)
+
+
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
