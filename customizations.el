@@ -32,6 +32,7 @@
      csv-mode
      dash
      deft
+     diff-hl
      dired-narrow
      dockerfile-mode
      dtrt-indent

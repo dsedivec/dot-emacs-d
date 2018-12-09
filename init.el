@@ -1001,6 +1001,11 @@ faster, in my testing."
 (bind-keys ("M-m h d c" . describe-char))
 
 
+;;; diff-hl
+
+(global-diff-hl-mode 1)
+
+
 ;;; dired-narrow
 
 ;; I think this is how you expect dired-narrow--regexp-filter to work.
