@@ -61,6 +61,7 @@
      impatient-mode
      importmagic
      ivy
+     ivy-hydra
      ivy-xref
      ivy-yasnippet
      js2-mode
