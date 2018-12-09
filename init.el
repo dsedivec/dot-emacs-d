@@ -1297,6 +1297,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'text-mode-hook #'goto-address-mode)
 
 
+;;; help
+
+;; Select help windows always.
+(setq help-window-select t)
+
+
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
