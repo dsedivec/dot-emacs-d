@@ -717,6 +717,8 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; autorevert
 
+(setq global-auto-revert-non-file-buffers t)
+
 (global-auto-revert-mode 1)
 
 ;; Don't need an echo area message every time a buffer (including
