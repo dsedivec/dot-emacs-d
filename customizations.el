@@ -93,6 +93,7 @@
      python
      pyvenv
      quelpa
+     sly
      smart-tabs
      smartparens
      sticky-region
