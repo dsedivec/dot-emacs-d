@@ -63,6 +63,7 @@
      ivy
      ivy-xref
      ivy-yasnippet
+     js2-mode
      key-chord
      link-hint
      loccur

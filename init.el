@@ -1427,6 +1427,21 @@ surround \"foo\" with (in this example) parentheses.  I want
       ivy-xref-use-file-path t)
 
 
+;;; js2-mode
+
+;; https://elpa.gnu.org/packages/js2-mode.html
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . js2-jsx-mode))
+(add-to-list 'interpreter-mode-alist '("node" . js2-mode))
+
+(defun my:js2-mode-hook ()
+  ;; Prevailing JS style seems to be indenting with spaces.
+  (my:setq-local indent-tabs-mode nil
+                 tab-width 4))
+
+(add-hook 'js2-mode-hook #'my:js2-mode-hook)
+
+
 ;;; link-hint
 
 (autoload 'link-hint--get-link-at-point "link-hint")
