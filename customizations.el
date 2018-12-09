@@ -100,6 +100,7 @@
      treepy
      undo-tree
      unicode-fonts
+     volatile-highlights
      web-beautify
      web-mode
      webpaste

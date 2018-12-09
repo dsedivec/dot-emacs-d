@@ -2435,6 +2435,11 @@ level of indentation."
                  'vc-truncate-long-branch-names)
 
 
+;;; volatile-highlights
+
+(volatile-highlights-mode 1)
+
+
 ;;; web-mode
 
 (setq web-mode-enable-auto-expanding t
