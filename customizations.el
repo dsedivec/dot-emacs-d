@@ -38,6 +38,7 @@
      dtrt-indent
      dumb-jump
      edit-indirect
+     edit-server
      el-patch
      eltu
      emmet-mode

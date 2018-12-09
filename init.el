@@ -1073,6 +1073,14 @@ faster, in my testing."
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 
+;;; edit-server
+
+(edit-server-start)
+
+(setq edit-server-new-frame-alist
+      '((name . "Edit in Emacs from Browser")))
+
+
 ;;; elec-pair
 
 (add-hook 'prog-mode-hook #'electric-pair-local-mode)
