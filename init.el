@@ -976,6 +976,12 @@ faster, in my testing."
 (add-hook 'css-mode-hook #'counsel-css-imenu-setup)
 
 
+;;; counsel-projectile
+
+(with-eval-after-load 'projectile
+  (counsel-projectile-mode 1))
+
+
 ;;; deft
 
 (setq deft-directory "~/Dropbox/dropsync/Notes"

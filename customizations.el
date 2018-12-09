@@ -28,6 +28,7 @@
      company-web
      counsel
      counsel-css
+     counsel-projectile
      csv-mode
      dash
      deft
