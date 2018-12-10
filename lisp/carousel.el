@@ -36,9 +36,15 @@
   :group 'carousel)
 
 (defcustom carousel-safe-buffer-regexps
-  '("\\`\\*\\(?:scratch\\|Messages\\|Warnings\\|ielm\\|spacemacs\\)\\*\\'"
-    "\\` \\*\\(?:Minibuf-[[:digit:]]+\\|Echo Area [[:digit:]]+\\)\\*\\'")
-  "List of regular expressions of buffers that will never be auto-killed."
+  (list (rx string-start
+            (or " "
+                (: "*"
+                   (or "scratch" "Messages" "Warnings" "ielm" "spacemacs")
+                   "*"
+                   string-end))))
+  "List of regular expressions of buffers that will never be auto-killed.
+Default value excludes buffers that begin with a space or buffers
+named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
   :type '(set regexp)
   :group 'carousel)
 
