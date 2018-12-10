@@ -728,6 +728,7 @@ it returns the node that your EDIT-FORM changed)."
              ;; set buffer-undo-list to t.  I never use this
              ;; functionality, so let's just stop me from hurting myself.
              ("t" . nil))
+
   ;; Dired+ names buffers differently, have to tell bs about these names.
   (add-to-list 'bs-mode-font-lock-keywords
                '("..\\(.*Dired/.*\\)$" 1 font-lock-function-name-face))
@@ -943,7 +944,6 @@ it returns the node that your EDIT-FORM changed)."
 ;;; dired-x
 
 ;; Binds C-x C-j.  Probably does other stuff I care about.
-
 (require 'dired-x)
 
 
