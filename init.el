@@ -82,7 +82,9 @@
              '("my:org" . "~/repositories/org-mode/"))
 (add-to-list 'package-pinned-packages '(org-plus-contrib . "my:org"))
 
-(package-initialize)
+;; Remove this when Emacs 26 is definitely dead.
+(unless package--initialized
+  (package-initialize))
 
 ;; May not be installed yet.
 (require 'auto-compile nil t)
