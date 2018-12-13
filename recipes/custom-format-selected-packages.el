@@ -8,8 +8,8 @@
 ;; have the packages I want to add in that commit.  Much easier, much
 ;; less error prone, and all at the low low cost of a little
 ;; moderately-gross advice!
-(define-advice custom-save-variables
-    (:after (&rest _) my:selected-packages-one-per-line-sorted)
+
+(defun my:custom-save-selected-packages-sorted-one-per-line (&rest _args)
   (save-excursion
     (let ((err-fmt "In `my:selected-packages-one-per-line' advice: %S")
           (this-buf (current-buffer))
@@ -71,3 +71,6 @@
         (_
          (error "`package-selected-packages' doesn't look as expected: %S"
                 form))))))
+
+(advice-add 'custom-save-variables :after
+            #'my:custom-save-selected-packages-sorted-one-per-line)
