@@ -1221,6 +1221,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq help-window-select t)
 
 
+;;; hi-lock
+
+(global-hi-lock-mode 1)
+
+
 ;;; highlight-indent-guides
 
 (setq highlight-indent-guides-method 'character)
