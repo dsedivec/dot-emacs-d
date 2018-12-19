@@ -2206,6 +2206,25 @@ the selected link instead of opening it."
 (bind-key "C-M-=" 'count-words-region)
 
 
+;;; sly
+
+;; This is everything from sly-fancy.el (as of 2018-12-14) *except*
+;; sly-indentation.el, which loads sly-cl-indent.el, which fucks up
+;; `common-lisp-indent-function' by using a version that doesn't
+;; support indentation in Elisp [as well as built-in c-l-i-f does].
+;; See also: https://github.com/joaotavora/sly/issues/92
+(setq sly-contribs '(sly-mrepl
+                     sly-autodoc
+                     sly-fancy-inspector
+                     sly-fancy-trace
+                     sly-scratch
+                     sly-package-fu
+                     sly-fontifying-fu
+                     sly-trace-dialog
+                     sly-stickers
+                     sly-tramp))
+
+
 ;;; smartparens
 
 ;; Need this so ' is configured in lisp modes correctly, so that my
