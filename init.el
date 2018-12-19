@@ -191,6 +191,20 @@ upgraded."
 ;; installed:
 (require 'auto-compile)
 
+;; Useful command to upgrade a single Quelpa package.  I should
+;; probably make a command to upgrade a single package.el package some
+;; day.
+
+(defvar my:quelpa-upgrade--history nil)
+
+(defun my:quelpa-upgrade (package)
+  (interactive (list
+                (intern (completing-read "Package: "
+                                         (mapcar #'car my:quelpa-packages)
+                                         nil t ""
+                                         'my:quelpa-upgrade--history))))
+  (quelpa (assq package my:quelpa-packages) :upgrade t))
+
 
 ;;; Utility functions
 
