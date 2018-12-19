@@ -1285,7 +1285,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys ("M-m b i" . imenu-list-smart-toggle))
 
-(setq imenu-list-auto-resize t)
+(setq imenu-list-size 50)
 
 
 ;;; importmagic
