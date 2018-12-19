@@ -339,6 +339,8 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;;; Emacs built-ins
 
+(put 'downcase-region 'disabled nil)
+
 (defun my:show-trailing-white-space ()
   ;; setq-local instead of setq superfluous!
   (setq-local show-trailing-whitespace t))
