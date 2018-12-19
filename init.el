@@ -2380,6 +2380,11 @@ level of indentation."
 (setq undo-tree-enable-undo-in-region nil)
 
 
+;;; unfill
+
+(bind-key "M-q" 'unfill-toggle)
+
+
 ;;; unicode-fonts
 
 ;; The alternative:

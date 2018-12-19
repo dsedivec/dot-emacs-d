@@ -109,6 +109,7 @@
      transpose-frame
      treepy
      undo-tree
+     unfill
      unicode-fonts
      volatile-highlights
      web-beautify
