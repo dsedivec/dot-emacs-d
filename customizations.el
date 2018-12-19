@@ -48,20 +48,26 @@
      expand-region
      flx
      flycheck
+     flycheck-haskell
      flycheck-package
      flycheck-pos-tip
      free-keys
      god-mode
      graphviz-dot-mode
+     haskell-mode
+     haskell-snippets
      highlight-indent-guides
      highlight-parentheses
      highlight-symbol
+     hindent
      hl-line+
      hl-todo
+     hlint-refactor
      hydra
      imenu-list
      impatient-mode
      importmagic
+     intero
      ivy
      ivy-hydra
      ivy-xref

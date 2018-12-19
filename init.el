@@ -1215,6 +1215,34 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'text-mode-hook #'goto-address-mode)
 
 
+;;; haskell-mode
+
+(my:add-hooks 'haskell-mode-hook
+  #'subword-mode
+  #'interactive-haskell-mode
+  #'flycheck-haskell-setup
+  #'hindent-mode)
+
+;; https://haskell.github.io/haskell-mode/manual/latest/Aligning-code.html
+(with-eval-after-load 'align
+  (add-to-list 'align-rules-list
+               '(haskell-types
+                 (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
+                 (modes . '(haskell-mode literate-haskell-mode))))
+  (add-to-list 'align-rules-list
+               '(haskell-assignment
+                 (regexp . "\\(\\s-+\\)=\\s-+")
+                 (modes . '(haskell-mode literate-haskell-mode))))
+  (add-to-list 'align-rules-list
+               '(haskell-arrows
+                 (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
+                 (modes . '(haskell-mode literate-haskell-mode))))
+  (add-to-list 'align-rules-list
+               '(haskell-left-arrows
+                 (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
+                 (modes . '(haskell-mode literate-haskell-mode)))))
+
+
 ;;; help
 
 ;; Select help windows always.
@@ -1241,6 +1269,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq highlight-symbol-idle-delay 0.5)
 
 (add-hook 'prog-mode-hook #'highlight-symbol-mode)
+
+
+;;; hindent
+
+(with-eval-after-load 'hindent
+  (bind-keys :map hindent-mode-map
+             ([remap unfill-toggle] . hindent-reformat-decl-or-fill)))
 
 
 ;;; hippie-exp
@@ -1293,6 +1328,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'importmagic
   (bind-keys :map importmagic-mode-map
              ("M-m m r f" . importmagic-fix-symbol-at-point)))
+
+
+;;; intero
+
+(with-eval-after-load 'haskell-mode
+  (intero-global-mode 1))
 
 
 ;;; isearch
