@@ -1323,6 +1323,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq imenu-list-size 50)
 
 
+;;; impatient-mode
+
+;; We have this bound in `web-mode-map'.
+(autoload 'imp-visit-buffer "impatient-mode" nil t)
+
+
 ;;; importmagic
 
 (with-eval-after-load 'importmagic
@@ -2508,7 +2514,8 @@ set the engine for the file upon loading.")
   (bind-keys :map web-mode-map
              ("C-M-u" . web-mode-element-parent)
              ("C-M-d" . web-mode-element-child)
-             ("C-M-n" . web-mode-element-end)))
+             ("C-M-n" . web-mode-element-end)
+             ("M-m m i" . imp-visit-buffer)))
 
 (which-key-add-major-mode-key-based-replacements 'web-mode
     "C-c C-a" "attribute"
