@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        LaTeX-babel-insert-hyphen
         backward-sexp
         dabbrev-expand
         delete-horizontal-space
