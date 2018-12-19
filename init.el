@@ -582,20 +582,37 @@ it returns the node that your EDIT-FORM changed)."
              ("C-c g" . my:LaTeX-convert-to-gls)
              ("C-c M-g" . my:LaTeX-backward-convert-to-gls)))
 
+;; Copy the original value but with more possible ref commands.
+(setq company-reftex-labels-regexp
+      (rx ?\\ (or "ref" "eqref" "autoref" "nameref" "pageref" "vref" "cref")
+          (0+ "[" (0+ (not (any ?\]))) "]")
+          ?{ (group (1+ (not (any ?})))) ?}
+          ;; As seen in the original value of this variable (\=).
+          point))
+
 (defun my:LaTeX-mode-hook ()
   (my:setq-local er/try-expand-list (append er/try-expand-list
                                             '(mark-sentence mark-paragraph))
 
                  electric-pair-inhibit-predicate
-                 #'my:electric-pair-default-plus-before-word-inhibit))
-
-(add-hook 'LaTeX-mode-hook #'my:LaTeX-mode-hook)
+                 #'my:electric-pair-default-plus-before-word-inhibit)
+  (set (make-local-variable 'company-backends)
+       (append '(company-reftex-labels
+                 company-reftex-citations
+                 (company-auctex-macros company-auctex-symbols
+                  company-auctex-environments company-dabbrev-code)
+                 company-auctex-bibs
+                 company-auctex-labels)
+               company-backends)))
 
 (my:add-hooks 'LaTeX-mode-hook
+  #'reftex-mode
   #'electric-pair-local-mode
   #'flycheck-mode
   #'show-paren-mode
-  #'my:warn-white-space-mode)
+  #'auto-fill-mode
+  #'my:warn-white-space-mode
+  #'my:LaTeX-mode-hook)
 
 (my:load-recipe 'auctex-aggressively-load-styles)
 

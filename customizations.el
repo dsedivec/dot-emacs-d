@@ -23,6 +23,8 @@
      comment-dwim-2
      company
      company-anaconda
+     company-auctex
+     company-reftex
      company-shell
      company-statistics
      company-web
