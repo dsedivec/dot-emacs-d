@@ -1344,6 +1344,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'haskell-mode
   (intero-global-mode 1))
 
+(defun my:intero-mode-hook ()
+  (my:company-group-existing-backend 'intero-company '(company-dabbrev-code)))
+
+(add-hook 'intero-mode-hook #'my:intero-mode-hook)
+
 
 ;;; isearch
 
