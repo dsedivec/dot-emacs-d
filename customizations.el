@@ -101,6 +101,7 @@
      python
      pyvenv
      quelpa
+     rainbow-mode
      sly
      smart-tabs
      smartparens

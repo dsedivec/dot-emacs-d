@@ -1005,6 +1005,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 (my:add-hooks 'emacs-lisp-mode-hook
   #'paredit-mode
   #'aggressive-indent-mode
+  ;; Useful for colors in e.g. `set-face-attribute'.
+  #'rainbow-mode
   #'my:warn-white-space-mode)
 
 (defun my:emacs-lisp-mode-hook()
