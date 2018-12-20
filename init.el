@@ -852,6 +852,7 @@ it returns the node that your EDIT-FORM changed)."
 
 (defun my:company-group-existing-backend (backend other-backends
                                           &optional globally no-warn)
+  "Group BACKEND with OTHER-BACKENDS."
   (let* ((backends (copy-tree company-backends))
          (cell (memq backend backends)))
     (if (not cell)
