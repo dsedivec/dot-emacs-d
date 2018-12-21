@@ -1613,7 +1613,8 @@ the selected link instead of opening it."
 (bind-keys ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("<s-mouse-1>" . mc/add-cursor-on-click)
-           ("C-?" . mc/mark-all-dwim))
+           ("C-?" . mc/mark-all-dwim)
+           ("C-M-?" . mc/mark-more-like-this-extended))
 
 (with-eval-after-load 'multiple-cursors
   (bind-keys :map mc/keymap
