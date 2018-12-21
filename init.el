@@ -2217,6 +2217,9 @@ the selected link instead of opening it."
 
 ;;; sly
 
+(when (executable-find "sbcl")
+  (setq inferior-lisp-program "sbcl"))
+
 ;; This is everything from sly-fancy.el (as of 2018-12-14) *except*
 ;; sly-indentation.el, which loads sly-cl-indent.el, which fucks up
 ;; `common-lisp-indent-function' by using a version that doesn't
