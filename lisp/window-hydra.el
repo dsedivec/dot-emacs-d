@@ -34,9 +34,9 @@
 ;;;###autoload (autoload 'window-hydra/body "window-hydra" nil t)
 (defhydra window-hydra (:hint nil)
   "
-  ^_j_^                  _1_ single window   _2_ split window      _b_alance windows
-_h_   _l_  move buffer   _o_ther window      _|_ transpose frame   s_w_ap window
-  ^_k_^                  _←_ winner-undo     ^ ^                   _→_ winner redo
+  ^_j_^                  _1_ single window   _2_^ split window      _b_alance windows
+_h_   _l_  move buffer   _o_ther window      _\\_ transpose frame   s_w_ap window
+  ^_k_^                  _←_ winner-undo     _0_^ delete window     _→_ winner redo
 "
   ("j" (aw-swap-window (windmove-find-other-window 'up)))
   ("h" (aw-swap-window (windmove-find-other-window 'left)))
@@ -46,9 +46,10 @@ _h_   _l_  move buffer   _o_ther window      _|_ transpose frame   s_w_ap window
   ("2" split-window-below)
   ("b" balance-windows)
   ("o" ace-window)
-  ("|" transpose-frame)
+  ("\\" transpose-frame)
   ("w" ace-swap-window)
   ("<left>" winner-undo)
+  ("0" delete-window)
   ("<right>" winner-redo)
   ("q" nil))
 
