@@ -1572,14 +1572,15 @@ the selected link instead of opening it."
       markdown-header-scaling t)
 
 (defun my:markdown-mode-hook ()
-  (my:setq-local indent-tabs-mode nil)
+  (setq-local indent-tabs-mode nil)
   (visual-line-mode 1))
 
-(add-hook 'markdown-mode-hook 'my:markdown-mode-hook)
-
-;; I give up, GitHub Flavored Markdown is popular and treats line feed
-;; characters like <br>.  Default to visual-line-mode.
-(add-hook 'markdown-mode-hook #'visual-line-mode)
+(my:add-hooks 'markdown-mode-hook
+  ;; I give up, GitHub Flavored Markdown is popular and treats line feed
+  ;; characters like <br>.  Default to visual-line-mode.
+  #'visual-line-mode
+  #'electric-pair-local-mode
+  #'my:markdown-mode-hook)
 
 (my:load-recipes 'markdown-mode-edit-gfm-code-blocks)
 
