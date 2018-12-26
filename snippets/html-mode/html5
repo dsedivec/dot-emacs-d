@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: html5
+# key: html5
+# --
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>$1</title>
+	</head>
+	<body>
+		$0
+	</body>
+</html>
