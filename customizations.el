@@ -5,8 +5,7 @@
  ;; If there is more than one, they won't work right.
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(package-selected-packages
-   (quote
-    (
+   '(
      ace-window
      adaptive-wrap
      aggressive-indent
@@ -124,11 +123,10 @@
      yasnippet
      yasnippet-snippets
      zop-to-char
-     )))
+     ))
  '(paradox-github-token t)
  '(safe-local-variable-values
-   (quote
-    ((eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript")))))
+   '((eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
