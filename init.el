@@ -1627,6 +1627,11 @@ the selected link instead of opening it."
              ("C-r" . phi-search-backward)))
 
 
+;;; newcomment
+
+(setq comment-empty-lines 'eol)
+
+
 ;;; org
 
 ;; Don't step on windmove keys.
