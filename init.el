@@ -2132,6 +2132,25 @@ the selected link instead of opening it."
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
+(defun my:python-shell-send-dwim ()
+  (interactive)
+  (cond
+    ((use-region-p)
+     (call-interactively #'python-shell-send-region))
+    ((python-info-current-defun)
+     (call-interactively #'python-shell-send-defun))
+    (t
+     (save-excursion
+       (python-nav-beginning-of-statement)
+       (setq start (point))
+       (python-nav-end-of-statement)
+       (setq end (point)))
+     (python-shell-send-region start end))))
+
+(with-eval-after-load 'python
+  (bind-keys :map python-mode-map
+             ("C-c C-c" . my:python-shell-send-dwim)))
+
 
 ;;; pyvenv
 
