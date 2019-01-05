@@ -33,4 +33,5 @@
         describe-key-briefly
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
+        sql-send-paragraph
         ))
