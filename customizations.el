@@ -105,6 +105,7 @@
      sly
      smart-tabs
      smartparens
+     sql-indent
      sticky-region
      swiper
      transpose-frame

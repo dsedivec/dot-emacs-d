@@ -129,6 +129,7 @@
     (python :fetcher github :repo "dsedivec/python-el")
     (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
     (sticky-region :fetcher github :repo "dsedivec/sticky-region")
+    (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
     ))
 
 (defun my:packages-sync (&optional upgrade)
@@ -2284,52 +2285,9 @@ the selected link instead of opening it."
 
 ;;; sql
 
-(defun my:insert-tab-or-spaces (&optional count)
-  (interactive "p")
-  (let* ((num-chars (* (or count 1) (if indent-tabs-mode 1 tab-width))))
-    (insert-char (if indent-tabs-mode ?\t ?\s) num-chars)))
-
-(cl-defun my:remove-some-indentation (&optional (levels 1))
-  "Remove LEVELS of indentation on current line or in region.
-Does not move point.  When not operating on a region, will remove
-alignment spaces after tabs and treat those spaces as a single
-level of indentation."
-  (interactive "p")
-  (when (> levels 0)
-    (let ((backward-delete-char-untabify-method 'untabify))
-      (save-excursion
-        (cond
-          ((use-region-p)
-           (let ((end (copy-marker (region-end))))
-             (goto-char (region-beginning))
-             (cl-loop
-                do
-                  (back-to-indentation)
-                  (when indent-tabs-mode
-                    ;; Don't delete spaces after tabs ("alignment
-                    ;; spaces").
-                    (skip-chars-backward " "))
-                  (backward-delete-char-untabify (min (current-column)
-                                                      (* tab-width levels)))
-                while (and (zerop (forward-line 1)) (< (point) end)))))
-          (t
-           (back-to-indentation)
-           (let ((indent-start (point))
-                 (levels levels))
-             ;; When operating on a single line instead of a region,
-             ;; delete alignment spaces if they exist and count them
-             ;; as a single indentation level.
-             (when (not (zerop (skip-chars-backward " ")))
-               (delete-region (point) indent-start)
-               (cl-decf levels))
-             (backward-delete-char-untabify (min (current-column)
-                                                 (* tab-width levels))))))))))
-
 (with-eval-after-load 'sql
   (bind-keys :map sql-mode-map
-             ("TAB" . my:insert-tab-or-spaces)
-             ("C-c C-z" . sql-product-interactive)
-             ("<backtab>" . my:remove-some-indentation)))
+             ("C-c C-z" . sql-product-interactive)))
 
 ;; Set the default to my most commonly-used RDBMS.
 (setq sql-product 'postgres)
@@ -2350,17 +2308,8 @@ level of indentation."
   (push-mark nil t t)
   (sql-beginning-of-statement 1))
 
-(my:load-recipes 'indent-match-last-line)
-
 (defun my:sql-mode-hook ()
   (my:setq-local tab-width 4
-                 ;; This is necessary starting ca. 24.3.91 because
-                 ;; indent-according-to-mode now nukes white space
-                 ;; after a blank line, so if you try to put a blank
-                 ;; line in the middle of, say, an indented
-                 ;; transaction body, you lose your indent.  See git
-                 ;; commit 39c6030a.
-                 indent-line-function #'my:indent-match-last-line
 
                  electric-pair-inhibit-predicate
                  #'my:electric-pair-default-plus-before-word-inhibit)
@@ -2368,7 +2317,10 @@ level of indentation."
   (my:add-to-list-before (make-local-variable 'er/try-expand-list)
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
-(add-hook 'sql-mode-hook #'my:sql-mode-hook)
+(my:add-hooks 'sql-mode-hook
+  #'sqlind-minor-mode
+  #'smart-tabs-mode
+  #'my:sql-mode-hook)
 
 ;; sql-mode installs hook(s) that will screw up things like
 ;; column-marker or whitespace-mode initially in a buffer, and also
@@ -2406,6 +2358,146 @@ level of indentation."
     (call-process-region start end sqlformat t t nil
                          "-r" "--indent_width" "4" "-a" "-s"
                          "--wrap_after" "79" "-k" "upper" "-")))
+
+
+;;; sql-indent
+
+(defun my:sqlind-indent-first-select-table-on-new-line (syntax base-indentation)
+  ;; Putting a newline after FROM causes sql-indent to put you in
+  ;; select-table-continuation syntax.  This indents that first table
+  ;; like select-table instead.
+  (save-excursion
+    (back-to-indentation)
+    (let ((this-line-start (point))
+          (anchor-start (sqlind-anchor-point syntax)))
+      (save-restriction
+        (back-to-indentation)
+        (narrow-to-region anchor-start (point))
+        (goto-char (point-min))
+        (when (let ((case-fold-search t)) (looking-at-p "from"))
+          (forward-char 4)
+          (sqlind-forward-syntactic-ws)))
+      (if (= (point) this-line-start)
+          ;; There is nothing but white space (or comments) between
+          ;; "FROM" and where we were asked to indent, meaning this is
+          ;; the first table, so ignore BASE-INDENTATION and indent
+          ;; like select-table (rather than, presumably,
+          ;; select-table-continuation).
+          (sqlind-calculate-indentation (cons (cons 'select-table anchor-start)
+                                              (cdr syntax)))
+        base-indentation))))
+
+;; Test cases:
+;;
+;;     SELECT
+;;         (foo
+;;          - bar);
+;;
+;;
+;;     SELECT * FROM
+;;         foo
+;;         JOIN (
+;;             bar
+;;             JOIN baz
+;;                 ON bar.k = baz.k
+;;         ) USING (k)
+;;
+;; (Second one may not apply if/when I get around to making
+;; `sqlind-syntax-of-line' detect these "nested joins".)
+(defun my:sqlind-line-up-nested-continuations (syntax base-indentation)
+  (save-excursion
+    (goto-char (cdar syntax))
+    (skip-syntax-forward "(-")
+    (if (not (eolp))
+        (+ base-indentation 1)
+      (back-to-indentation)
+      (+ (current-column) sqlind-basic-offset))))
+
+;; I have chosen to "edit" `sqlind-default-indentation-offsets-alist'
+;; to produce `my:sqlind-indentation-offsets-alist', rather than
+;; redefining parts of it as the manual suggests.  Future-proof,
+;; amirite?!
+
+(defmacro my:set-sqlind-offset (syntax &rest values)
+  (declare (indent 1))
+  `(setf (alist-get ,syntax my:sqlind-indentation-offsets-alist) ',values))
+
+(defmacro my:append-sqlind-offset (syntax &rest values)
+  (declare (indent 1))
+  (let ((syn-var (gensym)))
+    `(let* ((,syn-var ,syntax))
+       (setf (alist-get ,syn-var my:sqlind-indentation-offsets-alist)
+             (append (alist-get ,syn-var my:sqlind-indentation-offsets-alist)
+                     ',values)))))
+
+(with-eval-after-load 'sql-indent
+  (defvar my:sqlind-indentation-offsets-alist)
+
+  ;; Breaking the assignment out into a separate `setq' so I can C-M-x
+  ;; this whole block.  (`defvar' won't reassign inside a
+  ;; `with-eval-after-load'.  Maybe I should fix that...)
+  (setq my:sqlind-indentation-offsets-alist
+        (copy-tree sqlind-default-indentation-offsets-alist))
+
+  ;; Align to the left, as prescribed by sql-indent docs.
+  (dolist (syntax '(select-clause
+                    insert-clause
+                    delete-clause
+                    update-clause))
+    (my:set-sqlind-offset syntax 0))
+
+  ;; Don't add indentation after CREATE VIEW.
+  (my:set-sqlind-offset 'create-statement 0)
+
+  ;; This plus my fancy function allows correct (to me) indentation of
+  ;; the stuff in a FROM clause.
+  (my:set-sqlind-offset 'select-table-continuation
+    +
+    sqlind-lineup-joins-to-anchor
+    +
+    my:sqlind-indent-first-select-table-on-new-line)
+
+  (my:set-sqlind-offset 'select-join-condition +)
+
+  (my:set-sqlind-offset 'nested-statement-continuation
+    my:sqlind-line-up-nested-continuations)
+
+  (my:set-sqlind-offset 'in-select-clause +)
+
+  (my:set-sqlind-offset 'in-insert-clause +)
+
+  (my:set-sqlind-offset 'comment-continuation 0)
+
+  ;; Lone semicolon gets indented back to anchor (usually column 0).
+  ;; These syntaxes are taken from sql-indent-left.el, which comes
+  ;; with sql-indent.
+  (dolist (syntax '(select-column
+                    select-column-continuation
+                    select-table-continuation
+                    in-select-clause
+                    in-delete-clause
+                    in-insert-clause
+                    in-update-clause))
+    (my:append-sqlind-offset syntax sqlind-lone-semicolon)))
+
+;; Skip over psql \... commands when finding beginning of statement.
+;; This makes indenting work right.  (But maybe it breaks motion.)
+
+(defun my:sqlind-beginning-of-statement-skip-psql (&rest _args)
+  (while (looking-at-p "^\\s-*\\\\")
+    (forward-line 1)
+    (sqlind-forward-syntactic-ws)))
+
+(advice-add 'sqlind-beginning-of-statement :after
+            #'my:sqlind-beginning-of-statement-skip-psql)
+
+(defun my:sqlind-minor-mode-hook ()
+  (setq sqlind-basic-offset tab-width
+        sqlind-indentation-offsets-alist my:sqlind-indentation-offsets-alist))
+
+(add-hook 'sqlind-minor-mode-hook #'my:sqlind-minor-mode-hook)
+
+(smart-tabs-advise 'sqlind-indent-line 'sqlind-basic-offset)
 
 
 ;;; startup
