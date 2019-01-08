@@ -2282,17 +2282,6 @@ the selected link instead of opening it."
 (bind-keys ("M-m j j" . sp-join-sexp))
 
 
-;;; startup
-
-(setq inhibit-startup-screen t
-      user-mail-address "dale@codefu.org")
-
-
-;;; sticky-region
-
-(sticky-region-mode 1)
-
-
 ;;; sql
 
 (defun my:insert-tab-or-spaces (&optional count)
@@ -2417,6 +2406,17 @@ level of indentation."
     (call-process-region start end sqlformat t t nil
                          "-r" "--indent_width" "4" "-a" "-s"
                          "--wrap_after" "79" "-k" "upper" "-")))
+
+
+;;; startup
+
+(setq inhibit-startup-screen t
+      user-mail-address "dale@codefu.org")
+
+
+;;; sticky-region
+
+(sticky-region-mode 1)
 
 
 ;;; swiper
