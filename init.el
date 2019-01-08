@@ -2319,6 +2319,7 @@ the selected link instead of opening it."
 
 (my:add-hooks 'sql-mode-hook
   #'sqlind-minor-mode
+  #'sqlup-mode
   #'smart-tabs-mode
   #'my:sql-mode-hook)
 
@@ -2498,6 +2499,11 @@ the selected link instead of opening it."
 (add-hook 'sqlind-minor-mode-hook #'my:sqlind-minor-mode-hook)
 
 (smart-tabs-advise 'sqlind-indent-line 'sqlind-basic-offset)
+
+
+;;; sqlup-mode
+
+(setq sqlup-blacklist '("id" "state"))
 
 
 ;;; startup

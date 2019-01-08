@@ -106,6 +106,7 @@
      smart-tabs
      smartparens
      sql-indent
+     sqlup-mode
      sticky-region
      swiper
      transpose-frame
