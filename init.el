@@ -2565,7 +2565,9 @@ Argument BASE-INDENTATION is updated."
 
 ;;; sqlup-mode
 
-(setq sqlup-blacklist '("id" "state"))
+(setq sqlup-blacklist '("name" "id" "label" "state"
+                        ;; WTF sql.el?
+                        "a" "c" "g" "k" "m" "p" "t"))
 
 
 ;;; startup
