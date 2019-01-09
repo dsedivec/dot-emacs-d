@@ -2529,6 +2529,8 @@ Argument BASE-INDENTATION is updated."
 
   (my:set-sqlind-offset 'comment-continuation 0)
 
+  (my:set-sqlind-offset 'in-begin-block 0)
+
   ;; Lone semicolon gets indented back to anchor (usually column 0).
   ;; These syntaxes are taken from sql-indent-left.el, which comes
   ;; with sql-indent.
