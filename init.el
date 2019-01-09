@@ -2362,6 +2362,12 @@ the selected link instead of opening it."
 
 ;;; sql-indent
 
+;; Add FROM and RETURNING as possible keywords in an UPDATE statement.
+;; PostgreSQL extensions both, AFAIK.  Still, I should *probably* push
+;; this upstream.
+(defconst sqlind-update-clauses-regexp
+  (regexp-opt '("update" "set" "from" "where" "returning") 'symbols))
+
 (defun my:sqlind-indent-first-select-table-on-new-line (syntax base-indentation)
   ;; Putting a newline after FROM causes sql-indent to put you in
   ;; select-table-continuation syntax.  This indents that first table
