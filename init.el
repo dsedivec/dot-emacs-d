@@ -2419,6 +2419,61 @@ the selected link instead of opening it."
       (back-to-indentation)
       (+ (current-column) sqlind-basic-offset))))
 
+(el-patch-feature sql-indent)
+
+;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
+;; the end of the anchor, e.g. for "UPDATE" it will move over the
+;; "UPDATE" and (in my SQL style) its following newline character.
+;; This results in it taking whatever the indent of the *following*
+;; line is as its indentation, never hitting the "EOL means indent
+;; `sqlind-basic-offset'" branch that I think it should be.  Patched
+;; below.
+;;
+;; I discovered this like:
+;;
+;;     WITH foo AS (
+;;         UPDATE
+;;         baz
+;;
+;; sql-indent was indenting "baz" at the same level as the "UPDATE".
+;; You could also just see it by writing
+;;
+;;     UPDATE
+;;         foo
+;;
+;; then kill the white space before "foo", tell sql-indent to indent
+;; the line, and it wouldn't indent it at all.
+;;
+;; I should push this upstream, though I admit I fear I may be asking
+;; too much of the maintainer with all my issues.
+(with-eval-after-load 'sql-indent
+  (el-patch-defun sqlind-lineup-to-clause-end (syntax base-indentation)
+    "Line up the current line with the end of a query clause.
+
+This assumes SYNTAX is one of in-select-clause, in-update-clause,
+in-insert-clause or in-delete-clause.  It will return an
+indentation so that:
+
+If the clause is on a line by itself, the current line is
+indented by `sqlind-basic-offset', otherwise the current line is
+indented so that it starts in next column from where the clause
+keyword ends.
+Argument BASE-INDENTATION is updated."
+    (cl-destructuring-bind ((_sym clause) . anchor) (car syntax)
+      (save-excursion
+        (goto-char anchor)
+        (forward-char (el-patch-splice 1 (1+ (length clause))))
+        (skip-syntax-forward " ")
+        (if (or (looking-at sqlind-comment-start-skip)
+                (eolp))
+            ;; if the clause is on a line by itself, indent this line with a
+            ;; sqlind-basic-offset
+            (+ base-indentation sqlind-basic-offset)
+          ;; otherwise, align to the end of the clause, with a few exceptions
+          (current-column)))))
+
+  (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
+
 ;; I have chosen to "edit" `sqlind-default-indentation-offsets-alist'
 ;; to produce `my:sqlind-indentation-offsets-alist', rather than
 ;; redefining parts of it as the manual suggests.  Future-proof,
