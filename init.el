@@ -2119,7 +2119,6 @@ the selected link instead of opening it."
 (my:add-hooks 'python-mode-hook
   #'my:python-mode-hook
   #'my:warn-white-space-mode
-  #'electric-indent-local-mode
   #'electric-pair-local-mode
   #'anaconda-mode
   #'anaconda-eldoc-mode
