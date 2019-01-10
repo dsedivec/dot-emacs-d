@@ -2744,6 +2744,19 @@ set the engine for the file upon loading.")
     "C-c C-t" "tag")
 
 
+;;; webpaste
+
+(with-eval-after-load 'webpaste
+  (let* ((ptpb (alist-get "ptpb.pw" webpaste-providers-alist
+                          nil nil #'string=))
+         (langs (memq :lang-overrides ptpb)))
+    (if (or (assq 'latex-mode webpaste--default-lang-alist)
+            (assq 'latex-mode (cadr langs)))
+        (warn (concat "webpaste has now configured latex-mode for us,"
+                      " we can now remove some code from init.el"))
+      (push '(latex-mode . "latex") (cadr langs)))))
+
+
 ;;; which-func
 
 (add-hook 'prog-mode-hook #'which-function-mode)
