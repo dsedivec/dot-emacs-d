@@ -2885,7 +2885,8 @@ set the engine for the file upon loading.")
 
 (add-hook 'prog-mode-hook #'which-function-mode)
 
-(my:load-recipes 'which-function-in-header-line)
+(my:load-recipes 'which-function-in-header-line
+                 'which-function-update-while-in-minibuffer)
 
 ;;; which-key
 
