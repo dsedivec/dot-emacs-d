@@ -1041,10 +1041,17 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
 
-(bind-keys :map emacs-lisp-mode-map
-           ("C-c C-r" . eval-region)
-           ("C-c C-b" . eval-buffer)
-           ("M-m m d m" . macrostep-expand))
+(defun my:ielm-switch-to-ielm ()
+  (interactive)
+  (switch-to-buffer-other-window (current-buffer))
+  (ielm))
+
+(with-eval-after-load 'elisp-mode
+  (bind-keys :map emacs-lisp-mode-map
+             ("C-c C-z" . my:ielm-switch-to-ielm)
+             ("C-c C-r" . eval-region)
+             ("C-c C-b" . eval-buffer)
+             ("M-m m d m" . macrostep-expand)))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
