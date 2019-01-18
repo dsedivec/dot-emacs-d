@@ -2657,7 +2657,15 @@ Argument BASE-INDENTATION is updated."
                     in-delete-clause
                     in-insert-clause
                     in-update-clause))
-    (my:append-sqlind-offset syntax sqlind-lone-semicolon)))
+    (my:append-sqlind-offset syntax sqlind-lone-semicolon))
+
+  ;; For easy C-M-x of this form, let's see if we should apply these
+  ;; settings to any existing buffers.
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (derived-mode-p 'sql-mode)
+        (setq sqlind-indentation-offsets-alist
+              my:sqlind-indentation-offsets-alist)))))
 
 ;; Skip over psql \... commands when finding beginning of statement.
 ;; This makes indenting work right.  (But maybe it breaks motion.)
