@@ -1410,6 +1410,9 @@ surround \"foo\" with (in this example) parentheses.  I want
       ;; involved ideas.
       ivy-truncate-lines nil)
 
+(setf (alist-get 'counsel-ag ivy-re-builders-alist)
+      #'ivy--regex-ignore-order)
+
 (my:load-recipes 'ivy-special-switch-buffers
                  'ivy-fuzzy-regex-combo-matcher)
 
