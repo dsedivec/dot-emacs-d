@@ -956,6 +956,8 @@ it returns the node that your EDIT-FORM changed)."
 
 (global-diff-hl-mode 1)
 
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+
 
 ;;; dired-x
 
