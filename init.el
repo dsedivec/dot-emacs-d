@@ -2452,7 +2452,67 @@ the selected link instead of opening it."
       (back-to-indentation)
       (+ (current-column) sqlind-basic-offset))))
 
-(el-patch-feature sql-indent)
+;; Indent successive lines of ALTER TABLE by one step:
+;;
+;;     ALTER TABLE foo
+;;         ALTER COLUMN bar SET NOT NULL;
+(defun my:sqlind-indent-alter-table (syntax base-indentation)
+  (save-excursion
+    (goto-char (cdar syntax))
+    (+ base-indentation
+       (if (let ((case-fold-search t))
+             (looking-at-p "alter\\s-+table"))
+           sqlind-basic-offset
+         0))))
+
+;; Indent one extra level within a transaction.  Does not handle
+;; nested transactions and just generally isn't super-smart, but
+;; hopefully gets the job done.
+;;
+;; BEGIN WORK;
+;;
+;;     SELECT 'this is indented one extra level';
+;;
+;; COMMIT;
+(defun my:sqlind-indent-inside-transaction (syntax base-indentation)
+  (save-excursion
+    (let ((case-fold-search t))
+      ;; I bet this setup isn't even remotely fool-proof.
+      (forward-line 0)
+      (sqlind-forward-syntactic-ws)
+      (cond
+        ;; Are we actually indenting a COMMIT/END WORK?  If so, remove
+        ;; a level of indentation.
+        ((looking-at-p (rx symbol-start
+                           ;; See comment below about COMMIT vs. END
+                           ;; WORK/TRANSACTION.
+                           (or "commit"
+                               (: "end"
+                                  (1+ space)
+                                  (or "work" "transaction")))
+                           symbol-end))
+         (max (- base-indentation sqlind-basic-offset) 0))
+        ;; Look backwards for nearest BEGIN/COMMIT/END WORK and add a level
+        ;; of indentation if the first match is BEGIN WORK.
+        ((and (sqlind-search-backward (point)
+                                      ;; BEGIN WORK/TRANSACTION
+                                      ;; END WORK/TRANSACTION
+                                      ;; COMMIT
+                                      ;;
+                                      ;; (COMMIT doesn't require
+                                      ;; WORK/TRANSACTION since I feel
+                                      ;; it's unambiguous.)
+                                      (rx symbol-start
+                                          (or (: (or "begin" "end")
+                                                 (1+ space)
+                                                 (or "work" "transaction"))
+                                              "commit")
+                                          symbol-end)
+                                      nil)
+              (sqlind-looking-at-begin-transaction))
+         (+ base-indentation sqlind-basic-offset))
+        ;; No change in indentation.
+        (t base-indentation)))))
 
 ;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
 ;; the end of the anchor, e.g. for "UPDATE" it will move over the
@@ -2479,6 +2539,9 @@ the selected link instead of opening it."
 ;;
 ;; I should push this upstream, though I admit I fear I may be asking
 ;; too much of the maintainer with all my issues.
+
+(el-patch-feature sql-indent)
+
 (with-eval-after-load 'sql-indent
   (el-patch-defun sqlind-lineup-to-clause-end (syntax base-indentation)
     "Line up the current line with the end of a query clause.
@@ -2506,6 +2569,22 @@ Argument BASE-INDENTATION is updated."
           (current-column)))))
 
   (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
+
+;; Another patch I should upstream: BEGIN WORK is shorter than BEGIN
+;; TRANSACTION, but the upstream's version of this function only
+;; recognizes the latter.  Let's recognize the former as well.
+
+(el-patch-feature sql-indent)
+
+(with-eval-after-load 'sql-indent
+  (el-patch-defun sqlind-looking-at-begin-transaction ()
+    "Return t if the point is on a \"begin transaction\" statement."
+    (and (looking-at "begin")
+         (save-excursion
+           (forward-word 1)
+           (sqlind-forward-syntactic-ws)
+           (looking-at (el-patch-swap "transaction"
+                                      "transaction\\|work"))))))
 
 ;; I have chosen to "edit" `sqlind-default-indentation-offsets-alist'
 ;; to produce `my:sqlind-indentation-offsets-alist', rather than
@@ -2540,8 +2619,10 @@ Argument BASE-INDENTATION is updated."
                     update-clause))
     (my:set-sqlind-offset syntax 0))
 
-  ;; Don't add indentation after CREATE VIEW.
-  (my:set-sqlind-offset 'create-statement 0)
+  (my:set-sqlind-offset 'create-statement
+    ;; 0 is to not indentation after CREATE VIEW.
+    0
+    my:sqlind-indent-alter-table)
 
   ;; This plus my fancy function allows correct (to me) indentation of
   ;; the stuff in a FROM clause.
@@ -2562,7 +2643,9 @@ Argument BASE-INDENTATION is updated."
 
   (my:set-sqlind-offset 'comment-continuation 0)
 
-  (my:set-sqlind-offset 'in-begin-block 0)
+  ;; Work tells me they prefer one level indent inside BEGIN.  I defer
+  ;; to their preference.
+  (my:set-sqlind-offset 'toplevel my:sqlind-indent-inside-transaction)
 
   ;; Lone semicolon gets indented back to anchor (usually column 0).
   ;; These syntaxes are taken from sql-indent-left.el, which comes
