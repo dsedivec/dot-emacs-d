@@ -1649,7 +1649,7 @@ the selected link instead of opening it."
            ("C-?" . mc/mark-all-dwim)
            ("C-M-?" . mc/mark-more-like-this-extended))
 
-(with-eval-after-load 'multiple-cursors
+(with-eval-after-load 'multiple-cursors-core
   (bind-keys :map mc/keymap
              ;; Return should not end multiple-cursors-mode.
              ("<return>" . nil)
