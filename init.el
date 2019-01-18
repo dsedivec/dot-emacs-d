@@ -2320,7 +2320,9 @@ the selected link instead of opening it."
              ("C-c C-z" . sql-product-interactive)))
 
 ;; Set the default to my most commonly-used RDBMS.
-(setq sql-product 'postgres)
+(setq sql-product 'postgres
+      ;; Make C-c C-z focus the SQLi buffer.
+      sql-display-sqli-buffer-function t)
 
 (with-eval-after-load 'sql
   ;; With readline on (or libedit on macOS?) things like
