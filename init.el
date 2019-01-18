@@ -268,6 +268,10 @@ NEW-ELEMENT."
 (gv-define-setter my:buffer-local-value (val variable &optional buffer)
   `(set (make-local-variable ,variable) ,val))
 
+(defun my:get-standard-value (var)
+  "Return the standard value of VAR."
+  (eval (car (get var 'standard-value))))
+
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
@@ -1100,6 +1104,24 @@ surround \"foo\" with (in this example) parentheses.  I want
       (delete-file auto-save-file-name))))
 
 (add-hook 'after-revert-hook #'my:delete-auto-save-after-revert)
+
+
+;;; fill
+
+;; Make `adaptive-fill-mode' recognize numbered lists as well.
+
+(unless (equal (my:get-standard-value 'adaptive-fill-regexp)
+               "[ \t]*\\([-–!|#%;>*·•‣⁃◦]+[ \t]*\\)*")
+  (warn "`adaptive-fill-regexp' changed from 27.0.50 value, check your mod"))
+
+(setq adaptive-fill-regexp (rx (* (any ?\s ?\t))
+                               (* (group (or
+                                          ;; List of "bullet-like" characters
+                                          ;; taken from original value.
+                                          (1+ (any "-–!|#%;>*·•‣⁃◦"))
+                                          ;; Here's the numbered list bit.
+                                          (: (1+ digit) ?.))
+                                         (* (any ?\s ?\t))))))
 
 
 ;;; find-func
