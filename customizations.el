@@ -52,7 +52,6 @@
      flycheck-package
      flycheck-pos-tip
      free-keys
-     god-mode
      graphviz-dot-mode
      haskell-mode
      haskell-snippets
