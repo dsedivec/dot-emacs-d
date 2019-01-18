@@ -1192,6 +1192,33 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 
 
+;;; frame
+
+;; Bug: `display-monitor-attributes-list' documents that a "display
+;; name" is acceptable, but `ns-display-monitor-attributes-list' (ObjC
+;; function) calls terminal_live_p, which does not accept a "display
+;; name".  Cf. `x-display-monitor-attributes-list' (xfns.c) which
+;; starts with check_x_display_info instead, and I assume that
+;; function accepts a display name.
+;;
+;; I discovered this when `fit-frame-to-buffer' raised the error.
+;;
+;; I should open a bug in Emacs (search keyword: upstream).
+
+(when (fboundp 'ns-display-monitor-attributes-list)
+  (define-advice ns-display-monitor-attributes-list
+      (:filter-args (args) my:accept-display-name-bug)
+    (if (and args (stringp (car args)))
+        ;; I'm really not even sure if this is proper, but it does
+        ;; work on macOS.
+        ;;
+        ;; Also, the `cdr' here is future-proofing: at the time of
+        ;; writing, `ns-display-monitor-attributes-list' only takes
+        ;; 0..1 arguments.
+        (cons (get-device-terminal (car args)) (cdr args))
+      args)))
+
+
 ;;; git-commit
 
 (with-eval-after-load 'git-commit
