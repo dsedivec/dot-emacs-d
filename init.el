@@ -1562,7 +1562,7 @@ the selected link instead of opening it."
 
 ;; I want this everywhere (recommended by the Magit manual's "Getting
 ;; Started" section).
-(bind-key "C-x g" 'magit-status)
+(bind-keys ("C-x g" . magit-status))
 
 (autoload 'magit "magit" nil t)
 
