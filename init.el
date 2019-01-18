@@ -1564,6 +1564,20 @@ the selected link instead of opening it."
 ;; Started" section).
 (bind-keys ("C-x g" . magit-status))
 
+;; Spacemacs uses <Leader>gfd to run `magit-diff-buffer-file-popup',
+;; but (a) I don't like that prefix (why not "v" for "version
+;; control", so it can potentially apply to all version control
+;; systems, rather than "g" for (presumably) "Git"), and (b) I want
+;; to just straight to the diff, no pop-up needed.
+;;
+;; So I'm breaking with Spacemacs and making my own bindings here.
+;; #Rebel
+(with-eval-after-load 'magit
+  (bind-keys
+   :map magit-file-mode-map
+   ("M-m v f" . magit-file-popup)
+   ("M-m v d" . magit-diff-buffer-file)))
+
 (autoload 'magit "magit" nil t)
 
 (setq magit-diff-refine-hunk 'all)
