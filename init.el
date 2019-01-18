@@ -680,6 +680,17 @@ it returns the node that your EDIT-FORM changed)."
   (dolist (key '("M-." "M-," "M-*"))
     (unbind-key key anaconda-mode-map)))
 
+;;; auto-highlight-symbol
+
+(add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
+
+(with-eval-after-load 'auto-highlight-symbol
+  ;; Must trigger defcustom's :set.
+  (customize-set-variable 'ahs-idle-interval 0.5)
+
+  (add-to-list 'ahs-inhibit-face-list 'font-lock-keyword-face))
+
+
 
 ;;; autorevert
 
@@ -1266,13 +1277,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; highlight-parentheses
 
 (add-hook 'prog-mode-hook #'highlight-parentheses-mode)
-
-
-;;; highlight-symbol
-
-(setq highlight-symbol-idle-delay 0.5)
-
-(add-hook 'prog-mode-hook #'highlight-symbol-mode)
 
 
 ;;; hindent

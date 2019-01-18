@@ -13,6 +13,7 @@
      amx
      auctex
      auto-compile
+     auto-highlight-symbol
      auto-package-update
      avy
      bind-key
@@ -57,7 +58,6 @@
      haskell-snippets
      highlight-indent-guides
      highlight-parentheses
-     highlight-symbol
      hindent
      hl-line+
      hl-todo
