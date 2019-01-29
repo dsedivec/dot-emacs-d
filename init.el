@@ -2590,7 +2590,9 @@ Argument BASE-INDENTATION is updated."
            (forward-word 1)
            (sqlind-forward-syntactic-ws)
            (looking-at (el-patch-swap "transaction"
-                                      "transaction\\|work"))))))
+                                      "transaction\\|work")))))
+
+  (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
 
 ;; Add FROM and RETURNING as possible keywords in an UPDATE statement.
 ;; PostgreSQL extensions both, AFAIK.  Still, I should *probably* push
