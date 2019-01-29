@@ -2463,11 +2463,11 @@ the selected link instead of opening it."
 ;; nested transactions and just generally isn't super-smart, but
 ;; hopefully gets the job done.
 ;;
-;; BEGIN WORK;
+;;     BEGIN WORK;
 ;;
-;;     SELECT 'this is indented one extra level';
+;;         SELECT 'this is indented one extra level';
 ;;
-;; COMMIT;
+;;     COMMIT;
 (defun my:sqlind-indent-inside-transaction (syntax base-indentation)
   (save-excursion
     (let ((case-fold-search t))
