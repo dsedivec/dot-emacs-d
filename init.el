@@ -2508,6 +2508,18 @@ the selected link instead of opening it."
         ;; No change in indentation.
         (t base-indentation)))))
 
+(defun my:sqlind-indent-line-comment (syntax base-indentation)
+  "Indent the \"--\" comment on this line to the next or previous line."
+  (cl-assert (save-excursion
+               (forward-line 0)
+               (looking-at-p "\\s-*--")))
+  (or (save-excursion
+        (when (zerop (forward-line 1))
+          (back-to-indentation)
+          (unless (looking-at-p "$\\|--")
+            (current-column))))
+      (sqlind-indent-comment-start syntax base-indentation)))
+
 ;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
 ;; the end of the anchor, e.g. for "UPDATE" it will move over the
 ;; "UPDATE" and (in my SQL style) its following newline character.
@@ -2641,6 +2653,8 @@ Argument BASE-INDENTATION is updated."
   (my:set-sqlind-offset 'in-select-clause +)
 
   (my:set-sqlind-offset 'in-insert-clause +)
+
+  (my:set-sqlind-offset 'comment-start my:sqlind-indent-line-comment)
 
   (my:set-sqlind-offset 'comment-continuation 0)
 
