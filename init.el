@@ -645,6 +645,14 @@ it returns the node that your EDIT-FORM changed)."
       (nconc hyperref-commands '(("\\nameref" ?n))))))
 
 
+;;; abbrev
+
+(with-eval-after-load 'abbrev
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x a" . "Prefix Command") . (nil . "abbrev"))))
+
+
+
 ;;; ace-window
 
 (with-eval-after-load 'ace-window
@@ -992,6 +1000,13 @@ it returns the node that your EDIT-FORM changed)."
 (bind-keys ("C-M-." . dumb-jump-go))
 
 
+;;; edebug
+
+(with-eval-after-load 'edebug
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x X" . "Prefix Command") . (nil . "edebug"))))
+
+
 ;;; ediff
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -1175,6 +1190,17 @@ surround \"foo\" with (in this example) parentheses.  I want
 (global-flycheck-mode 1)
 
 (flycheck-pos-tip-mode 1)
+
+(with-eval-after-load 'flycheck
+  ;; I'm trying to avoid labeling C-c ! as Flycheck unless Flycheck
+  ;; mode is on in this buffer.  I'm not really sure this is a good
+  ;; way to accomplish this.
+  (add-to-list 'which-key-replacement-alist
+               '(("C-c !" . "Prefix Command")
+                 . (lambda (key-binding)
+                     (if flycheck-mode
+                         (cons (car key-binding) "flycheck")
+                       key-binding)))))
 
 (my:load-recipes 'flycheck-python-pylint-disable-switch)
 
@@ -1371,6 +1397,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys :map isearch-mode-map
            ("C-'" . my:avy-isearch))
+
+
+;;; iso-transl
+
+(with-eval-after-load 'iso-transl
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x 8" . "Prefix Command") . (nil . "unicode"))))
 
 
 ;;; ivy
@@ -1628,6 +1661,15 @@ the selected link instead of opening it."
 ;;; move-text
 
 (move-text-default-bindings)
+
+
+;;; mule
+
+;; Note that C-x RET is actually bound in mule-cmds.el, but that
+;; doesn't `provide' anything.
+(with-eval-after-load 'mule
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x RET" . "Prefix Command") . (nil . "mule"))))
 
 
 ;;; multi-line
@@ -1972,6 +2014,10 @@ the selected link instead of opening it."
 (bind-keys :map persp-mode-map
            ("M-m l l" . persp-frame-switch))
 
+;; Document C-c p o, which is a lambda.
+(add-to-list 'which-key-replacement-alist
+             '(("C-c p o" . nil) . (nil . "persp-mode off")))
+
 ;; Perspective-aware buffer switching with Ivy, courtesy
 ;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
 ;; (linked from persp-mode.el project).  I decided that I did not need
@@ -2164,6 +2210,9 @@ the selected link instead of opening it."
 (smart-tabs-advise 'python-indent-post-self-insert-function
                    'python-indent-offset)
 
+(which-key-add-major-mode-key-based-replacements 'python-mode
+    "C-c C-t" "skeletons")
+
 (my:load-recipes 'python-magic-quotes
                  'python-fix-dead-shell-font-lock-buffer)
 
@@ -2270,6 +2319,11 @@ the selected link instead of opening it."
 ;; default binding for `count-words-region'.  Put it elsewhere so I
 ;; can use it.
 (bind-key "C-M-=" 'count-words-region)
+
+(with-eval-after-load 'simple
+  (add-to-list 'which-key-replacement-alist
+               '(("C-x @" . "Prefix Command") . (nil . "add modifier"))))
+
 
 
 ;;; sly
@@ -2908,6 +2962,16 @@ set the engine for the file upon loading.")
 ;;; which-key
 
 (which-key-mode 1)
+
+;; Fill in some explanations for Emacs built-in prefixes, or prefixes
+;; that are kind of shared like C-x r.
+(dolist (pair '(("C-x 4" . "other window")
+                ("C-x 5" . "other frame")
+                ("C-x n" . "narrow")
+                ("C-x r" . "register/rectangle")
+                ("C-x w" . "highlight/winum")))
+  (add-to-list 'which-key-replacement-alist
+               `((,(car pair) . "Prefix Command") . (nil . ,(cdr pair)))))
 
 
 ;;; whitespace
