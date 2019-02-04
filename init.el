@@ -2596,6 +2596,49 @@ the selected link instead of opening it."
    ;; Use sql-indent default behavior.
    (sqlind-indent-comment-start syntax base-indentation)))
 
+;; Skip over psql \... commands when finding beginning of statement.
+;; This makes indenting work right.  (But maybe it breaks motion.)
+;; Should this get pushed upstream?  (Do I still need this after I
+;; modified `sqlind-beginning-of-directive', which see?)
+
+(defun my:sqlind-beginning-of-statement-skip-psql (&rest _args)
+  (while (looking-at-p "^\\s-*\\\\")
+    (forward-line 1)
+    (sqlind-forward-syntactic-ws)))
+
+(advice-add 'sqlind-beginning-of-statement :after
+            #'my:sqlind-beginning-of-statement-skip-psql)
+
+;; Teach sql-indent about psql directives.  I should definitely push
+;; this upstream.
+
+(defconst sqlind-psql-directive
+  "^\\s-*\\\\[a-zA-Z?!]"
+  "Match a psql directive at the beginning of a line.
+psql directives are always on a single line, by themselves.")
+
+(el-patch-feature sql-indent)
+
+(with-eval-after-load 'sql-indent
+  (el-patch-defun sqlind-beginning-of-directive ()
+    "Return the position of an SQL directive, or nil.
+We will never move past one of these in our scan.  We also assume
+they are one-line only directives."
+    (let ((rx (cl-case (and (boundp 'sql-product) sql-product)
+                (ms sqlind-ms-directive)
+                (sqlite sqlind-sqlite-directive)
+                (oracle sqlind-sqlplus-directive)
+                (el-patch-add
+                  (postgres sqlind-psql-directive))
+                (t nil))))
+      (when rx
+        (save-excursion
+          (when (re-search-backward rx nil 'noerror)
+            (forward-line 1)
+            (point))))))
+
+  (el-patch-validate 'sqlind-beginning-of-directive 'defun t))
+
 ;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
 ;; the end of the anchor, e.g. for "UPDATE" it will move over the
 ;; "UPDATE" and (in my SQL style) its following newline character.
@@ -2759,17 +2802,6 @@ Argument BASE-INDENTATION is updated."
       (when (derived-mode-p 'sql-mode)
         (setq sqlind-indentation-offsets-alist
               my:sqlind-indentation-offsets-alist)))))
-
-;; Skip over psql \... commands when finding beginning of statement.
-;; This makes indenting work right.  (But maybe it breaks motion.)
-
-(defun my:sqlind-beginning-of-statement-skip-psql (&rest _args)
-  (while (looking-at-p "^\\s-*\\\\")
-    (forward-line 1)
-    (sqlind-forward-syntactic-ws)))
-
-(advice-add 'sqlind-beginning-of-statement :after
-            #'my:sqlind-beginning-of-statement-skip-psql)
 
 (defun my:sqlind-minor-mode-hook ()
   (setq sqlind-basic-offset tab-width
