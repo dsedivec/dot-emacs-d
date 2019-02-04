@@ -2281,11 +2281,11 @@ the selected link instead of opening it."
 
 (defun my:sh-mode-hook ()
   (my:setq-local indent-tabs-mode t
-                 tab-width 4)
-  (setq-local company-backends (cons '(company-shell
-                                       company-keywords
-                                       company-dabbrev-code)
-                                     company-backends)))
+                 tab-width 4
+                 company-backends (cons '(company-shell
+                                          company-keywords
+                                          company-dabbrev-code)
+                                        company-backends)))
 
 ;; Probably do want `my:warn-white-space-mode' to come after
 ;; `my:sh-mode-hook' which sets `tab-width'.
