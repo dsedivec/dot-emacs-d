@@ -2973,8 +2973,8 @@ reverse order (a stack) and is used to skip over nested blocks."
 
   (my:set-sqlind-offset 'comment-continuation 0)
 
-  ;; Work tells me they prefer one level indent inside BEGIN.  I defer
-  ;; to their preference.
+  ;; Work tells me they prefer one level indent inside BEGIN WORK.  I
+  ;; defer to their preference.
   (my:set-sqlind-offset 'toplevel my:sqlind-indent-inside-transaction)
 
   (my:set-sqlind-offset 'in-begin-block my:sqlind-indent-in-begin-block)
