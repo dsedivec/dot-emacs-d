@@ -1816,11 +1816,12 @@ the selected link instead of opening it."
              ;; for this command.  M-* not currently bound in my org-mode
              ;; buffer.
              ("M-*" . org-mark-ring-goto)
-             ;; org commit 68b076bf5238 stopped binding C-a/C-e in favor
-             ;; of replacing move-beginning-of-line/move-end-of-line
-             ;; (function remapping), but Spacemacs doesn't have C-a/C-e
-             ;; bound to those in the first place (uses mwim.el instead),
-             ;; so that basically breaks C-a/C-e in org.
+             ;; org commit 68b076bf5238 stopped binding C-a/C-e in
+             ;; favor of command remapping
+             ;; move-beginning-of-line/move-end-of-line, but I have
+             ;; C-a/C-e bound to mwim functions instead, so that
+             ;; basically breaks C-a/C-e in org.  Hence, just map
+             ;; C-a/C-e here to what org intends.
              ("C-a" . org-beginning-of-line)
              ("C-e" . org-end-of-line)
              ;; Somewhere along the lines I think the default binding
