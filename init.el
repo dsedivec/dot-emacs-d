@@ -2574,15 +2574,27 @@ the selected link instead of opening it."
 
 (defun my:sqlind-indent-line-comment (syntax base-indentation)
   "Indent the \"--\" comment on this line to the next or previous line."
+  ;; Ensure we're called on a comment line.
   (cl-assert (save-excursion
                (forward-line 0)
                (looking-at-p "\\s-*--")))
-  (or (save-excursion
-        (when (zerop (forward-line 1))
-          (back-to-indentation)
-          (unless (looking-at-p "$\\|--")
-            (current-column))))
-      (sqlind-indent-comment-start syntax base-indentation)))
+  (or
+   ;; Is this a continuation of a comment from the previous line?  If
+   ;; so, indent to match.
+   (save-excursion
+     (when (zerop (forward-line -1))
+       (back-to-indentation)
+       (when (looking-at-p "\\s-*--")
+         (current-column))))
+   ;; Previous line is not a comment.  Is the next line something
+   ;; other than a blank line?  If so, use its indent.
+   (save-excursion
+     (when (zerop (forward-line 1))
+       (back-to-indentation)
+       (unless (eolp)
+         (current-column))))
+   ;; Use sql-indent default behavior.
+   (sqlind-indent-comment-start syntax base-indentation)))
 
 ;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
 ;; the end of the anchor, e.g. for "UPDATE" it will move over the
