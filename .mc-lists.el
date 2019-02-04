@@ -21,6 +21,7 @@
         paredit-backward-kill-word
         paredit-forward
         paredit-forward-delete
+        paredit-forward-down
         paredit-forward-kill-word
         paredit-raise-sexp
         paredit-semicolon
