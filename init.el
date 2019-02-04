@@ -2282,6 +2282,8 @@ the selected link instead of opening it."
 (defun my:sh-mode-hook ()
   (my:setq-local indent-tabs-mode t
                  tab-width 4
+                 ;; Mode name "Shell-script" too long!
+                 mode-name "sh"
                  company-backends (cons '(company-shell
                                           company-keywords
                                           company-dabbrev-code)
