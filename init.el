@@ -2596,6 +2596,18 @@ the selected link instead of opening it."
    ;; Use sql-indent default behavior.
    (sqlind-indent-comment-start syntax base-indentation)))
 
+;; Remove one level of indentation from BEGIN after CREATE FUNCTION so
+;; that the BEGIN is at the same level as the CREATE FUNCTION.
+;;
+;;     CREATE FUNCTION foo() RETURNS void AS $$
+;;     BEGIN
+;;     END;
+;;     $$ LANGUAGE plpgsql;
+(defun my:sqlind-indent-in-begin-block (syntax base-indentation)
+  (if (eq (nth 1 (caar syntax)) 'defun)
+      base-indentation
+    (+ base-indentation sqlind-basic-offset)))
+
 ;; Skip over psql \... commands when finding beginning of statement.
 ;; This makes indenting work right.  (But maybe it breaks motion.)
 ;; Should this get pushed upstream?  (Do I still need this after I
@@ -2713,12 +2725,192 @@ Argument BASE-INDENTATION is updated."
 
   (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
 
+;; Another patch: need to indent a continued join inside an UPDATE's
+;; FROM clause:
+;;
+;;     UPDATE foo SET bar = TRUE
+;;     FROM
+;;         t1
+;;         JOIN t2
+;;             -- This adds this extra level of indent here:
+;;             ON t1.k = t2.k
+;;     WHERE foo.k = t1.k;
+
+(el-patch-feature sql-indent)
+
+(with-eval-after-load 'sql-indent
+  (el-patch-defun sqlind-syntax-in-update (pos start)
+    "Return the syntax at POS which is inside an \"update\" statement at START."
+    (save-excursion
+      (catch 'finished
+        (goto-char pos)
+
+        ;; all select query components are indented relative to the start of the
+        ;; select statement)
+        (when (looking-at sqlind-update-clauses-regexp)
+          (throw 'finished (cons 'update-clause start)))
+
+        (while (re-search-backward sqlind-update-clauses-regexp start t)
+          (let* ((match-pos (match-beginning 0))
+                 (clause (sqlind-match-string 0)))
+            (setq clause (replace-regexp-in-string "[ \t\r\n\f]" " " clause))
+            (when (sqlind-same-level-statement (point) start)
+              (throw 'finished
+                (el-patch-wrap 3
+                    (if (string= clause "from")
+                        (sqlind-syntax-in-select pos start)
+                      (cons (list 'in-update-clause clause) match-pos))))))))))
+
+  (el-patch-validate 'sqlind-syntax-in-update 'defun t))
+
+
+;; PostgreSQL uses DECLARE in PL/pgSQL, not just Oracle and PL/SQL!
+;; Should probably push this upstream.
+
+(el-patch-feature sql-indent)
+
+(with-eval-after-load 'sql-indent
+  (el-patch-defun sqlind-beginning-of-block (&optional end-statement-stack)
+    "Find the start of the current block and return its syntax.
+
+END-STATEMENT-STACK contains a list of \"end\" syntaxes in
+reverse order (a stack) and is used to skip over nested blocks."
+    (interactive)
+    ;; This function works as follows: `sqlind-start-block-regexp` defines the
+    ;; keywords where it stops to inspect the code.  Each time it stops at one
+    ;; of these keywords, it checks to see if the keyword is inside a comment or
+    ;; string.  If the keyworkd is not inside a comment or string, the
+    ;; `sqlind-maybe-*` functions are called to check if the keyword is valid.
+    ;; Each of these functions will do one of the following:
+    ;;
+    ;; * throw a syntax object with a 'finished tag, if they decide that the
+    ;;   keyword is valid
+    ;;
+    ;; * return t to indicate that they decided that the keyword is not valid
+    ;;   and `sqlind-beginning-of-block` should search for the next keyword
+    ;;
+    ;; * return nil to indicate that they don't recognize the keyword and
+    ;;   another `sqlind-maybe-*` function should be called
+    ;;
+    ;; Some of these `sqlind-maybe-*` functions are specific to the
+    ;; `sql-product` and are only invoked for the speficied SQL dialect.
+    (catch 'finished
+      (let ((sqlind-end-stmt-stack end-statement-stack))
+        (while (re-search-backward sqlind-start-block-regexp sqlind-search-limit 'noerror)
+          (or (sqlind-in-comment-or-string (point))
+              (when (looking-at ")") (forward-char 1) (forward-sexp -1) t)
+              (sqlind-maybe-end-statement)
+              (sqlind-maybe-if-statement)
+              (sqlind-maybe-case-statement)
+              (sqlind-maybe-then-statement)
+              (sqlind-maybe-exception-statement)
+              (sqlind-maybe-else-statement)
+              (sqlind-maybe-loop-statement)
+              (sqlind-maybe-begin-statement)
+              ;; declare statements only start blocks in PL/SQL
+              (when (el-patch-swap (eq sql-product 'oracle)
+                                   (memq sql-product '(oracle postgres)))
+                (sqlind-maybe-declare-statement))
+              (when (eq sql-product 'postgres)
+                (sqlind-maybe-$$-statement))
+              (sqlind-maybe-create-statement)
+              (sqlind-maybe-defun-statement))))
+      'toplevel))
+
+  (el-patch-validate 'sqlind-beginning-of-block 'defun t))
+
+;; Woo boy, another patch: looks to me like sql-indent things WITH is
+;; only used with SELECT.  Not here in PostgreSQL country, at least.
+;; The patch to handle all these many clauses is not pretty, but
+;; works.  I think something more elegant is possible but don't have
+;; the time for it right now.
+;;
+;;     WITH foo AS (SELECT 1)
+;;     UPDATE
+;;         bar
+;;     SET
+;;         baz = 42;
+;;
+;; I should at least upstream an issue for this.
+
+(el-patch-feature sql-indent)
+
+(with-eval-after-load 'sql-indent
+  ;; This is new, defined by me
+  (defconst my:sqlind-dml-regexp
+    (regexp-opt '("select" "insert" "update" "delete") 'symbols)
+    "Regexp matching DML statements.")
+
+  (el-patch-defun sqlind-syntax-in-with (pos start)
+    "Return the syntax at POS which is part of a \"with\" statement at START."
+    (save-excursion
+      (catch 'finished
+        (goto-char pos)
+        (cond
+          ((looking-at sqlind-with-clauses-regexp)
+           (throw 'finished (cons 'with-clause start)))
+          ((and (looking-at
+                 (el-patch-swap "\\_<select\\_>" my:sqlind-dml-regexp))
+                (sqlind-same-level-statement (point) start))
+           (throw 'finished (cons 'with-clause start))))
+        (while (re-search-backward (el-patch-swap
+                                     "\\_<select\\_>"
+                                     my:sqlind-dml-regexp)
+                                   start 'noerror)
+          (when (sqlind-same-level-statement (point) start)
+            (throw 'finished
+              (el-patch-swap
+                (sqlind-syntax-in-select pos (point))
+                ;; See also `sqlind-refine-syntax' which has a `cond'
+                ;; block that sort of serves this purpose.  (That
+                ;; `cond' is also the route into this function,
+                ;; `sqlind-syntax-in-with', BTW.)
+                (funcall (intern (format "sqlind-syntax-in-%s"
+                                         (sqlind-match-string 0)))
+                         pos (point))))))
+        (goto-char pos)
+        (when (looking-at "\\_<as\\_>")
+          (throw 'finished (cons 'with-clause-cte-cont start)))
+        (sqlind-backward-syntactic-ws)
+        (when (looking-at ",")
+          (throw 'finished (cons 'with-clause-cte start)))
+        (forward-word -1)
+        (when (looking-at sqlind-with-clauses-regexp)
+          ;; We're right after the with (recursive keyword)
+          (throw 'finished (cons 'with-clause-cte start)))
+        (throw 'finished (cons 'with-clause-cte-cont start)))))
+
+  (el-patch-validate 'sqlind-syntax-in-with 'defun t))
+
 ;; Add FROM and RETURNING as possible keywords in an UPDATE statement.
 ;; PostgreSQL extensions both, AFAIK.  Still, I should *probably* push
 ;; this upstream.
 (with-eval-after-load 'sql-indent
   (defconst sqlind-update-clauses-regexp
     (regexp-opt '("update" "set" "from" "where" "returning") 'symbols)))
+
+;; Add DO.  Should probably push this upstream.
+(with-eval-after-load 'sql-indent
+  (defconst sqlind-start-block-regexp
+    (concat "\\(\\_<"
+            (regexp-opt '("if" "then" "else" "elsif" "loop"
+                          "begin" "declare" "create" "alter" "exception"
+                          "procedure" "function" "end" "case"
+                          "do")
+                        t)
+            "\\_>\\)\\|)\\|\\$\\$")
+    "Regexp to match the start of a block."))
+
+;; Maybe make DO work like an anonymous defun-start?  Trying this out.
+;; May want to upstream.
+
+(defun my:sqlind-maybe-defun-from-do-statement (orig-fun &rest args)
+  (if (looking-at-p "\\_<do\\_>")
+      (throw 'finished (list 'defun-start ""))
+    (apply orig-fun args)))
+
+(advice-add 'sqlind-maybe-defun-statement :around
+            #'my:sqlind-maybe-defun-from-do-statement)
 
 ;; I have chosen to "edit" `sqlind-default-indentation-offsets-alist'
 ;; to produce `my:sqlind-indentation-offsets-alist', rather than
@@ -2775,6 +2967,8 @@ Argument BASE-INDENTATION is updated."
 
   (my:set-sqlind-offset 'in-insert-clause +)
 
+  (my:set-sqlind-offset 'in-update-clause +)
+
   (my:set-sqlind-offset 'comment-start my:sqlind-indent-line-comment)
 
   (my:set-sqlind-offset 'comment-continuation 0)
@@ -2782,6 +2976,8 @@ Argument BASE-INDENTATION is updated."
   ;; Work tells me they prefer one level indent inside BEGIN.  I defer
   ;; to their preference.
   (my:set-sqlind-offset 'toplevel my:sqlind-indent-inside-transaction)
+
+  (my:set-sqlind-offset 'in-begin-block my:sqlind-indent-in-begin-block)
 
   ;; Lone semicolon gets indented back to anchor (usually column 0).
   ;; These syntaxes are taken from sql-indent-left.el, which comes
