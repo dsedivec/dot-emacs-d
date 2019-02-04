@@ -1189,8 +1189,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (global-flycheck-mode 1)
 
-(flycheck-pos-tip-mode 1)
-
 (with-eval-after-load 'flycheck
   ;; I'm trying to avoid labeling C-c ! as Flycheck unless Flycheck
   ;; mode is on in this buffer.  I'm not really sure this is a good
@@ -1209,6 +1207,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (with-eval-after-load 'flycheck
   (flycheck-package-setup))
+
+
+;;; flycheck-pos-tip
+
+(with-eval-after-load 'flycheck
+  (flycheck-pos-tip-mode 1))
 
 
 ;;; flyspell
