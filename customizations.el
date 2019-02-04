@@ -42,6 +42,7 @@
      edit-indirect
      edit-server
      el-patch
+     elisp-slime-nav
      eltu
      emmet-mode
      exec-path-from-shell
