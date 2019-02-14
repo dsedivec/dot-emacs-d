@@ -1412,6 +1412,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-hook)
 
 
+;;; hideshow-tab
+
+(with-eval-after-load 'hideshow
+  (bind-keys :map hs-minor-mode-map
+             ("TAB" . hideshow-tab)))
+
+
 ;;; highlight-indent-guides
 
 (setq highlight-indent-guides-method 'character)
