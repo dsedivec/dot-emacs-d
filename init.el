@@ -1474,6 +1474,13 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq imenu-auto-rescan t
       imenu-auto-rescan-maxout (* 1024 1024 10))
 
+(defun my:imenu-highlight-after-jump ()
+  ;; `next-error' is the face that xref uses after jumping.  Good
+  ;; enough for xref, good enough for imenu.
+  (pulse-momentary-highlight-one-line (point) 'next-error))
+
+(add-hook 'imenu-after-jump-hook #'my:imenu-highlight-after-jump)
+
 
 ;;; imenu-list
 
