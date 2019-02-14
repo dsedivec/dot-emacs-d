@@ -971,6 +971,20 @@ it returns the node that your EDIT-FORM changed)."
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
 
 
+;;; dired-ranger
+
+(with-eval-after-load 'dired
+  (bind-keys :map dired-mode-map
+             ;; Taken from
+             ;; http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/.
+             ;; These actually overwrite some default bindings from
+             ;; `dired-mode', so I'm not sure if this is a good idea.
+             ;; Might want to change these.
+             ("W" . dired-ranger-copy)
+             ("X" . dired-ranger-move)
+             ("Y" . dired-ranger-paste)))
+
+
 ;;; dired-x
 
 ;; Binds C-x C-j.  Probably does other stuff I care about.

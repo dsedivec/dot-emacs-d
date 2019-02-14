@@ -36,6 +36,7 @@
      deft
      diff-hl
      dired-narrow
+     dired-ranger
      dockerfile-mode
      dtrt-indent
      dumb-jump
