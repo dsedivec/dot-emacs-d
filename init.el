@@ -1128,8 +1128,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; faces
 
-(dolist (frame '(t nil))
-  (set-face-attribute 'default frame :font "Fira Mono 8"))
+(set-face-attribute 'default nil :font "Fira Mono 8")
 
 
 ;;; files
