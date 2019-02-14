@@ -456,6 +456,21 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;;; Configure various packages
 
+;;; which-key
+
+(which-key-mode 1)
+
+;; Fill in some explanations for Emacs built-in prefixes, or prefixes
+;; that are kind of shared like C-x r.
+(dolist (pair '(("C-x 4" . "other window")
+                ("C-x 5" . "other frame")
+                ("C-x n" . "narrow")
+                ("C-x r" . "register/rectangle")
+                ("C-x w" . "highlight/winum")))
+  (add-to-list 'which-key-replacement-alist
+               `((,(car pair) . "Prefix Command") . (nil . ,(cdr pair)))))
+
+
 ;;; wspc-hydra
 
 ;; This package is out of order because I use
@@ -3220,21 +3235,6 @@ set the engine for the file upon loading.")
 
 (my:load-recipes 'which-function-in-header-line
                  'which-function-update-while-in-minibuffer)
-
-;;; which-key
-
-(which-key-mode 1)
-
-;; Fill in some explanations for Emacs built-in prefixes, or prefixes
-;; that are kind of shared like C-x r.
-(dolist (pair '(("C-x 4" . "other window")
-                ("C-x 5" . "other frame")
-                ("C-x n" . "narrow")
-                ("C-x r" . "register/rectangle")
-                ("C-x w" . "highlight/winum")))
-  (add-to-list 'which-key-replacement-alist
-               `((,(car pair) . "Prefix Command") . (nil . ,(cdr pair)))))
-
 
 ;;; whitespace
 
