@@ -1055,7 +1055,6 @@ surround \"foo\" with (in this example) parentheses.  I want
   #'aggressive-indent-mode
   ;; Useful for colors in e.g. `set-face-attribute'.
   #'rainbow-mode
-  #'elisp-slime-nav-mode
   #'my:warn-white-space-mode)
 
 (defun my:emacs-lisp-mode-hook()
@@ -1369,8 +1368,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; ielm
 
 (my:add-hooks 'ielm-mode-hook
-  #'paredit-mode
-  #'elisp-slime-nav-mode)
+  #'paredit-mode)
 
 
 ;;; imenu
