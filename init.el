@@ -1180,6 +1180,35 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-key "<s-return>" 'toggle-frame-fullscreen)
 
 
+;;; frame-resize
+
+(defun my:frame-resize-imenu-list-window (window)
+  (when (integerp imenu-list-size)
+    (with-selected-window window
+      (when (derived-mode-p 'imenu-list-major-mode)
+        (if (memq imenu-list-position '(left right))
+            (list imenu-list-size nil)
+          (list nil imenu-list-size))))))
+
+(defun my:frame-resize-window-default (window)
+  '(80 nil))
+
+(with-eval-after-load 'frame-resize
+  (with-eval-after-load 'imenu-list
+    (add-to-list 'frame-resize-window-size-functions
+                 #'my:frame-resize-imenu-list-window))
+
+  (add-to-list 'frame-resize-window-size-functions
+               #'my:frame-resize-window-default t)
+
+  (add-to-list 'auto-frame-resize-commands 'transpose-frame))
+
+(when (display-graphic-p)
+  (auto-frame-resize-mode 1))
+
+(bind-keys ("M-+" . frame-resize))
+
+
 ;;; free-keys
 
 (with-eval-after-load 'free-keys
