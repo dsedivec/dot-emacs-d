@@ -1655,6 +1655,40 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m r SPC" . js2-refactor-hydra/body)))
 
 
+;;; json-mode
+
+;; json-snatcher is broken.  `json-path-to-position' actually works.
+(defun my:json-mode-show-path (&optional pos)
+  "Print the sexp path to the node at POS and put it on the kill ring.
+POS defaults to point."
+  (interactive "d")
+  (let* ((path (plist-get (json-path-to-position (or pos (point))) :path))
+         (path-str (format "%S" path)))
+    (kill-new path-str)
+    (message path-str)))
+
+(defun my:json-mode-show-path-jq (&optional pos)
+  "Print the path to the node at POS in jq syntax and put it on the kill ring.
+POS defaults to point."
+  (interactive "d")
+  (let* ((path (plist-get (json-path-to-position (or pos (point))) :path))
+         (path-str (seq-reduce #'concat
+                               (mapcar (lambda (elt)
+                                         (if (numberp elt)
+                                             (format "[%d]" elt)
+                                           (format ".%s" elt)))
+                                       path)
+                               ".")))
+    (kill-new path-str)
+    (message path-str)))
+
+(with-eval-after-load 'json-mode
+  (bind-keys :map json-mode-map
+             ("C-c C-p" . my:json-mode-show-path-jq)))
+
+(my:add-hooks 'json-mode-hook #'hs-minor-mode)
+
+
 ;;; link-hint
 
 (autoload 'link-hint--get-link-at-point "link-hint")
