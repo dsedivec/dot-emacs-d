@@ -1502,6 +1502,14 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m r f" . importmagic-fix-symbol-at-point)))
 
 
+;;; info
+
+;; Default is t, which makes `Info-mode' precede everything with
+;; "see", which reads stupid in things like "...consult see The other
+;; section".
+(setq Info-hide-note-references 'hide)
+
+
 ;;; intero
 
 (with-eval-after-load 'haskell-mode
