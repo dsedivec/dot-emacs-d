@@ -460,6 +460,8 @@ it returns the node that your EDIT-FORM changed)."
 
 (which-key-mode 1)
 
+(my:load-recipes 'which-key-some-prefixes-are-fast)
+
 ;; Fill in some explanations for Emacs built-in prefixes, or prefixes
 ;; that are kind of shared like C-x r.
 (dolist (pair '(("C-x 4" . "other window")
@@ -1377,6 +1379,15 @@ surround \"foo\" with (in this example) parentheses.  I want
   ;; this `lookup-key' form.)
   (bind-key "s-2" (lookup-key hs-minor-mode-map (kbd "C-c @"))
             hs-minor-mode-map))
+
+(defun my:hs-minor-mode-faster-which-key ()
+  (make-local-variable 'my:which-key-no-delay-prefixes)
+  (add-to-list 'my:which-key-no-delay-prefixes t t)
+  (dolist (prefix '("C-c @" "s-2"))
+    (add-to-list 'my:which-key-no-delay-prefixes prefix)))
+
+(with-eval-after-load 'which-key
+  (add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-faster-which-key))
 
 (defun my:hs-minor-mode-warn-slow-settings ()
   ;; It took a long time to figure out what was making `hs-minor-mode'
