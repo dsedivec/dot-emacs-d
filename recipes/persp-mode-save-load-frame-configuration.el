@@ -3,6 +3,8 @@
 (require 'cl-lib)
 (require 'subr-x)
 
+(require 'persp-mode)
+
 ;; Save/restore frame configuration along with persp-mode.  Adding
 ;; data to perspectives inspired by
 ;; https://gist.github.com/gilbertw1/8d963083efea41f28bfdc85ed3c93eb4.
@@ -38,9 +40,24 @@
                       (frame-list))
               nil))
 
+(defun my:persp-mode-filter-persp-frame-property (current _filtered
+                                                  _parameters saving)
+  "frameset filter to properly save frames' 'persp' properties."
+  (cons (car current)
+        (if saving
+            (when (persp-p (cdr current))
+              (persp-name (cdr current)))
+
+          (when (cdr current)
+            ;; Not documented, but if a perspective with the name
+            ;; already exists, this returns it rather than creating a
+            ;; new perspective.
+            (persp-add-new (cdr current))))))
+
 (defun my:persp-mode-get-frameset ()
   (let ((frameset-filter-alist
-         (append (mapcar (lambda (prop) (cons prop :never))
+         (append '((persp . my:persp-mode-filter-persp-frame-property))
+                 (mapcar (lambda (prop) (cons prop :never))
                          (my:persp-mode-all-unserializable-frame-parameters))
                  frameset-filter-alist)))
     (frameset-save nil)))
@@ -53,7 +70,10 @@
   (condition-case e
       (when-let ((frameset (persp-parameter 'my:frame-configuration nil)))
         (delete-persp-parameter 'my:frame-configuration nil)
-        (frameset-restore frameset :reuse-frames t :cleanup-frames t))
+        (let ((frameset-filter-alist
+               (append '((persp . my:persp-mode-filter-persp-frame-property))
+                       frameset-filter-alist)))
+          (frameset-restore frameset :reuse-frames t :cleanup-frames t)))
     (t
      (warn "failed to restore frames: %S" e))))
 
