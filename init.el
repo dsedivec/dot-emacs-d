@@ -3533,6 +3533,13 @@ for this command) must be an arrow key."
              ("RET" . xref-quit-and-goto-xref)))
 
 
+;;; yaml-mode
+
+(with-eval-after-load 'yaml-mode
+  (bind-keys :map yaml-mode-map
+             ("RET" . newline-and-indent)))
+
+
 ;;; yasnippet
 
 (yas-global-mode 1)
