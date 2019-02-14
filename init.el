@@ -1129,6 +1129,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; faces
 
 (set-face-attribute 'default nil :font "Fira Mono 8")
+(set-face-attribute 'variable-pitch nil :font "Helvetica 10")
 
 
 ;;; files
