@@ -67,7 +67,7 @@
                        nil))
 
 (defun my:persp-mode-restore-frame-configuration (&rest _)
-  (condition-case e
+  (condition-case err
       (when-let ((frameset (persp-parameter 'my:frame-configuration nil)))
         (delete-persp-parameter 'my:frame-configuration nil)
         (let ((frameset-filter-alist
@@ -75,7 +75,7 @@
                        frameset-filter-alist)))
           (frameset-restore frameset :reuse-frames t :cleanup-frames t)))
     (t
-     (warn "failed to restore frames: %S" e))))
+     (warn "failed to restore frames: %S" err))))
 
 (with-eval-after-load 'persp-mode
   (add-hook 'persp-before-save-state-to-file-functions
