@@ -1367,6 +1367,40 @@ surround \"foo\" with (in this example) parentheses.  I want
 (global-hi-lock-mode 1)
 
 
+;;; hideshow
+
+(with-eval-after-load 'hideshow
+  ;; A kind of "change `hs-minor-mode' prefix" thing.  C-c @ is a bit
+  ;; unreasonable IMHO.  https://emacs.stackexchange.com/a/33686
+  ;;
+  ;; (Have to use `bind-key' rather than `bind-keys' so I can eval
+  ;; this `lookup-key' form.)
+  (bind-key "s-2" (lookup-key hs-minor-mode-map (kbd "C-c @"))
+            hs-minor-mode-map))
+
+(defun my:hs-minor-mode-warn-slow-settings ()
+  ;; It took a long time to figure out what was making `hs-minor-mode'
+  ;; slow in a JSON buffer.  Let's remind future me.
+  (let* ((maybe-slow-vars '(show-trailing-whitespace
+                            highlight-parentheses-mode))
+         (slow-vars (seq-filter (lambda (var)
+                                  (and (boundp var)
+                                       (symbol-value var)))
+                                maybe-slow-vars)))
+    (when slow-vars
+      (message "%s may make `hs-minor-mode' slow, maybe turn %s off"
+               (string-join (mapcar (apply-partially #'format-message "`%s'")
+                                    slow-vars)
+                            ", ")
+               (if (= (length slow-vars) 1) "it" "them")))))
+
+(defun my:hs-minor-mode-hook ()
+  (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-warn-slow-settings
+            t t))
+
+(add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-hook)
+
+
 ;;; highlight-indent-guides
 
 (setq highlight-indent-guides-method 'character)
