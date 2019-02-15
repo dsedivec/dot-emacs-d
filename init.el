@@ -1810,6 +1810,7 @@ the selected link instead of opening it."
   ;; characters like <br>.  Default to visual-line-mode.
   #'visual-line-mode
   #'electric-pair-local-mode
+  #'variable-pitch-mode
   #'my:markdown-mode-hook)
 
 (my:load-recipes 'markdown-mode-edit-gfm-code-blocks)
