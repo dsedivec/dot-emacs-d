@@ -1773,7 +1773,8 @@ the selected link instead of opening it."
 (with-eval-after-load 'magit
   (bind-keys
    :map magit-file-mode-map
-   ("M-m v f" . magit-file-popup)
+   ("M-m v f" . magit-find-file)
+   ("M-m v F" . magit-file-popup)
    ("M-m v d" . magit-diff-buffer-file)))
 
 (autoload 'magit "magit" nil t)
