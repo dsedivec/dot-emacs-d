@@ -2126,7 +2126,8 @@ the selected link instead of opening it."
                  'org-babel-read-table-in-dblock
                  'org-daily-time-summary
                  'org-columns-delete-property
-                 'org-insert-heading-ignore-invisibility)
+                 'org-insert-heading-ignore-invisibility
+                 'org-jump-over-priority-after-setting-it)
 
 
 ;;; osx-dictionary
