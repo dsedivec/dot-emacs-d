@@ -128,8 +128,14 @@
                                            "~/repositories/ns-copy-html/")))
     (python :fetcher github :repo "dsedivec/python-el")
     (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
+    ;; Need my (hopefully temporary) fork of emacs-sql-indent.
+    ;; (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
+    (sql-indent
+     ,@(let ((local-repo (expand-file-name "~/repositories/emacs-sql-indent")))
+         (if (file-directory-p local-repo)
+             (list :fetcher 'git :url (concat "file://" local-repo))
+           (list :fetcher 'github :repo "dsedivec/emacs-sql-indent"))))
     (sticky-region :fetcher github :repo "dsedivec/sticky-region")
-    (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
     ))
 
 (defun my:packages-sync (&optional upgrade)
@@ -2616,30 +2622,15 @@ the selected link instead of opening it."
 
 ;;; sql-indent
 
-(defun my:sqlind-indent-first-select-table-on-new-line (syntax base-indentation)
-  ;; Putting a newline after FROM causes sql-indent to put you in
-  ;; select-table-continuation syntax.  This indents that first table
-  ;; like select-table instead.
+;; Test case:
+;;
+;;     SELECT 1 FROM
+;;         foo;
+(defun my:sqlind-indent-to-start-of-anchor-line (syntax base-indentation)
   (save-excursion
+    (goto-char (cdar syntax))
     (back-to-indentation)
-    (let ((this-line-start (point))
-          (anchor-start (sqlind-anchor-point syntax)))
-      (save-restriction
-        (back-to-indentation)
-        (narrow-to-region anchor-start (point))
-        (goto-char (point-min))
-        (when (let ((case-fold-search t)) (looking-at-p "from"))
-          (forward-char 4)
-          (sqlind-forward-syntactic-ws)))
-      (if (= (point) this-line-start)
-          ;; There is nothing but white space (or comments) between
-          ;; "FROM" and where we were asked to indent, meaning this is
-          ;; the first table, so ignore BASE-INDENTATION and indent
-          ;; like select-table (rather than, presumably,
-          ;; select-table-continuation).
-          (sqlind-calculate-indentation (cons (cons 'select-table anchor-start)
-                                              (cdr syntax)))
-        base-indentation))))
+    (current-column)))
 
 ;; Test cases:
 ;;
@@ -2732,25 +2723,25 @@ the selected link instead of opening it."
 (defun my:sqlind-indent-line-comment (syntax base-indentation)
   "Indent the \"--\" comment on this line to the next or previous line."
   ;; Ensure we're called on a comment line.
-  (cl-assert (save-excursion
-               (forward-line 0)
-               (looking-at-p "\\s-*--")))
   (or
-   ;; Is this a continuation of a comment from the previous line?  If
-   ;; so, indent to match.
-   (save-excursion
-     (when (zerop (forward-line -1))
-       (back-to-indentation)
-       (when (looking-at-p "\\s-*--")
-         (current-column))))
-   ;; Previous line is not a comment.  Is the next line something
-   ;; other than a blank line?  If so, use its indent.
-   (save-excursion
-     (when (zerop (forward-line 1))
-       (back-to-indentation)
-       (unless (eolp)
-         (current-column))))
-   ;; Use sql-indent default behavior.
+   (when (save-excursion
+           (back-to-indentation)
+           (looking-at-p "\\s-*--"))
+     ;; Is this a continuation of a comment from the previous line?
+     ;; If so, indent to match.
+     (save-excursion
+       (when (zerop (forward-line -1))
+         (back-to-indentation)
+         (when (looking-at-p "\\s-*--")
+           (current-column))))
+     ;; Previous line is not a comment.  Is the next line something
+     ;; other than a blank line?  If so, use its indent.
+     (save-excursion
+       (when (zerop (forward-line 1))
+         (back-to-indentation)
+         (unless (eolp)
+           (current-column)))))
+   ;; Use sql-indent's default behavior.
    (sqlind-indent-comment-start syntax base-indentation)))
 
 ;; Remove one level of indentation from BEGIN after CREATE FUNCTION so
@@ -2808,80 +2799,6 @@ they are one-line only directives."
 
   (el-patch-validate 'sqlind-beginning-of-directive 'defun t))
 
-;; `sqlind-lineup-to-clause-end' mysteriously goes one character past
-;; the end of the anchor, e.g. for "UPDATE" it will move over the
-;; "UPDATE" and (in my SQL style) its following newline character.
-;; This results in it taking whatever the indent of the *following*
-;; line is as its indentation, never hitting the "EOL means indent
-;; `sqlind-basic-offset'" branch that I think it should be.  Patched
-;; below.
-;;
-;; I discovered this like:
-;;
-;;     WITH foo AS (
-;;         UPDATE
-;;         baz
-;;
-;; sql-indent was indenting "baz" at the same level as the "UPDATE".
-;; You could also just see it by writing
-;;
-;;     UPDATE
-;;         foo
-;;
-;; then kill the white space before "foo", tell sql-indent to indent
-;; the line, and it wouldn't indent it at all.
-;;
-;; I should push this upstream, though I admit I fear I may be asking
-;; too much of the maintainer with all my issues.
-
-(el-patch-feature sql-indent)
-
-(with-eval-after-load 'sql-indent
-  (el-patch-defun sqlind-lineup-to-clause-end (syntax base-indentation)
-    "Line up the current line with the end of a query clause.
-
-This assumes SYNTAX is one of in-select-clause, in-update-clause,
-in-insert-clause or in-delete-clause.  It will return an
-indentation so that:
-
-If the clause is on a line by itself, the current line is
-indented by `sqlind-basic-offset', otherwise the current line is
-indented so that it starts in next column from where the clause
-keyword ends.
-Argument BASE-INDENTATION is updated."
-    (cl-destructuring-bind ((_sym clause) . anchor) (car syntax)
-      (save-excursion
-        (goto-char anchor)
-        (forward-char (el-patch-splice 1 (1+ (length clause))))
-        (skip-syntax-forward " ")
-        (if (or (looking-at sqlind-comment-start-skip)
-                (eolp))
-            ;; if the clause is on a line by itself, indent this line with a
-            ;; sqlind-basic-offset
-            (+ base-indentation sqlind-basic-offset)
-          ;; otherwise, align to the end of the clause, with a few exceptions
-          (current-column)))))
-
-  (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
-
-;; Another patch I should upstream: BEGIN WORK is shorter than BEGIN
-;; TRANSACTION, but the upstream's version of this function only
-;; recognizes the latter.  Let's recognize the former as well.
-
-(el-patch-feature sql-indent)
-
-(with-eval-after-load 'sql-indent
-  (el-patch-defun sqlind-looking-at-begin-transaction ()
-    "Return t if the point is on a \"begin transaction\" statement."
-    (and (looking-at "begin")
-         (save-excursion
-           (forward-word 1)
-           (sqlind-forward-syntactic-ws)
-           (looking-at (el-patch-swap "transaction"
-                                      "transaction\\|work")))))
-
-  (el-patch-validate 'sqlind-lineup-to-clause-end 'defun t))
-
 ;; Another patch: need to indent a continued join inside an UPDATE's
 ;; FROM clause:
 ;;
@@ -2920,131 +2837,25 @@ Argument BASE-INDENTATION is updated."
 
   (el-patch-validate 'sqlind-syntax-in-update 'defun t))
 
-
-;; PostgreSQL uses DECLARE in PL/pgSQL, not just Oracle and PL/SQL!
-;; Should probably push this upstream.
-
-(el-patch-feature sql-indent)
-
-(with-eval-after-load 'sql-indent
-  (el-patch-defun sqlind-beginning-of-block (&optional end-statement-stack)
-    "Find the start of the current block and return its syntax.
-
-END-STATEMENT-STACK contains a list of \"end\" syntaxes in
-reverse order (a stack) and is used to skip over nested blocks."
-    (interactive)
-    ;; This function works as follows: `sqlind-start-block-regexp` defines the
-    ;; keywords where it stops to inspect the code.  Each time it stops at one
-    ;; of these keywords, it checks to see if the keyword is inside a comment or
-    ;; string.  If the keyworkd is not inside a comment or string, the
-    ;; `sqlind-maybe-*` functions are called to check if the keyword is valid.
-    ;; Each of these functions will do one of the following:
-    ;;
-    ;; * throw a syntax object with a 'finished tag, if they decide that the
-    ;;   keyword is valid
-    ;;
-    ;; * return t to indicate that they decided that the keyword is not valid
-    ;;   and `sqlind-beginning-of-block` should search for the next keyword
-    ;;
-    ;; * return nil to indicate that they don't recognize the keyword and
-    ;;   another `sqlind-maybe-*` function should be called
-    ;;
-    ;; Some of these `sqlind-maybe-*` functions are specific to the
-    ;; `sql-product` and are only invoked for the speficied SQL dialect.
-    (catch 'finished
-      (let ((sqlind-end-stmt-stack end-statement-stack))
-        (while (re-search-backward sqlind-start-block-regexp sqlind-search-limit 'noerror)
-          (or (sqlind-in-comment-or-string (point))
-              (when (looking-at ")") (forward-char 1) (forward-sexp -1) t)
-              (sqlind-maybe-end-statement)
-              (sqlind-maybe-if-statement)
-              (sqlind-maybe-case-statement)
-              (sqlind-maybe-then-statement)
-              (sqlind-maybe-exception-statement)
-              (sqlind-maybe-else-statement)
-              (sqlind-maybe-loop-statement)
-              (sqlind-maybe-begin-statement)
-              ;; declare statements only start blocks in PL/SQL
-              (when (el-patch-swap (eq sql-product 'oracle)
-                                   (memq sql-product '(oracle postgres)))
-                (sqlind-maybe-declare-statement))
-              (when (eq sql-product 'postgres)
-                (sqlind-maybe-$$-statement))
-              (sqlind-maybe-create-statement)
-              (sqlind-maybe-defun-statement))))
-      'toplevel))
-
-  (el-patch-validate 'sqlind-beginning-of-block 'defun t))
-
-;; Woo boy, another patch: looks to me like sql-indent things WITH is
-;; only used with SELECT.  Not here in PostgreSQL country, at least.
-;; The patch to handle all these many clauses is not pretty, but
-;; works.  I think something more elegant is possible but don't have
-;; the time for it right now.
-;;
-;;     WITH foo AS (SELECT 1)
-;;     UPDATE
-;;         bar
-;;     SET
-;;         baz = 42;
-;;
-;; I should at least upstream an issue for this.
+;; Pretty sure this is fixing a bug in this function, and so pretty
+;; sure I should upstream this.
 
 (el-patch-feature sql-indent)
 
 (with-eval-after-load 'sql-indent
-  ;; This is new, defined by me
-  (defconst my:sqlind-dml-regexp
-    (regexp-opt '("select" "insert" "update" "delete") 'symbols)
-    "Regexp matching DML statements.")
-
-  (el-patch-defun sqlind-syntax-in-with (pos start)
-    "Return the syntax at POS which is part of a \"with\" statement at START."
+  (el-patch-defun sqlind-same-level-statement (point start)
+    "Return t if POINT is at the same syntactic level as START.
+This means that POINT is at the same nesting level and not inside
+a string or comment."
     (save-excursion
-      (catch 'finished
-        (goto-char pos)
-        (cond
-          ((looking-at sqlind-with-clauses-regexp)
-           (throw 'finished (cons 'with-clause start)))
-          ((and (looking-at
-                 (el-patch-swap "\\_<select\\_>" my:sqlind-dml-regexp))
-                (sqlind-same-level-statement (point) start))
-           (throw 'finished (cons 'with-clause start))))
-        (while (re-search-backward (el-patch-swap
-                                     "\\_<select\\_>"
-                                     my:sqlind-dml-regexp)
-                                   start 'noerror)
-          (when (sqlind-same-level-statement (point) start)
-            (throw 'finished
-              (el-patch-swap
-                (sqlind-syntax-in-select pos (point))
-                ;; See also `sqlind-refine-syntax' which has a `cond'
-                ;; block that sort of serves this purpose.  (That
-                ;; `cond' is also the route into this function,
-                ;; `sqlind-syntax-in-with', BTW.)
-                (funcall (intern (format "sqlind-syntax-in-%s"
-                                         (sqlind-match-string 0)))
-                         pos (point))))))
-        (goto-char pos)
-        (when (looking-at "\\_<as\\_>")
-          (throw 'finished (cons 'with-clause-cte-cont start)))
-        (sqlind-backward-syntactic-ws)
-        (when (looking-at ",")
-          (throw 'finished (cons 'with-clause-cte start)))
-        (forward-word -1)
-        (when (looking-at sqlind-with-clauses-regexp)
-          ;; We're right after the with (recursive keyword)
-          (throw 'finished (cons 'with-clause-cte start)))
-        (throw 'finished (cons 'with-clause-cte-cont start)))))
+      (let ((ppss-point (syntax-ppss point))
+            (ppss-start (syntax-ppss start)))
+        (and (equal (nth 3 ppss-point) (nth 3 ppss-start)) ; string
+             (equal (nth 4 (el-patch-swap ppss-start ppss-point))
+                    (nth 4 ppss-start)) ; comment
+             (= (nth 0 ppss-point) (nth 0 ppss-start)))))) ; same nesting
 
-  (el-patch-validate 'sqlind-syntax-in-with 'defun t))
-
-;; Add FROM and RETURNING as possible keywords in an UPDATE statement.
-;; PostgreSQL extensions both, AFAIK.  Still, I should *probably* push
-;; this upstream.
-(with-eval-after-load 'sql-indent
-  (defconst sqlind-update-clauses-regexp
-    (regexp-opt '("update" "set" "from" "where" "returning") 'symbols)))
+  (el-patch-validate 'sqlind-same-level-statement 'defun t))
 
 ;; Add DO.  Should probably push this upstream.
 (with-eval-after-load 'sql-indent
@@ -3110,10 +2921,11 @@ reverse order (a stack) and is used to skip over nested blocks."
   ;; This plus my fancy function allows correct (to me) indentation of
   ;; the stuff in a FROM clause.
   (my:set-sqlind-offset 'select-table-continuation
-    +
-    sqlind-lineup-joins-to-anchor
-    +
-    my:sqlind-indent-first-select-table-on-new-line)
+    ;; Sometimes I write "SELECT 1 FROM" and I want to add an indent
+    ;; level to that.  This function corrects the "base indentation"
+    ;; to accommodate this.
+    my:sqlind-indent-to-start-of-anchor-line
+    +)
 
   (my:set-sqlind-offset 'select-join-condition +)
 
