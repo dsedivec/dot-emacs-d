@@ -2645,16 +2645,67 @@ the selected link instead of opening it."
 ;;                 ON bar.k = baz.k
 ;;         ) USING (k)
 ;;
-;; (Second one may not apply if/when I get around to making
-;; `sqlind-syntax-of-line' detect these "nested joins".)
+;;     CREATE TABLE foo (
+;;         bar INT,
+;;         baz INT
+;;             REFERENCES foo (bar)
+;;     );
 (defun my:sqlind-line-up-nested-continuations (syntax base-indentation)
-  (save-excursion
-    (goto-char (cdar syntax))
-    (skip-syntax-forward "(-")
-    (if (not (eolp))
-        (+ base-indentation 1)
-      (back-to-indentation)
-      (+ (current-column) sqlind-basic-offset))))
+  (let ((start (cdar syntax)))
+    ;; Test if we're inside something like a CREATE TABLE comment list.
+    (if (save-excursion
+          (goto-char start)
+          (and (zerop (nth 0 (syntax-ppss)))
+               (progn (sqlind-beginning-of-statement)
+                      ;; Ugly (internal) API.
+                      (catch 'finished
+                        (sqlind-maybe-create-statement)))))
+        ;; We're inside some kind of CREATE TABLE column list or
+        ;; something like that.
+        (+
+         ;; Start with the indentation of the anchor line.  (Don't use
+         ;; the column where the anchor is (AKA `base-indenation'),
+         ;; since that's probably like an open parenthesis after
+         ;; CREATE TABLE foo, so column is likely to be totally
+         ;; wrong.)
+         (save-excursion
+           (goto-char start)
+           (back-to-indentation)
+           (current-column))
+         ;; Add one indent level on top of that.
+         sqlind-basic-offset
+         ;; If previous line ended with a comma, add no further
+         ;; indentation.  Otherwise, add an additional level.
+         (if (save-excursion
+               (and (zerop (forward-line -1))
+                    (progn
+                      (end-of-line)
+                      (save-restriction
+                        ;; `forward-comment' moves over newline.
+                        (narrow-to-region (line-beginning-position) (point))
+                        (while (or
+                                (let ((state (syntax-ppss)))
+                                  ;; Move out of a comment we're in.
+                                  (and (nth 4 state)
+                                       (goto-char (nth 8 state))))
+                                ;; Move over white space and/or
+                                ;; comment before point.  This may
+                                ;; move over white space and then
+                                ;; return nil because it didn't find a
+                                ;; comment, but point is still moved
+                                ;; so we use this as a cute way to
+                                ;; skip white space.
+                                (forward-comment -1))))
+                      (eq (char-before) ?,))))
+             0
+           sqlind-basic-offset))
+      (save-excursion
+        (goto-char start)
+        (skip-syntax-forward "(-")
+        (if (not (eolp))
+            (+ base-indentation 1)
+          (back-to-indentation)
+          (+ (current-column) sqlind-basic-offset))))))
 
 ;; Indent successive lines of ALTER TABLE by one step:
 ;;
