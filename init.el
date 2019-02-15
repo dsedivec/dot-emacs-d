@@ -110,12 +110,7 @@
     (package-refresh-contents)))
 
 (defvar my:quelpa-packages
-  `(
-    ;; Until https://github.com/domtronn/all-the-icons.el/pull/106 gets merged:
-    ;; all-the-icons
-    (all-the-icons :fetcher github :repo "ubolonton/all-the-icons.el"
-                   :branch "font-lock-fix" :files (:defaults "data"))
-    (bookmark+ :fetcher wiki
+  `((bookmark+ :fetcher wiki
                :files ,(cons "bookmark+.el"
                              (mapcar (lambda (suffix)
                                        (format "bookmark+-%s.el" suffix))
