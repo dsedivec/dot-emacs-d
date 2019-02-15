@@ -109,29 +109,31 @@
                 my:package-max-age-before-refresh))
     (package-refresh-contents)))
 
+(defun my:quelpa-git-local-or-github (name &optional repo-name)
+  "Return Quelpa recipe for package NAME.
+REPO-NAME is optional local and GitHub repo name if it is not the
+same as NAME."
+  (let* ((repo-name (or repo-name (symbol-name name)))
+         (local-repo (expand-file-name (concat "~/repositories/" repo-name))))
+    (cons name
+          (if (file-directory-p local-repo)
+              (list :fetcher 'git :url (concat "file://" local-repo))
+            (list :fetcher 'github :repo (concat "dsedivec/" repo-name))))))
+
 (defvar my:quelpa-packages
   `((bookmark+ :fetcher wiki
                :files ,(cons "bookmark+.el"
                              (mapcar (lambda (suffix)
                                        (format "bookmark+-%s.el" suffix))
                                      '(mac bmu 1 key lit))))
-    (eltu :fetcher github :repo "dsedivec/eltu"
-          :files (:defaults "eltu_update_tags.py"))
     (hl-line+ :fetcher wiki)
-    (ns-copy-html :fetcher git
-                  :url ,(concat "file://" (expand-file-name
-                                           "~/repositories/ns-copy-html/")))
-    (python :fetcher github :repo "dsedivec/python-el")
-    (smart-tabs :fetcher github :repo "dsedivec/smart-tabs")
-    ;; Need my (hopefully temporary) fork of emacs-sql-indent.
-    ;; (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
-    (sql-indent
-     ,@(let ((local-repo (expand-file-name "~/repositories/emacs-sql-indent")))
-         (if (file-directory-p local-repo)
-             (list :fetcher 'git :url (concat "file://" local-repo))
-           (list :fetcher 'github :repo "dsedivec/emacs-sql-indent"))))
-    (sticky-region :fetcher github :repo "dsedivec/sticky-region")
-    ))
+    ,(my:quelpa-git-local-or-github 'eltu)
+    ,(my:quelpa-git-local-or-github 'ns-copy-html)
+    ,(my:quelpa-git-local-or-github 'python "python-el")
+    ,(my:quelpa-git-local-or-github 'smart-tabs)
+    ;; I have a fork of sql-indent, hopefully just temporarily.
+    ,(my:quelpa-git-local-or-github 'sql-indent "emacs-sql-indent")
+    ,(my:quelpa-git-local-or-github 'sticky-region)))
 
 (defun my:packages-sync (&optional upgrade)
   "Install, (maybe) upgrade, and remove packages.
