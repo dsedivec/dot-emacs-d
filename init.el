@@ -1938,7 +1938,7 @@ the selected link instead of opening it."
  org-reverse-note-order t
  ;; Nice indentation.  Use with visual-line-mode.
  org-startup-indented t
- org-special-ctrl-a/e '(t . reversed)
+ org-special-ctrl-a/e t
  org-speed-commands-user '(("a" . org-archive-subtree-default)
                            ("P" . org-set-property)
                            ("S" . widen)
