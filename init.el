@@ -939,6 +939,16 @@ it returns the node that your EDIT-FORM changed)."
   (company-statistics-mode 1))
 
 
+;;; conf-mode
+
+;; conf-mode doesn't derive from anything.  Run prog-mode-hook by
+;; hand.  What could go wrong?
+(defun my:conf-mode-hook ()
+  (run-hooks 'prog-mode-hook))
+
+(add-hook 'conf-mode-hook #'my:conf-mode-hook)
+
+
 ;;; counsel
 
 (counsel-mode 1)
