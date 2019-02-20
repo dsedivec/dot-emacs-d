@@ -785,6 +785,16 @@ it returns the node that your EDIT-FORM changed)."
 (my:load-recipes 'bookmark+-speed-up)
 
 
+;;; browse-url
+
+;; OK, this doesn't really belong here, probably.  `my:find-url' only
+;; came into existence because I really needed `browse-url-emacs' one
+;; day, but it was broken in Emacs master.  See comments in recipe for
+;; more details.
+
+(my:load-recipes 'find-url)
+
+
 ;;; bs
 
 (bind-key "C-x C-b" 'bs-show)
