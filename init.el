@@ -744,6 +744,13 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; bookmark
 
+;; My hints for using bookmarks:
+;;
+;; * C-x r m: set bookmark *at point*
+;; * C-x r l or C-x p e: show bookmark list
+;; * (In bookmark list) C-u a: edit annotation
+;; * C-x p s: save bookmarks file (should also happen at exit)
+
 ;; Saving bookmarks after every change (ex. value of "1" here) works
 ;; poorly, particularly with auto-named bookmarks in bookmark+ where
 ;; things like *moving to the next/previous bookmark* will end up
