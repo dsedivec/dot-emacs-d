@@ -2691,8 +2691,9 @@ the selected link instead of opening it."
           (and (zerop (nth 0 (syntax-ppss)))
                (progn (sqlind-beginning-of-statement)
                       ;; Ugly (internal) API.
-                      (catch 'finished
-                        (sqlind-maybe-create-statement)))))
+                      (eq (nth 2 (catch 'finished
+                                   (sqlind-maybe-create-statement)))
+                          'table))))
         ;; We're inside some kind of CREATE TABLE column list or
         ;; something like that.
         (+
