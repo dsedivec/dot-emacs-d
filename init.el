@@ -2600,7 +2600,9 @@ the selected link instead of opening it."
   (my:setq-local tab-width 4
 
                  electric-pair-inhibit-predicate
-                 #'my:electric-pair-default-plus-before-word-inhibit)
+                 #'my:electric-pair-default-plus-before-word-inhibit
+
+                 electric-pair-skip-whitespace 'chomp)
   (my:warn-white-space-mode)
   (my:add-to-list-before (make-local-variable 'er/try-expand-list)
                          'my:sql-mark-statement 'er/mark-next-accessor))
