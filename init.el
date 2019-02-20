@@ -2768,34 +2768,40 @@ the selected link instead of opening it."
     (let ((case-fold-search t))
       ;; I bet this setup isn't even remotely fool-proof.
       (forward-line 0)
-      (sqlind-forward-syntactic-ws)
+      (skip-syntax-forward "-")
       (cond
-        ;; Are we actually indenting a COMMIT/END WORK?  If so, remove
-        ;; a level of indentation.
+        ;; Are we actually indenting a COMMIT/ROLLBACK/END WORK?  If
+        ;; so, remove a level of indentation.
         ((looking-at-p (rx symbol-start
-                           ;; See comment below about COMMIT vs. END
-                           ;; WORK/TRANSACTION.
-                           (or "commit"
-                               (: "end"
-                                  (1+ space)
-                                  (or "work" "transaction")))
+                           (or (: (or "commit" "rollback"))
+                               ;; We require WORK or TRANSACTION after
+                               ;; END, since END may have other
+                               ;; meanings.
+                               (: "end" (1+ space) (or "work" "transaction")))
                            symbol-end))
          (max (- base-indentation sqlind-basic-offset) 0))
         ;; Look backwards for nearest BEGIN/COMMIT/END WORK and add a level
         ;; of indentation if the first match is BEGIN WORK.
         ((and (sqlind-search-backward (point)
-                                      ;; BEGIN WORK/TRANSACTION
-                                      ;; END WORK/TRANSACTION
-                                      ;; COMMIT
+                                      ;; BEGIN (WORK|TRANSACTION)
+                                      ;; COMMIT [WORK|TRANSACTION]
+                                      ;; ROLLBACK [WORK|TRANSACTION]
+                                      ;; END (WORK|TRANSACTION)
                                       ;;
-                                      ;; (COMMIT doesn't require
-                                      ;; WORK/TRANSACTION since I feel
-                                      ;; it's unambiguous.)
+                                      ;; As mentioned in a prior
+                                      ;; comment, BEGIN and END may be
+                                      ;; used for other purposes, so
+                                      ;; we require them to have WORK
+                                      ;; or TRANSACTION afterwards.
+                                      ;; We don't have the same
+                                      ;; requirement on COMMIT and
+                                      ;; ROLLBACK, which are less
+                                      ;; ambiguous.
                                       (rx symbol-start
-                                          (or (: (or "begin" "end")
+                                          (or (or "commit" "rollback")
+                                              (: (or "begin" "end")
                                                  (1+ space)
-                                                 (or "work" "transaction"))
-                                              "commit")
+                                                 (or "work" "transaction")))
                                           symbol-end)
                                       nil)
               (sqlind-looking-at-begin-transaction))
