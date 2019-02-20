@@ -3037,6 +3037,21 @@ a string or comment."
 
   (my:set-sqlind-offset 'in-begin-block my:sqlind-indent-in-begin-block)
 
+  ;;     SELECT
+  ;;         CASE
+  ;;             WHEN foo
+  ;;                 THEN bar
+  ;;             WHEN
+  ;;                 foo2
+  ;;                 THEN
+  ;;                     bar2
+  ;;             ELSE baz
+  ;;         END;
+
+  (my:set-sqlind-offset 'case-clause +)
+
+  (my:set-sqlind-offset 'case-clause-item-cont +)
+
   ;; Lone semicolon gets indented back to anchor (usually column 0).
   ;; These syntaxes are taken from sql-indent-left.el, which comes
   ;; with sql-indent.
