@@ -1699,9 +1699,20 @@ POS defaults to point."
                                              (format "[%d]" elt)
                                            (format ".%s" elt)))
                                        path)
-                               ".")))
+                               "")))
     (kill-new path-str)
     (message path-str)))
+
+;; json-reformat is required by json-mode but probably obsolete now
+;; that we have `json-pretty-print' and friends.  Most importantly for
+;; me, I usually want to sort object keys, so just replace
+;; `json-mode-beautify' with a thin wrapper around
+;; `json-pretty-print-buffer-ordered'.
+(define-advice json-mode-beautify (:override () my:use-pretty-print-ordered)
+  (let ((json-encoding-default-indentation (make-string js-indent-level ?\s)))
+    (if (use-region-p)
+        (json-pretty-print-ordered (region-beginning) (region-end))
+      (json-pretty-print-buffer-ordered))))
 
 (with-eval-after-load 'json-mode
   (bind-keys :map json-mode-map
