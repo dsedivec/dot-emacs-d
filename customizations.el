@@ -54,6 +54,7 @@
      flycheck-pos-tip
      free-keys
      graphviz-dot-mode
+     groovy-mode
      haskell-mode
      haskell-snippets
      highlight-indent-guides

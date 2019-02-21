@@ -1361,6 +1361,16 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'text-mode-hook #'goto-address-mode)
 
 
+;;; groovy-mode
+
+(defun my:groovy-mode-hook ()
+  ;; I'm pasting Groovy into Jira Cloud ScriptRunner, and tabs are not
+  ;; pretty there.
+  (setq-local indent-tabs-mode nil))
+
+(add-hook 'groovy-mode-hook #'my:groovy-mode-hook)
+
+
 ;;; haskell-mode
 
 (my:add-hooks 'haskell-mode-hook
