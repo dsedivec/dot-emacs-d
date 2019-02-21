@@ -1430,24 +1430,46 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'which-key
   (add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-faster-which-key))
 
-(defun my:hs-minor-mode-warn-slow-settings ()
-  ;; It took a long time to figure out what was making `hs-minor-mode'
-  ;; slow in a JSON buffer.  Let's remind future me.
-  (let* ((maybe-slow-vars '(show-trailing-whitespace
-                            highlight-parentheses-mode))
-         (slow-vars (seq-filter (lambda (var)
-                                  (and (boundp var)
-                                       (symbol-value var)))
-                                maybe-slow-vars)))
-    (when slow-vars
-      (message "%s may make `hs-minor-mode' slow, maybe turn %s off"
+(defvar my:hs-minor-mode-slow-settings
+  '((show-trailing-whitespace bool-var t)
+    (highlight-parentheses-mode mode t))
+  "List of variables or modes that can make `hs-minor-mode' slow.")
+
+(defun my:hs-minor-mode-slow-settings (&optional make-changes)
+  (interactive "P")
+  (let ((slow-settings
+         (delq nil
+               (mapcar (lambda (setting)
+                         (pcase-let
+                             ((`(,var
+                                 ,(and type
+                                       (guard (memq type '(bool-var mode))))
+                                 ,slow-value)
+                                setting))
+                           (when (and (boundp var)
+                                      ;; Using `not' to convert both values
+                                      ;; to t/nil so I can compare them with
+                                      ;; `eq'.
+                                      (eq (not (symbol-value var))
+                                          (not slow-value)))
+                             (when make-changes
+                               (pcase type
+                                 ('bool-var (set var (not slow-value)))
+                                 ('mode (funcall var (if slow-value -1 1)))))
+                             var)))
+                       my:hs-minor-mode-slow-settings))))
+    (when slow-settings
+      (message (if make-changes
+                   "Changed %s to speed up `hs-minor-mode'"
+                 (concat "%s may make `hs-minor-mode' slow, run"
+                         " C-u M-x my:hs-minor-mode-slow-settings to change "
+                         (if (> (length slow-settings) 1) "them" "it")))
                (string-join (mapcar (apply-partially #'format-message "`%s'")
-                                    slow-vars)
-                            ", ")
-               (if (= (length slow-vars) 1) "it" "them")))))
+                                    slow-settings)
+                            ", ")))    ))
 
 (defun my:hs-minor-mode-hook ()
-  (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-warn-slow-settings
+  (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-slow-settings
             t t))
 
 (add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-hook)
