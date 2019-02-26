@@ -1847,7 +1847,7 @@ the selected link instead of opening it."
   (bind-keys
    :map magit-file-mode-map
    ("M-m v f" . magit-find-file)
-   ("M-m v F" . magit-file-popup)
+   ("M-m v F" . magit-file-dispatch)
    ("M-m v d" . magit-diff-buffer-file)))
 
 (autoload 'magit "magit" nil t)
