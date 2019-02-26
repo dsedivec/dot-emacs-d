@@ -25,15 +25,14 @@
       ;; `custom-set-variables' form invalid.
       (when
           (with-demoted-errors err-fmt
-            ;; `custom-save-variables' should have left us right at
-            ;; the end of the `custom-set-variables' form that it
-            ;; inserted.
-            (forward-sexp -1)
-            (unless (looking-at-p "(custom-set-variables\\_>")
-              (error "Expected to be at `custom-set-variables' form"))
-            ;; Move into the list of variables.
-            (down-list)
-            (forward-sexp)
+            ;; As of somewhere in 27.0.50, at least---and quite
+            ;; probably earlier versions---you cannot depend on point
+            ;; being at the end of a `custom-set-variables' form, in
+            ;; case you were wondering.
+            (goto-char (point-min))
+            (unless (let ((case-fold-search nil))
+                      (re-search-forward "^(custom-set-variables$" nil t))
+              (error "Cannot find `custom-set-variables' form"))
             ;; Look for `package-selected-packages' in the list of
             ;; variables.
             (condition-case err
