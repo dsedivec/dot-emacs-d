@@ -59,8 +59,11 @@ Useful when you want to make a symbol, like pcase, indented by
   (goto-char (nth 2 state))
   (lisp-indent-function indent-point state))
 
-(put 'pcase 'common-lisp-indent-function-for-elisp
-     'common-lisp-to-lisp-indent-function-adapter)
+;; Use Elisp indenter for all the pcase functions.
+(dolist (sym '(pcase pcase-lambda pcase-defmacro pcase-let pcase-let*
+               pcase-dolist))
+  (put sym 'common-lisp-indent-function-for-elisp
+       'common-lisp-to-lisp-indent-function-adapter))
 
 
 ;; And these bits are only if you're using SLIME's slime-cl-indent.el.
