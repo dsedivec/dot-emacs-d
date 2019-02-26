@@ -1,24 +1,24 @@
 ;; -*- lexical-binding: t; -*-
 
 ;; Ivy already installs its own ivy-switch-buffer.
-;; ivy--recompute-index has to treat it special so that, when you
+;; `ivy--recompute-index' has to treat it special so that, when you
 ;; start typing, the match selected becomes the match at the top,
-;; which is generally what people expect.  (It's what I expect, and
-;; I assume abo-abo agrees since he added this code to Ivy.)
+;; which is generally what people expect.  (It's what I expect, and I
+;; assume abo-abo agrees since he added this code to Ivy.)
 ;;
-;; Ivy also installs ivy-switch-buffer-other-window, but it fails to
-;; give this special treatment in ivy--recompute-index, so I do it
+;; Ivy also installs `ivy-switch-buffer-other-window', but it fails to
+;; give this special treatment in `ivy--recompute-index', so I do it
 ;; here with advice.
 ;;
-;; Ivy does not supply something like switch-to-buffer-other-frame,
+;; Ivy does not supply something like `switch-to-buffer-other-frame',
 ;; so I cribbed code from Ivy to create
-;; my:ivy-switch-to-buffer-other-frame here.  Then I give it the
+;; `my:ivy-switch-to-buffer-other-frame' here.  Then I give it the
 ;; same special index treatment I have described above.
 
-;; Note that I tried to do this using ivy-index-functions-alist
+;; Note that I tried to do this using `ivy-index-functions-alist'
 ;; instead of advice, but it doesn't seem to be possible.  (Which
-;; explains ivy--recompute-index already having a special case for
-;; ivy-switch-buffer.)
+;; explains `ivy--recompute-index' already having a special case for
+;; `ivy-switch-buffer'.)
 (define-advice ivy--recompute-index
     (:around (orig-fun name &rest args) my:ivy-fix-index-for-buffer-commands)
   (if (and (> (length name) 0)
