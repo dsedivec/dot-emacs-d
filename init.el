@@ -260,6 +260,18 @@ NEW-ELEMENT."
   (dolist (hook-func hook-funcs)
     (add-hook hook-var hook-func)))
 
+(defmacro my:with-eval-after-all-load (files &rest body)
+  (declare (indent 1))
+  (let ((form `(progn ,@body))
+        (quoted (when (eq (car files) 'quote)
+                  (setq files (cadr files))
+                  t)))
+    (dolist (file (reverse files) form)
+      (setq form `(eval-after-load ,(if (and quoted (symbolp file))
+                                        `',file
+                                      file)
+                    (lambda () ,form))))))
+
 ;; When you're truly reluctant to type `(current-buffer)' as that last
 ;; arg to `buffer-local-value', here's a version that defaults to the
 ;; current buffer.  It's a generalized variable, too.
@@ -2234,12 +2246,11 @@ the selected link instead of opening it."
 
 ;;; persp-mode
 
-;; Must set this before turning on persp-mode for it to have an effect
-;; at startup.
+;; Must set this before turning on persp-mode for it to have an effect.
 (setq persp-auto-resume-time 0.1)
 
 (when (bound-and-true-p persp-mode)
-  (warn "Set `persp-auto-resume-time' too late, persp-mode already loaded"))
+  (warn "Set `persp-auto-resume-time' too late, persp-mode already on"))
 
 (setq persp-add-buffer-on-after-change-major-mode 'free
       ;; C-x 5 2 shouldn't copy e.g. window layout.  I hope this still
@@ -2247,33 +2258,13 @@ the selected link instead of opening it."
       ;; (If not, perhaps see `persp-ignore-wconf-once' here?)
       persp-init-new-frame-behaviour-override nil)
 
-;; Don't attempt to reactivate persp-mode if it's already active
-;; (Spacemacs will have it enabled, I believe).  Doing so does weird
-;; things.
-(unless persp-mode
-  (persp-mode 1))
+(with-eval-after-load 'persp-mode
+  (bind-keys :map persp-mode-map
+             ("M-m l l" . persp-frame-switch))
 
-(bind-keys :map persp-mode-map
-           ("M-m l l" . persp-frame-switch))
-
-;; Document C-c p o, which is a lambda.
-(add-to-list 'which-key-replacement-alist
-             '(("C-c p o" . nil) . (nil . "persp-mode off")))
-
-;; Perspective-aware buffer switching with Ivy, courtesy
-;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
-;; (linked from persp-mode.el project).  I decided that I did not need
-;; all of the code there, so this is just a subset, and a modified
-;; subset at that.
-
-(defun my:persp-mode-ivy-filter-buffers (buffer)
-  (when-let ((persp (and persp-mode (get-current-persp))))
-    (not (persp-contain-buffer-p buffer persp))))
-
-(with-eval-after-load 'ivy
-  (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
-
-(my:load-recipes 'persp-mode-save-load-frame-configuration)
+  ;; Document C-c p o, which is a lambda.
+  (add-to-list 'which-key-replacement-alist
+               '(("C-c p o" . nil) . (nil . "persp-mode off"))))
 
 ;; Don't save buffers that aren't backed by a file, lest you get a
 ;; bunch of useless Magit and EPC buffers in `fundamental-mode' after
@@ -2287,11 +2278,36 @@ the selected link instead of opening it."
   (unless (buffer-file-name b)
     'skip))
 
-(unless (memq #'my:persp-mode-dont-save-buffers-without-files
-              persp-save-buffer-functions)
-  (let ((last-cell (last persp-save-buffer-functions)))
-    (setf (cdr last-cell) (list (car last-cell))
-          (car last-cell) #'my:persp-mode-dont-save-buffers-without-files)))
+(with-eval-after-load 'persp-mode
+  (unless (memq #'my:persp-mode-dont-save-buffers-without-files
+                persp-save-buffer-functions)
+    (let ((last-cell (last persp-save-buffer-functions)))
+      (setf (cdr last-cell) (list (car last-cell))
+            (car last-cell) #'my:persp-mode-dont-save-buffers-without-files))))
+
+;; Perspective-aware buffer switching with Ivy, courtesy
+;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
+;; (linked from persp-mode.el project).  I decided that I did not need
+;; all of the code there, so this is just a subset, and a modified
+;; subset at that.
+
+(defun my:persp-mode-ivy-filter-buffers (buffer)
+  (when-let ((persp (and persp-mode (get-current-persp))))
+    (not (persp-contain-buffer-p buffer persp))))
+
+(my:with-eval-after-all-load '(persp-mode ivy)
+  (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
+
+(my:load-recipes 'persp-mode-save-load-frame-configuration)
+
+;; Never try and turn `persp-mode' on during init.
+;; `persp-auto-resume-time' being non-zero (see above) will cause
+;; `persp-mode' to set a timer, and that timer might run during init,
+;; especially in my case where `el-patch-validate' might do things
+;; that cause timers to fire.  You will be in a world of hurt.  Weird
+;; shit like `enable-local-variables' getting set to nil (by el-patch)
+;; will happen while your buffers are restored by persp-mode.
+(add-hook 'after-init-hook #'persp-mode)
 
 
 ;;; prog-mode
