@@ -100,7 +100,7 @@
 (defvar my:package-max-age-before-refresh 3600)
 
 (define-advice package-refresh-contents
-    (:after (&rest args) my:note-last-refresh-time)
+    (:after (&rest _args) my:note-last-refresh-time)
   (setq my:package-last-refresh (float-time)))
 
 (defun my:package-refresh-maybe (&optional force-refresh)
