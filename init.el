@@ -1161,9 +1161,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
 
 (defun my:ielm-switch-to-ielm ()
+  "Switch to the IELM buffer, creating it if needed."
   (interactive)
-  (switch-to-buffer-other-window (current-buffer))
-  (ielm))
+  ;; `ielm' uses `pop-to-buffer-same-window', unconditionally.  This
+  ;; seems like the easiest way to get the IELM buffer, creating it if
+  ;; it doesn't exist.
+  (pop-to-buffer (save-window-excursion
+                   (ielm)
+                   (current-buffer))))
 
 (with-eval-after-load 'elisp-mode
   (bind-keys :map emacs-lisp-mode-map
