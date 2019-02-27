@@ -126,7 +126,7 @@
         ;;
         ;; We don't muck around with this when pom is non-nil because
         ;; I have NFC what is going on in that case.  I haven't seen
-        ;; it non-nill tonight.  Maybe it's non-nil when I delete a
+        ;; it non-nil tonight.  Maybe it's non-nil when I delete a
         ;; property from an agenda buffer?  (Agenda buffer in column
         ;; mode?)
         (forward-char -1)))
