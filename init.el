@@ -362,6 +362,11 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;;; Emacs built-ins
 
+;; Doubling these as I kept running out of undo history (at least, I
+;; did with undo-tree).
+(setq undo-limit (* 2 80000)
+      undo-strong-limit (* 2 120000))
+
 (put 'downcase-region 'disabled nil)
 
 (defun my:show-trailing-white-space ()
