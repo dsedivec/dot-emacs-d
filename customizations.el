@@ -3,7 +3,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ahs-idle-interval 0.5)
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
+ '(org-modules
+   '(org-tempo org-id org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
  '(package-selected-packages
    '(
      ace-window
