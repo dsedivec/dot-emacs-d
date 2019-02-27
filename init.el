@@ -135,6 +135,9 @@ same as NAME."
     ,(my:quelpa-git-local-or-github 'sql-indent "emacs-sql-indent")
     ,(my:quelpa-git-local-or-github 'sticky-region)))
 
+;; Don't checkout MELPA at startup.
+(setq quelpa-checkout-melpa-p nil)
+
 (defun my:packages-sync (&optional upgrade)
   "Install, (maybe) upgrade, and remove packages.
 
