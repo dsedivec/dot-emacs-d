@@ -750,6 +750,18 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   (add-to-list 'ahs-inhibit-face-list 'font-lock-keyword-face))
 
 
+;;; auto-yasnippet
+
+(bind-keys ("C-o" . aya-open-line)
+           ;; Spacemacs bindings
+           ("M-m i S c" . aya-create)
+           ("M-m i S e" . aya-expand)
+           ("M-m i S w" . aya-persist-snippet))
+
+(with-eval-after-load 'auto-yasnippet
+  (add-to-list 'which-key-replacement-alist
+               '(("M-m i S" . "Prefix Command") . (nil . "auto-yasnippet"))))
+
 
 ;;; autorevert
 

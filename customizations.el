@@ -18,6 +18,7 @@
      auto-compile
      auto-highlight-symbol
      auto-package-update
+     auto-yasnippet
      avy
      bind-key
      bookmark+
