@@ -734,6 +734,13 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; auto-highlight-symbol
 
+(defun my:ahs-inhibit-multiple-cursors (_symbol)
+  "Don't highlight symbols when I'm using multiple cursors.
+Makes it hard to use things like `mc/mark-more-like-this-extended'."
+  (bound-and-true-p multiple-cursors-mode))
+
+(setq ahs-exclude #'my:ahs-inhibit-multiple-cursors)
+
 (add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
 
 (with-eval-after-load 'auto-highlight-symbol
