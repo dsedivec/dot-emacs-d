@@ -1019,6 +1019,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
            ("M-m /" . counsel-auto-grep-maybe-projectile)
            ("M-m s f" . counsel-auto-grep-ask-dir))
 
+(my:load-recipes 'counsel-limit-grep-result-length)
+
 
 ;;; counsel-css
 
