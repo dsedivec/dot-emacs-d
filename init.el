@@ -2546,6 +2546,7 @@ the selected link instead of opening it."
 
 (my:load-recipes 'emacs-yank-rectangle-to-new-lines)
 
+
 ;;; saveplace
 
 (save-place-mode 1)
