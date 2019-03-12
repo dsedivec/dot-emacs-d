@@ -3365,10 +3365,11 @@ set the engine for the file upon loading.")
 
 ;;; webpaste
 
+;; I should upstream this.
 (with-eval-after-load 'webpaste
-  (let* ((ptpb (alist-get "ptpb.pw" webpaste-providers-alist
-                          nil nil #'string=))
-         (langs (memq :lang-overrides ptpb)))
+  (let* ((provider (alist-get "ix.io" webpaste-providers-alist
+                              nil nil #'string=))
+         (langs (memq :lang-overrides provider)))
     (if (or (assq 'latex-mode webpaste--default-lang-alist)
             (assq 'latex-mode (cadr langs)))
         (warn (concat "webpaste has now configured latex-mode for us,"
