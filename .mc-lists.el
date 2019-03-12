@@ -11,6 +11,7 @@
         electric-newline-and-maybe-indent
         forward-sexp
         kill-sexp
+        markdown-insert-code
         mwim-beginning-of-code-or-line
         mwim-end-of-line-or-code
         my:insert-tab-or-spaces
