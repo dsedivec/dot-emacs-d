@@ -1685,7 +1685,7 @@ surround \"foo\" with (in this example) parentheses.  I want
       ivy-truncate-lines nil)
 
 (setf (alist-get 'counsel-ag ivy-re-builders-alist)
-      #'ivy--regex-ignore-order)
+      #'ivy--regex-plus)
 
 (my:load-recipes 'ivy-special-switch-buffers
                  'ivy-fuzzy-regex-combo-matcher)
