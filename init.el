@@ -890,6 +890,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; comment-dwim-2
 
+(setq cd2/region-command #'cd2/comment-or-uncomment-region)
+
 (bind-keys ("M-;" . comment-dwim-2))
 
 
