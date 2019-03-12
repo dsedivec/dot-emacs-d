@@ -180,67 +180,67 @@ dominates (see the documentation for
   (unless (run-hook-with-args-until-success
            'frame-resize-ignore-frame-functions frame)
     (pcase-let*
-     ((tree (car (window-tree frame)))
-      (`(,wd-delta ,ht-delta . ,managed-windows)
-        (frame-resize--find-frame-and-window-sizes tree))
-      (wd-delta-pixels (* wd-delta (frame-char-width frame)))
-      (ht-delta-pixels (* ht-delta (frame-char-height frame)))
-      (`(,max-wd-pixels . ,max-ht-pixels)
-        (frame-resize--get-frame-max-text-size-pixels frame))
-      (new-wd-pixels (min (+ (frame-text-width frame) wd-delta-pixels)
-                          max-wd-pixels))
-      (new-ht-pixels (min (+ (frame-text-height frame) ht-delta-pixels)
-                          max-ht-pixels))
-      (`(,x-pos . ,y-pos) (frame-position frame))
-      (new-x-pos (max (- x-pos (/ wd-delta-pixels 2)) 0))
-      (new-y-pos (max (- y-pos (/ ht-delta-pixels 2)) 0)))
-     ;; Resize and reposition the frame.
-     (set-frame-size frame new-wd-pixels new-ht-pixels t)
-     (set-frame-position frame new-x-pos new-y-pos)
-     ;; Resize windows in our newly-resized frame.
-     (let (un-preserve-size-calls)
-       (unwind-protect
-            (pcase-dolist (`(,window ,win-wd ,win-ht) managed-windows)
-                          ;; Note that clamping the window size here prevents
-                          ;; errors from `window-resize'.  May be that we should
-                          ;; tell the user about this.  Also possible that we
-                          ;; should check this *before* we compute the frame's
-                          ;; new size.  However, I'm not sure if
-                          ;; `window-min-delta'/`window-max-delta' would work
-                          ;; right *before* the frame is resized.
-                          (let* ((win-wd-delta
-                                   (if win-wd
-                                       (frame-resize--clamp-window-resize-delta
-                                        window (- win-wd (window-width window)) t)
-                                     0))
-                                 (win-ht-delta
-                                   (if win-ht
-                                       (frame-resize--clamp-window-resize-delta
-                                        window (- win-ht (window-height window)))
-                                     0)))
-                            ;; When we resize a window we `window-preserve-size'
-                            ;; its new dimension(s) (if necessary) and then undo
-                            ;; it later.  In my mind, at least, this prevents us
-                            ;; from resizing window N, then resizing window N+1,
-                            ;; but now Emacs has resized window N in a way we
-                            ;; don't want.
-                            (when (not (zerop win-wd-delta))
-                              (window-resize window win-wd-delta t)
-                              (unless (window-preserved-size window t)
-                                (window-preserve-size window t t)
-                                (push (list window t nil) un-preserve-size-calls)))
-                            (when (not (zerop win-ht-delta))
-                              (window-resize window win-ht-delta nil)
-                              (unless (window-preserved-size window nil)
-                                (window-preserve-size window nil t)
-                                (push (list window nil nil) un-preserve-size-calls))))))
-       ;; Now undo all the `window-preserve-size' calls we did above.
-       (dolist (args un-preserve-size-calls)
-         ;; We *really* want to try and undo everything we did.
-         ;; Don't let an error from a single call kill us.
-         (with-demoted-errors
-           "`frame-resize' error undoing size preservation: %S"
-           (apply #'window-preserve-size args)))))))
+        ((tree (car (window-tree frame)))
+         (`(,wd-delta ,ht-delta . ,managed-windows)
+          (frame-resize--find-frame-and-window-sizes tree))
+         (wd-delta-pixels (* wd-delta (frame-char-width frame)))
+         (ht-delta-pixels (* ht-delta (frame-char-height frame)))
+         (`(,max-wd-pixels . ,max-ht-pixels)
+          (frame-resize--get-frame-max-text-size-pixels frame))
+         (new-wd-pixels (min (+ (frame-text-width frame) wd-delta-pixels)
+                             max-wd-pixels))
+         (new-ht-pixels (min (+ (frame-text-height frame) ht-delta-pixels)
+                             max-ht-pixels))
+         (`(,x-pos . ,y-pos) (frame-position frame))
+         (new-x-pos (max (- x-pos (/ wd-delta-pixels 2)) 0))
+         (new-y-pos (max (- y-pos (/ ht-delta-pixels 2)) 0)))
+      ;; Resize and reposition the frame.
+      (set-frame-size frame new-wd-pixels new-ht-pixels t)
+      (set-frame-position frame new-x-pos new-y-pos)
+      ;; Resize windows in our newly-resized frame.
+      (let (un-preserve-size-calls)
+        (unwind-protect
+             (pcase-dolist (`(,window ,win-wd ,win-ht) managed-windows)
+               ;; Note that clamping the window size here prevents
+               ;; errors from `window-resize'.  May be that we should
+               ;; tell the user about this.  Also possible that we
+               ;; should check this *before* we compute the frame's
+               ;; new size.  However, I'm not sure if
+               ;; `window-min-delta'/`window-max-delta' would work
+               ;; right *before* the frame is resized.
+               (let* ((win-wd-delta
+                       (if win-wd
+                           (frame-resize--clamp-window-resize-delta
+                            window (- win-wd (window-width window)) t)
+                         0))
+                      (win-ht-delta
+                       (if win-ht
+                           (frame-resize--clamp-window-resize-delta
+                            window (- win-ht (window-height window)))
+                         0)))
+                 ;; When we resize a window we `window-preserve-size'
+                 ;; its new dimension(s) (if necessary) and then undo
+                 ;; it later.  In my mind, at least, this prevents us
+                 ;; from resizing window N, then resizing window N+1,
+                 ;; but now Emacs has resized window N in a way we
+                 ;; don't want.
+                 (when (not (zerop win-wd-delta))
+                   (window-resize window win-wd-delta t)
+                   (unless (window-preserved-size window t)
+                     (window-preserve-size window t t)
+                     (push (list window t nil) un-preserve-size-calls)))
+                 (when (not (zerop win-ht-delta))
+                   (window-resize window win-ht-delta nil)
+                   (unless (window-preserved-size window nil)
+                     (window-preserve-size window nil t)
+                     (push (list window nil nil) un-preserve-size-calls))))))
+        ;; Now undo all the `window-preserve-size' calls we did above.
+        (dolist (args un-preserve-size-calls)
+          ;; We *really* want to try and undo everything we did.
+          ;; Don't let an error from a single call kill us.
+          (with-demoted-errors
+              "`frame-resize' error undoing size preservation: %S"
+            (apply #'window-preserve-size args)))))))
 
 (defun auto-frame-resize--maybe-resize-frame ()
   "Call `frame-resize' if `this-command' is in `auto-frame-resize-commands'."
