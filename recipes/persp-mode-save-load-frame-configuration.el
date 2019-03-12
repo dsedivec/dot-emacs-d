@@ -23,11 +23,11 @@
                                  vector)))
        ;; Can't pass an improper list to `seq-every-p', but
        ;; `sequencep' returns T for improper lists.
-       (or (and (consp obj)
-                (my:persp-mode-serializable-p (car obj))
+       (if (consp obj)
+           (and (my:persp-mode-serializable-p (car obj))
                 (my:persp-mode-serializable-p (cdr obj)))
-           (not (sequencep obj))
-           (seq-every-p #'my:persp-mode-serializable-p obj))))
+         (or (not (sequencep obj))
+             (seq-every-p #'my:persp-mode-serializable-p obj)))))
 
 (defun my:persp-mode-unserializable-frame-parameters (&optional frame)
   (mapcar #'car (seq-remove (lambda (pair)
