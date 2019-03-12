@@ -2529,7 +2529,8 @@ the selected link instead of opening it."
 
 (with-eval-after-load 'python
   (bind-keys :map python-mode-map
-             ("C-c C-c" . my:python-shell-send-dwim)))
+             ("C-c C-c" . my:python-shell-send-dwim)
+             ("C-c C-b" . python-shell-send-buffer)))
 
 
 ;;; pyvenv
