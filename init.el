@@ -1339,6 +1339,8 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (cons (car key-binding) "flycheck")
                        key-binding)))))
 
+(my:load-recipes 'flycheck-python-pylint-detect-tabs)
+
 
 ;;; flycheck-package
 
