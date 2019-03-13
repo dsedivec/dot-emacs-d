@@ -1339,8 +1339,6 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (cons (car key-binding) "flycheck")
                        key-binding)))))
 
-(my:load-recipes 'flycheck-python-pylint-disable-switch)
-
 
 ;;; flycheck-package
 
@@ -2469,23 +2467,7 @@ the selected link instead of opening it."
   ;; False" block, rather than the "if True" block *where you
   ;; manually de-indented to*.
   (add-hook 'electric-indent-functions
-            #'my:python-mode-inhibit-electric-indent nil t)
-
-  (when (flycheck-find-checker-executable 'python-pylint)
-    (my:setq-local flycheck-checker 'python-pylint
-                   ;; Note: flycheck-pylint-disabled-messages is my
-                   ;; own creation, see my (use-package flycheck).
-                   ;;
-                   ;; C0301: Don't warn about long lines, I use
-                   ;; whitespace-mode for that.
-                   ;;
-                   ;; C0330: As of 1.3.1 this check for incorrect
-                   ;; hanging and/or continued indentation is
-                   ;; totally off, at least in our code base.  See
-                   ;; also:
-                   ;; https://github.com/PyCQA/pylint/issues/232
-                   ;; https://github.com/PyCQA/pylint/issues/289
-                   flycheck-pylint-disabled-messages "C0301,C0330")))
+            #'my:python-mode-inhibit-electric-indent nil t))
 
 (my:add-hooks 'python-mode-hook
   #'my:python-mode-hook
