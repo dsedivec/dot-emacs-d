@@ -191,12 +191,28 @@ dominates (see the documentation for
                              max-wd-pixels))
          (new-ht-pixels (min (+ (frame-text-height frame) ht-delta-pixels)
                              max-ht-pixels))
-         (`(,x-pos . ,y-pos) (frame-position frame))
-         (new-x-pos (max (- x-pos (/ wd-delta-pixels 2)) 0))
-         (new-y-pos (max (- y-pos (/ ht-delta-pixels 2)) 0)))
+         (`(,pos-left ,pos-top ,pos-right ,pos-bottom)
+          (frame-edges frame 'outer-edges))
+         (`(,min-left ,min-top ,max-right ,max-bottom)
+          (frame-monitor-workarea frame))
+         ;; We try to keep the center of the frame in the same place
+         ;; on the screen, but if we're resizing near the edges, that
+         ;; may be impossible.  right-overflow/bottom-overflow hold
+         ;; the number of pixels that would be off-screen if we keep
+         ;; the center where it is after resize.
+         (right-overflow
+          (max 0 (- (+ pos-right (/ wd-delta-pixels 2)) max-right)))
+         (new-left (max min-left (- pos-left
+                                    (/ wd-delta-pixels 2)
+                                    right-overflow)))
+         (bottom-overflow
+          (max 0 (- (+ pos-bottom (/ ht-delta-pixels 2)) max-bottom)))
+         (new-top (max min-top (- pos-top
+                                  (/ ht-delta-pixels 2)
+                                  bottom-overflow))))
       ;; Resize and reposition the frame.
       (set-frame-size frame new-wd-pixels new-ht-pixels t)
-      (set-frame-position frame new-x-pos new-y-pos)
+      (set-frame-position frame new-left new-top)
       ;; Resize windows in our newly-resized frame.
       (let (un-preserve-size-calls)
         (unwind-protect
