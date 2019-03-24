@@ -748,7 +748,12 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   ;; Must trigger defcustom's :set.
   (customize-set-variable 'ahs-idle-interval 0.5)
 
-  (add-to-list 'ahs-inhibit-face-list 'font-lock-keyword-face))
+  (add-to-list 'ahs-inhibit-face-list 'font-lock-keyword-face)
+
+  ;; Don't sit on `negative-argument'.  (Particularly since winum is
+  ;; sitting on C-<digit>, so I never use C-- to get at
+  ;; `negative-argument'.)
+  (unbind-key "M--" auto-highlight-symbol-mode-map))
 
 
 ;;; auto-yasnippet
