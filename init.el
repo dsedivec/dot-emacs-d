@@ -1122,6 +1122,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 
+;;; edit-indirect
+
+(bind-keys ("C-c '" . edit-indirect-region))
+
+
 ;;; edit-server
 
 (edit-server-start)
