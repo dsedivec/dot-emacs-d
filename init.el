@@ -714,7 +714,7 @@ it returns the node that your EDIT-FORM changed)."
   (unless (memq major-mode '(org-mode))
     (adaptive-wrap-prefix-mode 1)))
 
-(add-hook 'text-mode-hook #'my:turn-on-adaptive-wrap-prefix-mode)
+(add-hook 'visual-line-mode-hook #'my:turn-on-adaptive-wrap-prefix-mode)
 
 
 ;;; all-the-icons
