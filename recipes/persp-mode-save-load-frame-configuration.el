@@ -62,8 +62,9 @@
   "frameset filter to properly save frames' 'persp' properties."
   (cons (car current)
         (if saving
-            (when (persp-p (cdr current))
-              (persp-name (cdr current)))
+            (let ((perspective (cdr current)))
+              (when (and perspective (persp-p perspective))
+                (persp-name perspective)))
 
           (when (cdr current)
             ;; Not documented, but if a perspective with the name
