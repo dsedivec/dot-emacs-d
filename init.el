@@ -1024,7 +1024,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
       ;; Pretty sure I want company-dabbrev-code to search all
       ;; buffers, not even just buffers of the same major mode.
       ;; (Consider, for example, sql-interactive-mode vs. sql-mode.)
-      company-dabbrev-code-other-buffers 'all
       ;; Also search *SQL* buffers, damn it.
       company-dabbrev-ignore-buffers "\\` "
 
