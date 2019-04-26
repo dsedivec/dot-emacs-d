@@ -368,6 +368,10 @@ it returns the node that your EDIT-FORM changed)."
 (setq undo-limit (* 2 80000)
       undo-strong-limit (* 2 120000))
 
+;; Resize windows proportionally for the whole frame, not just the
+;; window being split.
+(setq window-combination-resize t)
+
 (put 'list-timers 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
