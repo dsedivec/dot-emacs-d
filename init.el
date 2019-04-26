@@ -1321,6 +1321,15 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'after-revert-hook #'my:delete-auto-save-after-revert)
 
+;; Detect SQL in strings!
+
+(add-to-list 'magic-fallback-mode-alist
+             (cons (rx (* (any space ?\n))
+                       symbol-start
+                       (or "select" "insert" "update" "delete"
+                           "create" "alter" "drop"))
+                   'sql-mode))
+
 
 ;;; fill
 
