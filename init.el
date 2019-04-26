@@ -2633,7 +2633,8 @@ the selected link instead of opening it."
 
 (my:load-recipes 'python-magic-quotes
                  'python-toggle-triple-quotes
-                 'python-fix-dead-shell-font-lock-buffer)
+                 'python-fix-dead-shell-font-lock-buffer
+                 'expand-region-python-fix-strings)
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
