@@ -1382,8 +1382,10 @@ surround \"foo\" with (in this example) parentheses.  I want
   (add-to-list 'frame-resize-window-size-functions
                #'my:frame-resize-window-default t)
 
-  (add-to-list 'auto-frame-resize-commands #'transpose-frame)
-  (add-to-list 'auto-frame-resize-commands #'my:delete-window-that-direction))
+  (dolist (func '(transpose-frame
+                  my:delete-window-that-direction
+                  winner-undo))
+    (add-to-list 'auto-frame-resize-commands func)))
 
 (when (display-graphic-p)
   (auto-frame-resize-mode 1))
