@@ -90,21 +90,15 @@ Set, by advice, only within a call to
        ;; (e.g. missing) prefix from `company-dabbrev-code' will look
        ;; dumb next to others in the list.)
        (let* ((real-prefix my:company-dabbrev-code--grouped-completions-prefix)
-              (dabbrev-prefix (funcall orig-fun 'prefix))
-              (prefix-to-add (if (string-suffix-p dabbrev-prefix real-prefix)
-                                 (substring real-prefix 0
-                                            (- (length dabbrev-prefix)))
-                               (error (concat "From grouped completions advice"
-                                              " on `company-dabbrev-code':"
-                                              " %S is not a suffix of %S")
-                                      dabbrev-prefix real-prefix))))
+              (dabbrev-prefix (funcall orig-fun 'prefix)))
          (mapcar (lambda (cand)
                    ;; For speed, not copying text properties here.
                    ;; May be a bad idea?  Right now
                    ;; `company-dabbrev-code' doesn't use any text
                    ;; properties AFAIK, and AFAIK the prefix shouldn't
                    ;; have any properties either.
-                   (concat prefix-to-add cand))
+                   (concat real-prefix
+                           (substring cand (length dabbrev-prefix))))
                  (apply orig-fun command dabbrev-prefix (cdr args)))))
       (t
        (apply orig-fun command args)))))
