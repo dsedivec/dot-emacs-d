@@ -2460,7 +2460,8 @@ the selected link instead of opening it."
 (my:with-eval-after-all-load '(persp-mode ivy)
   (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
 
-(my:load-recipes 'persp-mode-save-load-frame-configuration)
+(my:load-recipes 'persp-mode-save-load-frame-configuration
+                 'persp-mode-auto-save-configuration)
 
 ;; Must set this before turning on persp-mode for it to have an effect.
 (setq persp-auto-resume-time 0.1)
