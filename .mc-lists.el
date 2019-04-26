@@ -10,6 +10,7 @@
         delete-indentation
         electric-newline-and-maybe-indent
         forward-sexp
+        indent-for-tab-command
         kill-sexp
         markdown-insert-code
         mwim-beginning-of-code-or-line
@@ -24,6 +25,7 @@
         paredit-forward-delete
         paredit-forward-down
         paredit-forward-kill-word
+        paredit-open-round
         paredit-raise-sexp
         paredit-semicolon
         paredit-splice-sexp
@@ -32,7 +34,11 @@
 
 (setq mc/cmds-to-run-once
       '(
+        avy-goto-char
+        beginning-of-buffer
+        counsel-describe-function
         describe-key-briefly
+        edit-indirect-region
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
         sql-send-paragraph
