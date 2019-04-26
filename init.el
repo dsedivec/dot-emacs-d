@@ -1614,7 +1614,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                                  ,(and type
                                        (guard (memq type '(bool-var mode))))
                                  ,slow-value)
-                                setting))
+                               setting))
                            (when (and (boundp var)
                                       ;; Using `not' to convert both values
                                       ;; to t/nil so I can compare them with
