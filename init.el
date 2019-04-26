@@ -368,6 +368,7 @@ it returns the node that your EDIT-FORM changed)."
 (setq undo-limit (* 2 80000)
       undo-strong-limit (* 2 120000))
 
+(put 'list-timers 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
 (defun my:show-trailing-white-space ()
