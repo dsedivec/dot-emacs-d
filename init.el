@@ -1089,6 +1089,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (counsel-mode 1)
 
+(setq counsel-find-file-at-point t)
+
 (defun my:counsel-trace-function-toggle (func-name)
   (let ((func (intern func-name)))
     (if (trace-is-traced 'func)
