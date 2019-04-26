@@ -127,6 +127,7 @@ same as NAME."
                                        (format "bookmark+-%s.el" suffix))
                                      '(mac bmu 1 key lit))))
     (hl-line+ :fetcher wiki)
+    (blackout :fetcher github :repo "raxod502/blackout")
     ,(my:quelpa-git-local-or-github 'eltu)
     ,(my:quelpa-git-local-or-github 'ns-copy-html)
     ,(my:quelpa-git-local-or-github 'python "python-el")
@@ -785,6 +786,14 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (bind-keys ("C-'" . avy-goto-char)
            ("M-g g" . avy-goto-line)
            ("M-g M-g" . avy-goto-line))
+
+
+;;; blackout
+
+;; No autoloads.
+(require 'blackout)
+
+(blackout 'python-mode "Py")
 
 
 ;;; bookmark

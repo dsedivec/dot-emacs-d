@@ -21,6 +21,7 @@
      auto-yasnippet
      avy
      bind-key
+     blackout
      bookmark+
      clean-aindent-mode
      command-log-mode
