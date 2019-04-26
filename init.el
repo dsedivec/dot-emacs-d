@@ -2910,7 +2910,8 @@ the selected link instead of opening it."
 (my:add-hooks 'sql-interactive-mode-hook
   ;; Reverse order to make sure company gets loaded first.
   #'my:company-group-useful-backends-with-capf
-  #'company-mode)
+  #'company-mode
+  #'sql-set-sqli-buffer-generally)
 
 (with-eval-after-load 'company-dabbrev-code
   (add-to-list 'company-dabbrev-code-modes 'sql-interactive-mode))
