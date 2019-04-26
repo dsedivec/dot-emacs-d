@@ -60,9 +60,6 @@ will return either the regular or fuzzy RE builders."
                  ivy-highlight-functions-alist)
       #'my:ivy--highlight-regular-or-fuzzy)
 
-;; Defined in counsel.el.
-(defvar smex-initialized-p)
-
 ;; Note that Swiper uses swiper--re-builder, which will not engage flx
 ;; sorting here--but flx sorting with Swiper and ivy--regex-fuzzy
 ;; sucks.  You do not want that, therefore this lack of flx in the
@@ -71,18 +68,10 @@ will return either the regular or fuzzy RE builders."
     (:around (orig-fun name candidates) my:ivy-regular-or-fuzzy-flx-sort-fix)
   "Engage flx sorting if fuzzy matching.
 `ivy--sort' behaves specially when `ivy--regex-function' is
-exactly `ivy--regex-fuzzy'.  Also don't do flx sorting when
-`counsel-M-x' is the caller and smex is in use, because smex's
-ordering is better than the flx ordering."
+exactly `ivy--regex-fuzzy'."
   (let ((ivy--regex-function
          (my:ivy--regular-or-fuzzy-get-actual-re-builder name)))
-    (if (and (eq (ivy-state-caller ivy-last) 'counsel-M-x)
-             (featurep 'smex)
-             smex-initialized-p
-             (memq ivy--regex-function (list 'ivy--regex-fuzzy
-                                             my:ivy-fuzzy-re-builder)))
-        candidates
-      (funcall orig-fun name candidates))))
+    (funcall orig-fun name candidates)))
 
 (define-advice ivy--recompute-index
     (:around (orig-fun name &rest args) my:ivy-regular-or-fuzzy-flx-index-fix)
