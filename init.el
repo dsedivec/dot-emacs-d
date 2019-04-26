@@ -2634,7 +2634,8 @@ the selected link instead of opening it."
 (my:load-recipes 'python-magic-quotes
                  'python-toggle-triple-quotes
                  'python-fix-dead-shell-font-lock-buffer
-                 'expand-region-python-fix-strings)
+                 'expand-region-python-fix-strings
+                 'python-edit-indirect-in-strings)
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
@@ -2656,6 +2657,7 @@ the selected link instead of opening it."
 (with-eval-after-load 'python
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
+             ("C-c '" . my:python-edit-indirect-dwim)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)))
 
