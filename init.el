@@ -2414,12 +2414,6 @@ the selected link instead of opening it."
 
 ;;; persp-mode
 
-;; Must set this before turning on persp-mode for it to have an effect.
-(setq persp-auto-resume-time 0.1)
-
-(when (bound-and-true-p persp-mode)
-  (warn "Set `persp-auto-resume-time' too late, persp-mode already on"))
-
 (setq persp-add-buffer-on-after-change-major-mode 'free
       ;; C-x 5 2 shouldn't copy e.g. window layout.  I hope this still
       ;; means additional frames will be saved with the perspective!
@@ -2467,6 +2461,12 @@ the selected link instead of opening it."
   (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
 
 (my:load-recipes 'persp-mode-save-load-frame-configuration)
+
+;; Must set this before turning on persp-mode for it to have an effect.
+(setq persp-auto-resume-time 0.1)
+
+(when (bound-and-true-p persp-mode)
+  (warn "Set `persp-auto-resume-time' too late, persp-mode already on"))
 
 ;; Never try and turn `persp-mode' on during init.
 ;; `persp-auto-resume-time' being non-zero (see above) will cause
