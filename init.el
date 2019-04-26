@@ -739,6 +739,11 @@ it returns the node that your EDIT-FORM changed)."
     (unbind-key key anaconda-mode-map)))
 
 
+;;; anzu
+
+(global-anzu-mode 1)
+
+
 ;;; auto-highlight-symbol
 
 (defun my:ahs-inhibit-multiple-cursors (_symbol)

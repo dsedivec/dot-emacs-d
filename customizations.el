@@ -14,6 +14,7 @@
      aggressive-indent
      all-the-icons
      amx
+     anzu
      auctex
      auto-compile
      auto-highlight-symbol
