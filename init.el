@@ -2619,7 +2619,6 @@ the selected link instead of opening it."
                '(("C-x @" . "Prefix Command") . (nil . "add modifier"))))
 
 
-
 ;;; sly
 
 (when (executable-find "sbcl")

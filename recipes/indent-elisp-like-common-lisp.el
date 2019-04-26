@@ -65,7 +65,6 @@ Useful when you want to make a symbol, like pcase, indented by
   (put sym 'common-lisp-indent-function-for-elisp
        'common-lisp-to-lisp-indent-function-adapter))
 
-
 ;; And these bits are only if you're using SLIME's slime-cl-indent.el.
 
 (defvar common-lisp-style)
@@ -122,6 +121,5 @@ Useful when you want to make a symbol, like pcase, indented by
          (apply orig-fun (or unprefixed-name name) args)))
     ;; Not Emacs Lisp, behave normally.
     (apply orig-fun name args)))
-
 
 ;;; indent-elisp-like-common-lisp.el ends here

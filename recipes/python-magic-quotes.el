@@ -12,6 +12,7 @@
 ;; but then Emacs goes into a hard loop and you have to SIGUSR1 it a
 ;; few times just to bring it back from the dead.  In the end, it
 ;; turns out writing this function is the easiest solution, for me.
+
 (defun my:python-magic-single-quote (times)
   "Skip over single quotes when used as string delimiters.
 
