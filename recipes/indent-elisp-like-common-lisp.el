@@ -32,6 +32,11 @@
 
 (add-hook 'emacs-lisp-mode-hook #'my:use-common-lisp-indent)
 
+;; For some reason, `lisp-indent-function' special-cases forms that
+;; begin with "def".  `common-lisp-indent-function' doesn't, but we
+;; can teach it how to indent the ones we care about easily enough.
+
+(put 'define-derived-mode 'lisp-indent-function 3)
 
 ;; This bit applies to both Emacs's own cl-indent.el and also SLIME's
 ;; slime-cl-indent.el, which is an old fork of Emacs's cl-indent.el.
