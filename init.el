@@ -1295,7 +1295,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; be... weird.
 (require 'expand-region)
 
-(bind-key "M-@" 'er/expand-region)
+(bind-key "M-'" 'er/expand-region)
 
 
 ;;; faces
