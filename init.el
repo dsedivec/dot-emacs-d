@@ -1561,6 +1561,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; Select help windows always.
 (setq help-window-select t)
 
+(defun my:info-elisp ()
+  (interactive)
+  (info "elisp"))
+
+(with-eval-after-load 'help
+  (bind-keys :map help-map
+             ("E" . my:info-elisp)))
+
 
 ;;; hi-lock
 
