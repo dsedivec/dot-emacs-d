@@ -83,4 +83,5 @@ behavior when using fuzzy searching."
          (my:ivy--regular-or-fuzzy-get-actual-re-builder name)))
     (apply orig-fun name args)))
 
+;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
 (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
