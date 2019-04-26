@@ -766,7 +766,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   ;; Don't sit on `negative-argument'.  (Particularly since winum is
   ;; sitting on C-<digit>, so I never use C-- to get at
   ;; `negative-argument'.)
-  (unbind-key "M--" auto-highlight-symbol-mode-map))
+  (unbind-key "M--" auto-highlight-symbol-mode-map)
+
+  ;; Black on DodgerBlue is too hard to read, remove the :foreground
+  ;; and I get white on DodgerBlue instead.
+  (set-face-attribute 'ahs-plugin-bod-face nil :foreground nil))
 
 
 ;;; auto-yasnippet
