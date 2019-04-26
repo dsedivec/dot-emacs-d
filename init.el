@@ -1392,6 +1392,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys ("M-+" . frame-resize))
 
+;; I abuse `frame-resize' for redrawing the display, which is
+;; necessary distressingly often on NeXTStep term.
+(when (eq window-system 'ns)
+  (define-advice frame-resize (:after (&rest _args) my:redraw-display)
+    (redraw-display)))
+
 
 ;;; free-keys
 
