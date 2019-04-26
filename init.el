@@ -1565,9 +1565,13 @@ surround \"foo\" with (in this example) parentheses.  I want
   (interactive)
   (info "elisp"))
 
+(my:load-recipes 'help-describe-map)
+
 (with-eval-after-load 'help
   (bind-keys :map help-map
-             ("E" . my:info-elisp)))
+             ("E" . my:info-elisp)
+             ;; Copying help-fns+.el
+             ("M-k" . my:describe-map)))
 
 
 ;;; hi-lock
