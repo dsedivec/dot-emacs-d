@@ -83,5 +83,76 @@ behavior when using fuzzy searching."
          (my:ivy--regular-or-fuzzy-get-actual-re-builder name)))
     (apply orig-fun name args)))
 
+;; `ivy--exhibit' implements special behavior for switching buffers,
+;; such as with `ivy-switch-buffer': if the input has a leading space
+;; then it will only return "hidden" buffers (those with leading
+;; spaces in their names) as candidates.  Without a leading space it
+;; will never return hidden buffers as candidates.
+;;
+;; Since I commonly use `my:ivy--regex-regular-or-fuzzy' with a
+;; leading space in order to switch to `ivy--regex-ignore-order', this
+;; caused a problem since I would frequently find myself only
+;; presented with hidden buffers as candidates---not what I wanted.
+;;
+;; These two pieces of advice change Ivy's behavior when completing
+;; buffers: when `my:ivy--regex-regular-or-fuzzy' is in use, two
+;; leading spaces (or "\ " or "^ ") are required to start searching
+;; hidden buffers.  A single leading space will be interpreted as a
+;; request to switch to the other regexp builder, as usual.  This
+;; makes sense, since switching to hidden buffers is expected to be
+;; uncommon.
+;;
+;; The implementation here is gross.  It is necessary because of the
+;; special case that handles `internal-complete-buffer' completions in
+;; `ivy--exhibit' (which may itself be considered "gross" by some).
+;; Ivy only requests the list of buffer candidates when the search
+;; string changes from no leading space to having a leading space, or
+;; from having a leading space to no leading space.  Therefore, to
+;; reach our goals here, we trick `ivy--exhibit' into recomputing
+;; completion candidates by clobbering `ivy--old-text' whenever the
+;; search string changes between "two leading spaces" and "less than
+;; two leading spaces".  Then we must further advise
+;; `ivy--buffer-list' to change which set of candidates it will return
+;; when it is called to produce the list of candidates, which itself
+;; ugly.
+;;
+;; Alternatives to all this ugliness that I have not really explored:
+;;
+;; * Change how Ivy decides when to get a new list of buffer
+;;   candidates, maybe via a user-configurable predicate function on
+;;   the input.
+;;
+;; * Use a key binding for SPC in `ivy-minibuffer-map' that doesn't
+;;   insert space when you're at the beginning of the input in the
+;;   minibuffer, but instead it just sets a flag or toggles the regexp
+;;   builder for you, preferrably with some sort of message telling
+;;   you that the matcher has been changed.
+
+(defconst my:ivy--intentional-leading-space-regexp "^\\(?:  \\|\\\\ \\|\\^ \\)")
+
+(define-advice ivy--buffer-list (:around
+                                 (orig-fun str &optional virtual predicate)
+                                 my:fix-leading-space-with-my-re-builder)
+  (when (and (eq ivy--regex-function #'my:ivy--regex-regular-or-fuzzy)
+             (equal str " ")
+             (not (string-match-p my:ivy--intentional-leading-space-regexp
+                                  ivy-text)))
+    ;; Switch this to a regular non-leading-space `ivy--buffer-list'
+    ;; call.
+    (setq str ""))
+  (funcall orig-fun str virtual predicate))
+
+(define-advice ivy--input
+    (:filter-return (str) my:buffer-switch-combo-matcher-ignore-leading-space)
+  (when (and (eq ivy--regex-function #'my:ivy--regex-regular-or-fuzzy)
+             (eq (ivy-state-collection ivy-last) #'internal-complete-buffer)
+             (not (equal
+                   (string-match-p my:ivy--intentional-leading-space-regexp
+                                   str)
+                   (string-match-p my:ivy--intentional-leading-space-regexp
+                                   ivy--old-text))))
+    (setq ivy--old-text ""))
+  str)
+
 ;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
 (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
