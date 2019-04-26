@@ -2843,6 +2843,9 @@ the selected link instead of opening it."
 (setq sql-product 'postgres)
 
 (with-eval-after-load 'sql
+  ;; Make Postgres's name shorter in the mode line.
+  (sql-set-product-feature 'postgres :name "Pg")
+
   ;; With readline on (or libedit on macOS?) things like
   ;; `sql-send-buffer' will sometimes apparently corrupt the data sent
   ;; to psql.
