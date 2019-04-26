@@ -2499,6 +2499,13 @@ the selected link instead of opening it."
            ("M-m p" . projectile-command-map))
 
 
+;;; pulse
+
+(my:load-recipes 'find-cursor)
+
+(bind-keys ("<f8>" . my:find-cursor))
+
+
 ;;; python
 
 ;; dtrt-indent does this for us, everywhere.
