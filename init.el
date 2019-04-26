@@ -941,6 +941,19 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (setq bs-default-configuration "files-and-dirs")
 
 
+;;; buttercup
+
+(bind-keys :map emacs-lisp-mode-map
+           ("M-m m t" . buttercup-run-at-point))
+
+;; `buttercup-run-at-point' does `save-selected-window' so Shackle's
+;; :select t can't help us here.
+(define-advice buttercup-run-at-point
+    (:after (&rest _args) my:buttercup-select-results)
+  (when-let ((win (get-buffer-window "*Buttercup*")))
+    (select-window win)))
+
+
 ;;; carousel
 
 (carousel-mode 1)

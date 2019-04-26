@@ -24,6 +24,7 @@
      bind-key
      blackout
      bookmark+
+     buttercup
      clean-aindent-mode
      command-log-mode
      comment-dwim-2
