@@ -2402,6 +2402,46 @@ the selected link instead of opening it."
                  'org-insert-heading-ignore-invisibility
                  'org-jump-over-priority-after-setting-it)
 
+(defvar my:org-todo-files (mapcar #'expand-file-name
+                                  '("~/todo.org" "~/todo.org_archive")))
+
+(defun my:org-in-todo-file-p ()
+  (member (buffer-file-name) my:org-todo-files))
+
+(defface my:org-waiting
+    '((t (:background "#fee470" :foreground "#950759D00000" :weight bold)))
+  "Used for WAITING or HOLD to-do states.")
+
+(defun my:org-todo-file-specific-hook ()
+  (when (my:org-in-todo-file-p)
+    (my:setq-local org-refile-targets '((nil . (:tag . "refile"))
+                                        ("~/someday.org" . (:level . 1)))
+                   org-tags-exclude-from-inheritance '("refile")
+                   org-todo-keyword-faces '(("WAITING" . my:org-waiting)
+                                            ("HOLD" . my:org-waiting))
+                   ;; org-confirm-babel-evaluate nil
+                   )))
+
+(add-hook 'org-mode-hook #'my:org-todo-file-specific-hook)
+
+(autoload 'org-table-get-remote-range "org-table")
+
+(defun my:org-todo-allowed-projects (prop-name)
+  (when (and (my:org-in-todo-file-p)
+             (equal (upcase prop-name) "PROJECT"))
+    (with-current-buffer (find-file-noselect "~/todo.org")
+      (mapcar #'substring-no-properties
+              (org-table-get-remote-range "projects" "@2$2..@>$2")))))
+
+;; I apply this globally, rather than buffer local, *presumably*
+;; because that's necessary to get it to take effect in agenda buffers
+;; too.  But there's probably a better way to do this.
+(add-hook 'org-property-allowed-value-functions
+          #'my:org-todo-allowed-projects)
+
+;; Private stuff that doesn't get checked into Git.
+(load-file (expand-file-name "private/org.el" user-emacs-directory))
+
 
 ;;; osx-dictionary
 
