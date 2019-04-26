@@ -105,4 +105,6 @@ Set, by advice, only within a call to
                    ;; properties AFAIK, and AFAIK the prefix shouldn't
                    ;; have any properties either.
                    (concat prefix-to-add cand))
-                 (apply orig-fun command dabbrev-prefix (cdr args))))))))
+                 (apply orig-fun command dabbrev-prefix (cdr args)))))
+      (t
+       (apply orig-fun command args)))))
