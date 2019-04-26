@@ -2828,14 +2828,19 @@ the selected link instead of opening it."
 
 ;;; sql
 
+(setq sql-display-sqli-buffer-function #'display-buffer)
+
+(defun my:sql-switch-to-sqli-buffer ()
+  (interactive)
+  (let ((sql-display-sqli-buffer-function t))
+    (call-interactively #'sql-product-interactive)))
+
 (with-eval-after-load 'sql
   (bind-keys :map sql-mode-map
-             ("C-c C-z" . sql-product-interactive)))
+             ("C-c C-z" . my:sql-switch-to-sqli-buffer)))
 
 ;; Set the default to my most commonly-used RDBMS.
-(setq sql-product 'postgres
-      ;; Make C-c C-z focus the SQLi buffer.
-      sql-display-sqli-buffer-function t)
+(setq sql-product 'postgres)
 
 (with-eval-after-load 'sql
   ;; With readline on (or libedit on macOS?) things like
