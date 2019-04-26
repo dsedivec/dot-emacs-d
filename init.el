@@ -291,6 +291,19 @@ NEW-ELEMENT."
   "Return the standard value of VAR."
   (eval (car (get var 'standard-value))))
 
+(defun my:pop-up-buffer-p (&optional buffer additional-modes)
+  (with-current-buffer (or buffer (current-buffer))
+    (or (apply #'derived-mode-p additional-modes)
+        (and
+         ;; `ivy-occur-grep-mode' is derived from `compilation-mode', but
+         ;; I don't want to treat it as pop-up.
+         (not (derived-mode-p 'ivy-occur-grep-mode))
+         (derived-mode-p 'compilation-mode
+                         'flycheck-error-list-mode
+                         'help-mode
+                         'osx-dictionary-mode))
+        (equal (buffer-name) "*Buttercup*"))))
+
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
@@ -2394,10 +2407,6 @@ the selected link instead of opening it."
 
 (bind-keys ("C-$" . osx-dictionary-search-pointer))
 
-(with-eval-after-load 'window-purpose-x
-  (add-to-list 'purpose-x-popwin-major-modes 'osx-dictionary-mode)
-  (purpose-x-popwin-update-conf))
-
 
 ;;; package-build
 
@@ -2761,6 +2770,20 @@ the selected link instead of opening it."
                                               sh-other-keywords))))))
 
 (add-hook 'sh-set-shell-hook #'my:sh-add-company-keywords)
+
+
+;;; shackle
+
+(my:load-recipes 'shackle-dismiss-pop-up-window)
+
+(setq shackle-rules
+      '(
+        ((:custom my:pop-up-buffer-p)
+         :custom my:shackle-display-pop-up-window
+         :popup t :align below :select t :size 0.33)
+        ))
+
+(shackle-mode 1)
 
 
 ;;; simple
@@ -3602,45 +3625,6 @@ for this command) must be an arrow key."
 ;; This is normally `split-line' which I have never knowingly used and
 ;; doubt I ever would.
 (bind-key "C-M-o" 'window-hydra/body)
-
-
-;;; window-purpose
-
-(purpose-mode 1)
-
-(with-eval-after-load 'ivy
-  (require 'ivy-switch-with-purpose))
-
-;; Docs for window-purpose don't really mention users modifying
-;; `purpose-action-sequences` to suit their tastes, but Spacemacs is
-;; doing it to get the behavior I want: do *not* try to reuse an
-;; existing window when C-x b is invoked.  Some day perhaps I should
-;; make a PR to document this modification.  (Huh: and this variable.
-;; It has no doc string.)
-;;
-;; An alternative to this would be modifying the advice here which
-;; removes force-same-window rather forcibly:
-;; https://github.com/bmag/emacs-purpose/blob/a302340e183d20baa4445858d321f43449298829/window-purpose-switch.el#L957-L962
-(let ((stb-actions (assq 'switch-to-buffer purpose-action-sequences))
-      (action 'purpose-display-maybe-same-window))
-  (setcdr stb-actions (cons action (delq action (cdr stb-actions)))))
-
-;; Purpose extensions
-;;
-;; Note that window-purpose provides an extension for
-;; *perspective.el*, not persp-mode.el.  I'm using the latter, so the
-;; extension in window-purpose doesn't apply to me.
-
-(require 'window-purpose-x)
-(purpose-x-magit-single-on)
-;; This gives popwin-like functionality, but better default popup
-;; window heights.
-(purpose-x-popwin-setup)
-
-(if (get 'purpose-set-extension-configuration 'lisp-indent-function)
-    (warn (concat "`purpose-set-extension-configuration'"
-                  " now sets `lisp-indent-function'"))
-  (put 'purpose-set-extension-configuration 'lisp-indent-function 1))
 
 
 ;;; winner-mode

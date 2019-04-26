@@ -113,6 +113,7 @@
      rainbow-mode
      reformatter
      scss-mode
+     shackle
      sly
      smart-tabs
      smartparens
@@ -131,7 +132,6 @@
      webpaste
      wgrep
      which-key
-     window-purpose
      winum
      yaml-mode
      yasnippet
