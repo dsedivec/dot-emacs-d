@@ -2098,6 +2098,13 @@ the selected link instead of opening it."
 ;; hide lines without a cursor.
 (require 'multiple-cursors)
 
+(defun my:mc/mark-more-like-this-extended-dwim-advice (&rest _args)
+  (unless (use-region-p)
+    (mc--mark-symbol-at-point)))
+
+(advice-add 'mc/mark-more-like-this-extended :before
+            #'my:mc/mark-more-like-this-extended-dwim-advice)
+
 (bind-keys ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("<s-mouse-1>" . mc/add-cursor-on-click)
