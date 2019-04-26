@@ -2061,7 +2061,14 @@ the selected link instead of opening it."
 ;;; minions
 
 (setq minions-mode-line-lighter "🄼"
-      minions-direct '(flycheck-mode persp-mode multiple-cursors-mode))
+      minions-direct '(
+                       black-format-on-save-mode
+                       docformatter-on-save-mode
+                       flycheck-mode
+                       multiple-cursors-mode
+                       persp-mode
+                       yapf-format-on-save-mode
+                       ))
 
 (minions-mode 1)
 
@@ -2677,6 +2684,27 @@ the selected link instead of opening it."
 ;;; rect
 
 (my:load-recipes 'emacs-yank-rectangle-to-new-lines)
+
+
+;;; reformatter
+
+(reformatter-define black-format
+    :program "black"
+    :args '("-l" "80" "--quiet" "--fast" "-")
+    :lighter "Bl")
+
+(reformatter-define yapf-format
+    :program "yapf"
+    :lighter "Yapf")
+
+(reformatter-define docformatter
+    :program "docformatter"
+    :args '("-")
+    :lighter "Df")
+
+(reformatter-define rufo
+    :program "rufo-emacs-wrapper"
+    :lighter " Rufo")
 
 
 ;;; saveplace

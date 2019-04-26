@@ -111,6 +111,7 @@
      pyvenv
      quelpa
      rainbow-mode
+     reformatter
      scss-mode
      sly
      smart-tabs
