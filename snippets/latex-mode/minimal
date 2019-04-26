@@ -1,0 +1,36 @@
+# -*- mode: snippet -*-
+# name: Minimal LaTeX article
+# key: minimal
+# --
+\documentclass[11pt]{article}
+
+%%% Packages
+
+\usepackage[l2tabu, orthodox]{nag}
+\usepackage{geometry}
+\usepackage{fontspec}
+\usepackage{microtype}
+
+\usepackage{hyperref}
+
+%%% Preamble
+
+\geometry{paper=letterpaper,margin=1in}
+
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{TeX Gyre Pagella}
+\setmonofont{Source Code Pro}
+
+\hypersetup{colorlinks, linkcolor=blue, urlcolor=blue}
+
+\title{$1}
+${2:$(when (string-empty-p yas-text) "% ")}\author{$2}
+${3:$(when (string-empty-p yas-text) "% ")}\date{$3}
+
+\begin{document}
+
+\maketitle{}
+
+$0
+
+\end{document}
