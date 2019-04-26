@@ -1363,22 +1363,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; frame-resize
 
-(defun my:frame-resize-imenu-list-window (window)
-  (when (integerp imenu-list-size)
-    (with-selected-window window
-      (when (derived-mode-p 'imenu-list-major-mode)
-        (if (memq imenu-list-position '(left right))
-            (list imenu-list-size nil)
-          (list nil imenu-list-size))))))
-
 (defun my:frame-resize-window-default (window)
-  '(80 nil))
+  (unless (window-preserved-size window t)
+    '(80 nil)))
 
 (with-eval-after-load 'frame-resize
-  (with-eval-after-load 'imenu-list
-    (add-to-list 'frame-resize-window-size-functions
-                 #'my:frame-resize-imenu-list-window))
-
   (add-to-list 'frame-resize-window-size-functions
                #'my:frame-resize-window-default t)
 
@@ -1718,9 +1707,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; imenu-list
 
-(bind-keys ("M-m b i" . imenu-list-smart-toggle))
+(my:load-recipes 'imenu-list-in-side-buffer)
 
-(setq imenu-list-size 50)
+;; After using the recipe above, this parameter specifies the
+;; `window-total-width' of the imenu-list side window.  On my system,
+;; today, I need 54 to get a `window-text-width' of 50.
+(setq imenu-list-size 54)
+
+(bind-keys ("M-m b i" . imenu-list-smart-toggle))
 
 
 ;;; impatient-mode
