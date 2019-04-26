@@ -114,7 +114,7 @@ Will turn on `whitespace-mode' if necessary."
       (setq-local whitespace-style whitespace-active-style))))
 
 ;;;###autoload (autoload 'wspc-hydra/body "wspc-hydra" nil t)
-(defhydra wspc-hydra ()
+(defhydra wspc-hydra (:hint none)
   "
 _w_hitespace mode: ?w?
 _c_ycle face/mark ?c?^^^^^^^               ^^^^^_f_: [?f?] faces
