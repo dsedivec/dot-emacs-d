@@ -967,6 +967,12 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
            ([remap backward-kill-word] . nil))
 
 
+;;; comint
+
+(setq-default comint-scroll-to-bottom-on-input 'this
+              comint-input-ignoredups t)
+
+
 ;;; comment-dwim-2
 
 (setq cd2/region-command #'cd2/comment-or-uncomment-region)
