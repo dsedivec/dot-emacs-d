@@ -772,6 +772,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   ;; and I get white on DodgerBlue instead.
   (set-face-attribute 'ahs-plugin-bod-face nil :foreground nil))
 
+(defun my:ahs-set-default-range-to-defun ()
+  (ahs-change-range 'ahs-range-beginning-of-defun t))
+
+(add-hook 'emacs-lisp-mode-hook #'my:ahs-set-default-range-to-defun)
+
 
 ;;; auto-yasnippet
 
