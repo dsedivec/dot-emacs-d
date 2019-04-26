@@ -1716,6 +1716,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys ("M-m b i" . imenu-list-smart-toggle))
 
+(my:load-recipes 'imenu-list-sort)
+
 
 ;;; impatient-mode
 
