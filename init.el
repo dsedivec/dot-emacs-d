@@ -759,6 +759,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   ;; Must trigger defcustom's :set.
   (customize-set-variable 'ahs-idle-interval 0.5)
 
+  (add-to-list 'ahs-plugin-bod-modes 'python-mode)
+
   (add-to-list 'ahs-inhibit-face-list 'font-lock-keyword-face)
 
   ;; Don't sit on `negative-argument'.  (Particularly since winum is
