@@ -35,6 +35,7 @@
      counsel
      counsel-css
      counsel-projectile
+     crontab-mode
      csv-mode
      dash
      deft
@@ -97,6 +98,7 @@
      orgtbl-aggregate
      osx-dictionary
      package-build
+     pandoc-mode
      paradox
      paredit
      persp-mode
