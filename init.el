@@ -777,6 +777,19 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (add-hook 'emacs-lisp-mode-hook #'my:ahs-set-default-range-to-defun)
 
+;; Prevent auto-highlight-symbol from highlighting while in the middle
+;; of `avy-goto-char'---and then forgetting to re-highlight when
+;; `avy-goto-char' ends.  Of course, I'm sure this very general advice
+;; will apply to other commands that sit idle waiting for input; we'll
+;; see if this needs to be narrowed.
+
+(defun my:ahs-dont-highlight-while-command-in-progress (&rest _args)
+  ;; https://emacs.stackexchange.com/a/20126
+  (not this-command))
+
+(advice-add 'ahs-highlight-p :before-while
+            #'my:ahs-dont-highlight-while-command-in-progress)
+
 
 ;;; auto-yasnippet
 
