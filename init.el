@@ -3359,7 +3359,7 @@ a string or comment."
 
 ;;; sqlup-mode
 
-(setq sqlup-blacklist '("name" "id" "label" "state"
+(setq sqlup-blacklist '("name" "id" "label" "state" "sql" "operation"
                         ;; WTF sql.el?
                         "a" "c" "g" "k" "m" "p" "t"))
 
