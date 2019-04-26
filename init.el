@@ -2093,6 +2093,11 @@ the selected link instead of opening it."
 
 ;;; multiple-cursors
 
+;; You must actually require this, otherwise you will not load some of
+;; the more interesting multiple-cursors functionality, such as C-' to
+;; hide lines without a cursor.
+(require 'multiple-cursors)
+
 (bind-keys ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("<s-mouse-1>" . mc/add-cursor-on-click)
