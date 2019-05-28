@@ -1232,6 +1232,14 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (bind-keys ("C-c '" . edit-indirect-region))
 
+(my:load-recipes 'edit-indirect-copy-vars-from-parent)
+
+(defun my:edit-indirect-guess-mode (parent-buffer _beg _end)
+  (my:edit-indirect-set-up-cloned-vars parent-buffer)
+  (normal-mode))
+
+(setq edit-indirect-guess-mode-function #'my:edit-indirect-guess-mode)
+
 
 ;;; edit-server
 
