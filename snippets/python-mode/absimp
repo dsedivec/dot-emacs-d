@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Absolute imports
+# key: absimp
+# --
+from __future__ import absolute_imports
