@@ -1397,7 +1397,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; frame-resize
 
 (defun my:frame-resize-window-default (window)
-  (unless (window-preserved-size window t)
+  (unless (or (window-preserved-size window t)
+              (window-parameter window 'window-side))
     '(80 nil)))
 
 (with-eval-after-load 'frame-resize
