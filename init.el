@@ -1218,6 +1218,15 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
+;; I think `ediff-setup-windows-plain' really does not like it when
+;; you have `window-combination-resize' turned on.  I should probably
+;; report this upstream as a bug.  To reproduce, just turn on
+;; `window-combination-resize' and then invoke, say, ediff from Magit.
+(define-advice ediff-setup-windows-plain
+    (:around (orig-fun &rest args) my:disable-window-combination-resize)
+  (let ((window-combination-resize nil))
+    (apply orig-fun args)))
+
 
 ;;; edit-indirect
 
