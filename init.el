@@ -1116,11 +1116,15 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; Include directory in prompt when searching.
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
 
-(bind-keys :map counsel-mode-map
-           ("M-m /" . counsel-auto-grep-maybe-projectile)
-           ("M-m s f" . counsel-auto-grep-ask-dir))
-
 (my:load-recipes 'counsel-limit-grep-result-length)
+
+
+;;; counsel-auto-grep
+
+(with-eval-after-load 'counsel
+  (bind-keys :map counsel-mode-map
+             ("M-m /" . counsel-auto-grep-maybe-projectile)
+             ("M-m s f" . counsel-auto-grep-ask-dir)))
 
 
 ;;; counsel-css
