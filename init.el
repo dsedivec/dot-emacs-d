@@ -1745,8 +1745,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; imenu-list
 
-(my:load-recipes 'imenu-list-in-side-buffer)
-
 ;; After using the recipe above, this parameter specifies the
 ;; `window-total-width' of the imenu-list side window.  On my system,
 ;; today, I need 54 to get a `window-text-width' of 50.
@@ -1754,7 +1752,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-keys ("M-m b i" . imenu-list-smart-toggle))
 
-(my:load-recipes 'imenu-list-sort)
+(my:load-recipes 'imenu-list-in-side-buffer
+                 'imenu-list-sort)
 
 
 ;;; impatient-mode
