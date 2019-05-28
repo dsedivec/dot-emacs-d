@@ -9,10 +9,12 @@
         delete-horizontal-space
         delete-indentation
         electric-newline-and-maybe-indent
+        electric-pair-delete-pair
         forward-sexp
         indent-for-tab-command
         kill-sexp
         markdown-insert-code
+        markdown-outdent-or-delete
         mwim-beginning-of-code-or-line
         mwim-end-of-line-or-code
         my:insert-tab-or-spaces
@@ -37,8 +39,10 @@
         avy-goto-char
         beginning-of-buffer
         counsel-describe-function
+        counsel-projectile-find-file
         describe-key-briefly
         edit-indirect-region
+        ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
         sql-send-paragraph
