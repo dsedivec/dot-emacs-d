@@ -1840,7 +1840,7 @@ surround \"foo\" with (in this example) parentheses.  I want
       ;; involved ideas.
       ivy-truncate-lines nil)
 
-(setf (alist-get 'counsel-ag ivy-re-builders-alist)
+(setf (alist-get 'counsel-rg ivy-re-builders-alist)
       #'ivy--regex-plus)
 
 (my:load-recipes 'ivy-special-switch-buffers
