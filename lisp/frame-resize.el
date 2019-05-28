@@ -73,6 +73,14 @@ terminates immediately (and normally, not with an error)."
   :group 'frame-resize
   :type '(repeat function))
 
+(defvar frame-resize-debug nil
+  "Output debugging messages when non-nil.")
+
+(defun frame-resize--debug-message (msg &rest args)
+  (when frame-resize-debug
+    (let ((inhibit-message t))
+      (apply #'message (concat "frame-resize: " msg) args))))
+
 (defun frame-resize-frame-fullscreen-p (frame)
   "Return non-nil if FRAME is full screen or maximized.
 Returns nil if FRAME is merely fullwidth or fullheight."
@@ -210,6 +218,16 @@ dominates (see the documentation for
          (new-top (max min-top (- pos-top
                                   (/ ht-delta-pixels 2)
                                   bottom-overflow))))
+      (frame-resize--debug-message (concat "Δw=%s px, Δh=%s px,"
+                                           " max w=%s px, max h=%s px")
+                                   wd-delta-pixels ht-delta-pixels
+                                   max-wd-pixels max-ht-pixels)
+      (frame-resize--debug-message "new w=%s px, new h=%x px"
+                                   new-wd-pixels new-ht-pixels)
+      (frame-resize--debug-message (concat "→ over=%s px, ← new=%s px,"
+                                           " ↓ over=%s px, ↑ new=%s px")
+                                   right-overflow new-left
+                                   bottom-overflow new-top)
       ;; Resize and reposition the frame.
       (set-frame-size frame new-wd-pixels new-ht-pixels t)
       (set-frame-position frame new-left new-top)
@@ -240,6 +258,10 @@ dominates (see the documentation for
                  ;; from resizing window N, then resizing window N+1,
                  ;; but now Emacs has resized window N in a way we
                  ;; don't want.
+                 (frame-resize--debug-message "%S wants %sx%s, Δ %sx%s"
+                                              window
+                                              win-wd win-ht
+                                              win-wd-delta win-ht-delta)
                  (when (not (zerop win-wd-delta))
                    (window-resize window win-wd-delta t)
                    (unless (window-preserved-size window t)
