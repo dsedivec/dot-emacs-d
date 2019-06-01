@@ -2605,6 +2605,8 @@ the selected link instead of opening it."
 
 ;;; python
 
+(setq python-indent-def-block-scale 1)
+
 ;; dtrt-indent does this for us, everywhere.
 (setq python-indent-guess-indent-offset nil)
 
