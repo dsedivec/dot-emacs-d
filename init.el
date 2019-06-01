@@ -822,9 +822,9 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (bind-keys ("C-o" . aya-open-line)
            ;; Spacemacs bindings
-           ("M-m i S c" . aya-create)
-           ("M-m i S e" . aya-expand)
-           ("M-m i S w" . aya-persist-snippet))
+           ("M-m i c" . aya-create)
+           ("M-m i e" . aya-expand)
+           ("M-m i w" . aya-persist-snippet))
 
 ;; I actually want `open-line' to open a new line above the current
 ;; line, without modifying the current line, even if point is in the
