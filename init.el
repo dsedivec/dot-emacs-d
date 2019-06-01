@@ -510,13 +510,12 @@ it returns the node that your EDIT-FORM changed)."
 
 ;; Fill in some explanations for Emacs built-in prefixes, or prefixes
 ;; that are kind of shared like C-x r.
-(dolist (pair '(("C-x 4" . "other window")
-                ("C-x 5" . "other frame")
-                ("C-x n" . "narrow")
-                ("C-x r" . "register/rectangle")
-                ("C-x w" . "highlight/winum")))
-  (add-to-list 'which-key-replacement-alist
-               `((,(car pair) . "Prefix Command") . (nil . ,(cdr pair)))))
+(which-key-add-key-based-replacements
+  "C-x 4" "other window"
+  "C-x 5" "other frame"
+  "C-x n" "narrow"
+  "C-x r" "register/rectangle"
+  "C-x w" "highlight/winum")
 
 
 ;;; wspc-hydra
