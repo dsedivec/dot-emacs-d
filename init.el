@@ -1011,25 +1011,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (add-hook 'prog-mode-hook #'company-mode)
 
-(with-eval-after-load 'company
-  (bind-keys :map company-mode-map
-             ("<C-return>" . company-complete))
-
-  ;; Among a few other things this makes it so TAB completes, not RET,
-  ;; which I really need because it's annoying to hit enter at EOL to
-  ;; insert a newline and instead a completion slips in instead.
-  (company-tng-configure-default)
-
-  ;; But now I'm starving for a key that means "complete the selected
-  ;; one".
-  (bind-keys :map company-active-map
-             ("<C-return>" . company-complete-selection))
-
-  ;; C-<digit> to select a completion
-  (dotimes (n 10)
-    (bind-key (kbd (format "C-%d" n)) 'company-complete-number
-              company-active-map)))
-
 (setq company-selection-wrap-around t
       company-show-numbers t
       company-tooltip-align-annotations t
@@ -1061,7 +1042,22 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (my:load-recipes 'company-dont-complete-numbers
                  'company-dabbrev-code-work-with-other-prefixes
-                 'company-remove-dabbrev-code-duplicates)
+                 'company-remove-dabbrev-code-duplicates
+                 'company-complete-or-other-backend)
+
+(with-eval-after-load 'company
+  ;; Among a few other things this makes it so TAB completes, not RET,
+  ;; which I really need because it's annoying to hit enter at EOL to
+  ;; insert a newline and instead a completion slips in instead.
+  (company-tng-configure-default)
+
+  (bind-keys :map company-mode-map
+             ("<C-return>" . my:company-complete-or-other-backend))
+
+  ;; C-<digit> to select a completion
+  (dotimes (n 10)
+    (bind-key (kbd (format "C-%d" n)) 'company-complete-number
+              company-active-map)))
 
 (defun my:company-group-existing-backend (backend other-backends
                                           &optional globally no-warn)
