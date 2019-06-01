@@ -74,7 +74,6 @@
      hydra
      imenu-list
      impatient-mode
-     importmagic
      intero
      ivy
      ivy-hydra

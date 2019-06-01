@@ -1804,13 +1804,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (autoload 'imp-visit-buffer "impatient-mode" nil t)
 
 
-;;; importmagic
-
-(with-eval-after-load 'importmagic
-  (bind-keys :map importmagic-mode-map
-             ("M-m m r f" . importmagic-fix-symbol-at-point)))
-
-
 ;;; info
 
 ;; Default is t, which makes `Info-mode' precede everything with
@@ -2764,7 +2757,6 @@ the selected link instead of opening it."
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
-  #'importmagic-mode
   #'smart-tabs-mode)
 
 (smart-tabs-advise 'python-indent-line 'python-indent-offset)
@@ -2782,7 +2774,8 @@ the selected link instead of opening it."
                  'python-toggle-triple-quotes
                  'python-fix-dead-shell-font-lock-buffer
                  'expand-region-python-fix-strings
-                 'python-edit-indirect-in-strings)
+                 'python-edit-indirect-in-strings
+                 'python-add-import)
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
@@ -2806,7 +2799,8 @@ the selected link instead of opening it."
              ("M-m m q" . my:python-toggle-triple-quotes)
              ("C-c '" . my:python-edit-indirect-dwim)
              ("C-c C-c" . my:python-shell-send-dwim)
-             ("C-c C-b" . python-shell-send-buffer)))
+             ("C-c C-b" . python-shell-send-buffer)
+             ("M-m m i" . my:python-add-import)))
 
 
 ;;; pyvenv
