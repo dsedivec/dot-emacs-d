@@ -2076,6 +2076,9 @@ the selected link instead of opening it."
       magit-diff-refine-ignore-whitespace nil
       magit-bury-buffer-function 'magit-mode-quit-window)
 
+(my:load-recipes 'magit-file-mode-autoload)
+
+
 ;; truncate-lines does not work well for me when viewing diffs and such.
 
 (defun my:magit-mode-hook ()
