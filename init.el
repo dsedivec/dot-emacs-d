@@ -366,14 +366,6 @@ it returns the node that your EDIT-FORM changed)."
            (setq ,zip-var (treepy-next ,zip-var)))))))
 
 
-;;; "Leader" keys setup
-
-;; Inspired by Spacemacs.
-
-(define-prefix-command 'my:global-leader-map)
-(bind-key "M-m" 'my:global-leader-map)
-
-
 ;;;; Emacs built-ins
 
 ;; Doubling these as I kept running out of undo history (at least, I
@@ -516,6 +508,25 @@ it returns the node that your EDIT-FORM changed)."
   "C-x n" "narrow"
   "C-x r" "register/rectangle"
   "C-x w" "highlight/winum")
+
+
+;;; "Leader" keys setup
+
+;; Inspired by Spacemacs.
+
+(define-prefix-command 'my:global-leader-map)
+
+(bind-key "M-m" 'my:global-leader-map)
+
+(which-key-add-key-based-replacements
+  "M-m a" "apps"
+  "M-m h" "help"
+  "M-m i" "insert"
+  "M-m j" "jump/join"
+  "M-m m" "major mode"
+  "M-m s" "search"
+  "M-m u" "utils"
+  "M-m v" "vc")
 
 
 ;;; wspc-hydra
@@ -1387,9 +1398,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; find-func
 
-(bind-keys ("M-m j f" . find-function)
-           ("M-m j v" . find-variable)
-           ("M-m f e l" . find-library))
+(bind-keys ("M-m j e f" . find-function)
+           ("M-m j e v" . find-variable)
+           ("M-m j e l" . find-library))
+
+(which-key-add-key-based-replacements "M-m j e" "emacs")
 
 
 ;;; frame
@@ -1753,7 +1766,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; today, I need 54 to get a `window-text-width' of 50.
 (setq imenu-list-size 54)
 
-(bind-keys ("M-m b i" . imenu-list-smart-toggle))
+(bind-keys ("M-m u i" . imenu-list-smart-toggle))
 
 (my:load-recipes 'imenu-list-in-side-buffer
                  'imenu-list-sort)
@@ -2505,9 +2518,6 @@ the selected link instead of opening it."
       persp-init-new-frame-behaviour-override nil)
 
 (with-eval-after-load 'persp-mode
-  (bind-keys :map persp-mode-map
-             ("M-m l l" . persp-frame-switch))
-
   ;; Document C-c p o, which is a lambda.
   (add-to-list 'which-key-replacement-alist
                '(("C-c p o" . nil) . (nil . "persp-mode off"))))
