@@ -29,7 +29,6 @@
      command-log-mode
      comment-dwim-2
      company
-     company-anaconda
      company-auctex
      company-reftex
      company-shell
@@ -51,6 +50,7 @@
      edit-indirect
      edit-server
      el-patch
+     elpy
      eltu
      emmet-mode
      exec-path-from-shell

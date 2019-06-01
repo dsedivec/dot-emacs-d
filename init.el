@@ -766,16 +766,6 @@ it returns the node that your EDIT-FORM changed)."
 (setq amx-history-length 500)
 
 
-;;; anaconda-mode
-
-(with-eval-after-load 'anaconda-mode
-  ;; anaconda-mode can't navigate around my (messy) code base nearly
-  ;; as well as just using tags, so tell it to get off the xref
-  ;; bindings.
-  (dolist (key '("M-." "M-," "M-*"))
-    (unbind-key key anaconda-mode-map)))
-
-
 ;;; anzu
 
 (global-anzu-mode 1)
@@ -1344,6 +1334,27 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m d m" . macrostep-expand)))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; elpy
+
+(advice-add 'python-mode :before #'elpy-enable)
+
+(with-eval-after-load 'elpy
+  (setq elpy-modules (delq 'elpy-module-highlight-indentation elpy-modules))
+
+  (bind-keys :map elpy-mode-map
+             ("<C-return>" . nil)
+             ("<C-up>" . nil)
+             ("<C-down>" . nil)
+             ;; auto-highlight-symbol uses these.
+             ("<M-left>" . nil)
+             ("<M-right>" . nil))
+
+  ;; https://github.com/jorgenschaefer/elpy/wiki/Customizations#use-flycheck-instead-of-flymake
+  (when (load "flycheck" t t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode)))
 
 
 ;;; emmet-mode
@@ -2738,8 +2749,6 @@ the selected link instead of opening it."
     (whitespace-mode -1)
     (whitespace-mode 1))
 
-  (set (make-local-variable 'company-backends)
-       (cons '(company-anaconda company-dabbrev-code) company-backends))
 
   ;; Don't reindent if we're already at an acceptable level.  For
   ;; example:
@@ -2759,8 +2768,6 @@ the selected link instead of opening it."
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
-  #'anaconda-mode
-  #'anaconda-eldoc-mode
   #'importmagic-mode
   #'smart-tabs-mode)
 
@@ -2809,6 +2816,8 @@ the selected link instead of opening it."
 ;;; pyvenv
 
 (exec-path-from-shell-copy-envs '("PYTHONPATH"  "WORKON_HOME"))
+
+(setq pyvenv-mode-line-indicator nil)
 
 
 ;;; recentf-mode
