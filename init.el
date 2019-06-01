@@ -504,6 +504,10 @@ it returns the node that your EDIT-FORM changed)."
 
 (my:load-recipes 'which-key-some-prefixes-are-fast)
 
+;; `defun' by default, which seems a little weird.  I prefer this
+;; indentation.
+(put 'which-key-add-key-based-replacements 'lisp-indent-function 0)
+
 ;; Fill in some explanations for Emacs built-in prefixes, or prefixes
 ;; that are kind of shared like C-x r.
 (dolist (pair '(("C-x 4" . "other window")
