@@ -2934,16 +2934,21 @@ the selected link instead of opening it."
 
 ;;; sql
 
+;; Don't select the SQLi window when eval'ing some SQL.  That's
+;; annoying.
 (setq sql-display-sqli-buffer-function #'display-buffer)
 
-(defun my:sql-switch-to-sqli-buffer ()
-  (interactive)
+;; But do select the SQLi window when I run `sql-postgres' or the
+;; like.
+(define-advice sql-product-interactive
+    (:around (orig-fun &rest args) my:select-sqli-buffer)
   (let ((sql-display-sqli-buffer-function t))
-    (call-interactively #'sql-product-interactive)))
+    (apply orig-fun args)))
 
 (with-eval-after-load 'sql
   (bind-keys :map sql-mode-map
-             ("C-c C-z" . my:sql-switch-to-sqli-buffer)))
+             ;; C-c C-z should select the SQLi buffer, not just show it.
+             ("C-c C-z" . sql-product-interactive)))
 
 ;; Set the default to my most commonly-used RDBMS.
 (setq sql-product 'postgres)
