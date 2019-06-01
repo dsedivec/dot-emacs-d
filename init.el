@@ -304,6 +304,11 @@ NEW-ELEMENT."
                          'osx-dictionary-mode))
         (equal (buffer-name) "*Buttercup*"))))
 
+(defun my:highlight-line-after-movement ()
+  ;; `next-error' is the face that xref uses after jumping.  Good
+  ;; enough for xref, good enough for imenu.
+  (pulse-momentary-highlight-one-line (point) 'next-error))
+
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
@@ -367,6 +372,11 @@ it returns the node that your EDIT-FORM changed)."
 
 
 ;;;; Emacs built-ins
+
+;; My nav-stack package uses circular lists, try not to stack overflow
+;; when I accidentally end up printing one during debugging.  (Why is
+;; this nil nby default, anyway?)
+(setq print-circle t)
 
 ;; Doubling these as I kept running out of undo history (at least, I
 ;; did with undo-tree).
@@ -1132,6 +1142,19 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (my:load-recipes 'counsel-limit-grep-result-length)
 
+;; `counsel-find-file' doesn't leave the file you just found as the
+;; current buffer.  This is because `counsel-find-file' →
+;; `counsel-find-file-action' → `with-ivy-window' →
+;; `with-selected-window' → `save-current-buffer'.  Your window does
+;; end up showing the new buffer, but Emacs's "current buffer" is
+;; still your old buffer during `post-command-hook', which breaks
+;; nav-stack.  I should probably report this upstream: it seems
+;; harmless but I bet it could break more than just nav-stack.  (OTOH,
+;; changing its behavior now might break even more...?)
+(define-advice counsel-find-file-action
+    (:after (&rest args) my:set-current-buffer-like-find-file)
+  (set-buffer (with-ivy-window (window-buffer))))
+
 
 ;;; counsel-auto-grep
 
@@ -1751,12 +1774,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq imenu-auto-rescan t
       imenu-auto-rescan-maxout (* 1024 1024 10))
 
-(defun my:imenu-highlight-after-jump ()
-  ;; `next-error' is the face that xref uses after jumping.  Good
-  ;; enough for xref, good enough for imenu.
-  (pulse-momentary-highlight-one-line (point) 'next-error))
+(add-hook 'imenu-after-jump-hook #'my:highlight-line-after-movement)
 
-(add-hook 'imenu-after-jump-hook #'my:imenu-highlight-after-jump)
 
 
 ;;; imenu-list
@@ -2183,6 +2202,32 @@ the selected link instead of opening it."
              ;; the suggested substitute.
              ("C-s" . phi-search)
              ("C-r" . phi-search-backward)))
+
+
+;;; nav-stack
+
+;; (setq nav-stack-debug-enabled t)
+
+(nav-stack-mode 1)
+
+(require 'nav-stack-ivy)
+
+(dolist (mode '(imenu-list-major-mode treemacs-mode))
+  (add-to-list 'nav-stack-post-command-excluded-major-modes mode))
+
+(defun my:nav-stack-move-predicate (location)
+  (let ((buffer (nav-stack-location-buffer location)))
+    (not (or (my:pop-up-buffer-p buffer)
+             (with-current-buffer buffer
+               ;; Empty *Backtrace* buffers.  Maybe I should just
+               ;; delete these.
+               (and (derived-mode-p 'debugger-mode)
+                    (= (point-max) 1)))))))
+
+(add-to-list 'nav-stack-move-predicates
+             #'my:nav-stack-move-predicate t)
+
+(add-hook 'nav-stack-after-move-hook #'my:highlight-line-after-movement)
 
 
 ;;; newcomment
