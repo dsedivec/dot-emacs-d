@@ -122,6 +122,7 @@
      sticky-region
      swiper
      transpose-frame
+     treemacs
      treepy
      undo-tree
      unfill

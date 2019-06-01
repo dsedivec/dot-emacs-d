@@ -3496,6 +3496,22 @@ a string or comment."
 (tool-bar-mode -1)
 
 
+;;; treemacs
+
+(setq treemacs-python-executable "/opt/local/bin/python3"
+      treemacs-width 50)
+
+(add-hook 'treemacs-hook #'treemacs-tag-follow-mode)
+
+(bind-keys ("M-m u t" . treemacs))
+
+(with-eval-after-load 'treemacs
+  ;; Normal size says to use 22, or 44 if you have a high DPI display.
+  ;; I have a high DPI display---but I don't think NS Emacs is able to
+  ;; use it.  22 is too big, 44 is *way* too big!
+  (treemacs-resize-icons 11))
+
+
 ;;; undo-tree
 
 (global-undo-tree-mode)
