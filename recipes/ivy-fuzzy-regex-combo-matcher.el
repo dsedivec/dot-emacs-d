@@ -17,7 +17,7 @@
   "Return fuzzy RE builder or regular RE builder based on INPUT.
 `ivy-text' is used if STR is not supplied."
   ;; Fun fact: string-match-p is like 10x faster than seq-contains.
-  (let ((has-space-or-regexp (string-match-p "[!^\\\\ ]" (or input ivy-text))))
+  (let ((has-space-or-regexp (string-match-p "[!^$\\\\ ]" (or input ivy-text))))
     (if has-space-or-regexp
         my:ivy-regular-re-builder
       my:ivy-fuzzy-re-builder)))
