@@ -670,6 +670,10 @@ it returns the node that your EDIT-FORM changed)."
              ("C-c g" . my:LaTeX-convert-to-gls)
              ("C-c M-g" . my:LaTeX-backward-convert-to-gls)))
 
+(underlings-move-menu-after-load 'latex 'LaTeX-mode
+                                 '["Preview" "Command"]
+                                 "LaTeX")
+
 ;; Copy the original value but with more possible ref commands.
 (setq company-reftex-labels-regexp
       (rx ?\\ (or "ref" "eqref" "autoref" "nameref" "pageref" "vref" "cref")
@@ -726,6 +730,9 @@ it returns the node that your EDIT-FORM changed)."
       (unless (> (length hyperref-commands) 1)
         (error "Oops, can't throw away `nconc' result anymore"))
       (nconc hyperref-commands '(("\\nameref" ?n))))))
+
+(underlings-move-menu-after-load 'reftex 'reftex-mode "Ref"
+                                 "LaTeX" :dest-map 'LaTeX-mode-map)
 
 
 ;;; abbrev
@@ -902,8 +909,28 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; bookmark+
 
-;; Doing this to get the keys loaded, but there might be a better way.
-(require 'bookmark+)
+;; I require all of bookmark+ to get its keys loaded.  bookmark+ also
+;; sets up a mode hook that tries to change menus in `dired-mode-map',
+;; menus which I move elsewhere.  Best of all, the mode hook is a
+;; lambda, so I can't get at it by name.  Therefore I engage in the
+;; following horrible, awful maneuver to try and keep the hook happy.
+
+(if (featurep 'bookmark+)
+    (warn "Too late, bookmark+ loaded, dired menus are screwed")
+
+  (add-hook
+   'dired-mode-hook
+   (underlings-define-menu-mover 'dired-mode "Subdir" "Dired"
+                                 :func-name 'my:dired-bmkp-hide-subdir-menu))
+
+  (require 'bookmark+)
+
+  (add-hook
+   'dired-mode-hook
+   (underlings-define-menu-mover 'dired-mode
+                                 '[("Dired" "Subdir")]
+                                 nil
+                                 :func-name 'my:dired-bmkp-show-subdir-menu)))
 
 (setq bmkp-auto-light-when-set 'all-in-buffer
       bmkp-auto-light-when-jump 'any-bookmark)
@@ -1199,6 +1226,19 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
              ("W" . dired-ranger-copy)
              ("X" . dired-ranger-move)
              ("Y" . dired-ranger-paste)))
+
+
+;;; dired
+
+;; Combine all bordering-on-abusively-numerous dired menus into a
+;; single menu item.  macOS users rejoice.  Note that I also move the
+;; "Subdir" menu, but I have to do that in a stupid way because of
+;; bookmark+; see my init code for that package elsewhere in this file
+(underlings-move-menu-with-one-time-hook 'dired-mode
+                                         ;; Quoted for indentation, sigh.
+                                         '["Operate" "Mark" "Regexp"
+                                           "Immediate"]
+                                         "Dired")
 
 
 ;;; dired-x
@@ -1772,6 +1812,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (my:add-hooks 'ielm-mode-hook
   #'paredit-mode)
+
+(underlings-move-menu-with-one-time-hook 'ielm-map
+                                         '["Complete" "In/Out" "Signals"]
+                                         "IELM"
+                                         :hook-var 'ielm-mode-hook)
 
 
 ;;; imenu
@@ -2570,6 +2615,11 @@ the selected link instead of opening it."
   (add-to-list 'which-key-replacement-alist
                '(("C-c p o" . nil) . (nil . "persp-mode off"))))
 
+(add-hook 'persp-mode-hook
+          (underlings-define-menu-mover 'persp-mode "Perspectives" "Minors"
+                                        :dest-map global-map
+                                        :visible t))
+
 ;; Don't save buffers that aren't backed by a file, lest you get a
 ;; bunch of useless Magit and EPC buffers in `fundamental-mode' after
 ;; loading the last saved perspective.  We insert this just before the
@@ -2639,6 +2689,9 @@ the selected link instead of opening it."
            ;; Spacemacs bindings, particularly useful when comint
            ;; binds something to C-c C-p.
            ("M-m p" . projectile-command-map))
+
+(underlings-move-menu-with-one-time-hook 'projectile-mode "Projectile" "Minors"
+                                         :dest-map global-map :visible t)
 
 
 ;;; pulse
@@ -2808,6 +2861,9 @@ the selected link instead of opening it."
 (exec-path-from-shell-copy-envs '("PYTHONPATH"  "WORKON_HOME"))
 
 (setq pyvenv-mode-line-indicator nil)
+
+(underlings-move-menu-with-one-time-hook 'pyvenv-mode "Virtual Envs" "Minors"
+                                         :dest-map global-map :visible t)
 
 
 ;;; recentf-mode
