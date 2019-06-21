@@ -1246,6 +1246,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; Do this before dtrt-indent gets loaded, hopefully.
 (setq dtrt-indent-active-mode-line-info nil)
 
+(setq dtrt-indent-min-quality 70.0)
+
 (dtrt-indent-global-mode 1)
 
 ;; If dtrt-indent changed buffer settings like indent-tabs-mode,
