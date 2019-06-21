@@ -1111,17 +1111,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
         (make-local-variable 'company-backends))
       (setq company-backends backends))))
 
-(defvar my:company-generally-useful-prog-mode-backends
-  '(company-dabbrev-code company-files))
-
-;; More than one mode hook wants to use this.
-(defun my:company-group-useful-backends-with-capf ()
-  (my:company-group-existing-backend
-   'company-capf
-   my:company-generally-useful-prog-mode-backends))
-
-(add-hook 'prog-mode-hook #'my:company-group-useful-backends-with-capf t)
-
 
 ;;; company-statistics
 
@@ -1353,7 +1342,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   ;; Trying out case-insensitive dabbrev-code completion in Emacs
   ;; Lisp.  Would have saved me time figuring out why I couldn't
   ;; complete "my:LaTex-" (note lower case "X"--oops).
-  (setq-local company-dabbrev-code-ignore-case t))
+  (setq-local company-dabbrev-code-ignore-case t)
+  (my:company-group-existing-backend 'company-capf '(company-dabbrev-code)))
 
 (add-hook 'emacs-lisp-mode-hook #'my:emacs-lisp-mode-hook)
 
@@ -3124,8 +3114,6 @@ the selected link instead of opening it."
         (whitespace-mode 1)))))
 
 (my:add-hooks 'sql-interactive-mode-hook
-  ;; Reverse order to make sure company gets loaded first.
-  #'my:company-group-useful-backends-with-capf
   #'company-mode
   #'sql-set-sqli-buffer-generally)
 
