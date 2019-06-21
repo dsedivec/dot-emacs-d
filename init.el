@@ -2199,6 +2199,7 @@ the selected link instead of opening it."
                        black-format-on-save-mode
                        docformatter-on-save-mode
                        flycheck-mode
+                       isort-format-on-save-mode
                        multiple-cursors-mode
                        persp-mode
                        yapf-format-on-save-mode
@@ -2897,6 +2898,11 @@ the selected link instead of opening it."
     :program "black"
     :args '("-l" "80" "--quiet" "--fast" "-")
     :lighter "Bl")
+
+(reformatter-define isort-format
+    :program "isort"
+    :args '("-")
+    :lighter "Ist")
 
 (reformatter-define yapf-format
     :program "yapf"
