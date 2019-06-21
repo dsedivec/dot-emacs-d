@@ -3116,7 +3116,9 @@ the selected link instead of opening it."
 
                  electric-pair-skip-whitespace 'chomp)
   (my:warn-white-space-mode)
-  (my:add-to-list-before (make-local-variable 'er/try-expand-list)
+  (set (make-local-variable 'er/try-expand-list)
+       (copy-tree er/try-expand-list))
+  (my:add-to-list-before 'er/try-expand-list
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
 (my:add-hooks 'sql-mode-hook
