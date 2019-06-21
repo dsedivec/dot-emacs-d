@@ -281,6 +281,16 @@ NEW-ELEMENT."
                                       file)
                     (lambda () ,form))))))
 
+(defun my:minor-mode-arg-will-turn-on (arg mode-currently-on)
+  "Returns non-nil if ARG turns on a mode when passed to a minor mode function.
+MODE-CURRENTLY-ON is a boolean indicating whether the minor mode
+is currently turned on.  Rules for what means \"turn on\" were
+taken from the docstring of a minor mode function defined by
+`define-minor-mode'."
+  (or (and (numberp arg) (> arg 0))
+      (null arg)
+      (and (eq arg 'toggle) (not mode-currently-on))))
+
 ;; When you're truly reluctant to type `(current-buffer)' as that last
 ;; arg to `buffer-local-value', here's a version that defaults to the
 ;; current buffer.  It's a generalized variable, too.
@@ -1413,6 +1423,15 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (set-face-attribute 'default nil :font "Fira Mono 8")
 (set-face-attribute 'variable-pitch nil :font "Helvetica 10")
+
+
+;;; faux-indent
+
+(define-advice faux-indent-mode (:before (&optional arg)
+                                         my:turn-off-sqlind-minor-mode)
+  (when (and (bound-and-true-p sqlind-minor-mode)
+             (my:minor-mode-arg-will-turn-on arg faux-indent-mode))
+    (sqlind-minor-mode -1)))
 
 
 ;;; files
@@ -3131,6 +3150,12 @@ the selected link instead of opening it."
 
 
 ;;; sql-indent
+
+(define-advice sqlind-minor-mode (:before (&optional arg)
+                                          my:turn-off-faux-indent-mode)
+  (when (and (bound-and-true-p faux-indent-mode)
+             (my:minor-mode-arg-will-turn-on arg sqlind-minor-mode))
+    (faux-indent-mode -1)))
 
 ;; Test case:
 ;;

@@ -10,6 +10,7 @@
         delete-indentation
         electric-newline-and-maybe-indent
         electric-pair-delete-pair
+        faux-indent-delete-backward-indent-or-char
         forward-sexp
         indent-for-tab-command
         kill-sexp
