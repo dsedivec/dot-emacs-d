@@ -3997,9 +3997,28 @@ for this command) must be an arrow key."
 
 ;;; yaml-mode
 
+(defun my:yaml-backtab (arg)
+  (interactive "*p")
+  (let ((in-indentation (<= (current-column) (current-indentation))))
+    (save-excursion
+      (back-to-indentation)
+      ;; Not really perfect: may just backspace a character.  But often
+      ;; good enough?
+      (if (bolp)
+          (user-error "No more indentation on this line")
+        (yaml-electric-backspace arg)))
+    (when in-indentation
+      ;; Make line with just " ", put point at end of line, call this
+      ;; function: without this `back-to-indentation', you end up with
+      ;; cursor somewhere other than end of line, in the middle of the
+      ;; indentation.  I never looked into why that happens, but this
+      ;; behavior is probably preferable in any case.
+      (back-to-indentation))))
+
 (with-eval-after-load 'yaml-mode
   (bind-keys :map yaml-mode-map
-             ("RET" . newline-and-indent)))
+             ("RET" . newline-and-indent)
+             ("<backtab>" . my:yaml-backtab)))
 
 
 ;;; yasnippet
