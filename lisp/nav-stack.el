@@ -49,6 +49,15 @@
 
 ;; TODO: Might like "go back *in this window*"
 
+;; TODO: Maybe keep separate pointers into the stack for buffer,
+;; window, and/or global (and maybe frame).  This way you can have one
+;; command for "go to other thing in this buffer" without modifying
+;; the global pointer.
+
+;; TODO: M-- M-, repeatedly just bounces back and forth between same
+;; point, growing stack.  Also, maybe the initial prefix should be
+;; remembered for successive moves in this DWIM command M-,.
+
 ;;; Code:
 
 (require 'cl-lib)
