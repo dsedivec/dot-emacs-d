@@ -1338,9 +1338,6 @@ surround \"foo\" with (in this example) parentheses.  I want
   (setq imenu-generic-expression
         (append imenu-generic-expression
                 '(("Sections" "^;;;;?\\s-+\\(.*\\)" 1))))
-  ;; XXX
-  ;; (add-hook 'completion-at-point-functions
-  ;;           #'my:elisp-feature-completion-at-point nil t)
   ;; Trying out case-insensitive dabbrev-code completion in Emacs
   ;; Lisp.  Would have saved me time figuring out why I couldn't
   ;; complete "my:LaTex-" (note lower case "X"--oops).
