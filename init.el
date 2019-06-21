@@ -109,6 +109,11 @@
                 my:package-max-age-before-refresh))
     (package-refresh-contents)))
 
+;; I always forget to run `package-refresh-contents' before trying to
+;; install.
+(define-advice package-install (:before (&rest _args) my:package-refresh-maybe)
+  (my:package-refresh-maybe))
+
 (defun my:quelpa-git-local-or-github (name &optional repo-name)
   "Return Quelpa recipe for package NAME.
 REPO-NAME is optional local and GitHub repo name if it is not the
