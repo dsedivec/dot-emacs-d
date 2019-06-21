@@ -96,6 +96,7 @@
      multiple-cursors
      mwim
      ns-copy-html
+     olivetti
      org-plus-contrib
      orgtbl-aggregate
      osx-dictionary
