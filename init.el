@@ -3123,7 +3123,6 @@ the selected link instead of opening it."
 
 (my:add-hooks 'sql-mode-hook
   #'sqlind-minor-mode
-  #'sqlup-mode
   #'smart-tabs-mode
   #'my:sql-mode-hook)
 
@@ -3605,6 +3604,10 @@ a string or comment."
 (setq sqlup-blacklist '("name" "id" "label" "state" "sql" "operation"
                         ;; WTF sql.el?
                         "a" "c" "g" "k" "m" "p" "t"))
+
+(my:load-recipes 'sqlup-maybe-enable)
+
+(add-hook 'sql-mode-hook #'my:maybe-enable-sqlup-mode)
 
 
 ;;; startup
