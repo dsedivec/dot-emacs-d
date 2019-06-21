@@ -2805,7 +2805,6 @@ the selected link instead of opening it."
     (whitespace-mode -1)
     (whitespace-mode 1))
 
-
   ;; Don't reindent if we're already at an acceptable level.  For
   ;; example:
   ;;
