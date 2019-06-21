@@ -30,7 +30,13 @@
           (let ((inhibit-message t)
                 ;; This gets rid of the "Saving"... messages, but not
                 ;; the "Wrote"... messages.
-                (save-silently t))
+                (save-silently t)
+                ;; I have a lot of problems on macOS with my host name
+                ;; changing and Emacs thinking some other user [with
+                ;; my user name] on some other host [usually with the
+                ;; same first component of the host name] has locked
+                ;; the auto-save file.  Just turn off locking here.
+                (create-lockfiles nil))
             (persp-save-state-to-file))
           (with-current-buffer (messages-buffer)
             (save-excursion
