@@ -3959,6 +3959,9 @@ for this command) must be an arrow key."
 
 ;;; xref
 
+;; Note: Maybe I should ask upstream to make `xref-etags-mode'
+;; autoloaded, since I do use it in a .dir-locals.el.
+
 ;; These are versions of `xref-next-line' and `xref-prev-line' that
 ;; just move the cursor to the next/previous location without also
 ;; actually jumping to that location.
