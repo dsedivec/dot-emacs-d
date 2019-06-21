@@ -731,13 +731,14 @@ its INDEX argument, which see."
       ;;                 (bilist-ptr-idx bilist)))
       (bilist-do (location bilist :idx-var idx :backward t)
         (let* ((marker (nav-stack-location-marker location))
+               (window (nav-stack-location-property location 'window))
                (buf (marker-buffer marker))
                (is-live (buffer-live-p buf))
                (is-ptr (= idx ptr-idx))
                (line (format "%s%4d %s %s: %s\n"
                              (if is-ptr ">" " ")
                              idx
-                             (if (window-live-p (car location))
+                             (if (window-live-p window)
                                  "     "
                                "nowin")
                              (if is-live
