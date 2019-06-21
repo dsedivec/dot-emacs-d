@@ -2845,6 +2845,12 @@ the selected link instead of opening it."
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
+(defun my:python-reformat-buffer ()
+  (interactive)
+  (save-some-buffers)
+  (isort-format-buffer)
+  (black-format-buffer))
+
 (defun my:python-shell-send-dwim ()
   (interactive)
   (cond
@@ -2864,6 +2870,8 @@ the selected link instead of opening it."
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
              ("C-c '" . my:python-edit-indirect-dwim)
+             ("M-m m f" . my:python-reformat-buffer)
+             ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
              ("M-m m i" . my:python-add-import)))
