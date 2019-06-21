@@ -17,7 +17,8 @@ of a completion, so this command is a suitable replacement for a
   (interactive "P")
   (if (and (not force-other)
            company-candidates
-           company-selection-changed)
+           (or company-selection-changed
+               (string= (company-grab-symbol) (car company-candidates))))
       (company-complete-selection)
     (company-other-backend)))
 
