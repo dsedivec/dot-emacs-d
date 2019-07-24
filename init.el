@@ -2888,11 +2888,13 @@ care that the maximum size is 0."
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
-(defun my:python-reformat-buffer ()
+(defun my:python-reformat-region-or-buffer ()
   (interactive)
-  (save-some-buffers)
-  (isort-format-buffer)
-  (black-format-buffer))
+  (if (use-region-p)
+      (black-format-region (region-beginning) (region-end))
+    (save-some-buffers)
+    (isort-format-buffer)
+    (black-format-buffer)))
 
 (defun my:python-shell-send-dwim ()
   (interactive)
@@ -2913,7 +2915,7 @@ care that the maximum size is 0."
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
              ("C-c '" . my:python-edit-indirect-dwim)
-             ("M-m m f" . my:python-reformat-buffer)
+             ("M-m m f" . my:python-reformat-region-or-buffer)
              ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
