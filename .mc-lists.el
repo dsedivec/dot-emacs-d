@@ -19,8 +19,10 @@
         mwim-beginning-of-code-or-line
         mwim-end-of-line-or-code
         my:insert-tab-or-spaces
+        my:python-magic-double-quote
         my:python-magic-single-quote
         org-beginning-of-line
+        org-delete-char
         org-self-insert-command
         paredit-backslash
         paredit-backward-kill-word
