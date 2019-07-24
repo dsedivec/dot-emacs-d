@@ -1332,6 +1332,66 @@ surround \"foo\" with (in this example) parentheses.  I want
       (eq (char-syntax (following-char)) ?w)))
 
 
+;;; electric
+
+;; Problem: `electric-indent-mode' is enabled by default.  Take
+;; following `text-mode' buffer with point at |:
+;;
+;;     * blah blah blah
+;;       blah blah blah
+;;       |
+;;
+;; Note that the indentation of point was automatically inserted by
+;; `electric-indent-mode' after hitting RET at the end of the second
+;; line.  If you now hit RET again, the point moves to the next line,
+;; and no indentation is inserted, however the previous line now has
+;; two characters of trailing white space.
+;;
+;; The white space is not removed as it might be in other modes
+;; because `indent-line-function' is `indent-relative' by default in
+;; `text-mode', and `indent-relative' is (probably quite correctly) in
+;; `electric-indent-functions-without-reindent'.  If not for this,
+;; `electric-indent-mode' would actually `delete-horizontal-space' at
+;; the end of the third line.  (Of course, it would also screw up
+;; indentation on the second line when you hit RET at the end of that
+;; line.)
+;;
+;; In programming-esque modes, `clean-aindent-mode' deals with this
+;; for me.  However, clean-aindent works by advising
+;; `newline-and-indent'.  By default, RET is unbound in
+;; `text-mode-map', and so RET is `newline' via `global-map' in
+;; `text-mode' buffers, meaning clean-aindent never runs in
+;; `text-mode'.
+;;
+;; This applies to any mode where RET is not `newline-and-indent' and
+;; where `electric-indent-mode' is not otherwise inhibited/disabled.
+;; Therefore solutions that affect only `text-mode' are not sufficient
+;; for me.  (I tried solving this in just `text-mode-map' and then
+;; *immediately* ran into this same problem in a `conf-mode' buffer.)
+;;
+;; A non-exhaustive list of possible solutions to this problem:
+;;
+;; 1. Turn off `electric-indent-mode' globally, turn on locally where
+;;    I want it.
+;;
+;; 2. Bind RET to `newline-and-indent' in `global-map'.  This seems
+;;    invasive.
+;;
+;; 3. Write my own thing like `clean-aindent-mode' that works with
+;;    `newline'.  (clean-aindent's code may already work with
+;;    `newline'.)
+;;
+;; 4. Remove \n from `electric-indent-chars' globally.  Maybe add it
+;;    back in modes where it makes sense.
+;;
+;; Going with #1 for now, we'll see how long this lasts.  (Maybe I
+;; should just turn on `electric-indent-local-mode' in
+;; `prog-mode-hook', especially since `prog-mode-map' already binds
+;; RET to `newline-and-indent'.)
+
+(electric-indent-mode -1)
+
+
 ;;; elisp-mode
 
 (my:add-hooks 'emacs-lisp-mode-hook
@@ -3669,61 +3729,6 @@ a string or comment."
 ;;; swiper
 
 (bind-key "s-s" 'swiper)
-
-
-;;; text-mode
-
-;; Problem: `electric-indent-mode' is enabled by default.  Take
-;; following `text-mode' buffer with point at |:
-;;
-;;     * blah blah blah
-;;       blah blah blah
-;;       |
-;;
-;; Note that the indentation of point was automatically inserted by
-;; `electric-indent-mode' after hitting RET at the end of the second
-;; line.  If you now hit RET again, the point moves to the next line,
-;; and no indentation is inserted, however the previous line now has
-;; two characters of trailing white space.
-;;
-;; The white space is not removed as it might be in other modes
-;; because `indent-line-function' is `indent-relative' by default in
-;; `text-mode', and `indent-relative' is (probably quite correctly) in
-;; `electric-indent-functions-without-reindent'.  If not for this,
-;; `electric-indent-mode' would actually `delete-horizontal-space' at
-;; the end of the third line.  (Of course, it would also screw up
-;; indentation on the second line when you hit RET at the end of that
-;; line.)
-;;
-;; In programming-esque modes, `clean-aindent-mode' deals with this
-;; for me.  However, clean-aindent works by advising
-;; `newline-and-indent'.  By default, RET is unbound in
-;; `text-mode-map', and so RET is `newline' via `global-map' in
-;; `text-mode' buffers, meaning clean-aindent never runs in
-;; `text-mode'.
-;;
-;; Possible solutions:
-;;
-;; 1. Turn off `electric-indent-mode' in `text-mode' buffers.
-;;
-;; 2. Turn off `electric-indent-mode' everywhere.  (I don't want to do
-;;    this, I think I like `electric-indent-mode'.  Sometimes.)
-;;
-;; 3. Bind RET to `newline-and-indent' in `text-mode-map'.
-;;
-;; 4. Write my own thing like `clean-aindent-mode' that works with
-;;    `newline'.  (clean-aindent's code may already work with
-;;    `newline'.)
-;;
-;; As long as I'm going to leave `electric-indent-mode' on, I'll go
-;; with #3 since that configuration is known to work from my
-;; experience with other modes, and it's less work than #4.  If I stop
-;; using `electric-indent-mode' in `text-mode', I should probably stop
-;; using this.
-
-(with-eval-after-load 'text-mode
-  (bind-keys :map text-mode-map
-             ("RET" . newline-and-indent)))
 
 
 ;;; tool-bar
