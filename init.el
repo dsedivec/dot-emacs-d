@@ -1391,7 +1391,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; `prog-mode-hook', especially since `prog-mode-map' already binds
 ;; RET to `newline-and-indent'.)
 
-(electric-indent-mode -1)
+(with-eval-after-load 'electric
+  (electric-indent-mode -1))
 
 
 ;;; elisp-mode
@@ -2931,6 +2932,7 @@ care that the maximum size is 0."
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
+  #'electric-indent-local-mode
   #'smart-tabs-mode)
 
 (smart-tabs-advise 'python-indent-line 'python-indent-offset)
@@ -3067,6 +3069,7 @@ care that the maximum size is 0."
 (my:add-hooks 'sh-mode-hook
   #'my:warn-white-space-mode
   #'smart-tabs-mode
+  #'electric-indent-local-mode
   #'my:sh-mode-hook)
 
 ;; XXX This is a bad idea, since it potentially steps on any other
