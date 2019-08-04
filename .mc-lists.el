@@ -50,5 +50,6 @@
         ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
+        my:delete-window-that-direction
         sql-send-paragraph
         ))
