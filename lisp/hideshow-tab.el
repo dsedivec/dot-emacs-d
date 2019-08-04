@@ -32,8 +32,9 @@
 ;; * If point is on a hide/show hidden overlay, it calls
 ;;   `hs-toggle-hiding' to (presumably) show it.
 ;;
-;; * If it's being called from ex. `execute-extended-command' (M-x),
-;;   then `hs-toggle-hiding'.  (But why are you doing this?)
+;; * If it's being called from something other than a key bound to
+;;   `hideshow-tab', such as from `execute-extended-command' (M-x),
+;;   then do `hs-toggle-hiding'.  (But why are you doing this?)
 ;;
 ;; * Otherwise, it tries to do what command would normally have been
 ;;   called for whatever `this-command-keys-vector' reports for this
