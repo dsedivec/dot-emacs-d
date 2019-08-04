@@ -20,6 +20,8 @@
 (defvar my:local-packages-autoload-file
   (expand-file-name "autoloads.el" my:local-packages-dir))
 
+(defvar generated-autoload-file)
+
 (defun my:update-local-package-autoloads ()
   (interactive)
   (let ((kill-buffer-after
