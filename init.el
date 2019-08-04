@@ -1483,8 +1483,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; faces
 
-(set-face-attribute 'default nil :font "Fira Mono 8")
-(set-face-attribute 'variable-pitch nil :font "Helvetica 10")
+(when (x-list-fonts "Fira Mono")
+  (set-face-attribute 'default nil :font "Fira Mono 8"))
+
+(when (x-list-fonts "Helvetica")
+  (set-face-attribute 'variable-pitch nil :font "Helvetica 10"))
 
 
 ;;; faux-indent
