@@ -2696,7 +2696,7 @@ care that the maximum size is 0."
           #'my:org-todo-allowed-projects)
 
 ;; Private stuff that doesn't get checked into Git.
-(load-file (expand-file-name "private/org.el" user-emacs-directory))
+(load (expand-file-name "private/org" user-emacs-directory) t)
 
 
 ;;; osx-dictionary
