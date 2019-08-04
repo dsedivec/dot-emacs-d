@@ -3151,6 +3151,10 @@ care that the maximum size is 0."
 (with-eval-after-load 'smartparens
   (require 'smartparens-config))
 
+(dolist (command '(sp-split-sexp sp-join-sexp sp-splice-sexp sp-raise-sexp))
+  (unless (commandp command)
+    (autoload command "smartparens" nil t)))
+
 (bind-keys
  ;; `sp-split-sexp' is handy even when I'm not using
  ;; `smartparens-mode', such as when I want to split a string across
