@@ -4089,7 +4089,10 @@ for this command) must be an arrow key."
 (with-eval-after-load 'yaml-mode
   (bind-keys :map yaml-mode-map
              ("RET" . newline-and-indent)
-             ("<backtab>" . my:yaml-backtab)))
+             ("<backtab>" . my:yaml-backtab))
+
+  (add-to-list 'yaml-imenu-generic-expression
+               '("Ansible" "^-\\s-+name: \\(.*\\)" 1)))
 
 
 ;;; yasnippet
