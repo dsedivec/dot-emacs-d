@@ -13,6 +13,7 @@
         faux-indent-delete-backward-indent-or-char
         forward-sexp
         indent-for-tab-command
+        insert-parentheses
         kill-sexp
         markdown-insert-code
         markdown-outdent-or-delete
