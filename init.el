@@ -2123,7 +2123,9 @@ POS defaults to point."
   (bind-keys :map json-mode-map
              ("C-c C-p" . my:json-mode-show-path-jq)))
 
-(my:add-hooks 'json-mode-hook #'hs-minor-mode)
+(my:add-hooks 'json-mode-hook
+  #'electric-indent-local-mode
+  #'hs-minor-mode)
 
 
 ;;; link-hint
@@ -3239,6 +3241,7 @@ care that the maximum size is 0."
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
 (my:add-hooks 'sql-mode-hook
+  #'electric-indent-local-mode
   #'sqlind-minor-mode
   #'smart-tabs-mode
   #'my:sql-mode-hook)
