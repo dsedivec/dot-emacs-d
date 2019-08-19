@@ -1139,6 +1139,12 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (add-hook 'conf-mode-hook #'my:conf-mode-hook)
 
+(add-hook 'conf-mode-hook #'faux-indent-mode)
+
+(with-eval-after-load 'conf-mode
+  (bind-keys :map conf-mode-map
+             ("RET" . newline-and-indent)))
+
 
 ;;; counsel
 
