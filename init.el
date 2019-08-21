@@ -2014,7 +2014,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; ivy-xref
 
-(setq xref-show-xrefs-function #'ivy-xref-show-xrefs
+(setq xref-show-definitions-function #'ivy-xref-show-defs
+      xref-show-xrefs-function #'ivy-xref-show-xrefs
       ivy-xref-use-file-path t)
 
 
