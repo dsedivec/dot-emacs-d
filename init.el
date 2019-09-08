@@ -3117,6 +3117,12 @@ care that the maximum size is 0."
 (shackle-mode 1)
 
 
+;;; shift-number
+
+(bind-keys ("C-s-=" . shift-number-up)
+           ("C-s--" . shift-number-down))
+
+
 ;;; simple
 
 (column-number-mode 1)

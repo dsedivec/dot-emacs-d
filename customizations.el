@@ -114,6 +114,7 @@
      reformatter
      scss-mode
      shackle
+     shift-number
      sly
      smart-tabs
      smartparens
