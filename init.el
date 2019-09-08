@@ -1011,6 +1011,12 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq bs-default-configuration "files-and-dirs")
 
+(my:load-recipes 'bs-abbreviate-file-names)
+
+(setq my:bs-file-name-abbrev-alist
+      `((,(concat "\\`" (regexp-quote (expand-file-name "~")) "/git/pippin/")
+          . ":pippin:/")))
+
 
 ;;; buttercup
 
