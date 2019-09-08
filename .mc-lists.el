@@ -4,6 +4,8 @@
 (setq mc/cmds-to-run-for-all
       '(
         LaTeX-babel-insert-hyphen
+        LaTeX-insert-left-brace
+        TeX-insert-backslash
         backward-sexp
         dabbrev-expand
         delete-horizontal-space
@@ -36,18 +38,23 @@
         paredit-semicolon
         paredit-splice-sexp
         paredit-split-sexp
+        shift-number-up
         yaml-electric-backspace
         yaml-electric-dash-and-dot
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        TeX-font
         avy-goto-char
         beginning-of-buffer
+        counsel-M-x
         counsel-describe-function
         counsel-projectile-find-file
+        count-words-region
         describe-key-briefly
         edit-indirect-region
+        frame-resize
         ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
