@@ -1609,7 +1609,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   ;; Add function keys.
   (setq free-keys-keys (nconc (split-string free-keys-keys "" t)
                               (mapcar (lambda (n) (format "<f%d>" n))
-                                      (number-sequence 1 12))))
+                                      (number-sequence 1 12))
+                              '("_" "+")))
 
   ;; Add super modifier.
   (dolist (mod '("s" "C-s" "M-s" "C-M-s"))
