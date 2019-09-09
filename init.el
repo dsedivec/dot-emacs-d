@@ -3135,7 +3135,8 @@ care that the maximum size is 0."
 (column-number-mode 1)
 
 (setq set-mark-command-repeat-pop t
-      backward-delete-char-untabify-method nil)
+      backward-delete-char-untabify-method nil
+      save-interprogram-paste-before-kill t)
 
 ;; My Moom (macOS) configuration will maximize window on M-=, the
 ;; default binding for `count-words-region'.  Put it elsewhere so I
