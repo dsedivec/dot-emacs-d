@@ -117,7 +117,7 @@ will be reflected in `underlings-mode-map'."
   (cl-loop
      with items = (underlings--find-menu-items-in-keymap map path)
      for (real-path . _item) in items
-     do (define-key map (vconcat real-path) 'undefined)
+     do (define-key map (vconcat real-path) nil)
      finally return items))
 
 (defun underlings--add-props-to-menu-item (item &rest extra-props)
