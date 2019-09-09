@@ -362,9 +362,7 @@ will be reflected in `underlings-mode-map'."
     ;; is available.
     (when (and (not no-immediate)
                (keymapp (underlings--resolve-keymap mode-or-map t)))
-      (underlings-move-menu mode-or-map menu-names dest
-                            :dest-map dest-map
-                            :visible visible))
+      (funcall func-name))
     func-name))
 
 ;;;###autoload
