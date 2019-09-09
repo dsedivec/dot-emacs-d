@@ -1906,7 +1906,7 @@ surround \"foo\" with (in this example) parentheses.  I want
   #'paredit-mode)
 
 (underlings-move-menu-with-one-time-hook 'ielm-map
-                                         '["Complete" "In/Out" "Signals"]
+                                         ["Complete" "In/Out" "Signals"]
                                          "IELM"
                                          :hook-var 'ielm-mode-hook)
 
