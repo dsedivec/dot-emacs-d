@@ -4,7 +4,7 @@
 
 ;; Author: Dale Sedivec <dale@codefu.org>
 ;; Version: 1
-;; Package-Requires: ((emacs "24") (ace-window "0.7"))
+;; Package-Requires: ((emacs "24") (ace-window "0.7") (transpose-frame "0.1.0"))
 ;; Keywords: convenience
 
 ;; This program is free software; you can redistribute it and/or modify
