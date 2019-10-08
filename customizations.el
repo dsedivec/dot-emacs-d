@@ -78,6 +78,7 @@
      impatient-mode
      intero
      ivy
+     ivy-bibtex
      ivy-hydra
      ivy-xref
      ivy-yasnippet

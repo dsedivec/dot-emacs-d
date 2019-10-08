@@ -2076,6 +2076,11 @@ surround \"foo\" with (in this example) parentheses.  I want
                  'ivy-fuzzy-regex-combo-matcher)
 
 
+;;; ivy-bibtex
+
+(setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+
+
 ;;; ivy-xref
 
 (setq xref-show-definitions-function #'ivy-xref-show-defs
