@@ -1781,6 +1781,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'groovy-mode-hook #'my:groovy-mode-hook)
 
+;; I should submit a patch upstream to at least not give an error when
+;; it tries to (get-buffer nil) because `groovy-buffer' starts nil.
+(defun my:switch-to-groovy-auto-start-groovy (&rest _)
+  (unless (and groovy-buffer (get-buffer groovy-buffer))
+    (call-interactively #'run-groovy)))
+
+(advice-add 'switch-to-groovy :before #'my:switch-to-groovy-auto-start-groovy)
+
 
 ;;; haskell-mode
 
