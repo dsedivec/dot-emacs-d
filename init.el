@@ -1036,12 +1036,40 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (carousel-mode 1)
 
 
+;;; cider
+
+(my:add-hooks 'cider-repl-mode-hook
+  #'paredit-mode)
+
+(underlings-move-menu-after-load 'cider-mode 'cider-mode
+                                 ["CIDER Eval" "CIDER Interactions"]
+                                 "CIDER")
+
+;; CIDER has an autoload form that uses `with-eval-after-load' to put
+;; sesman into `clojure-mode-map' after `clojure-mode' has been
+;; loaded.  Just use a one-time hook on `clojure-mode-hook' to avoid
+;; any kind of loading order problems with moving this menu item.
+(underlings-move-menu-with-one-time-hook 'clojure-mode ["Sesman"] "Clojure")
+
+(underlings-move-menu-after-load 'cider-repl 'cider-repl-mode
+                                 ["Sesman"]
+                                 "REPL")
+
+
 ;;; clean-aindent-mode
 
 (clean-aindent-mode 1)
 
 (bind-keys :map clean-aindent-mode--keymap
            ([remap backward-kill-word] . nil))
+
+
+;;; clojure-mode
+
+(my:add-hooks 'clojure-mode-hook
+  #'paredit-mode
+  #'aggressive-indent-mode
+  #'eldoc-mode)
 
 
 ;;; comint
@@ -1654,6 +1682,12 @@ surround \"foo\" with (in this example) parentheses.  I want
                        key-binding)))))
 
 (my:load-recipes 'flycheck-python-pylint-detect-tabs)
+
+
+;;; flycheck-clj-kondo
+
+(with-eval-after-load 'clojure-mode
+  (require 'flycheck-clj-kondo))
 
 
 ;;; flycheck-package

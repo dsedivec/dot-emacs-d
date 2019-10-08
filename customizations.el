@@ -25,6 +25,7 @@
      blackout
      bookmark+
      buttercup
+     cider
      clean-aindent-mode
      command-log-mode
      comment-dwim-2
@@ -57,6 +58,7 @@
      expand-region
      flx
      flycheck
+     flycheck-clj-kondo
      flycheck-haskell
      flycheck-package
      flycheck-pos-tip
