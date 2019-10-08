@@ -4,8 +4,10 @@
 (setq mc/cmds-to-run-for-all
       '(
         LaTeX-babel-insert-hyphen
+        LaTeX-close-environment
         LaTeX-insert-left-brace
         TeX-insert-backslash
+        TeX-insert-sub-or-superscript
         backward-sexp
         dabbrev-expand
         delete-horizontal-space
@@ -40,6 +42,7 @@
         paredit-split-sexp
         shift-number-up
         yaml-electric-backspace
+        yaml-electric-bar-and-angle
         yaml-electric-dash-and-dot
         ))
 
