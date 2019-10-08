@@ -691,13 +691,12 @@ it returns the node that your EDIT-FORM changed)."
                                  '["Preview" "Command"]
                                  "LaTeX")
 
-;; Copy the original value but with more possible ref commands.
-(setq company-reftex-labels-regexp
-      (rx ?\\ (or "ref" "eqref" "autoref" "nameref" "pageref" "vref" "cref")
-          (0+ "[" (0+ (not (any ?\]))) "]")
-          ?{ (group (1+ (not (any ?})))) ?}
-          ;; As seen in the original value of this variable (\=).
-          point))
+(with-eval-after-load 'company-reftex
+  (setq company-reftex-labels-regexp
+        (concat company-reftex-labels-regexp
+                ;; I should upstream these additions.
+                "\\|\\\\nameref{\\(?1:[^}]*\\)\\="
+                "\\|\\\\hyperref\\[\\(?1:[^]]*\\)\\=")))
 
 (defun my:LaTeX-mode-hook ()
   (my:setq-local er/try-expand-list (append er/try-expand-list
