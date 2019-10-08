@@ -2200,7 +2200,6 @@ POS defaults to point."
              ("C-c C-p" . my:json-mode-show-path-jq)))
 
 (my:add-hooks 'json-mode-hook
-  #'electric-indent-local-mode
   #'hs-minor-mode)
 
 
@@ -2874,6 +2873,12 @@ care that the maximum size is 0."
 
 ;;; prog-mode
 
+;; See the electric section of this file for information on why I turn
+;; off the global `electric-indent-mode'.  Recent experience tells me,
+;; though, that I do want it on in basically every `prog-mode'-derived
+;; buffer.
+(add-hook 'prog-mode-hook #'electric-indent-local-mode)
+
 ;; This may be a bad idea.
 (with-eval-after-load 'prog-mode
   (bind-keys :map prog-mode-map
@@ -3010,7 +3015,6 @@ care that the maximum size is 0."
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
-  #'electric-indent-local-mode
   #'smart-tabs-mode)
 
 (smart-tabs-advise 'python-indent-line 'python-indent-offset)
@@ -3147,7 +3151,6 @@ care that the maximum size is 0."
 (my:add-hooks 'sh-mode-hook
   #'my:warn-white-space-mode
   #'smart-tabs-mode
-  #'electric-indent-local-mode
   #'my:sh-mode-hook)
 
 ;; XXX This is a bad idea, since it potentially steps on any other
@@ -3324,7 +3327,6 @@ care that the maximum size is 0."
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
 (my:add-hooks 'sql-mode-hook
-  #'electric-indent-local-mode
   #'sqlind-minor-mode
   #'smart-tabs-mode
   #'my:sql-mode-hook)
