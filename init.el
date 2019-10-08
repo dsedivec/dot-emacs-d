@@ -890,6 +890,20 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
            ("M-g M-g" . avy-goto-line))
 
 
+;;; bibtex
+
+(setq bibtex-comma-after-last-field t
+      bibtex-dialect 'biblatex
+      bibtex-maintain-sorted-entries t)
+
+(with-eval-after-load 'bibtex
+  (mapc (apply-partially #'add-to-list 'bibtex-entry-format)
+        '(realign last-comma whitespace unify-case braces sort-fields))
+
+  (bind-keys :map bibtex-mode-map
+             ("C-c C-e o" . bibtex-Online)))
+
+
 ;;; blackout
 
 ;; No autoloads.
