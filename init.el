@@ -715,6 +715,7 @@ it returns the node that your EDIT-FORM changed)."
 
 (my:add-hooks 'LaTeX-mode-hook
   #'reftex-mode
+  #'company-mode
   #'electric-pair-local-mode
   #'flycheck-mode
   #'show-paren-mode
