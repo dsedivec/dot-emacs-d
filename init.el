@@ -3119,6 +3119,11 @@ care that the maximum size is 0."
     :lighter " Rufo")
 
 
+(reformatter-define eslint-format
+    ;; This is a script of my own.
+    :program "eslint-reformat"
+    :lighter " ESL")
+
 ;;; saveplace
 
 (save-place-mode 1)
