@@ -1091,10 +1091,16 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; clojure-mode
 
+(defun my:clojure-mode-hook ()
+  ;; CIDER's CAPF is fine, but it only completes things that have been
+  ;; eval'ed, which is really annoying.  (Is this a bug in CIDER?)
+  (my:company-group-existing-backend 'company-capf '(company-dabbrev-code)))
+
 (my:add-hooks 'clojure-mode-hook
   #'paredit-mode
   #'aggressive-indent-mode
-  #'eldoc-mode)
+  #'eldoc-mode
+  #'my:clojure-mode-hook)
 
 
 ;;; comint
