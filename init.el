@@ -1053,6 +1053,9 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; cider
 
+(my:add-hooks 'cider-mode-hook
+  #'eldoc-mode)
+
 (my:add-hooks 'cider-repl-mode-hook
   #'paredit-mode)
 
