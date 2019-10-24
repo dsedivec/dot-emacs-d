@@ -388,19 +388,15 @@ Each predicate is called with ARGS."
 
 (defun nav-stack-compact-all ()
   (interactive)
-  (unless nav-stack-quiet
-    (message "Compacting stacks..."))
   (let* ((num-removed 0))
     (nav-stack--map-scopes
      (lambda (frame-or-window)
        (cl-incf num-removed
-                (bilist-delete-if (nav-stack--bilist frame-or-window)
-                                  (lambda (location)
-                                    (not
-                                     (nav-stack-location-buffer location)))))))
-    (unless nav-stack-quiet
-      (message "Compacting stacks... done, removed %d item%s."
-               num-removed (if (= num-removed 1) "" "s")))))
+                (bilist-delete-if
+                 (nav-stack--bilist frame-or-window)
+                 (lambda (location)
+                   (not
+                    (nav-stack-location-buffer location)))))))))
 
 (defvar nav-stack--compaction-timer nil)
 
