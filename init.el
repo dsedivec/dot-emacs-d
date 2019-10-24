@@ -2593,6 +2593,8 @@ care that the maximum size is 0."
              ;; This interferes with avy, and I don't use
              ;; org-cycle-agenda-files anyway.
              ("C-'" . nil)
+             ;; This interferes with my binding for `frame-resize'.
+             ("M-+" . nil)
              ;; Org manual suggests setting this globally, but let's do
              ;; locally in org-mode buffers for now.
              ("C-c l" . org-store-link)
