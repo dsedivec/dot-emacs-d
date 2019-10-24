@@ -1059,6 +1059,13 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (my:add-hooks 'cider-repl-mode-hook
   #'paredit-mode)
 
+(with-eval-after-load 'cider-mode
+  (bind-keys :map cider-mode-map
+             ;; Conflicts with nav-stack.
+             ("M-," . nil)
+             ;; Conflicts with link-hint.
+             ("C-c C-o" . nil)))
+
 (underlings-move-menu-after-load 'cider-mode 'cider-mode
                                  ["CIDER Eval" "CIDER Interactions"]
                                  "CIDER")
