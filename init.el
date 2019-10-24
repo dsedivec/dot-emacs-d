@@ -705,12 +705,13 @@ it returns the node that your EDIT-FORM changed)."
                  electric-pair-inhibit-predicate
                  #'my:electric-pair-default-plus-before-word-inhibit)
   (set (make-local-variable 'company-backends)
-       (append '(company-reftex-labels
-                 company-reftex-citations
-                 (company-auctex-macros company-auctex-symbols
-                  company-auctex-environments company-dabbrev-code)
-                 company-auctex-bibs
-                 company-auctex-labels)
+       (append '((company-yasnippet
+                  company-reftex-labels
+                  company-reftex-citations
+                  company-auctex-macros
+                  company-auctex-symbols
+                  company-auctex-environments)
+                 company-dabbrev-code)
                company-backends)))
 
 (my:add-hooks 'LaTeX-mode-hook
