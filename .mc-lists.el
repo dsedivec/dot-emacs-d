@@ -9,6 +9,7 @@
         TeX-insert-backslash
         TeX-insert-sub-or-superscript
         backward-sexp
+        clojure-convert-collection-to-list
         dabbrev-expand
         delete-horizontal-space
         delete-indentation
@@ -30,12 +31,18 @@
         org-delete-char
         org-self-insert-command
         paredit-backslash
+        paredit-backward
         paredit-backward-kill-word
+        paredit-backward-up
+        paredit-doublequote
         paredit-forward
         paredit-forward-delete
         paredit-forward-down
         paredit-forward-kill-word
+        paredit-forward-up
+        paredit-kill
         paredit-open-round
+        paredit-open-square
         paredit-raise-sexp
         paredit-semicolon
         paredit-splice-sexp
