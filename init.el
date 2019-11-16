@@ -796,6 +796,11 @@ it returns the node that your EDIT-FORM changed)."
 (global-anzu-mode 1)
 
 
+;;; atomic-chrome
+
+(atomic-chrome-start-server)
+
+
 ;;; auto-highlight-symbol
 
 (defun my:ahs-inhibit-multiple-cursors (_symbol)
@@ -1381,14 +1386,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   (normal-mode))
 
 (setq edit-indirect-guess-mode-function #'my:edit-indirect-guess-mode)
-
-
-;;; edit-server
-
-(edit-server-start)
-
-(setq edit-server-new-frame-alist
-      '((name . "Edit in Emacs from Browser")))
 
 
 ;;; elec-pair

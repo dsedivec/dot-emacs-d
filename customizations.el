@@ -15,6 +15,7 @@
      all-the-icons
      amx
      anzu
+     atomic-chrome
      auctex
      auto-compile
      auto-highlight-symbol
@@ -49,7 +50,6 @@
      dtrt-indent
      dumb-jump
      edit-indirect
-     edit-server
      el-patch
      elpy
      eltu
