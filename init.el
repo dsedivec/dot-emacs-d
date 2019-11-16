@@ -1511,18 +1511,19 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'elpy
   (setq elpy-modules (delq 'elpy-module-highlight-indentation elpy-modules))
 
+  ;; https://github.com/jorgenschaefer/elpy/blob/1beb3b5ddb0590e7ccec744f353d7c71c2fbda09/docs/customization_tips.rst#use-flycheck-instead-of-flymake
+  (when (load "flycheck" t t)
+    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    (add-hook 'elpy-mode-hook 'flycheck-mode))
+
   (bind-keys :map elpy-mode-map
              ("<C-return>" . nil)
              ("<C-up>" . nil)
              ("<C-down>" . nil)
              ;; auto-highlight-symbol uses these.
              ("<M-left>" . nil)
-             ("<M-right>" . nil))
+             ("<M-right>" . nil)))
 
-  ;; https://github.com/jorgenschaefer/elpy/wiki/Customizations#use-flycheck-instead-of-flymake
-  (when (load "flycheck" t t)
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode)))
 
 
 ;;; emmet-mode
