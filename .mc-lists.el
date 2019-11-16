@@ -15,6 +15,7 @@
         delete-indentation
         electric-newline-and-maybe-indent
         electric-pair-delete-pair
+        faux-indent-add-indentation
         faux-indent-delete-backward-indent-or-char
         forward-sexp
         indent-for-tab-command
@@ -69,5 +70,6 @@
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
         my:delete-window-that-direction
+        my:link-hint-multi-dispatch
         sql-send-paragraph
         ))
