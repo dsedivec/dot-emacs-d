@@ -1548,6 +1548,20 @@ surround \"foo\" with (in this example) parentheses.  I want
 (bind-key "M-'" 'er/expand-region)
 
 
+;;; face-search
+
+(require 'custom)
+(require 'cus-edit)
+(custom-load-symbol 'hi-lock-faces)
+
+(setq face-search-default-faces
+      (mapcar #'car (seq-filter (lambda (item) (eq (cadr item) 'custom-face))
+                                (custom-group-members 'hi-lock-faces nil))))
+
+(bind-keys ("C-x w C-s" . face-search-forward)
+           ("C-x w C-r" . face-search-backward))
+
+
 ;;; faces
 
 (when (x-list-fonts "Fira Mono")
