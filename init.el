@@ -1453,11 +1453,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;
 ;; 4. Remove \n from `electric-indent-chars' globally.  Maybe add it
 ;;    back in modes where it makes sense.
-;;
-;; Going with #1 for now, we'll see how long this lasts.  (Maybe I
-;; should just turn on `electric-indent-local-mode' in
-;; `prog-mode-hook', especially since `prog-mode-map' already binds
-;; RET to `newline-and-indent'.)
 
 (with-eval-after-load 'electric
   (electric-indent-mode -1))
