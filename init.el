@@ -1504,6 +1504,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; elpy
 
+(setq elpy-eldoc-show-current-function nil)
+
 (advice-add 'python-mode :before #'elpy-enable)
 
 (with-eval-after-load 'elpy
