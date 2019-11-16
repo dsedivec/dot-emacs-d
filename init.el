@@ -2520,6 +2520,9 @@ care that the maximum size is 0."
  org-agenda-start-on-weekday 0
  org-agenda-todo-ignore-deadlines 'far
  org-agenda-todo-ignore-scheduled 1
+ ;; Maybe don't be executing Elisp in table formulas in some random
+ ;; org file I downloaded.  (Thanks wasamasa.)
+ org-table-allow-automatic-line-recalculation nil
  ;; I don't want or like org creating bookmarks, especially since
  ;; Bookmark+ then highlights the bookmarks.
  org-bookmark-names-plist nil
