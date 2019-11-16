@@ -3146,6 +3146,7 @@ care that the maximum size is 0."
     :program "eslint-reformat"
     :lighter " ESL")
 
+
 ;;; saveplace
 
 (save-place-mode 1)
