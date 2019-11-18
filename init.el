@@ -2003,6 +2003,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'imenu-after-jump-hook #'my:highlight-line-after-movement)
 
+(my:load-recipes 'imenu-only-rescan-after-changes)
 
 
 ;;; imenu-list
