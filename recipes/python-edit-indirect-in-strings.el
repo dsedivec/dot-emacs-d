@@ -5,6 +5,8 @@
 ;; `edit-indirect-region'.  If the region is already active, or if
 ;; you're not inside a string, this is just like calling
 ;; `edit-indirect-region'.
+;;
+;; Requires package edit-indirect.
 
 (defun my:python-edit-indirect-dwim ()
   (interactive)
