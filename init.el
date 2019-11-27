@@ -1597,14 +1597,20 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'after-revert-hook #'my:delete-auto-save-after-revert)
 
-;; Detect SQL in strings!
-
+;; Detect SQL in strings!  Turns out that `magic-mode-alist' (and
+;; `magic-fallback-mode-alist') set `case-fold-search' to nil when
+;; matching their regexps, hence the dance with `upcase' here.
 (add-to-list 'magic-fallback-mode-alist
-             (cons (rx (* (any space ?\n))
-                       symbol-start
-                       (or "select" "insert" "update" "delete"
-                           "create" "alter" "drop"))
-                   'sql-mode))
+             (let* ((keywords '("select"
+                                "insert" "update" "delete"
+                                "create" "alter" "drop"))
+                    (keywords-regexp
+                     (regexp-opt (nconc (mapcar #'upcase keywords)
+                                        keywords))))
+               (cons (rx (* (any space ?\n))
+                         symbol-start
+                         (regexp keywords-regexp))
+                     'sql-mode)))
 
 
 ;;; fill
