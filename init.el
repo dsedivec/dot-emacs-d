@@ -1660,6 +1660,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                   kill-buffer-and-window
                   ediff-toggle-split
                   my:delete-window-that-direction
+                  imenu-list-quit-window
                   transpose-frame
                   treemacs
                   winner-undo
