@@ -2100,8 +2100,8 @@ surround \"foo\" with (in this example) parentheses.  I want
       ;; involved ideas.
       ivy-truncate-lines nil)
 
-(setf (alist-get 'counsel-rg ivy-re-builders-alist)
-      #'ivy--regex-plus)
+(dolist (command '(counsel-rg swiper-isearch))
+  (setf (alist-get command ivy-re-builders-alist) #'ivy--regex-plus))
 
 (my:load-recipes 'ivy-special-switch-buffers
                  'ivy-fuzzy-regex-combo-matcher)
@@ -3870,7 +3870,13 @@ a string or comment."
 
 ;;; swiper
 
-(bind-key "s-s" 'swiper)
+(bind-keys ("s-s" . swiper)
+           ;; Doesn't DWIM with `ivy--regex-ignore-order' right now.
+           ;; Maybe because "isearch is not line-based"?
+           ("C-s" . swiper-isearch)
+           ("C-r" . swiper-isearch-backward))
+
+(setq swiper-goto-start-of-match t)
 
 
 ;;; tool-bar
