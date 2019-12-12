@@ -32,9 +32,9 @@
      comment-dwim-2
      company
      company-auctex
+     company-prescient
      company-reftex
      company-shell
-     company-statistics
      company-web
      counsel
      counsel-css
@@ -80,6 +80,7 @@
      ivy
      ivy-bibtex
      ivy-hydra
+     ivy-prescient
      ivy-xref
      ivy-yasnippet
      js2-mode

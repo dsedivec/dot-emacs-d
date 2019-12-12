@@ -1191,12 +1191,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
       (setq company-backends backends))))
 
 
-;;; company-statistics
-
-(with-eval-after-load 'company
-  (company-statistics-mode 1))
-
-
 ;;; conf-mode
 
 ;; conf-mode doesn't derive from anything.  Run prog-mode-hook by
@@ -4258,6 +4252,20 @@ for this command) must be an arrow key."
 ;;; zop-to-char
 
 (bind-keys ("M-z" . zop-up-to-char))
+
+
+;;; prescient.el
+
+(with-eval-after-load 'prescient
+  (prescient-persist-mode 1))
+
+(with-eval-after-load 'company
+  (company-prescient-mode 1))
+
+(setq ivy-prescient-enable-filtering nil
+      ivy-prescient-retain-classic-highlighting t)
+
+(ivy-prescient-mode 1)
 
 
 ;;; Epilogue
