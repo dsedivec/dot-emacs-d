@@ -1751,6 +1751,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
 
+(my:load-recipes 'flyspell-fix-key-lookup)
+
 
 ;;; frame
 
