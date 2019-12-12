@@ -18,16 +18,12 @@
 ;; produced by posframe.el (and its users such as company-posframe or
 ;; ivy-posframe).  I had this happen even when ivy-posframe's frame
 ;; wasn't visible when I exited.  When I restored I then had a bizarre
-;; floating child frame following me around.
-;;
-;; I don't really know what to do about this right now.  The easy
-;; answer is "don't save/restore child frames", which can be done via
-;; the PREDICATE argument to `frameset-save'.  I have not yet
-;; implemented that, though, since I don't use posframe now, and
-;; because I am not at all sure that child frames *shouldn't* be
-;; saved/restored, generally speaking.  Which is to say, I don't know
-;; the right way to solve this right now, and it doesn't affect me, so
-;; I'm ignoring it.
+;; floating child frame following me around.  Therefore I have
+;; `frameset-save' exclude child frames.  Note, however, that this
+;; might be a bad idea: there are perhaps some child frames that
+;; should be saved?  Right now, though, I think my only use of child
+;; frames are from posframe, and I have no circumstances where I want
+;; a posframe child frame saved/restored.
 
 (defun my:persp-mode-serializable-p (obj)
   (and (or (memq (type-of obj) '(bool-vector
@@ -78,7 +74,9 @@
                  (mapcar (lambda (prop) (cons prop :never))
                          (my:persp-mode-all-unserializable-frame-parameters))
                  frameset-filter-alist)))
-    (frameset-save nil)))
+    (frameset-save nil
+                   :predicate (lambda (frame)
+                                (null (frame-parameter frame 'parent-frame))))))
 
 (defun my:persp-mode-save-frame-configuration (&rest _)
   (set-persp-parameter 'my:frame-configuration (my:persp-mode-get-frameset)
