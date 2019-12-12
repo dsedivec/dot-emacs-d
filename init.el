@@ -1497,6 +1497,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq elpy-eldoc-show-current-function nil)
 
+(when (executable-find "python3")
+  (setq elpy-rpc-python-command "python3"))
+
 (advice-add 'python-mode :before #'elpy-enable)
 
 (with-eval-after-load 'elpy
