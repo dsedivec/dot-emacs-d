@@ -1597,7 +1597,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 (add-to-list 'magic-fallback-mode-alist
              (let* ((keywords '("select"
                                 "insert" "update" "delete"
-                                "create" "alter" "drop"))
+                                "create" "alter" "drop"
+                                "copy"))
                     (keywords-regexp
                      (regexp-opt (nconc (mapcar #'upcase keywords)
                                         keywords))))
