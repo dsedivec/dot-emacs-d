@@ -678,9 +678,6 @@ it returns the node that your EDIT-FORM changed)."
              ;; Spacemacs overrides the default LaTeX-insert-item binding
              ;; on M-RET, but we can put it on <M-S-return>.
              ("<M-S-return>" . LaTeX-insert-item)
-             ;; I use the combining acute accent a lot when typing up
-             ;; Russian coursework.
-             ("M-'" . my:LaTeX-insert-combining-acute-accent)
              ;; I don't actually use glossaries that much these days, but
              ;; I'm keeping these utility functions and their bindings
              ;; around for future reference, I guess.
