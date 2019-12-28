@@ -1512,6 +1512,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
   (bind-keys :map elpy-mode-map
              ("<C-return>" . nil)
+             ;; Not having these as forward/backward-paragraph drives
+             ;; me nuts.
              ("<C-up>" . nil)
              ("<C-down>" . nil)
              ;; auto-highlight-symbol uses these.
