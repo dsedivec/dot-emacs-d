@@ -2927,6 +2927,24 @@ care that the maximum size is 0."
 (add-hook 'after-init-hook #'persp-mode)
 
 
+;;; prescient.el
+
+;; NOTE: Package docs say that this must be loaded after counsel.
+;; Thankfully not a problem as long as "c" comes before "p" in the
+;; alphabet.
+
+(with-eval-after-load 'prescient
+  (prescient-persist-mode 1))
+
+(with-eval-after-load 'company
+  (company-prescient-mode 1))
+
+(setq ivy-prescient-enable-filtering nil
+      ivy-prescient-retain-classic-highlighting t)
+
+(ivy-prescient-mode 1)
+
+
 ;;; prog-mode
 
 ;; See the electric section of this file for information on why I turn
@@ -4266,20 +4284,6 @@ for this command) must be an arrow key."
 ;;; zop-to-char
 
 (bind-keys ("M-z" . zop-up-to-char))
-
-
-;;; prescient.el
-
-(with-eval-after-load 'prescient
-  (prescient-persist-mode 1))
-
-(with-eval-after-load 'company
-  (company-prescient-mode 1))
-
-(setq ivy-prescient-enable-filtering nil
-      ivy-prescient-retain-classic-highlighting t)
-
-(ivy-prescient-mode 1)
 
 
 ;;; Epilogue
