@@ -11,6 +11,9 @@
 ;;                    (format "\\`%s/.*\\.html\\(\\.translate\\)?\\'"
 ;;                            (expand-file-name "~/git/pippin"))))
 
+(eval-when-compile
+  '(require 'web-mode))
+
 (defvar my:web-mode-local-html-engine nil
   "This can be set as a file or directory local variable and
 `my:web-mode-set-html-engine-from-local-variable' will use it to
