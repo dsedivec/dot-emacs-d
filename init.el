@@ -326,6 +326,24 @@ taken from the docstring of a minor mode function defined by
   ;; enough for xref, good enough for imenu.
   (pulse-momentary-highlight-one-line (point) 'next-error))
 
+;; Repeatable command stuff courtesy Drew Adams,
+;; https://www.emacswiki.org/emacs/Repeatable.
+(defun my:repeat-command (command)
+  "Repeat COMMAND."
+  (require 'repeat)
+  (let ((repeat-previous-repeated-command  command)
+        (repeat-message-function           #'ignore)
+        (last-repeatable-command           'repeat))
+    (repeat nil)))
+
+(defun my:make-repeatable-command (repeat-cmd-name regular-cmd-name)
+  (fset repeat-cmd-name
+        (lambda (&rest _)
+          (my:repeat-command regular-cmd-name)))
+  (put repeat-cmd-name 'interactive-form (interactive-form regular-cmd-name))
+  (put repeat-cmd-name 'function-documentation
+       (format "Repeatable version of `%S'." regular-cmd-name)))
+
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
@@ -3286,25 +3304,36 @@ care that the maximum size is 0."
 (with-eval-after-load 'smartparens
   (require 'smartparens-config))
 
-(dolist (command '(sp-split-sexp sp-join-sexp sp-splice-sexp sp-raise-sexp))
+;; I don't usually care for smartparens, but it does have some useful
+;; functions that duplicate paredit functionality I've found fond of,
+;; but which work outside of `paredit-mode' (and `smartparens-mode',
+;; apparently).
+;;
+;; So maybe you'd say I do "use smartparens", but I just don't use
+;; `smartparens-mode'.  `paredit-mode' kills it in lisps, and
+;; `electric-pair-mode' is fine/more reliable everywhere else.
+
+(dolist (command '(sp-split-sexp
+                   sp-join-sexp
+                   sp-splice-sexp
+                   sp-raise-sexp
+                   sp-forward-barf-sexp
+                   sp-backward-barf-sexp
+                   sp-forward-slurp-sexp
+                   sp-backward-slurp-sexp))
   (unless (commandp command)
-    (autoload command "smartparens" nil t)))
+    (autoload command "smartparens" nil t))
+  (my:make-repeatable-command (intern (format "my:%S-repeat" command)) command))
 
 (bind-keys
- ;; `sp-split-sexp' is handy even when I'm not using
- ;; `smartparens-mode', such as when I want to split a string across
- ;; multiple lines in SQL or Python.  Bindings stolen from Spacemacs.
- ("M-m j s" . sp-split-sexp)
- ;; This one is actually not a Spacemacs binding.  But it should be.
- ;; If I'm going to bind up `sp-split-sexp', might as well bind its
- ;; inverse as well.  Useful for basically the same situations
- ;; mentioned in the comment above, but inverted.
- ("M-m j j" . sp-join-sexp)
- ;; Other bindings not stolen from Spacemacs.
- ("M-m j S" . sp-splice-sexp)
- ;; (`sp-raise-sexp' is an alias for `sp-splice-sexp-killing-around',
- ;; but I think this name is more clear here.)
- ("M-m j r" . sp-raise-sexp))
+ ("M-m x s" . my:sp-split-sexp-repeat)
+ ("M-m x j" . my:sp-join-sexp-repeat)
+ ("M-m x S" . my:sp-splice-sexp-repeat)
+ ("M-m x r" . my:sp-raise-sexp-repeat)
+ ("M-m x u" . my:sp-forward-slurp-sexp-repeat)
+ ("M-m x U" . my:sp-backward-slurp-sexp-repeat)
+ ("M-m x b" . my:sp-forward-barf-sexp-repeat)
+ ("M-m x B" . my:sp-backward-barf-sexp-repeat))
 
 
 ;;; sql
