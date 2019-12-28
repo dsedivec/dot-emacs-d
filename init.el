@@ -1462,10 +1462,14 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;
 ;; 4. Remove \n from `electric-indent-chars' globally.  Maybe add it
 ;;    back in modes where it makes sense.
+;;
+;; For now, #4 seems to work best for me, except I define "modes where
+;; it makes sense" as all modes derived from `prog-mode'.
 
 (with-eval-after-load 'electric
-  (electric-indent-mode -1))
+  (electric-indent-mode -1)
 
+  (add-hook 'prog-mode-hook #'electric-indent-local-mode))
 
 ;;; elisp-mode
 
@@ -2961,12 +2965,6 @@ care that the maximum size is 0."
 
 
 ;;; prog-mode
-
-;; See the electric section of this file for information on why I turn
-;; off the global `electric-indent-mode'.  Recent experience tells me,
-;; though, that I do want it on in basically every `prog-mode'-derived
-;; buffer.
-(add-hook 'prog-mode-hook #'electric-indent-local-mode)
 
 ;; This may be a bad idea.
 (with-eval-after-load 'prog-mode
