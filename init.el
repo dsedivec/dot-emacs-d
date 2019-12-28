@@ -4133,6 +4133,18 @@ for this command) must be an arrow key."
 
 (winum-mode 1)
 
+(bind-keys :map winum-keymap
+           ("C-0" . winum-select-window-0-or-10)
+           ("C-1" . winum-select-window-1)
+           ("C-2" . winum-select-window-2)
+           ("C-3" . winum-select-window-3)
+           ("C-4" . winum-select-window-4)
+           ("C-5" . winum-select-window-5)
+           ("C-6" . winum-select-window-6)
+           ("C-7" . winum-select-window-7)
+           ("C-8" . winum-select-window-8)
+           ("C-9" . winum-select-window-9))
+
 (defvar my:winum-number-string-base #x2780)
 
 (defvar my:winum-number-string-min 1)
@@ -4155,19 +4167,6 @@ for this command) must be an arrow key."
 (push '(:eval (my:winum-get-number-string)) (cdr mode-line-format))
 
 (set-face-attribute 'winum-face nil :height 1.2)
-
-(with-eval-after-load 'winum
-  (bind-keys :map winum-keymap
-             ("C-0" . winum-select-window-0-or-10)
-             ("C-1" . winum-select-window-1)
-             ("C-2" . winum-select-window-2)
-             ("C-3" . winum-select-window-3)
-             ("C-4" . winum-select-window-4)
-             ("C-5" . winum-select-window-5)
-             ("C-6" . winum-select-window-6)
-             ("C-7" . winum-select-window-7)
-             ("C-8" . winum-select-window-8)
-             ("C-9" . winum-select-window-9)))
 
 
 ;;; xref
