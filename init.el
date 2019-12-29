@@ -2952,8 +2952,9 @@ care that the maximum size is 0."
     (warn (concat "`ivy-prescient-sort-commands' is no longer a :not"
                   " by default, fix init.el"))
   (cl-loop
-     for func in '(swiper-isearch
-                   counsel-yank-pop)
+     for func in '(counsel-rg
+                   counsel-yank-pop
+                   swiper-isearch)
      if (memq func ivy-prescient-sort-commands)
      do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
               func)
