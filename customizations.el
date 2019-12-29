@@ -50,6 +50,7 @@
      dtrt-indent
      dumb-jump
      edit-indirect
+     editorconfig
      el-patch
      elpy
      eltu

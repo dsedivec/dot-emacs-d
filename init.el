@@ -3158,6 +3158,15 @@ care that the maximum size is 0."
              ("C-c C-b" . python-shell-send-buffer)
              ("M-m m i" . my:python-add-import)))
 
+(require 'editorconfig)
+
+(defun my:maybe-enable-black-format-on-save ()
+  (let ((props (funcall editorconfig-get-properties-function)))
+    (when (equal (gethash 'org.codefu/python_formatter props) "black")
+      (black-format-on-save-mode 1))))
+
+(add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
+
 
 ;;; pyvenv
 
