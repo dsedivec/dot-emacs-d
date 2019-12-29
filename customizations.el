@@ -6,7 +6,7 @@
  '(ahs-idle-interval 0.5)
  '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(org-modules
-   '(org-tempo org-id org-w3m org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
+   '(org-tempo org-id ol-w3m ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-irc ol-mhe ol-rmail ol-eww))
  '(package-selected-packages
    '(
      ace-window
