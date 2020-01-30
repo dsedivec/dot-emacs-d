@@ -1753,6 +1753,16 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (cons (car key-binding) "flycheck")
                        key-binding)))))
 
+;; Run Pylint, then Mypy.
+
+(flycheck-add-next-checker 'python-pylint 'python-mypy)
+
+(setf (flycheck-checker-get 'python-mypy 'next-checkers) nil)
+
+;; Prefer pylint to flake8.
+(setq flycheck-checkers (cons 'python-pylint
+                              (delq 'python-pylint flycheck-checkers)))
+
 (my:load-recipes 'flycheck-python-pylint-detect-tabs)
 
 
