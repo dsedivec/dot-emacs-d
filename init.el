@@ -1544,6 +1544,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 
 
+;;; embrace
+
+(bind-keys ("C-\"" . embrace-commander))
+
+
 ;;; emmet-mode
 
 (setq emmet-preview-default t)

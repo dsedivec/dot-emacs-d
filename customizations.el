@@ -54,6 +54,7 @@
      el-patch
      elpy
      eltu
+     embrace
      emmet-mode
      exec-path-from-shell
      expand-region
