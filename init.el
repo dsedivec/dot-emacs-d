@@ -1542,6 +1542,7 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("<M-left>" . nil)
              ("<M-right>" . nil)))
 
+(my:load-recipes 'elpy-nav-block-always-move)
 
 
 ;;; embrace
