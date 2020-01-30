@@ -4039,6 +4039,14 @@ a string or comment."
 ;;; web-mode
 
 (setq web-mode-enable-auto-expanding t
+      ;; web-mode's auto-pairing doesn't agree with
+      ;; electric-pair-mode, which I actually prefer.  In reality, the
+      ;; only pairs I really use on a regular basis are the ones for
+      ;; {{ }} in Go, and electric-pair-mode handles those just fine.
+      ;;
+      ;; This does lose the pairing for <!-- -->.  Just hit M-; to
+      ;; make a comment, lazy ass.
+      web-mode-enable-auto-pairing nil
       ;; This will indent, like, all HTML in the vicinity when you
       ;; yank, which is often kind of awful.
       ;; https://github.com/fxbois/web-mode/issues/894
