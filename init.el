@@ -3132,13 +3132,6 @@ care that the maximum size is 0."
 (which-key-add-major-mode-key-based-replacements 'python-mode
     "C-c C-t" "skeletons")
 
-(my:load-recipes 'python-magic-quotes
-                 'python-toggle-triple-quotes
-                 'python-fix-dead-shell-font-lock-buffer
-                 'expand-region-python-fix-strings
-                 'python-edit-indirect-in-strings
-                 'python-add-import)
-
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
 (defun my:python-reformat-region-or-buffer ()
@@ -3182,6 +3175,13 @@ care that the maximum size is 0."
       (black-format-on-save-mode 1))))
 
 (add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
+
+(my:load-recipes 'python-magic-quotes
+                 'python-toggle-triple-quotes
+                 'python-fix-dead-shell-font-lock-buffer
+                 'expand-region-python-fix-strings
+                 'python-edit-indirect-in-strings
+                 'python-add-import)
 
 
 ;;; pyvenv
