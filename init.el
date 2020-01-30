@@ -2132,6 +2132,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq ivy-use-virtual-buffers t
       ivy-virtual-abbreviate 'full
       ivy-magic-tilde nil
+      ivy-read-action-function #'ivy-hydra-read-action
       ;; Trying this for a while, helps when you have long matches
       ;; from something like counsel-ag.  Better fix might be to show
       ;; the matching portion (somehow), or bind some kind of "scroll
