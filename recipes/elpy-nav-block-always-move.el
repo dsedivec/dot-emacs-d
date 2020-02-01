@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
 ;; Elpy navigate-by-block bindings should always try to move me
-;; somewhere.!
+;; somewhere.
 
 (defun my:elpy-nav-blocks-always-do-something (orig-fun)
   (let ((col (current-column)))
