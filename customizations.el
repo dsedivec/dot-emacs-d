@@ -40,6 +40,7 @@
      counsel-css
      counsel-projectile
      crontab-mode
+     crux
      csv-mode
      dash
      deft

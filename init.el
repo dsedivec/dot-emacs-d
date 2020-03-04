@@ -871,23 +871,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
            ("M-m i e" . aya-expand)
            ("M-m i w" . aya-persist-snippet))
 
-;; I actually want `open-line' to open a new line above the current
-;; line, without modifying the current line, even if point is in the
-;; middle of the line.  This is more like Vi's "O" command, which is
-;; what I was expecting.
-;;
-;; Since I'm rebinding C-o to `aya-open-line', we'll make `open-line'
-;; behave differently only when executing the `aya-open-line' command.
-;; This is maybe a tiny bit better than modifying `open-line' itself,
-;; since it's conceivable that other programs could call that
-;; function, expecting it to behave as it usually does.
-
-(defun my:open-line-bol-from-aya-new-line (&rest _args)
-  (when (eq this-command 'aya-open-line)
-    (beginning-of-line)))
-
-(advice-add 'open-line :before #'my:open-line-bol-from-aya-new-line)
-
 (with-eval-after-load 'auto-yasnippet
   (add-to-list 'which-key-replacement-alist
                '(("M-m i S" . "Prefix Command") . (nil . "auto-yasnippet"))))
@@ -1277,6 +1260,30 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (with-eval-after-load 'projectile
   (counsel-projectile-mode 1))
+
+
+;;; crux
+
+;; Make `crux-smart-open-line-above' take a prefix arg to open
+;; multiple lines, so that I can use it as a substitute for
+;; `open-line', below.
+(defun my:crux-smart-open-line-above-repeatable (&optional n)
+  (interactive "*p")
+  (dotimes (_ n)
+    (crux-smart-open-line-above)))
+
+;; Remap `open-line' when used interactively.
+(bind-keys ([remap open-line] . my:crux-smart-open-line-above-repeatable))
+
+;; Now remap uses of `open-line' inside other functions.
+
+(defun my:redefine-open-line-to-crux-smart-open-line (orig-fun &rest args)
+  (cl-letf* (((symbol-function 'open-line)
+              #'my:crux-smart-open-line-above-repeatable))
+    (apply orig-fun args)))
+
+(dolist (func '(aya-open-line org-open-line))
+  (advice-add func :around #'my:redefine-open-line-to-crux-smart-open-line))
 
 
 ;;; deft
