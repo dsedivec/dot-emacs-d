@@ -1613,7 +1613,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; files
 
-(setq make-backup-files nil)
+(setq make-backup-files nil
+      confirm-kill-emacs 'y-or-n-p)
 
 ;; Reverting a buffer doesn't delete its auto-save file?  Well, OK,
 ;; fine, I'll delete it.
