@@ -8,15 +8,18 @@
         LaTeX-insert-left-brace
         TeX-insert-backslash
         TeX-insert-sub-or-superscript
+        TeX-newline
         backward-sexp
         clojure-convert-collection-to-list
         dabbrev-expand
         delete-horizontal-space
         delete-indentation
+        down-list
         electric-newline-and-maybe-indent
         electric-pair-delete-pair
         faux-indent-add-indentation
         faux-indent-delete-backward-indent-or-char
+        faux-indent-remove-indentation
         forward-sexp
         indent-for-tab-command
         insert-parentheses
@@ -30,6 +33,8 @@
         my:python-magic-single-quote
         org-beginning-of-line
         org-delete-char
+        org-meta-return
+        org-metaright
         org-self-insert-command
         paredit-backslash
         paredit-backward
@@ -57,6 +62,7 @@
 (setq mc/cmds-to-run-once
       '(
         TeX-font
+        ace-window
         avy-goto-char
         beginning-of-buffer
         counsel-M-x
