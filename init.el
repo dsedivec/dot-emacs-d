@@ -3254,6 +3254,11 @@ care that the maximum size is 0."
     :lighter " ESL")
 
 
+;;; rainbow-mode
+
+(with-eval-after-load 'rainbow-mode
+  (add-to-list 'rainbow-html-colors-major-mode-list 'web-mode))
+
 ;;; saveplace
 
 (save-place-mode 1)
@@ -4118,6 +4123,7 @@ a string or comment."
   #'my:web-mode-hook
   #'smart-tabs-mode
   #'emmet-mode
+  #'rainbow-mode
   #'my:warn-white-space-mode)
 
 (with-eval-after-load 'web-mode
