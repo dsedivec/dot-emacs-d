@@ -1,0 +1,33 @@
+# -*- mode: snippet -*-
+# name: Use *ref packages
+# key: use-ref
+# expand-env: ((yas-indent-line nil))
+# --
+% NOTE: varioref, hyperref, and cleveref must be loaded IN THAT ORDER.
+% And hyperref generally wants to be the last thing loaded in your
+% document (except for cleveref).
+
+% varioref provides \vref, which makes references like "figure 1 on
+% the next page" or "figure 2 on page 99" when the figure being
+% referenced is not on the same page as the reference.
+\\${1:$$(yas-choose-value '("usepackage" "RequirePackage"))}{varioref}
+
+% hyperref should generally be loaded last.
+\\$1{hyperref}
+
+% cleveref automatically adds the type of the thing being referenced
+% when you \cref, such as "figure 1" rather than just "1".  The
+% noabbrev option keeps it from abbreviating the name of the type of
+% thing being referenced, such as abbreviating "figure" to "fig."
+% Note that loading this package will add this type-prefixing to
+% varioref's \vref as well.
+%
+% Include nameinlink option if you want the "figure" to be a link as
+% well as "1" in e.g. "figure 1."
+%
+% The nosort option prevents cleveref from turning
+% "\cref{sec3,sec1,sec2}, respectively" into "sections 1, 2, and 3
+% respectively."
+%
+% NOTE: This package must be loaded *after* hyperref and amsmath.
+\\$1[noabbrev,nameinlink,nosort]{cleveref}

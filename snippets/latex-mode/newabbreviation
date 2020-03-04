@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: newabbreviation
+# key: ab
+# --
+\newabbreviation${4:$(unless (string-empty-p yas-text) "[description={")}${4:description}${4:$(unless (string-empty-p yas-text) "}]")}{${2:${1:$(reftex-string-to-label yas-text)}}}{${1:abbrev.}}{${3:expansion}}

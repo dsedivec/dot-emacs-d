@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: newglossaryentry
+# key: gl
+# --
+\newglossaryentry{${1:$(reftex-string-to-label yas-text)}}{name={$1}, ${2:$(unless (string-empty-p yas-text) "plural={")}${2:$1s}${2:$(unless (string-empty-p yas-text) "}, ")}description={$0}}
