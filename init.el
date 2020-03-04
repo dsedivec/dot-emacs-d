@@ -3207,6 +3207,8 @@ care that the maximum size is 0."
 (underlings-move-menu-with-one-time-hook 'pyvenv-mode "Virtual Envs" "Minors"
                                          :dest-map global-map :visible t)
 
+(pyvenv-tracking-mode 1)
+
 
 ;;; recentf-mode
 
