@@ -1760,17 +1760,17 @@ surround \"foo\" with (in this example) parentheses.  I want
                  . (lambda (key-binding)
                      (if flycheck-mode
                          (cons (car key-binding) "flycheck")
-                       key-binding)))))
+                       key-binding))))
 
-;; Run Pylint, then Mypy.
+  ;; Run Pylint, then Mypy.
 
-(flycheck-add-next-checker 'python-pylint 'python-mypy)
+  (flycheck-add-next-checker 'python-pylint 'python-mypy)
 
-(setf (flycheck-checker-get 'python-mypy 'next-checkers) nil)
+  (setf (flycheck-checker-get 'python-mypy 'next-checkers) nil)
 
-;; Prefer pylint to flake8.
-(setq flycheck-checkers (cons 'python-pylint
-                              (delq 'python-pylint flycheck-checkers)))
+  ;; Prefer pylint to flake8.
+  (setq flycheck-checkers (cons 'python-pylint
+                                (delq 'python-pylint flycheck-checkers))))
 
 (my:load-recipes 'flycheck-python-pylint-detect-tabs)
 
