@@ -2643,10 +2643,15 @@ care that the maximum size is 0."
  org-src-window-setup 'other-window
  org-tags-column -76)
 
-;; This actually visits org-default-notes-file, so we don't load this
-;; until we really have to.
 (with-eval-after-load 'org-agenda
-  (setq org-agenda-files (org-add-archive-files (list org-default-notes-file))))
+  ;; This actually visits org-default-notes-file, so we don't load
+  ;; this until we really have to.
+  (setq org-agenda-files (org-add-archive-files (list org-default-notes-file)))
+
+  ;; org-agenda must not sit on M-m, I use it for too many other
+  ;; things.
+  (bind-keys :map org-agenda-mode-map
+             ("M-m" . nil)))
 
 (bind-keys ("C-c r" . org-capture)
            ("M-m a o k i" . org-clock-in-last)
