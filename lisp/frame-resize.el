@@ -205,21 +205,50 @@ dominates (see the documentation for
           (frame-monitor-workarea frame))
          (max-right (+ min-left workarea-width))
          (max-bottom (+ min-top workarea-height))
-         ;; We try to keep the center of the frame in the same place
-         ;; on the screen, but if we're resizing near the edges, that
-         ;; may be impossible.  right-overflow/bottom-overflow hold
-         ;; the number of pixels that would be off-screen if we keep
-         ;; the center where it is after resize.
+         ;; right-overflow/bottom-overflow hold the number of pixels
+         ;; that would be off-screen if we keep the center where it is
+         ;; after resize.  See their use in determining
+         ;; new-left/new-top, below.
          (right-overflow
           (max 0 (- (+ pos-right (/ wd-delta-pixels 2)) max-right)))
-         (new-left (max min-left (- pos-left
-                                    (/ wd-delta-pixels 2)
-                                    right-overflow)))
+         (new-left (cond
+                     ((= pos-left min-left)
+                      ;; Frame is currently at the left of the screen,
+                      ;; try and keep it there.
+                      pos-left)
+                     ((= pos-right max-right)
+                      ;; Frame is currently at the right of the
+                      ;; screen, try and keep it there.
+                      (- pos-left wd-delta-pixels))
+                     (t
+                      ;; Try to keep the center of the frame in the
+                      ;; same horizontal position after resizing.  We
+                      ;; may not be able to do that if the new width
+                      ;; would put the frame outside of the bounds of
+                      ;; the screen, hence the use of right-overflow.
+                      (max min-left (- pos-left
+                                       (/ wd-delta-pixels 2)
+                                       right-overflow)))))
          (bottom-overflow
           (max 0 (- (+ pos-bottom (/ ht-delta-pixels 2)) max-bottom)))
-         (new-top (max min-top (- pos-top
-                                  (/ ht-delta-pixels 2)
-                                  bottom-overflow))))
+         (new-top (cond
+                    ((= pos-top min-top)
+                     ;; Frame is currently at the top of the screen,
+                     ;; keep it stuck to the top.
+                     pos-top)
+                    ((= pos-bottom max-bottom)
+                     ;; Frame is currently at the bottom of the
+                     ;; screen, keep it stuck to the bottom.
+                     (- pos-top ht-delta-pixels))
+                    (t
+                     ;; Try to keep the center of the frame in the
+                     ;; same vertical position after resizing.  We may
+                     ;; not be able to do that if the new height would
+                     ;; put the frame outside of the bounds of the
+                     ;; screen, hence the use of bottom-overflow.
+                     (max min-top (- pos-top
+                                     (/ ht-delta-pixels 2)
+                                     bottom-overflow))))))
       (frame-resize--debug-message (concat "currently top left %d, %d,"
                                            " bottom right %d %d")
                                    pos-top pos-left pos-bottom pos-right)
