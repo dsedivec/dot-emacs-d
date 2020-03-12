@@ -220,6 +220,12 @@ dominates (see the documentation for
          (new-top (max min-top (- pos-top
                                   (/ ht-delta-pixels 2)
                                   bottom-overflow))))
+      (frame-resize--debug-message (concat "currently top left %d, %d,"
+                                           " bottom right %d %d")
+                                   pos-top pos-left pos-bottom pos-right)
+      (frame-resize--debug-message (concat "max top left %d, %d,"
+                                           " max bottom right %d, %d")
+                                   min-top min-left max-bottom max-right)
       (frame-resize--debug-message (concat "Δw=%s px, Δh=%s px,"
                                            " max w=%s px, max h=%s px")
                                    wd-delta-pixels ht-delta-pixels
