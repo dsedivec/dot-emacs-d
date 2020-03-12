@@ -224,7 +224,7 @@ dominates (see the documentation for
                                            " max w=%s px, max h=%s px")
                                    wd-delta-pixels ht-delta-pixels
                                    max-wd-pixels max-ht-pixels)
-      (frame-resize--debug-message "new w=%s px, new h=%x px"
+      (frame-resize--debug-message "new w=%s px, new h=%s px"
                                    new-wd-pixels new-ht-pixels)
       (frame-resize--debug-message (concat "→ over=%s px, ← new=%s px,"
                                            " ↓ over=%s px, ↑ new=%s px")
