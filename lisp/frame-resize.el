@@ -201,8 +201,10 @@ dominates (see the documentation for
                              max-ht-pixels))
          (`(,pos-left ,pos-top ,pos-right ,pos-bottom)
           (frame-edges frame 'outer-edges))
-         (`(,min-left ,min-top ,max-right ,max-bottom)
+         (`(,min-left ,min-top ,workarea-width ,workarea-height)
           (frame-monitor-workarea frame))
+         (max-right (+ min-left workarea-width))
+         (max-bottom (+ min-top workarea-height))
          ;; We try to keep the center of the frame in the same place
          ;; on the screen, but if we're resizing near the edges, that
          ;; may be impossible.  right-overflow/bottom-overflow hold
