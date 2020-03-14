@@ -2861,7 +2861,8 @@ care that the maximum size is 0."
                  'org-daily-time-summary
                  'org-columns-delete-property
                  'org-insert-heading-ignore-invisibility
-                 'org-jump-over-priority-after-setting-it)
+                 'org-jump-over-priority-after-setting-it
+                 'org-make-nice-id-from-headline-text)
 
 (defvar my:org-todo-files (mapcar #'expand-file-name
                                   '("~/todo.org" "~/todo.org_archive")))
