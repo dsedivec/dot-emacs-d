@@ -1235,20 +1235,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq counsel-find-file-at-point t)
 
-(defun my:counsel-trace-function-toggle (func-name)
-  (let ((func (intern func-name)))
-    (if (trace-is-traced 'func)
-        (untrace-function func)
-      (trace-function func))))
-
-(ivy-add-actions
- 'counsel-describe-function
- '(("t" my:counsel-trace-function-toggle "toggle tracing")))
-
 ;; Include directory in prompt when searching.
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
 
-(my:load-recipes 'counsel-limit-grep-result-length)
+(my:load-recipes 'counsel-limit-grep-result-length
+                 'counsel-trace-function)
 
 ;; `counsel-find-file' doesn't leave the file you just found as the
 ;; current buffer.  This is because `counsel-find-file' →
