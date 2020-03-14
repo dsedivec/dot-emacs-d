@@ -31,6 +31,7 @@
         my:insert-tab-or-spaces
         my:python-magic-double-quote
         my:python-magic-single-quote
+        my:sp-splice-sexp-repeat
         org-beginning-of-line
         org-delete-char
         org-meta-return
