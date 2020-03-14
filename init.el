@@ -4299,6 +4299,8 @@ for this command) must be an arrow key."
 
 (set-face-attribute 'winum-face nil :height 1.2)
 
+(my:load-recipes 'winum-sort-like-ace-window)
+
 
 ;;; xref
 
