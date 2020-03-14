@@ -83,6 +83,7 @@
      ivy
      ivy-bibtex
      ivy-hydra
+     ivy-posframe
      ivy-prescient
      ivy-xref
      ivy-yasnippet
