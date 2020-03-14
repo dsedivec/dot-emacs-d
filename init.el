@@ -691,6 +691,10 @@ it returns the node that your EDIT-FORM changed)."
                          '("gls" "Key")
                          '("glsdisp" "Key" "Text")))))
 
+;; Let company-mode start idle completion after typing a hyphen, such
+;; as in "\gls{foo-".
+(put 'LaTeX-babel-insert-hyphen 'company-begin t)
+
 (with-eval-after-load 'latex
   (bind-keys :map LaTeX-mode-map
              ;; Spacemacs overrides the default LaTeX-insert-item binding
