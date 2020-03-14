@@ -3454,6 +3454,8 @@ care that the maximum size is 0."
  ("M-m x b" . my:sp-forward-barf-sexp-repeat)
  ("M-m x B" . my:sp-backward-barf-sexp-repeat))
 
+(my:load-recipes 'smartparens-split-python-triple-quoted-strings)
+
 
 ;;; sql
 
