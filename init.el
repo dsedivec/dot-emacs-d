@@ -717,6 +717,9 @@ it returns the node that your EDIT-FORM changed)."
                 "\\|\\\\nameref{\\(?1:[^}]*\\)\\="
                 "\\|\\\\hyperref\\[\\(?1:[^]]*\\)\\=")))
 
+(my:load-recipes 'auctex-aggressively-load-styles
+                 'auctex-company-glossaries-backend)
+
 (defun my:LaTeX-mode-hook ()
   (my:setq-local er/try-expand-list (append er/try-expand-list
                                             '(mark-sentence mark-paragraph))
@@ -729,7 +732,8 @@ it returns the node that your EDIT-FORM changed)."
                   company-reftex-citations
                   company-auctex-macros
                   company-auctex-symbols
-                  company-auctex-environments)
+                  company-auctex-environments
+                  my:company-auctex-glossaries)
                  company-dabbrev-code)
                company-backends)))
 
@@ -742,8 +746,6 @@ it returns the node that your EDIT-FORM changed)."
   #'auto-fill-mode
   #'my:warn-white-space-mode
   #'my:LaTeX-mode-hook)
-
-(my:load-recipe 'auctex-aggressively-load-styles)
 
 ;; This may be a problem if reftex gets loaded after AUCTeX.
 (setq reftex-plug-into-AUCTeX t)
