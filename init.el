@@ -2901,7 +2901,10 @@ care that the maximum size is 0."
           #'my:org-todo-allowed-projects)
 
 ;; Private stuff that doesn't get checked into Git.
-(load (expand-file-name "private/org" user-emacs-directory) t)
+(dolist (file-name '("org" "open-ticket"))
+  (load (expand-file-name (concat "private/" file-name)
+                          user-emacs-directory)
+        t))
 
 
 ;;; osx-dictionary
