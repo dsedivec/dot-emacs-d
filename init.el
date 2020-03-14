@@ -422,8 +422,9 @@ it returns the node that your EDIT-FORM changed)."
 ;; window being split.
 (setq window-combination-resize t)
 
-(put 'list-timers 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(put 'list-timers 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
 
 (defun my:show-trailing-white-space ()
   ;; setq-local instead of setq superfluous!
