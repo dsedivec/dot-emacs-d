@@ -2174,26 +2174,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
 
 
-;;; ivy-posframe
-
-;; Internal frame borders don't work in Emacs NS port,
-;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=37832.  I'm setting
-;; up a fringe and background so I can see the posframe window.
-
-(setq ivy-posframe-border-width 0
-      ivy-posframe-parameters '((left-fringe . 4)
-                                (right-fringe . 4))
-
-      ivy-posframe-display-functions-alist
-      '((t . nil)
-        (counsel-company . ivy-posframe-display-at-point)
-        (ivy-completion-in-region . ivy-posframe-display-at-point)))
-
-(ivy-posframe-mode 1)
-
-(set-face-attribute 'ivy-posframe nil :background "#eeeeee")
-
-
 ;;; ivy-xref
 
 (setq xref-show-definitions-function #'ivy-xref-show-defs
