@@ -628,75 +628,16 @@ it returns the node that your EDIT-FORM changed)."
   (interactive)
   (insert ?\u0301))
 
-(defun my:LaTeX-convert-to-gls (&optional start end num-words)
-  "Put region between START and END, or NUM-WORDS forward, in \gls or \glspl."
-  (interactive (if (use-region-p)
-                   (list (region-beginning) (region-end) nil)
-                 (list nil nil (or current-prefix-arg 1))))
-  (assert (or (and start end (null num-words))
-              (and (null start) (null end) num-words)))
-  (unless (null num-words)
-    (save-excursion
-      (forward-word num-words)
-      (setq end (point))
-      (backward-word num-words)
-      (setq start (point))))
-  (when (string-match (rx "'s" eos) (buffer-substring start end))
-    (setq end (- end 2)))
-  (atomic-change-group
-    (let ((end (copy-marker end))
-          (is-plural (string-match (rx "s" (0+ space) eos)
-                                   (buffer-substring start end))))
-      (goto-char start)
-      (insert (let ((case-fold-search nil))
-                (cond ((looking-at (rx upper))
-                       (prog1
-                           (if (looking-at (rx (>= 2 upper)))
-                               "\\gls"
-                             "\\Gls")
-                         (downcase-region start end)))
-                      (t "\\gls"))))
-      (when is-plural (insert "pl"))
-      (insert "{")
-      (while (re-search-forward (rx (1+ (any "\n" space))) end t)
-        (replace-match "-"))
-      (goto-char end)
-      (when is-plural (delete-char -1))
-      (insert "}")
-      (fill-paragraph)
-      (undo-boundary))))
-
-(defun my:LaTeX-backward-convert-to-gls (&optional num-words)
-  "Put NUM-WORDS before cursor in \gls or \glspl."
-  (interactive "p")
-  (atomic-change-group
-    (backward-word num-words)
-    (my:LaTeX-convert-to-gls nil nil num-words)))
-
-;; Teach AUCTeX how to insert glossaries-related commands.
-(defun my:LaTeX-arg-glossary-entry (optional &rest args)
-  (assert (not optional))
-  (insert TeX-grop "name=")
-  (insert (read-string (TeX-argument-prompt nil "Entry name" "")))
-  (insert ",\ndescription=" TeX-grop)
-  (set-marker exit-mark (point))
-  (insert TeX-grcl TeX-grcl)
-  (LaTeX-indent-line))
-
-(with-eval-after-load 'tex
-  (TeX-add-style-hook "glossaries"
-                      (lambda ()
-                        (TeX-add-symbols
-                         '("newacronym" "Key" "Acronym" "Expansion")
-                         '("newglossaryentry" "Key" my:LaTeX-arg-glossary-entry)
-                         '("gls" "Key")
-                         '("glsdisp" "Key" "Text")))))
-
 ;; Let company-mode start idle completion after typing a hyphen, such
 ;; as in "\gls{foo-".
 (put 'LaTeX-babel-insert-hyphen 'company-begin t)
 
 (with-eval-after-load 'latex
+  (my:load-recipes 'auctex-aggressively-load-styles
+                   'auctex-company-glossaries-backend
+                   'auctex-wrap-in-gls-commands
+                   'auctex-glossaries-package)
+
   (bind-keys :map LaTeX-mode-map
              ;; Spacemacs overrides the default LaTeX-insert-item binding
              ;; on M-RET, but we can put it on <M-S-return>.
@@ -717,9 +658,6 @@ it returns the node that your EDIT-FORM changed)."
                 ;; I should upstream these additions.
                 "\\|\\\\nameref{\\(?1:[^}]*\\)\\="
                 "\\|\\\\hyperref\\[\\(?1:[^]]*\\)\\=")))
-
-(my:load-recipes 'auctex-aggressively-load-styles
-                 'auctex-company-glossaries-backend)
 
 (defun my:LaTeX-mode-hook ()
   (my:setq-local er/try-expand-list (append er/try-expand-list
@@ -932,21 +870,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; * (In bookmark list) C-u a: edit annotation
 ;; * C-x p s: save bookmarks file (should also happen at exit)
 
-;; Saving bookmarks after every change (ex. value of "1" here) works
-;; poorly, particularly with auto-named bookmarks in bookmark+ where
-;; things like *moving to the next/previous bookmark* will end up
-;; calling `bmkp-maybe-save-bookmarks' *twice* for each movement (from
-;; `bookmark-rename' and later `bmkp-update-autonamed-bookmark'
-;; itself).  Therefore we set only to save when exiting Emacs, but
-;; also with `auto-save-hook'.
-(setq bookmark-save-flag t)
-
-(defun my:bookmark-maybe-auto-save ()
-  (when (and bookmark-save-flag
-             (> bookmark-alist-modification-count 0))
-    (bookmark-save)))
-
-(add-hook 'auto-save-hook #'my:bookmark-maybe-auto-save)
+(my:load-recipes 'bookmark-auto-save)
 
 
 ;;; bookmark+
