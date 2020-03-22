@@ -924,13 +924,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (bind-key "C-x C-b" 'bs-show)
 
-(defun my:bs-show-persp-aware (arg)
-  "`bs-show' wrapped with `with-persp-buffer-list'."
-  (interactive "P")
-  (with-persp-buffer-list () (bs-show arg)))
-
 (with-eval-after-load 'persp-mode
-  (bind-key "C-x C-b" 'my:bs-show-persp-aware))
+  (my:load-recipes 'bs-persp-mode))
 
 (defun my:visits-non-dired-non-file (buffer)
   "Returns T if buffer is neither a file nor a Dired buffer."
@@ -1553,19 +1548,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq make-backup-files nil
       confirm-kill-emacs 'y-or-n-p)
 
-;; Reverting a buffer doesn't delete its auto-save file?  Well, OK,
-;; fine, I'll delete it.
-(defun my:delete-auto-save-after-revert ()
-  (let ((auto-save-file-name (make-auto-save-file-name)))
-    (when (and (file-exists-p auto-save-file-name)
-               ;; Buffer really shouldn't be modified, just being
-               ;; extra-safe here.
-               (not (buffer-modified-p)))
-      (message "Deleting auto save file %s after revert" auto-save-file-name)
-      (delete-file auto-save-file-name))))
-
-(add-hook 'after-revert-hook #'my:delete-auto-save-after-revert)
-
 ;; Detect SQL in strings!  Turns out that `magic-mode-alist' (and
 ;; `magic-fallback-mode-alist') set `case-fold-search' to nil when
 ;; matching their regexps, hence the dance with `upcase' here.
@@ -1581,6 +1563,8 @@ surround \"foo\" with (in this example) parentheses.  I want
                          symbol-start
                          (regexp keywords-regexp))
                      'sql-mode)))
+
+(my:load-recipes 'files-delete-auto-save-after-revert-buffer)
 
 
 ;;; fill
@@ -2124,50 +2108,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (add-hook 'js2-mode-hook #'js2-refactor-mode)
 
-;; https://gist.githubusercontent.com/anachronic/7af88c62db136727cd1fed17ee0a662f/raw/a2839e7989297293621789d669594d7820e1a52e/init-javascript.el
-
-(defhydra js2-refactor-hydra (:color blue :hint nil)
-  ;; Must escape "[" in column zero.  See
-  ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Left-Margin-Paren.html.
-  "
-^Functions^                    ^Variables^               ^Buffer^                      ^sexp^               ^Debugging^
-------------------------------------------------------------------------------------------------------------------------------
-\[_lp_] Localize Parameter      [_ev_] Extract variable   [_wi_] Wrap buffer in IIFE    [_k_]  js2 kill      [_lt_] log this
-\[_ef_] Extract function        [_iv_] Inline variable    [_ig_] Inject global in IIFE  [_ss_] split string  [_dt_] debug this
-\[_ip_] Introduce parameter     [_rv_] Rename variable    [_ee_] Expand node at point   [_sl_] forward slurp
-\[_em_] Extract method          [_vt_] Var to this        [_cc_] Contract node at point [_ba_] forward barf
-\[_ao_] Arguments to object     [_sv_] Split var decl.    [_uw_] unwrap
-\[_tf_] Toggle fun exp and decl [_ag_] Add var to globals
-\[_ta_] Toggle fun expr and =>  [_ti_] Ternary to if
-\[_q_]  quit"
-  ("ee" js2r-expand-node-at-point)
-  ("cc" js2r-contract-node-at-point)
-  ("ef" js2r-extract-function)
-  ("em" js2r-extract-method)
-  ("tf" js2r-toggle-function-expression-and-declaration)
-  ("ta" js2r-toggle-arrow-function-and-expression)
-  ("ip" js2r-introduce-parameter)
-  ("lp" js2r-localize-parameter)
-  ("wi" js2r-wrap-buffer-in-iife)
-  ("ig" js2r-inject-global-in-iife)
-  ("ag" js2r-add-to-globals-annotation)
-  ("ev" js2r-extract-var)
-  ("iv" js2r-inline-var)
-  ("rv" js2r-rename-var)
-  ("vt" js2r-var-to-this)
-  ("ao" js2r-arguments-to-object)
-  ("ti" js2r-ternary-to-if)
-  ("sv" js2r-split-var-declaration)
-  ("ss" js2r-split-string)
-  ("uw" js2r-unwrap)
-  ("lt" js2r-log-this)
-  ("dt" js2r-debug-this)
-  ("sl" js2r-forward-slurp)
-  ("ba" js2r-forward-barf)
-  ("k" js2r-kill)
-  ("q" nil))
-
 (with-eval-after-load 'js2-refactor
+  (my:load-recipes 'js2-refactor-hydra)
+
   (js2r-add-keybindings-with-prefix "M-m m r")
 
   (bind-keys :map js2-refactor-mode-map
@@ -2176,43 +2119,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; json-mode
 
-;; json-snatcher is broken.  `json-path-to-position' actually works.
-(defun my:json-mode-show-path (&optional pos)
-  "Print the sexp path to the node at POS and put it on the kill ring.
-POS defaults to point."
-  (interactive "d")
-  (let* ((path (plist-get (json-path-to-position (or pos (point))) :path))
-         (path-str (format "%S" path)))
-    (kill-new path-str)
-    (message path-str)))
-
-(defun my:json-mode-show-path-jq (&optional pos)
-  "Print the path to the node at POS in jq syntax and put it on the kill ring.
-POS defaults to point."
-  (interactive "d")
-  (let* ((path (plist-get (json-path-to-position (or pos (point))) :path))
-         (path-str (seq-reduce #'concat
-                               (mapcar (lambda (elt)
-                                         (if (numberp elt)
-                                             (format "[%d]" elt)
-                                           (format ".%s" elt)))
-                                       path)
-                               "")))
-    (kill-new path-str)
-    (message path-str)))
-
-;; json-reformat is required by json-mode but probably obsolete now
-;; that we have `json-pretty-print' and friends.  Most importantly for
-;; me, I usually want to sort object keys, so just replace
-;; `json-mode-beautify' with a thin wrapper around
-;; `json-pretty-print-buffer-ordered'.
-(define-advice json-mode-beautify (:override () my:use-pretty-print-ordered)
-  (let ((json-encoding-default-indentation (make-string js-indent-level ?\s)))
-    (if (use-region-p)
-        (json-pretty-print-ordered (region-beginning) (region-end))
-      (json-pretty-print-buffer-ordered))))
-
 (with-eval-after-load 'json-mode
+  (my:load-recipes 'json-mode-show-path
+                   'json-mode-beautify)
+
   (bind-keys :map json-mode-map
              ("C-c C-p" . my:json-mode-show-path-jq)))
 
@@ -2601,6 +2511,18 @@ care that the maximum size is 0."
            ("M-m a o k g" . org-clock-goto))
 
 (with-eval-after-load 'org
+  (my:load-recipes
+   'org-babel-read-table-in-dblock
+   'org-columns-delete-property
+   'org-daily-time-summary
+   'org-fix-faces-after-goto
+   'org-insert-heading-ignore-invisibility
+   'org-jump-over-priority-after-setting-it
+   'org-make-nice-id-from-headline-text
+   'org-property-drawer-fixes
+   'org-switch-to-pending-on-clock-in
+   )
+
   (bind-keys :map org-mode-map
              ("C-c a" . org-agenda)
              ;; This interferes with avy, and I don't use
@@ -2659,16 +2581,6 @@ care that the maximum size is 0."
       org-clock-persist-query-resume nil)
 
 (org-clock-persistence-insinuate)
-
-;; Change task state to PENDING when clocking in on a task not already
-;; in PENDING.
-(defun my:org-switch-state-on-clock-in (current-state)
-  (when (and (member current-state '("NEW" "WAITING" "HOLD" "DONE"
-                                     "CANCELLED"))
-             (member "PENDING" org-not-done-keywords))
-    "PENDING"))
-
-(setq org-clock-in-switch-to-state #'my:org-switch-state-on-clock-in)
 
 ;; More compact clock display in mode line.
 (define-advice org-clock-get-clock-string
@@ -2759,15 +2671,6 @@ care that the maximum size is 0."
                 (nth 2 file)))
         tables)
   (funcall org-clock-clocktable-formatter ipos tables params))
-
-(my:load-recipes 'org-property-drawer-fixes
-                 'org-fix-faces-after-goto
-                 'org-babel-read-table-in-dblock
-                 'org-daily-time-summary
-                 'org-columns-delete-property
-                 'org-insert-heading-ignore-invisibility
-                 'org-jump-over-priority-after-setting-it
-                 'org-make-nice-id-from-headline-text)
 
 (defvar my:org-todo-files (mapcar #'expand-file-name
                                   '("~/todo.org" "~/todo.org_archive")))
