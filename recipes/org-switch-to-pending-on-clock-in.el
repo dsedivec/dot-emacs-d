@@ -3,6 +3,9 @@
 ;; Change task state to PENDING when clocking in on a task not already
 ;; in PENDING.
 
+(require 'org)
+(require 'org-clock)
+
 (defun my:org-switch-state-on-clock-in (current-state)
   (when (and (member current-state '("NEW" "WAITING" "HOLD" "DONE"
                                      "CANCELLED"))

@@ -2520,7 +2520,6 @@ care that the maximum size is 0."
    'org-jump-over-priority-after-setting-it
    'org-make-nice-id-from-headline-text
    'org-property-drawer-fixes
-   'org-switch-to-pending-on-clock-in
    )
 
   (bind-keys :map org-mode-map
@@ -2573,6 +2572,9 @@ care that the maximum size is 0."
     (setf (alist-get language org-babel-load-languages) t))
   (org-babel-do-load-languages 'org-babel-load-languages
                                org-babel-load-languages))
+
+(with-eval-after-load 'org-clock
+  (my:load-recipes 'org-switch-to-pending-on-clock-in))
 
 (add-hook 'org-mode-hook #'visual-line-mode)
 
