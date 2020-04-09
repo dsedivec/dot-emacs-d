@@ -2364,44 +2364,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq-default olivetti-body-width 80)
 
-;; https://github.com/rnkn/olivetti/issues/29
-
-(el-patch-feature olivetti)
-
-(with-eval-after-load 'olivetti
-  (el-patch-defun olivetti-set-margins
-      (&optional (el-patch-swap frame frame-or-window))
-    "Set text body width to `olivetti-body-width' with relative margins.
-
-Cycle through all windows displaying current buffer and first
-find the `olivetti-safe-width' to which to set
-`olivetti-body-width', then find the appropriate margin size
-relative to each window. Finally set the window margins, taking
-care that the maximum size is 0."
-    (el-patch-wrap 2 0
-      (let ((frame (if (framep frame-or-window)
-                       frame-or-window
-                     (window-frame frame-or-window))))
-        (dolist (window (get-buffer-window-list nil nil t))
-          (olivetti-reset-window window)
-          (let ((width (olivetti-safe-width olivetti-body-width window))
-                (window-width (window-total-width window))
-                (fringes (window-fringes window))
-                left-fringe right-fringe margin-total left-margin right-margin)
-            (cond ((integerp width)
-                   (setq width (olivetti-scale-width width)))
-                  ((floatp width)
-                   (setq width (* window-width width))))
-            (setq left-fringe (/ (car fringes) (float (frame-char-width frame)))
-                  right-fringe (/ (cadr fringes) (float (frame-char-width frame))))
-            (setq margin-total (max (/ (- window-width width) 2) 0)
-                  left-margin (max (round (- margin-total left-fringe)) 0)
-                  right-margin (max (round (- margin-total right-fringe)) 0))
-            (set-window-parameter window 'split-window 'olivetti-split-window)
-            (set-window-margins window left-margin right-margin))))))
-
-  (el-patch-validate 'olivetti-set-margins 'defun t))
-
 
 ;;; org
 
