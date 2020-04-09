@@ -1933,6 +1933,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (bind-key "M-/" 'hippie-expand)
 
+(with-eval-after-load 'hippie-exp
+  (setq hippie-expand-try-functions-list
+        (delq 'try-expand-line hippie-expand-try-functions-list)))
+
 
 ;;; hl-line+
 
