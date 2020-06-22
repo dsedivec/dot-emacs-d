@@ -1224,6 +1224,46 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   (advice-add func :around #'my:redefine-open-line-to-crux-smart-open-line))
 
 
+;;; css-mode
+
+;; `css-fill-paragraph' narrows comments, cutting off any indentation
+;; on the first line, which can result in a stupidly-long first line.
+;; We'll work around this by first de-denting the region if it's a
+;; comment.
+
+(defun my:css-mode-fill-paragraph-indented-comments (orig-fun &rest args)
+  (let (line-start-mark indent end-mark)
+    (cond
+      ((save-excursion
+         (and (integerp fill-column)
+              (progn
+                (let ((ppss (syntax-ppss)))
+                  (when (nth 4 ppss)
+                    (goto-char (nth 8 ppss))))
+                (beginning-of-line)
+                (setq line-start-mark (point-marker)
+                      indent (current-indentation))
+                (forward-comment 1))
+              (setq end-mark (point-marker))))
+       (prog1
+           (save-excursion
+             (indent-rigidly line-start-mark end-mark (- indent))
+             (unwind-protect
+                  (let ((fill-column (max (- fill-column indent) 1)))
+                    (apply orig-fun args))
+               (indent-rigidly line-start-mark end-mark indent)))
+         ;; When you M-q at the starting "/" of an indented comment,
+         ;; point gets moved to BOL for some reason, so move point
+         ;; somewhere more useful.
+         (when (bolp)
+           (back-to-indentation))))
+      (t
+       (apply orig-fun args)))))
+
+(advice-add 'css-fill-paragraph :around
+            #'my:css-mode-fill-paragraph-indented-comments)
+
+
 ;;; deft
 
 (setq deft-directory "~/Dropbox/dropsync/Notes"
