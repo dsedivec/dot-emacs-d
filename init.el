@@ -2244,7 +2244,8 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("C-c '" . my:gfm-fcb-edit)))
 
 (setq markdown-command "pandoc -f markdown -t html --standalone"
-      markdown-header-scaling t)
+      markdown-header-scaling t
+      markdown-enable-math t)
 
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil)
