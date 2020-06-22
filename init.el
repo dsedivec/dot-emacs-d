@@ -3789,16 +3789,22 @@ a string or comment."
 
 ;;; undo-tree
 
-(global-undo-tree-mode)
+(if (>= emacs-major-version 28)
+    ;; Trying new `undo-redo' in Emacs 28.
+    (bind-keys ("C-/" . undo-only)
+               ("s-z" . undo-only)
+               ("M-_" . undo-redo)
+               ("s-Z" . undo-redo))
+  (global-undo-tree-mode)
 
-(bind-keys :map undo-tree-map
-           ;; I want to use this for multiple-cursors.
-           ("C-?" . nil))
+  (bind-keys :map undo-tree-map
+             ;; I want to use this for multiple-cursors.
+             ("C-?" . nil))
 
-;; I never expect to be able to undo in a region, but this is on by
-;; default.  Turn it off.  Maybe someday I'll turn this back on (AKA
-;; leave it on) if I find a good use for it.
-(setq undo-tree-enable-undo-in-region nil)
+  ;; I never expect to be able to undo in a region, but this is on by
+  ;; default.  Turn it off.  Maybe someday I'll turn this back on (AKA
+  ;; leave it on) if I find a good use for it.
+  (setq undo-tree-enable-undo-in-region nil))
 
 
 ;;; unfill
