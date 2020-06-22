@@ -302,7 +302,8 @@ taken from the docstring of a minor mode function defined by
   (buffer-local-value variable (or buffer (current-buffer))))
 
 (gv-define-setter my:buffer-local-value (val variable &optional buffer)
-  `(set (make-local-variable ,variable) ,val))
+  `(with-current-buffer ,buffer
+     (set (make-local-variable ,variable) ,val)))
 
 (defun my:get-standard-value (var)
   "Return the standard value of VAR."
