@@ -4039,7 +4039,20 @@ a string or comment."
              ("C-M-u" . web-mode-element-parent)
              ("C-M-d" . web-mode-element-child)
              ("C-M-n" . web-mode-element-end)
-             ("M-m m i" . imp-visit-buffer)))
+             ("M-m m i" . imp-visit-buffer))
+
+  ;; I mostly work in Cheetah templates, which look a lot like
+  ;; Velocity templates, which do interpolation like $foo.  I don't
+  ;; want "$" to be part of the word "foo", it complicates things like
+  ;; Swiper's "search word under point".
+  ;;
+  ;; I reserve the right to later consider this to be a bad idea.
+  ;;
+  ;; I'm using "\" (escape syntax) because that's what cperl-mode uses
+  ;; for $.
+  ;;
+  ;; The syntax for $ was previously "w"ord, as of this writing.
+  (modify-syntax-entry ?$ "\\" web-mode-syntax-table))
 
 (which-key-add-major-mode-key-based-replacements 'web-mode
     "C-c C-a" "attribute"
