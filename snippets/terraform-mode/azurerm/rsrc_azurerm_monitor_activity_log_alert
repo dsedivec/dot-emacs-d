@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_monitor_activity_log_alert
+# key: key
+# --
+resource "azurerm_monitor_activity_log_alert" "$1" {
+  name = $2
+  resource_group_name = $3
+  scopes = $4
+
+  criteria {
+    category = $5
+  }
+}$0

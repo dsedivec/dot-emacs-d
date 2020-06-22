@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_private_dns_zone_virtual_network_link
+# key: key
+# --
+resource "azurerm_private_dns_zone_virtual_network_link" "$1" {
+  name = $2
+  private_dns_zone_name = $3
+  resource_group_name = $4
+  virtual_network_id = $5
+}$0

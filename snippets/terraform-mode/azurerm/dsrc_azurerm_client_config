@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azurerm_client_config
+# key: key
+# --
+data "azurerm_client_config" "$1" {
+}$0

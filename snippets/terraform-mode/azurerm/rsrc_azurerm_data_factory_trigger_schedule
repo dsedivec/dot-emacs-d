@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_data_factory_trigger_schedule
+# key: key
+# --
+resource "azurerm_data_factory_trigger_schedule" "$1" {
+  data_factory_name = $2
+  name = $3
+  pipeline_name = $4
+  resource_group_name = $5
+}$0

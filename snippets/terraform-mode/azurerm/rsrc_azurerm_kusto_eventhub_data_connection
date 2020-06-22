@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_kusto_eventhub_data_connection
+# key: key
+# --
+resource "azurerm_kusto_eventhub_data_connection" "$1" {
+  cluster_name = $2
+  consumer_group = $3
+  database_name = $4
+  eventhub_id = $5
+  location = $6
+  name = $7
+  resource_group_name = $8
+}$0

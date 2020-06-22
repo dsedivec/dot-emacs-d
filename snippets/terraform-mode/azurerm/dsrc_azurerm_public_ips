@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: data azurerm_public_ips
+# key: key
+# --
+data "azurerm_public_ips" "$1" {
+  resource_group_name = $2
+}$0

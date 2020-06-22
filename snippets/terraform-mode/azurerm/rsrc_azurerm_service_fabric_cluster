@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_service_fabric_cluster
+# key: key
+# --
+resource "azurerm_service_fabric_cluster" "$1" {
+  location = $2
+  management_endpoint = $3
+  name = $4
+  reliability_level = $5
+  resource_group_name = $6
+  upgrade_mode = $7
+  vm_image = $8
+
+  node_type {
+    client_endpoint_port = $9
+    http_endpoint_port = $10
+    instance_count = $11
+    is_primary = $12
+    name = $13
+  }
+}$0

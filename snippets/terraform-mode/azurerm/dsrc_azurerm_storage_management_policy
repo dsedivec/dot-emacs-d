@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: data azurerm_storage_management_policy
+# key: key
+# --
+data "azurerm_storage_management_policy" "$1" {
+  storage_account_id = $2
+}$0

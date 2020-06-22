@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_windows_virtual_machine_scale_set
+# key: key
+# --
+resource "azurerm_windows_virtual_machine_scale_set" "$1" {
+  admin_password = $2
+  admin_username = $3
+  instances = $4
+  location = $5
+  name = $6
+  resource_group_name = $7
+  sku = $8
+
+  network_interface {
+    name = $9
+
+    ip_configuration {
+      name = $10
+    }
+  }
+
+  os_disk {
+    caching = $11
+    storage_account_type = $12
+  }
+}$0

@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_openid_connect_provider
+# key: key
+# --
+resource "azurerm_api_management_openid_connect_provider" "$1" {
+  api_management_name = $2
+  client_id = $3
+  client_secret = $4
+  display_name = $5
+  metadata_endpoint = $6
+  name = $7
+  resource_group_name = $8
+}$0

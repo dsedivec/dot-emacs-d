@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_iotcentral_application
+# key: key
+# --
+resource "azurerm_iotcentral_application" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  sub_domain = $5
+}$0

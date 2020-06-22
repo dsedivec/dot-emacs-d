@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_storage_blob
+# key: key
+# --
+resource "azurerm_storage_blob" "$1" {
+  name = $2
+  storage_account_name = $3
+  storage_container_name = $4
+  type = $5
+}$0

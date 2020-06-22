@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_dns_caa_record
+# key: key
+# --
+resource "azurerm_dns_caa_record" "$1" {
+  name = $2
+  resource_group_name = $3
+  ttl = $4
+  zone_name = $5
+
+  record {
+    flags = $6
+    tag = $7
+    value = $8
+  }
+}$0

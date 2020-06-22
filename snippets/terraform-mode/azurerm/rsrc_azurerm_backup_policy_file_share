@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_backup_policy_file_share
+# key: key
+# --
+resource "azurerm_backup_policy_file_share" "$1" {
+  name = $2
+  recovery_vault_name = $3
+  resource_group_name = $4
+
+  backup {
+    frequency = $5
+    time = $6
+  }
+
+  retention_daily {
+    count = $7
+  }
+}$0

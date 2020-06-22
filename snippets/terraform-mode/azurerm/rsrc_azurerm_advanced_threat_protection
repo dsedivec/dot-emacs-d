@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_advanced_threat_protection
+# key: key
+# --
+resource "azurerm_advanced_threat_protection" "$1" {
+  enabled = $2
+  target_resource_id = $3
+}$0

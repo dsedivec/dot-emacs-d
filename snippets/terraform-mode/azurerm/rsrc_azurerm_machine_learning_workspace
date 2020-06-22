@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_machine_learning_workspace
+# key: key
+# --
+resource "azurerm_machine_learning_workspace" "$1" {
+  application_insights_id = $2
+  key_vault_id = $3
+  location = $4
+  name = $5
+  resource_group_name = $6
+  storage_account_id = $7
+
+  identity {
+    type = $8
+  }
+}$0

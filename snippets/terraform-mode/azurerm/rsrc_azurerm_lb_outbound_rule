@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_lb_outbound_rule
+# key: key
+# --
+resource "azurerm_lb_outbound_rule" "$1" {
+  backend_address_pool_id = $2
+  loadbalancer_id = $3
+  name = $4
+  protocol = $5
+  resource_group_name = $6
+}$0

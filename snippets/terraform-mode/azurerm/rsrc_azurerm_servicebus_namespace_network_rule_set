@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_servicebus_namespace_network_rule_set
+# key: key
+# --
+resource "azurerm_servicebus_namespace_network_rule_set" "$1" {
+  namespace_name = $2
+  resource_group_name = $3
+}$0

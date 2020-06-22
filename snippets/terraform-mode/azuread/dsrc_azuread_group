@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azuread_group
+# key: key
+# --
+data "azuread_group" "$1" {
+}$0

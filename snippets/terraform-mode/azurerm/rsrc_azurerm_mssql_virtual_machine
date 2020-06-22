@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_mssql_virtual_machine
+# key: key
+# --
+resource "azurerm_mssql_virtual_machine" "$1" {
+  sql_license_type = $2
+  virtual_machine_id = $3
+}$0

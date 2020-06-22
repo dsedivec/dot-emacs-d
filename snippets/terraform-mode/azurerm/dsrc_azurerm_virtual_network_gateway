@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_virtual_network_gateway
+# key: key
+# --
+data "azurerm_virtual_network_gateway" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

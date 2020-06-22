@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_batch_pool
+# key: key
+# --
+resource "azurerm_batch_pool" "$1" {
+  account_name = $2
+  name = $3
+  node_agent_sku_id = $4
+  resource_group_name = $5
+  vm_size = $6
+
+  storage_image_reference {
+  }
+}$0

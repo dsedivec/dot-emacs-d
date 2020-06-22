@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_machine_learning_workspace
+# key: key
+# --
+data "azurerm_machine_learning_workspace" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

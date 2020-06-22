@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_log_analytics_datasource_windows_event
+# key: key
+# --
+resource "azurerm_log_analytics_datasource_windows_event" "$1" {
+  event_log_name = $2
+  event_types = $3
+  name = $4
+  resource_group_name = $5
+  workspace_name = $6
+}$0

@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_batch_certificate
+# key: key
+# --
+resource "azurerm_batch_certificate" "$1" {
+  account_name = $2
+  certificate = $3
+  format = $4
+  resource_group_name = $5
+  thumbprint = $6
+  thumbprint_algorithm = $7
+}$0

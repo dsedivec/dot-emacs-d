@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_key_vault_certificate
+# key: key
+# --
+resource "azurerm_key_vault_certificate" "$1" {
+  key_vault_id = $2
+  name = $3
+
+  certificate_policy {
+
+    issuer_parameters {
+      name = $4
+    }
+
+    key_properties {
+      exportable = $5
+      key_size = $6
+      key_type = $7
+      reuse_key = $8
+    }
+
+    secret_properties {
+      content_type = $9
+    }
+  }
+}$0

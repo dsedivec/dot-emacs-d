@@ -1,0 +1,52 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_application_gateway
+# key: key
+# --
+resource "azurerm_application_gateway" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+
+  backend_address_pool {
+    name = $5
+  }
+
+  backend_http_settings {
+    cookie_based_affinity = $6
+    name = $7
+    port = $8
+    protocol = $9
+  }
+
+  frontend_ip_configuration {
+    name = $10
+  }
+
+  frontend_port {
+    name = $11
+    port = $12
+  }
+
+  gateway_ip_configuration {
+    name = $13
+    subnet_id = $14
+  }
+
+  http_listener {
+    frontend_ip_configuration_name = $15
+    frontend_port_name = $16
+    name = $17
+    protocol = $18
+  }
+
+  request_routing_rule {
+    http_listener_name = $19
+    name = $20
+    rule_type = $21
+  }
+
+  sku {
+    name = $22
+    tier = $23
+  }
+}$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_sentinel_alert_rule
+# key: key
+# --
+data "azurerm_sentinel_alert_rule" "$1" {
+  log_analytics_workspace_id = $2
+  name = $3
+}$0

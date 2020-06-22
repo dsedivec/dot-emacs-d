@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_bot_channel_slack
+# key: key
+# --
+resource "azurerm_bot_channel_slack" "$1" {
+  bot_name = $2
+  client_id = $3
+  client_secret = $4
+  location = $5
+  resource_group_name = $6
+  verification_token = $7
+}$0

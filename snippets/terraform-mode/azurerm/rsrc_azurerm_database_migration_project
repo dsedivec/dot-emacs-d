@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_database_migration_project
+# key: key
+# --
+resource "azurerm_database_migration_project" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  service_name = $5
+  source_platform = $6
+  target_platform = $7
+}$0

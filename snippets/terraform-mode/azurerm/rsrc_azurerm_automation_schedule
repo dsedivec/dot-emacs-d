@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_automation_schedule
+# key: key
+# --
+resource "azurerm_automation_schedule" "$1" {
+  automation_account_name = $2
+  frequency = $3
+  name = $4
+  resource_group_name = $5
+}$0

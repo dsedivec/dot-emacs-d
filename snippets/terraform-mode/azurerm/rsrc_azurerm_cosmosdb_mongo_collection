@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_cosmosdb_mongo_collection
+# key: key
+# --
+resource "azurerm_cosmosdb_mongo_collection" "$1" {
+  account_name = $2
+  database_name = $3
+  name = $4
+  resource_group_name = $5
+}$0

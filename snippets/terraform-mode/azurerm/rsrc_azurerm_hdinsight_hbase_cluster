@@ -1,0 +1,40 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_hdinsight_hbase_cluster
+# key: key
+# --
+resource "azurerm_hdinsight_hbase_cluster" "$1" {
+  cluster_version = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+  tier = $6
+
+  component_version {
+    hbase = $7
+  }
+
+  gateway {
+    enabled = $8
+    password = $9
+    username = $10
+  }
+
+  roles {
+
+    head_node {
+      username = $11
+      vm_size = $12
+    }
+
+    worker_node {
+      target_instance_count = $13
+      username = $14
+      vm_size = $15
+    }
+
+    zookeeper_node {
+      username = $16
+      vm_size = $17
+    }
+  }
+}$0

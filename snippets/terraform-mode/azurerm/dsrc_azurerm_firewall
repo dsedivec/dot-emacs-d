@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_firewall
+# key: key
+# --
+data "azurerm_firewall" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

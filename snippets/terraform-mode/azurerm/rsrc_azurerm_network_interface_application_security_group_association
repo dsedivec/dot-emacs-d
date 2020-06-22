@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_network_interface_application_security_group_association
+# key: key
+# --
+resource "azurerm_network_interface_application_security_group_association" "$1" {
+  application_security_group_id = $2
+  network_interface_id = $3
+}$0

@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_network_profile
+# key: key
+# --
+resource "azurerm_network_profile" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+
+  container_network_interface {
+    name = $5
+
+    ip_configuration {
+      name = $6
+      subnet_id = $7
+    }
+  }
+}$0

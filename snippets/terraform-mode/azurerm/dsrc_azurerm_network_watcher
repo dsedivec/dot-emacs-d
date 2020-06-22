@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_network_watcher
+# key: key
+# --
+data "azurerm_network_watcher" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

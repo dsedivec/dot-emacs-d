@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_key_vault_key
+# key: key
+# --
+resource "azurerm_key_vault_key" "$1" {
+  key_opts = [$2]
+  key_type = $3
+  key_vault_id = $4
+  name = $5
+}$0

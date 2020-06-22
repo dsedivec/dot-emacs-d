@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_nat_gateway_public_ip_association
+# key: key
+# --
+resource "azurerm_nat_gateway_public_ip_association" "$1" {
+  nat_gateway_id = $2
+  public_ip_address_id = $3
+}$0

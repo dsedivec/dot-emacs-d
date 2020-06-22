@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azurerm_role_definition
+# key: key
+# --
+data "azurerm_role_definition" "$1" {
+}$0

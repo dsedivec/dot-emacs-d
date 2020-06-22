@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_site_recovery_network_mapping
+# key: key
+# --
+resource "azurerm_site_recovery_network_mapping" "$1" {
+  name = $2
+  recovery_vault_name = $3
+  resource_group_name = $4
+  source_network_id = $5
+  source_recovery_fabric_name = $6
+  target_network_id = $7
+  target_recovery_fabric_name = $8
+}$0

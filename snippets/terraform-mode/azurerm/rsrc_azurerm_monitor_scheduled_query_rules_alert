@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_monitor_scheduled_query_rules_alert
+# key: key
+# --
+resource "azurerm_monitor_scheduled_query_rules_alert" "$1" {
+  data_source_id = $2
+  frequency = $3
+  location = $4
+  name = $5
+  query = $6
+  resource_group_name = $7
+  time_window = $8
+
+  action {
+    action_group = $9
+  }
+
+  trigger {
+    operator = $10
+    threshold = $11
+  }
+}$0

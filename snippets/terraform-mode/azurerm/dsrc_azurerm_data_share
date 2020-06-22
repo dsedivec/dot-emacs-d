@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_data_share
+# key: key
+# --
+data "azurerm_data_share" "$1" {
+  account_id = $2
+  name = $3
+}$0

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: data azurerm_backup_policy_vm
+# key: key
+# --
+data "azurerm_backup_policy_vm" "$1" {
+  name = $2
+  recovery_vault_name = $3
+  resource_group_name = $4
+}$0

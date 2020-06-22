@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_monitor_scheduled_query_rules_log
+# key: key
+# --
+resource "azurerm_monitor_scheduled_query_rules_log" "$1" {
+  data_source_id = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+
+  criteria {
+    metric_name = $6
+
+    dimension {
+      name = $7
+      values = [$8]
+    }
+  }
+}$0

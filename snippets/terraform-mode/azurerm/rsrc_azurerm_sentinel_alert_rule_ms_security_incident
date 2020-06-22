@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_sentinel_alert_rule_ms_security_incident
+# key: key
+# --
+resource "azurerm_sentinel_alert_rule_ms_security_incident" "$1" {
+  display_name = $2
+  log_analytics_workspace_id = $3
+  name = $4
+  product_filter = $5
+  severity_filter = $6
+}$0

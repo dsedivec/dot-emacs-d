@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_network_ddos_protection_plan
+# key: key
+# --
+data "azurerm_network_ddos_protection_plan" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

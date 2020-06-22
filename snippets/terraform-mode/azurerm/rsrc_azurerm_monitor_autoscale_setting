@@ -1,0 +1,20 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_monitor_autoscale_setting
+# key: key
+# --
+resource "azurerm_monitor_autoscale_setting" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  target_resource_id = $5
+
+  profile {
+    name = $6
+
+    capacity {
+      default = $7
+      maximum = $8
+      minimum = $9
+    }
+  }
+}$0

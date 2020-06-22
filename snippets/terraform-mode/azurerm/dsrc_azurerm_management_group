@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azurerm_management_group
+# key: key
+# --
+data "azurerm_management_group" "$1" {
+}$0

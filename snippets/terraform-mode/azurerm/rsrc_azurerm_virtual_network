@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_virtual_network
+# key: key
+# --
+resource "azurerm_virtual_network" "$1" {
+  address_space = [$2]
+  location = $3
+  name = $4
+  resource_group_name = $5
+}$0

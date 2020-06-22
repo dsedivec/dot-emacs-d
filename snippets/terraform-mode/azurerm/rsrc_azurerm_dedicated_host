@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_dedicated_host
+# key: key
+# --
+resource "azurerm_dedicated_host" "$1" {
+  dedicated_host_group_id = $2
+  location = $3
+  name = $4
+  platform_fault_domain = $5
+  sku_name = $6
+}$0

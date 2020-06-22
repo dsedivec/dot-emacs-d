@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_disk_encryption_set
+# key: key
+# --
+resource "azurerm_disk_encryption_set" "$1" {
+  key_vault_key_id = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+
+  identity {
+    type = $6
+  }
+}$0

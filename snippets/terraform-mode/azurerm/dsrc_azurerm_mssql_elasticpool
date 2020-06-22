@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: data azurerm_mssql_elasticpool
+# key: key
+# --
+data "azurerm_mssql_elasticpool" "$1" {
+  name = $2
+  resource_group_name = $3
+  server_name = $4
+}$0

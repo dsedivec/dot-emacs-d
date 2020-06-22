@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: data azurerm_monitor_diagnostic_categories
+# key: key
+# --
+data "azurerm_monitor_diagnostic_categories" "$1" {
+  resource_id = $2
+}$0

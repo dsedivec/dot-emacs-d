@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_identity_provider_microsoft
+# key: key
+# --
+resource "azurerm_api_management_identity_provider_microsoft" "$1" {
+  api_management_name = $2
+  client_id = $3
+  client_secret = $4
+  resource_group_name = $5
+}$0

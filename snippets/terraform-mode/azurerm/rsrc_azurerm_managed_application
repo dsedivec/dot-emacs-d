@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_managed_application
+# key: key
+# --
+resource "azurerm_managed_application" "$1" {
+  kind = $2
+  location = $3
+  managed_resource_group_name = $4
+  name = $5
+  resource_group_name = $6
+}$0

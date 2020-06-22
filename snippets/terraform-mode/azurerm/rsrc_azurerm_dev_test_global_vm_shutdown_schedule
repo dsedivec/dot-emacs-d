@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_dev_test_global_vm_shutdown_schedule
+# key: key
+# --
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "$1" {
+  daily_recurrence_time = $2
+  location = $3
+  timezone = $4
+  virtual_machine_id = $5
+
+  notification_settings {
+    enabled = $6
+  }
+}$0

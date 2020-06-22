@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_cost_management_export_resource_group
+# key: key
+# --
+resource "azurerm_cost_management_export_resource_group" "$1" {
+  name = $2
+  recurrence_period_end = $3
+  recurrence_period_start = $4
+  recurrence_type = $5
+  resource_group_id = $6
+
+  delivery_info {
+    container_name = $7
+    root_folder_path = $8
+    storage_account_id = $9
+  }
+
+  query {
+    time_frame = $10
+    type = $11
+  }
+}$0

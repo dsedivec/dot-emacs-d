@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_automation_variable_datetime
+# key: key
+# --
+resource "azurerm_automation_variable_datetime" "$1" {
+  automation_account_name = $2
+  name = $3
+  resource_group_name = $4
+}$0

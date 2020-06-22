@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_eventgrid_topic
+# key: key
+# --
+data "azurerm_eventgrid_topic" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

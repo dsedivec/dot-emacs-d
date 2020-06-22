@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_netapp_pool
+# key: key
+# --
+resource "azurerm_netapp_pool" "$1" {
+  account_name = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+  service_level = $6
+  size_in_tb = $7
+}$0

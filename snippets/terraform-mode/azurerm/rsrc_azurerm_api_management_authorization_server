@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_authorization_server
+# key: key
+# --
+resource "azurerm_api_management_authorization_server" "$1" {
+  api_management_name = $2
+  authorization_endpoint = $3
+  authorization_methods = $4
+  client_id = $5
+  client_registration_endpoint = $6
+  display_name = $7
+  grant_types = $8
+  name = $9
+  resource_group_name = $10
+}$0

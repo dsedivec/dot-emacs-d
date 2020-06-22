@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_private_dns_zone
+# key: key
+# --
+resource "azurerm_private_dns_zone" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

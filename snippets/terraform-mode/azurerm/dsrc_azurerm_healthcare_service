@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: data azurerm_healthcare_service
+# key: key
+# --
+data "azurerm_healthcare_service" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+}$0

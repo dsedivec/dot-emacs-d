@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_storage_container
+# key: key
+# --
+data "azurerm_storage_container" "$1" {
+  name = $2
+  storage_account_name = $3
+}$0

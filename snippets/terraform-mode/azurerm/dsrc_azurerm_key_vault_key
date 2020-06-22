@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_key_vault_key
+# key: key
+# --
+data "azurerm_key_vault_key" "$1" {
+  key_vault_id = $2
+  name = $3
+}$0

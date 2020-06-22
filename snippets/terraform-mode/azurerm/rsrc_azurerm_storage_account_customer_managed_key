@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_storage_account_customer_managed_key
+# key: key
+# --
+resource "azurerm_storage_account_customer_managed_key" "$1" {
+  key_name = $2
+  key_vault_id = $3
+  key_version = $4
+  storage_account_id = $5
+}$0

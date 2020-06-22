@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_backup_policy_vm
+# key: key
+# --
+resource "azurerm_backup_policy_vm" "$1" {
+  name = $2
+  recovery_vault_name = $3
+  resource_group_name = $4
+
+  backup {
+    frequency = $5
+    time = $6
+  }
+}$0

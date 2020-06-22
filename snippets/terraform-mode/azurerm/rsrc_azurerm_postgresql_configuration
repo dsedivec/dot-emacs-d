@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_postgresql_configuration
+# key: key
+# --
+resource "azurerm_postgresql_configuration" "$1" {
+  name = $2
+  resource_group_name = $3
+  server_name = $4
+  value = $5
+}$0

@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_sql_failover_group
+# key: key
+# --
+resource "azurerm_sql_failover_group" "$1" {
+  name = $2
+  resource_group_name = $3
+  server_name = $4
+
+  partner_servers {
+    id = $5
+  }
+
+  read_write_endpoint_failover_policy {
+    mode = $6
+  }
+}$0

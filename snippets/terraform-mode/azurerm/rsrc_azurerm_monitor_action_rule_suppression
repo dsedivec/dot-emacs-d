@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_monitor_action_rule_suppression
+# key: key
+# --
+resource "azurerm_monitor_action_rule_suppression" "$1" {
+  name = $2
+  resource_group_name = $3
+
+  suppression {
+    recurrence_type = $4
+  }
+}$0

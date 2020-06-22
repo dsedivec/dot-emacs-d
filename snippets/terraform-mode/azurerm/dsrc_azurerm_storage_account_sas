@@ -1,0 +1,33 @@
+# -*- mode: snippet -*-
+# name: data azurerm_storage_account_sas
+# key: key
+# --
+data "azurerm_storage_account_sas" "$1" {
+  connection_string = $2
+  expiry = $3
+  start = $4
+
+  permissions {
+    add = $5
+    create = $6
+    delete = $7
+    list = $8
+    process = $9
+    read = $10
+    update = $11
+    write = $12
+  }
+
+  resource_types {
+    container = $13
+    object = $14
+    service = $15
+  }
+
+  services {
+    blob = $16
+    file = $17
+    queue = $18
+    table = $19
+  }
+}$0

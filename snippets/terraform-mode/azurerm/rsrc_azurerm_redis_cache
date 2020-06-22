@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_redis_cache
+# key: key
+# --
+resource "azurerm_redis_cache" "$1" {
+  capacity = $2
+  family = $3
+  location = $4
+  name = $5
+  resource_group_name = $6
+  sku_name = $7
+}$0

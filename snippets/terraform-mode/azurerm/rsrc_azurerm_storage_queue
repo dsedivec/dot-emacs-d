@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_storage_queue
+# key: key
+# --
+resource "azurerm_storage_queue" "$1" {
+  name = $2
+  storage_account_name = $3
+}$0

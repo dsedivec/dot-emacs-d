@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azuread_application_certificate
+# key: key
+# --
+resource "azuread_application_certificate" "$1" {
+  application_object_id = $2
+  value = $3
+}$0

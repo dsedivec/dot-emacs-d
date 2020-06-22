@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_log_analytics_datasource_windows_performance_counter
+# key: key
+# --
+resource "azurerm_log_analytics_datasource_windows_performance_counter" "$1" {
+  counter_name = $2
+  instance_name = $3
+  interval_seconds = $4
+  name = $5
+  object_name = $6
+  resource_group_name = $7
+  workspace_name = $8
+}$0

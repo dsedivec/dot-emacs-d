@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_container_registry_webhook
+# key: key
+# --
+resource "azurerm_container_registry_webhook" "$1" {
+  actions = $2
+  location = $3
+  name = $4
+  registry_name = $5
+  resource_group_name = $6
+  service_uri = $7
+}$0

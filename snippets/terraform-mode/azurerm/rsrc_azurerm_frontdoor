@@ -1,0 +1,43 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_frontdoor
+# key: key
+# --
+resource "azurerm_frontdoor" "$1" {
+  enforce_backend_pools_certificate_name_check = $2
+  name = $3
+  resource_group_name = $4
+
+  backend_pool {
+    health_probe_name = $5
+    load_balancing_name = $6
+    name = $7
+
+    backend {
+      address = $8
+      host_header = $9
+      http_port = $10
+      https_port = $11
+    }
+  }
+
+  backend_pool_health_probe {
+    name = $12
+  }
+
+  backend_pool_load_balancing {
+    name = $13
+  }
+
+  frontend_endpoint {
+    custom_https_provisioning_enabled = $14
+    host_name = $15
+    name = $16
+  }
+
+  routing_rule {
+    accepted_protocols = [$17]
+    frontend_endpoints = [$18]
+    name = $19
+    patterns_to_match = [$20]
+  }
+}$0

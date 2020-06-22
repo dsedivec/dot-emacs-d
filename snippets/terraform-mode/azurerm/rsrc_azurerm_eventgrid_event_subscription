@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_eventgrid_event_subscription
+# key: key
+# --
+resource "azurerm_eventgrid_event_subscription" "$1" {
+  name = $2
+  scope = $3
+}$0

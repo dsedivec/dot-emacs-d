@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_hpc_cache_nfs_target
+# key: key
+# --
+resource "azurerm_hpc_cache_nfs_target" "$1" {
+  cache_name = $2
+  name = $3
+  resource_group_name = $4
+  target_host_name = $5
+  usage_model = $6
+
+  namespace_junction {
+    namespace_path = $7
+    nfs_export = $8
+  }
+}$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: data azurerm_netapp_snapshot
+# key: key
+# --
+data "azurerm_netapp_snapshot" "$1" {
+  account_name = $2
+  name = $3
+  pool_name = $4
+  resource_group_name = $5
+  volume_name = $6
+}$0

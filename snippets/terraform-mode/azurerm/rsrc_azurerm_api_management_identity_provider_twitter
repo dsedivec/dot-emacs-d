@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_identity_provider_twitter
+# key: key
+# --
+resource "azurerm_api_management_identity_provider_twitter" "$1" {
+  api_key = $2
+  api_management_name = $3
+  api_secret_key = $4
+  resource_group_name = $5
+}$0

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_data_factory_linked_service_postgresql
+# key: key
+# --
+resource "azurerm_data_factory_linked_service_postgresql" "$1" {
+  connection_string = $2
+  data_factory_name = $3
+  name = $4
+  resource_group_name = $5
+}$0

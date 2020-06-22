@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_policy_definition
+# key: key
+# --
+resource "azurerm_policy_definition" "$1" {
+  display_name = $2
+  mode = $3
+  name = $4
+  policy_type = $5
+}$0

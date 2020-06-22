@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_servicebus_namespace
+# key: key
+# --
+data "azurerm_servicebus_namespace" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

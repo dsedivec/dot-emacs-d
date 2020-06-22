@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_site_recovery_fabric
+# key: key
+# --
+resource "azurerm_site_recovery_fabric" "$1" {
+  location = $2
+  name = $3
+  recovery_vault_name = $4
+  resource_group_name = $5
+}$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_mariadb_server
+# key: key
+# --
+resource "azurerm_mariadb_server" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  sku_name = $5
+  version = $6
+}$0

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: data azurerm_dns_zone
+# key: key
+# --
+data "azurerm_dns_zone" "$1" {
+  name = $2
+}$0

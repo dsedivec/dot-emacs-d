@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_notification_hub_namespace
+# key: key
+# --
+data "azurerm_notification_hub_namespace" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_database_migration_service
+# key: key
+# --
+data "azurerm_database_migration_service" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

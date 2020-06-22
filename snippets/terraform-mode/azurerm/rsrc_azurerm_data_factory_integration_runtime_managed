@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_data_factory_integration_runtime_managed
+# key: key
+# --
+resource "azurerm_data_factory_integration_runtime_managed" "$1" {
+  data_factory_name = $2
+  location = $3
+  name = $4
+  node_size = $5
+  resource_group_name = $6
+}$0

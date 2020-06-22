@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_logic_app_trigger_recurrence
+# key: key
+# --
+resource "azurerm_logic_app_trigger_recurrence" "$1" {
+  frequency = $2
+  interval = $3
+  logic_app_id = $4
+  name = $5
+}$0

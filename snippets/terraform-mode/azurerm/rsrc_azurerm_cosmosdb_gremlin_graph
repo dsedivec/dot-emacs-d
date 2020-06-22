@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_cosmosdb_gremlin_graph
+# key: key
+# --
+resource "azurerm_cosmosdb_gremlin_graph" "$1" {
+  account_name = $2
+  database_name = $3
+  name = $4
+  resource_group_name = $5
+
+  conflict_resolution_policy {
+    mode = $6
+  }
+
+  index_policy {
+    indexing_mode = $7
+  }
+}$0

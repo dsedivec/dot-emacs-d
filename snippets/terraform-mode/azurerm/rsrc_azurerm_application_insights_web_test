@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_application_insights_web_test
+# key: key
+# --
+resource "azurerm_application_insights_web_test" "$1" {
+  application_insights_id = $2
+  configuration = $3
+  geo_locations = [$4]
+  kind = $5
+  location = $6
+  name = $7
+  resource_group_name = $8
+}$0

@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_sentinel_alert_rule_scheduled
+# key: key
+# --
+resource "azurerm_sentinel_alert_rule_scheduled" "$1" {
+  display_name = $2
+  log_analytics_workspace_id = $3
+  name = $4
+  query = $5
+  severity = $6
+}$0

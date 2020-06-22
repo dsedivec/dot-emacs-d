@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: resource azuread_service_principal
+# key: key
+# --
+resource "azuread_service_principal" "$1" {
+  application_id = $2
+}$0

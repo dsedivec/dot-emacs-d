@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_kubernetes_cluster
+# key: key
+# --
+resource "azurerm_kubernetes_cluster" "$1" {
+  dns_prefix = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+
+  default_node_pool {
+    name = $6
+    vm_size = $7
+  }
+}$0

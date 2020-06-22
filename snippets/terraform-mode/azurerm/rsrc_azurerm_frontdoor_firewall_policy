@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_frontdoor_firewall_policy
+# key: key
+# --
+resource "azurerm_frontdoor_firewall_policy" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

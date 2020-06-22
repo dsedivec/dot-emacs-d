@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_network_watcher_flow_log
+# key: key
+# --
+resource "azurerm_network_watcher_flow_log" "$1" {
+  enabled = $2
+  network_security_group_id = $3
+  network_watcher_name = $4
+  resource_group_name = $5
+  storage_account_id = $6
+
+  retention_policy {
+    days = $7
+    enabled = $8
+  }
+}$0

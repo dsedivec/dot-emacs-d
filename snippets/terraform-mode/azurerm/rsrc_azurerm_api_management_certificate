@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_certificate
+# key: key
+# --
+resource "azurerm_api_management_certificate" "$1" {
+  api_management_name = $2
+  data = $3
+  name = $4
+  resource_group_name = $5
+}$0

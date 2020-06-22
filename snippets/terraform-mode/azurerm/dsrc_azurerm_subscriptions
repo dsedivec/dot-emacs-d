@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azurerm_subscriptions
+# key: key
+# --
+data "azurerm_subscriptions" "$1" {
+}$0

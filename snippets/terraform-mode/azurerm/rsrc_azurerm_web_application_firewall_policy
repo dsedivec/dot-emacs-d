@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_web_application_firewall_policy
+# key: key
+# --
+resource "azurerm_web_application_firewall_policy" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+
+  managed_rules {
+
+    managed_rule_set {
+      version = $5
+    }
+  }
+}$0

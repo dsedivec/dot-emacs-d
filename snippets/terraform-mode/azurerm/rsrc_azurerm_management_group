@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_management_group
+# key: key
+# --
+resource "azurerm_management_group" "$1" {
+}$0

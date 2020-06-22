@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_site_recovery_protection_container_mapping
+# key: key
+# --
+resource "azurerm_site_recovery_protection_container_mapping" "$1" {
+  name = $2
+  recovery_fabric_name = $3
+  recovery_replication_policy_id = $4
+  recovery_source_protection_container_name = $5
+  recovery_target_protection_container_id = $6
+  recovery_vault_name = $7
+  resource_group_name = $8
+}$0

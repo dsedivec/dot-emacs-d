@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_iothub_dps
+# key: key
+# --
+data "azurerm_iothub_dps" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

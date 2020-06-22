@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_sql_server
+# key: key
+# --
+resource "azurerm_sql_server" "$1" {
+  administrator_login = $2
+  administrator_login_password = $3
+  location = $4
+  name = $5
+  resource_group_name = $6
+  version = $7
+}$0

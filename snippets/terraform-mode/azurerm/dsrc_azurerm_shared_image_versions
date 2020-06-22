@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: data azurerm_shared_image_versions
+# key: key
+# --
+data "azurerm_shared_image_versions" "$1" {
+  gallery_name = $2
+  image_name = $3
+  resource_group_name = $4
+}$0

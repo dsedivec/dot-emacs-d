@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_cosmosdb_account
+# key: key
+# --
+resource "azurerm_cosmosdb_account" "$1" {
+  location = $2
+  name = $3
+  offer_type = $4
+  resource_group_name = $5
+
+  consistency_policy {
+    consistency_level = $6
+  }
+
+  geo_location {
+    failover_priority = $7
+    location = $8
+  }
+}$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_private_endpoint_connection
+# key: key
+# --
+data "azurerm_private_endpoint_connection" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

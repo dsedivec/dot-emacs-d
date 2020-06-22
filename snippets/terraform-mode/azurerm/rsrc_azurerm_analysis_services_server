@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_analysis_services_server
+# key: key
+# --
+resource "azurerm_analysis_services_server" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  sku = $5
+}$0

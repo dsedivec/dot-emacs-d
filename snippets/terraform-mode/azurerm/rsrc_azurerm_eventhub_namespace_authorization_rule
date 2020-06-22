@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_eventhub_namespace_authorization_rule
+# key: key
+# --
+resource "azurerm_eventhub_namespace_authorization_rule" "$1" {
+  name = $2
+  namespace_name = $3
+  resource_group_name = $4
+}$0

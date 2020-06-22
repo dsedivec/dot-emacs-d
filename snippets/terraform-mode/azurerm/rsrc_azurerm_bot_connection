@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_bot_connection
+# key: key
+# --
+resource "azurerm_bot_connection" "$1" {
+  bot_name = $2
+  client_id = $3
+  client_secret = $4
+  location = $5
+  name = $6
+  resource_group_name = $7
+  service_provider_name = $8
+}$0

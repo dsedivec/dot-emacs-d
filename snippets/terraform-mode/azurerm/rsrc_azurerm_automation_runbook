@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_automation_runbook
+# key: key
+# --
+resource "azurerm_automation_runbook" "$1" {
+  automation_account_name = $2
+  location = $3
+  log_progress = $4
+  log_verbose = $5
+  name = $6
+  resource_group_name = $7
+  runbook_type = $8
+}$0

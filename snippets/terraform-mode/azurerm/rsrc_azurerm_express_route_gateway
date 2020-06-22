@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_express_route_gateway
+# key: key
+# --
+resource "azurerm_express_route_gateway" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  scale_units = $5
+  virtual_hub_id = $6
+}$0

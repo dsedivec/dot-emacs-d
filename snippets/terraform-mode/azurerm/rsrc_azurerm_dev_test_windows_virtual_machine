@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_dev_test_windows_virtual_machine
+# key: key
+# --
+resource "azurerm_dev_test_windows_virtual_machine" "$1" {
+  lab_name = $2
+  lab_subnet_name = $3
+  lab_virtual_network_id = $4
+  location = $5
+  name = $6
+  password = $7
+  resource_group_name = $8
+  size = $9
+  storage_type = $10
+  username = $11
+
+  gallery_image_reference {
+    offer = $12
+    publisher = $13
+    sku = $14
+    version = $15
+  }
+}$0

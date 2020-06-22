@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_private_link_service
+# key: key
+# --
+resource "azurerm_private_link_service" "$1" {
+  load_balancer_frontend_ip_configuration_ids = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+
+  nat_ip_configuration {
+    name = $6
+    primary = $7
+    subnet_id = $8
+  }
+}$0

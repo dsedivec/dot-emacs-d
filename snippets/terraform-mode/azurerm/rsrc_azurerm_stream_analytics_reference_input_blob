@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_stream_analytics_reference_input_blob
+# key: key
+# --
+resource "azurerm_stream_analytics_reference_input_blob" "$1" {
+  date_format = $2
+  name = $3
+  path_pattern = $4
+  resource_group_name = $5
+  storage_account_key = $6
+  storage_account_name = $7
+  storage_container_name = $8
+  stream_analytics_job_name = $9
+  time_format = $10
+
+  serialization {
+    type = $11
+  }
+}$0

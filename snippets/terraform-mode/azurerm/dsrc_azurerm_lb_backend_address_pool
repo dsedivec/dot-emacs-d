@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_lb_backend_address_pool
+# key: key
+# --
+data "azurerm_lb_backend_address_pool" "$1" {
+  loadbalancer_id = $2
+  name = $3
+}$0

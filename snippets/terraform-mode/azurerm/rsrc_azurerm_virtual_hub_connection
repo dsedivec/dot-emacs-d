@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_virtual_hub_connection
+# key: key
+# --
+resource "azurerm_virtual_hub_connection" "$1" {
+  name = $2
+  remote_virtual_network_id = $3
+  virtual_hub_id = $4
+}$0

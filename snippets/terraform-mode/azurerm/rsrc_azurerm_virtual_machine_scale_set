@@ -1,0 +1,35 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_virtual_machine_scale_set
+# key: key
+# --
+resource "azurerm_virtual_machine_scale_set" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  upgrade_policy_mode = $5
+
+  network_profile {
+    name = $6
+    primary = $7
+
+    ip_configuration {
+      name = $8
+      primary = $9
+      subnet_id = $10
+    }
+  }
+
+  os_profile {
+    admin_username = $11
+    computer_name_prefix = $12
+  }
+
+  sku {
+    capacity = $13
+    name = $14
+  }
+
+  storage_profile_os_disk {
+    create_option = $15
+  }
+}$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azuread_domains
+# key: key
+# --
+data "azuread_domains" "$1" {
+}$0

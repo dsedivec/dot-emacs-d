@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_kusto_database_principal
+# key: key
+# --
+resource "azurerm_kusto_database_principal" "$1" {
+  client_id = $2
+  cluster_name = $3
+  database_name = $4
+  object_id = $5
+  resource_group_name = $6
+  role = $7
+  type = $8
+}$0

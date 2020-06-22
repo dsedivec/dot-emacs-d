@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_bot_channel_email
+# key: key
+# --
+resource "azurerm_bot_channel_email" "$1" {
+  bot_name = $2
+  email_address = $3
+  email_password = $4
+  location = $5
+  resource_group_name = $6
+}$0

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_product_group
+# key: key
+# --
+resource "azurerm_api_management_product_group" "$1" {
+  api_management_name = $2
+  group_name = $3
+  product_id = $4
+  resource_group_name = $5
+}$0

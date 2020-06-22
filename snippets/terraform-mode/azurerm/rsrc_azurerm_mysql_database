@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_mysql_database
+# key: key
+# --
+resource "azurerm_mysql_database" "$1" {
+  charset = $2
+  collation = $3
+  name = $4
+  resource_group_name = $5
+  server_name = $6
+}$0

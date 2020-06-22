@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_backup_protected_file_share
+# key: key
+# --
+resource "azurerm_backup_protected_file_share" "$1" {
+  backup_policy_id = $2
+  recovery_vault_name = $3
+  resource_group_name = $4
+  source_file_share_name = $5
+  source_storage_account_id = $6
+}$0

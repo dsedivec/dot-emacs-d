@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_automation_certificate
+# key: key
+# --
+resource "azurerm_automation_certificate" "$1" {
+  automation_account_name = $2
+  base64 = $3
+  name = $4
+  resource_group_name = $5
+}$0

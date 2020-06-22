@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: resource azuread_application
+# key: key
+# --
+resource "azuread_application" "$1" {
+  name = $2
+}$0

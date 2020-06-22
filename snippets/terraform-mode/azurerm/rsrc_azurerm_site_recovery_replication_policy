@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_site_recovery_replication_policy
+# key: key
+# --
+resource "azurerm_site_recovery_replication_policy" "$1" {
+  application_consistent_snapshot_frequency_in_minutes = $2
+  name = $3
+  recovery_point_retention_in_minutes = $4
+  recovery_vault_name = $5
+  resource_group_name = $6
+}$0

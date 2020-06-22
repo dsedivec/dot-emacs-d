@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_network_connection_monitor
+# key: key
+# --
+resource "azurerm_network_connection_monitor" "$1" {
+  location = $2
+  name = $3
+  network_watcher_name = $4
+  resource_group_name = $5
+
+  destination {
+    port = $6
+  }
+
+  source {
+    virtual_machine_id = $7
+  }
+}$0

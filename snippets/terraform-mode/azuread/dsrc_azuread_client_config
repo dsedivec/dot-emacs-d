@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azuread_client_config
+# key: key
+# --
+data "azuread_client_config" "$1" {
+}$0

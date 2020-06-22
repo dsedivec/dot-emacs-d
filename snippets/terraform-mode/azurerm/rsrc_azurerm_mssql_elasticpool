@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_mssql_elasticpool
+# key: key
+# --
+resource "azurerm_mssql_elasticpool" "$1" {
+  location = $2
+  name = $3
+  resource_group_name = $4
+  server_name = $5
+
+  per_database_settings {
+    max_capacity = $6
+    min_capacity = $7
+  }
+
+  sku {
+    capacity = $8
+    name = $9
+    tier = $10
+  }
+}$0

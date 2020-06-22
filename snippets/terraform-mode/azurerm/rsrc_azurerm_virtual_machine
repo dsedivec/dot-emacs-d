@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_virtual_machine
+# key: key
+# --
+resource "azurerm_virtual_machine" "$1" {
+  location = $2
+  name = $3
+  network_interface_ids = [$4]
+  resource_group_name = $5
+  vm_size = $6
+
+  storage_os_disk {
+    create_option = $7
+    name = $8
+  }
+}$0

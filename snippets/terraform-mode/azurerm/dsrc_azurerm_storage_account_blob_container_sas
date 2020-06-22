@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: data azurerm_storage_account_blob_container_sas
+# key: key
+# --
+data "azurerm_storage_account_blob_container_sas" "$1" {
+  connection_string = $2
+  container_name = $3
+  expiry = $4
+  start = $5
+
+  permissions {
+    add = $6
+    create = $7
+    delete = $8
+    list = $9
+    read = $10
+    write = $11
+  }
+}$0

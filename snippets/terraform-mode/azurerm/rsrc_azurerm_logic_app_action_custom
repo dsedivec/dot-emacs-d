@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_logic_app_action_custom
+# key: key
+# --
+resource "azurerm_logic_app_action_custom" "$1" {
+  body = $2
+  logic_app_id = $3
+  name = $4
+}$0

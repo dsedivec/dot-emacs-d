@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azurerm_policy_definition
+# key: key
+# --
+data "azurerm_policy_definition" "$1" {
+}$0

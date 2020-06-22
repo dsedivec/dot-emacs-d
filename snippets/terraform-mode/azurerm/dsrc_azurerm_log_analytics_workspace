@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_log_analytics_workspace
+# key: key
+# --
+data "azurerm_log_analytics_workspace" "$1" {
+  name = $2
+  resource_group_name = $3
+}$0

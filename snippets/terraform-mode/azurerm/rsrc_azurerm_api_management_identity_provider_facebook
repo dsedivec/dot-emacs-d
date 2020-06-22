@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_api_management_identity_provider_facebook
+# key: key
+# --
+resource "azurerm_api_management_identity_provider_facebook" "$1" {
+  api_management_name = $2
+  app_id = $3
+  app_secret = $4
+  resource_group_name = $5
+}$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: data azuread_application
+# key: key
+# --
+data "azuread_application" "$1" {
+}$0

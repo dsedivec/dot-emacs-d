@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: resource azuread_group_member
+# key: key
+# --
+resource "azuread_group_member" "$1" {
+  group_object_id = $2
+  member_object_id = $3
+}$0

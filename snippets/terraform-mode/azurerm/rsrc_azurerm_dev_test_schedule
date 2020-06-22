@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_dev_test_schedule
+# key: key
+# --
+resource "azurerm_dev_test_schedule" "$1" {
+  lab_name = $2
+  location = $3
+  name = $4
+  resource_group_name = $5
+  task_type = $6
+  time_zone_id = $7
+
+  notification_settings {
+  }
+}$0

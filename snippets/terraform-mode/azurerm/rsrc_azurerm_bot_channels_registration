@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: resource azurerm_bot_channels_registration
+# key: key
+# --
+resource "azurerm_bot_channels_registration" "$1" {
+  location = $2
+  microsoft_app_id = $3
+  name = $4
+  resource_group_name = $5
+  sku = $6
+}$0

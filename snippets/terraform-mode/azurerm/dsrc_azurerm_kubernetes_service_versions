@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: data azurerm_kubernetes_service_versions
+# key: key
+# --
+data "azurerm_kubernetes_service_versions" "$1" {
+  location = $2
+}$0

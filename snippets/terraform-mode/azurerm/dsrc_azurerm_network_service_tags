@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: data azurerm_network_service_tags
+# key: key
+# --
+data "azurerm_network_service_tags" "$1" {
+  location = $2
+  service = $3
+}$0
