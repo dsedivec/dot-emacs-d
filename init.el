@@ -268,7 +268,7 @@ NEW-ELEMENT."
 
 (defun my:add-hooks (hook-var &rest hook-funcs)
   (declare (indent 1))
-  (dolist (hook-func hook-funcs)
+  (dolist (hook-func (reverse hook-funcs))
     (add-hook hook-var hook-func)))
 
 (defmacro my:with-eval-after-all-load (files &rest body)
