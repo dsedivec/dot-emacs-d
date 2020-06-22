@@ -2046,6 +2046,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (ivy-mode 1)
 
+(require 'ivy-avy)
+
 (bind-keys ("<f6>" . ivy-resume)
            :map ivy-minibuffer-map
            ("<next>" . ivy-scroll-up-command)
