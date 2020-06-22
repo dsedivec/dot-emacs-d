@@ -35,6 +35,7 @@
      company-prescient
      company-reftex
      company-shell
+     company-terraform
      company-web
      counsel
      counsel-css
@@ -130,6 +131,8 @@
      sqlup-mode
      sticky-region
      swiper
+     terraform-doc
+     terraform-mode
      transpose-frame
      treemacs
      treepy

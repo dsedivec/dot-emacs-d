@@ -1701,6 +1701,59 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (my:load-recipes 'flycheck-python-pylint-detect-tabs)
 
+;; "terraform validate" checker
+
+(defun my:flycheck-parse-terraform-validate (output checker buffer)
+  "Parse \"terraform validate\" errors from JSON OUTPUT."
+  (when-let ((diagnostics (alist-get 'diagnostics
+                                     (car (flycheck-parse-json output)))))
+    (mapcar (lambda (diag)
+              (let* ((range (alist-get 'range diag))
+                     (start (alist-get 'start range))
+                     (end (alist-get 'end range))
+                     (summary (alist-get 'summary diag))
+                     (detail (alist-get 'detail diag)))
+                (flycheck-error-new
+                 :line (or (alist-get 'line start) 1)
+                 :column (alist-get 'column start)
+                 :end-line (alist-get 'line end)
+                 :end-column (alist-get 'column end)
+                 :buffer buffer
+                 :checker checker
+                 :filename (alist-get 'filename range)
+                 :message (if detail
+                              (format "%s: %s" summary detail)
+                            summary)
+                 :level (intern (alist-get 'severity diag)))))
+            diagnostics)))
+
+(with-eval-after-load 'terraform-mode
+  (with-eval-after-load 'flycheck
+    (flycheck-define-checker my:terraform-validate
+      "A Terraform checker with `terraform validate'.
+
+See URL `https://www.terraform.io/docs/commands/validate.html'."
+      :command ("terraform" "validate" "-json")
+      :error-parser my:flycheck-parse-terraform-validate
+      :predicate flycheck-buffer-saved-p
+      :modes (terraform-mode))
+
+    (unless (memq 'my:terraform-validate flycheck-checkers)
+      (setq flycheck-checkers (append flycheck-checkers
+                                      '(my:terraform-validate))))
+
+    (let ((after-tflint (flycheck-get-next-checkers 'terraform-tflint)))
+      (cond
+        ((equal after-tflint '(my:terraform-validate))
+         ;; No action necessary.
+         )
+        (after-tflint
+         (warn (concat "terraform-tflint checker has a next-checker already,"
+                       " not adding mine")))
+        (t
+         (flycheck-add-next-checker 'terraform-tflint
+                                    'my:terraform-validate))))))
+
 
 ;;; flycheck-clj-kondo
 
@@ -3764,6 +3817,17 @@ a string or comment."
            ("C-r" . swiper-isearch-backward))
 
 (setq swiper-goto-start-of-match t)
+
+
+;;; terraform-mode
+
+(defun my:terraform-mode-hook ()
+  (push '(company-terraform company-dabbrev-code)
+        (my:buffer-local-value 'company-backends)))
+
+(my:add-hooks 'terraform-mode-hook
+  #'terraform-format-on-save-mode
+  #'my:terraform-mode-hook)
 
 
 ;;; tool-bar
