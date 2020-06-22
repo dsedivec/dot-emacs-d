@@ -2905,7 +2905,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
-  #'smart-tabs-mode)
+  #'smart-tabs-mode
+  #'subword-mode)
 
 (smart-tabs-advise 'python-indent-line 'python-indent-offset)
 (smart-tabs-advise 'python-indent-region 'python-indent-offset)
