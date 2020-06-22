@@ -2256,7 +2256,6 @@ surround \"foo\" with (in this example) parentheses.  I want
   ;; characters like <br>.  Default to visual-line-mode.
   #'visual-line-mode
   #'electric-pair-local-mode
-  #'variable-pitch-mode
   #'my:markdown-mode-hook)
 
 (my:load-recipes 'markdown-mode-edit-gfm-code-blocks)
