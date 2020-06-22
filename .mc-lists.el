@@ -55,6 +55,7 @@
         paredit-splice-sexp
         paredit-split-sexp
         shift-number-up
+        web-mode-element-vanish
         yaml-electric-backspace
         yaml-electric-bar-and-angle
         yaml-electric-dash-and-dot
