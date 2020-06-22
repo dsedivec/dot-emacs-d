@@ -1998,7 +1998,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                          (if (> (length slow-settings) 1) "them" "it")))
                (string-join (mapcar (apply-partially #'format-message "`%s'")
                                     slow-settings)
-                            ", ")))    ))
+                            ", ")))))
 
 (defun my:hs-minor-mode-hook ()
   (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-slow-settings
