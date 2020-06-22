@@ -91,6 +91,7 @@
      json-mode
      key-chord
      link-hint
+     literate-calc-mode
      loccur
      lorem-ipsum
      lua-mode
