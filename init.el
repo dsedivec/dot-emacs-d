@@ -4017,6 +4017,23 @@ a string or comment."
   #'rainbow-mode
   #'my:warn-white-space-mode)
 
+(defun my:web-mode-after-set-engine-hook ()
+  (when (equal web-mode-engine "velocity")
+    (setq-local web-mode-imenu-regexp-list
+                (append web-mode-imenu-regexp-list
+                        `((,(rx bol
+                                (* space)
+                                "#"
+                                (group (| "def" "attr"))
+                                (+ space)
+                                (group symbol-start
+                                       (+? not-newline)
+                                       symbol-end))
+                            1 2 ": "))))))
+
+(advice-add 'web-mode-on-engine-setted :after
+            #'my:web-mode-after-set-engine-hook)
+
 (with-eval-after-load 'web-mode
   (bind-keys :map web-mode-map
              ("C-M-u" . web-mode-element-parent)
