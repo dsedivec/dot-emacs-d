@@ -1195,6 +1195,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   (counsel-projectile-mode 1))
 
 
+;;; cperl-mode
+
+(add-to-list 'auto-mode-alist '("\\.pl\\'" . cperl-mode))
+
+
 ;;; crux
 
 ;; Make `crux-smart-open-line-above' take a prefix arg to open
