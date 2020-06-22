@@ -2756,8 +2756,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                   " by default, fix init.el"))
   (cl-loop
      for func in '(counsel-rg
-                   counsel-yank-pop
-                   swiper-isearch)
+                   counsel-yank-pop)
      if (memq func ivy-prescient-sort-commands)
      do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
               func)
