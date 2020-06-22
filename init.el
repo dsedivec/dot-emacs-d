@@ -2957,9 +2957,12 @@ surround \"foo\" with (in this example) parentheses.  I want
 (require 'editorconfig)
 
 (defun my:maybe-enable-black-format-on-save ()
-  (let ((props (funcall editorconfig-get-properties-function)))
-    (when (equal (gethash 'org.codefu/python_formatter props) "black")
-      (black-format-on-save-mode 1))))
+  ;; Guard on `buffer-file-name' needed to avoid Elpy stuffing Python
+  ;; into temporary buffers when sending code to the REPL.
+  (when buffer-file-name
+    (let ((props (funcall editorconfig-get-properties-function)))
+      (when (equal (gethash 'org.codefu/python_formatter props) "black")
+        (black-format-on-save-mode 1)))))
 
 (add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
 
