@@ -1525,7 +1525,10 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("<C-down>" . nil)
              ;; auto-highlight-symbol uses these.
              ("<M-left>" . nil)
-             ("<M-right>" . nil)))
+             ("<M-right>" . nil)
+             ;; I use this for opening links (and I never use
+             ;; `elpy-occur-definitions').
+             ("C-c C-o" . nil)))
 
 (my:load-recipes 'elpy-nav-block-always-move)
 
