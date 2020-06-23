@@ -82,6 +82,7 @@
      impatient-mode
      intero
      ivy
+     ivy-avy
      ivy-bibtex
      ivy-hydra
      ivy-prescient
