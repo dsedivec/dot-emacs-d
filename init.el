@@ -2746,6 +2746,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq package-build-recipes-dir "~/repositories/melpa/recipes")
 
 
+;;; paradox
+
+;; Temporary fix for https://github.com/Malabarba/paradox/issues/181
+(if (fboundp 'package-menu-filter)
+    (warn "Paradox has fixed `package-menu-filter', remove fix from init.el")
+  (defalias 'package-menu-filter 'package-menu-filter-by-keyword))
+
+
 ;;; paredit
 
 (with-eval-after-load 'paredit
