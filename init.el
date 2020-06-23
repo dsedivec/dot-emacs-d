@@ -2001,8 +2001,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                             ", ")))))
 
 (defun my:hs-minor-mode-hook ()
-  (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-slow-settings
-            t t))
+  (add-hook 'hack-local-variables-hook #'my:hs-minor-mode-slow-settings 0 t))
 
 (add-hook 'hs-minor-mode-hook #'my:hs-minor-mode-hook)
 

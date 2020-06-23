@@ -40,7 +40,7 @@ set the engine for the file upon loading.")
 (defun my:web-mode-set-hook-to-set-engine-from-local-variable ()
   "Set up engine from file-local variable after local variables are loaded."
   (add-hook 'hack-local-variables-hook
-            #'my:web-mode-set-engine-from-local-variable nil t))
+            #'my:web-mode-set-engine-from-local-variable 0 t))
 
 (add-hook 'web-mode-hook
           #'my:web-mode-set-hook-to-set-engine-from-local-variable)
