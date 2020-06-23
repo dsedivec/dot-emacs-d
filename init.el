@@ -3903,7 +3903,7 @@ a string or comment."
 
 ;;; undo-tree
 
-(if (>= emacs-major-version 28)
+(if (and (>= emacs-major-version 28) (fboundp 'undo-redo))
     ;; Trying new `undo-redo' in Emacs 28.
     (bind-keys ("C-/" . undo-only)
                ("s-z" . undo-only)
