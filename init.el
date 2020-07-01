@@ -1646,7 +1646,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; frame
 
-(bind-key "<s-return>" 'toggle-frame-fullscreen)
+(bind-keys ("<s-return>" . toggle-frame-fullscreen)
+           ;; Alternate shortcut, which is standard for macOS:
+           ("C-s-f" . toggle-frame-fullscreen))
 
 
 ;;; frame-resize
