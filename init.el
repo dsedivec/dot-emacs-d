@@ -1448,8 +1448,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; 4. Remove \n from `electric-indent-chars' globally.  Maybe add it
 ;;    back in modes where it makes sense.
 ;;
-;; For now, #4 seems to work best for me, except I define "modes where
-;; it makes sense" as all modes derived from `prog-mode'.
+;; `electric-indent-mode' angered me enough that I now do #1, but
+;; experience has taught me that I usually want `electric-indent-mode'
+;; on in every prog-mode-derived buffer.
 
 (with-eval-after-load 'electric
   (electric-indent-mode -1)
