@@ -447,7 +447,15 @@ it returns the node that your EDIT-FORM changed)."
   ;; Saving/restoring frames via persp-mode seems to affect this
   ;; somehow.  Setting this seems to put us back where we belong,
   ;; without a friggin' white title bar (WTF).
-  (setf (alist-get 'ns-transparent-titlebar default-frame-alist) nil))
+  (setf (alist-get 'ns-transparent-titlebar default-frame-alist) nil)
+
+  ;; If you google "emacs mac x-colors" you will see lots of people
+  ;; commenting that they're missing colors.  I think there's some
+  ;; kind of timing bug during build, or something else isn't
+  ;; configured right, that leaves you with just the colors from the
+  ;; "Developer" colors in your `x-colors' variable.  This is the
+  ;; quick-and-dirty fix, I hope.
+  (setq x-colors (ns-list-colors)))
 
 ;; Mode line mods
 
