@@ -3949,6 +3949,8 @@ a string or comment."
 
 ;;; vc
 
+(bind-keys ("M-m v g" . vc-annotate))
+
 (my:load-recipes 'vc-use-icons-in-mode-line
                  'vc-truncate-long-branch-names)
 
