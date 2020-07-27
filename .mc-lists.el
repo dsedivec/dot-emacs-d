@@ -37,6 +37,7 @@
         org-meta-return
         org-metaright
         org-self-insert-command
+        orgtbl-hijacker-command-102
         paredit-backslash
         paredit-backward
         paredit-backward-kill-word
@@ -81,4 +82,5 @@
         my:delete-window-that-direction
         my:link-hint-multi-dispatch
         sql-send-paragraph
+        zop-up-to-char
         ))
