@@ -1625,7 +1625,8 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (regexp keywords-regexp))
                      'sql-mode)))
 
-(my:load-recipes 'files-delete-auto-save-after-revert-buffer)
+(my:load-recipes 'files-delete-auto-save-after-revert-buffer
+                 'files-save-some-buffers-default-no-query)
 
 
 ;;; fill
