@@ -54,16 +54,22 @@
   ;; and (2) it wraps its work in `save-window-excursion' whicih
   ;; really fucks up eww buffers when I'm live-previewing Markdown for
   ;; some reason.
-  (dolist (buf (buffer-list))
-    ;; I don't exactly understand why I need to check `buffer-live-p'
-    ;; but I think it's because saving one buffer may kill others, and
-    ;; we've already got a reference to that killed buffer from
-    ;; `buffer-list' (above).
-    (when (buffer-live-p buf)
-      (with-current-buffer buf
-        (when (and idle-save-buffer-mode
-                   (buffer-modified-p))
-          (save-buffer))))))
+  (let (some-idle-mode-buffers-exist)
+    (dolist (buf (buffer-list))
+      ;; I don't exactly understand why I need to check `buffer-live-p'
+      ;; but I think it's because saving one buffer may kill others, and
+      ;; we've already got a reference to that killed buffer from
+      ;; `buffer-list' (above).
+      (when (buffer-live-p buf)
+        (with-current-buffer buf
+          (when idle-save-buffer-mode
+            (setq some-idle-mode-buffers-exist t)
+            (when (buffer-modified-p)
+              (save-buffer))))))
+    (unless some-idle-mode-buffers-exist
+      ;; Stop running the timer if there's not going to be anything
+      ;; for us to do.
+      (cancel-timer idle-save-buffer-timer))))
 
 (provide 'idle-save)
 ;;; idle-save.el ends here
