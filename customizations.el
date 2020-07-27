@@ -154,7 +154,8 @@
      ))
  '(paradox-github-token t)
  '(safe-local-variable-values
-   '((eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript"))))
+   '((elpy-rpc-virtualenv-path . current)
+     (eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
