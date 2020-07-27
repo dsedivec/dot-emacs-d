@@ -2115,6 +2115,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; impatient-mode
 
+(setq impatient-mode-delay 1)
+
 ;; We have this bound in `web-mode-map'.
 (autoload 'imp-visit-buffer "impatient-mode" nil t)
 
