@@ -3964,6 +3964,14 @@ a string or comment."
                  'vc-truncate-long-branch-names)
 
 
+;;; vcl-mode
+
+(defun my:vcl-mode-hook ()
+  (my:setq-local c-basic-offset 4))
+
+(add-hook 'vcl-mode-hook #'my:vcl-mode-hook)
+
+
 ;;; volatile-highlights
 
 (volatile-highlights-mode 1)

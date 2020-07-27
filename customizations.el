@@ -140,6 +140,7 @@
      undo-tree
      unfill
      unicode-fonts
+     vcl-mode
      volatile-highlights
      web-beautify
      web-mode
