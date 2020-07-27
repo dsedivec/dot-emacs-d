@@ -3956,6 +3956,8 @@ a string or comment."
 
 ;;; vc
 
+(setq vc-follow-symlinks t)
+
 (bind-keys ("M-m v g" . vc-annotate))
 
 (my:load-recipes 'vc-use-icons-in-mode-line
