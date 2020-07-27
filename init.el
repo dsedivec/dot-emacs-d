@@ -1516,9 +1516,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq elpy-eldoc-show-current-function nil)
 
-(when (executable-find "python3")
-  (setq elpy-rpc-python-command "python3"))
-
 (advice-add 'python-mode :before #'elpy-enable)
 
 (with-eval-after-load 'elpy
@@ -1732,7 +1729,11 @@ surround \"foo\" with (in this example) parentheses.  I want
                               ;; template.
                               web-mode)
       ;; Defaults to 400, sadly too few for some of my files at work.
-      flycheck-checker-error-threshold 2000)
+      flycheck-checker-error-threshold 2000
+      ;; These default to "python3", which annoys me when I have to
+      ;; work on Python 2.
+      flycheck-python-pycompile-executable "python"
+      flycheck-python-pylint-executable "python")
 
 (global-flycheck-mode 1)
 
