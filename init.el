@@ -116,7 +116,7 @@
 (define-advice package-install (:before (&rest _args) my:package-refresh-maybe)
   (my:package-refresh-maybe))
 
-(defun my:quelpa-git-local-or-github (name &optional repo-name)
+(defun my:quelpa-git-local-or-github (name &optional repo-name &rest plist)
   "Return Quelpa recipe for package NAME.
 REPO-NAME is optional local and GitHub repo name if it is not the
 same as NAME."
@@ -124,8 +124,10 @@ same as NAME."
          (local-repo (expand-file-name (concat "~/repositories/" repo-name))))
     (cons name
           (if (file-directory-p local-repo)
-              (list :fetcher 'git :url (concat "file://" local-repo))
-            (list :fetcher 'github :repo (concat "dsedivec/" repo-name))))))
+              (cl-list* :fetcher 'git :url (concat "file://" local-repo)
+                        plist)
+            (cl-list* :fetcher 'github :repo (concat "dsedivec/" repo-name)
+                      plist)))))
 
 (defvar my:quelpa-packages
   `((bookmark+ :fetcher wiki
@@ -135,7 +137,8 @@ same as NAME."
                                      '(mac bmu 1 key lit))))
     (hl-line+ :fetcher wiki)
     (blackout :fetcher github :repo "raxod502/blackout")
-    ,(my:quelpa-git-local-or-github 'eltu)
+    ,(my:quelpa-git-local-or-github 'eltu nil
+                                    :files '(:defaults "eltu_update_tags.py"))
     ,(my:quelpa-git-local-or-github 'ns-copy-html)
     ,(my:quelpa-git-local-or-github 'python "python-el")
     ,(my:quelpa-git-local-or-github 'smart-tabs)
