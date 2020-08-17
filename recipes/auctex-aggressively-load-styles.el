@@ -1,13 +1,40 @@
 ;; -*- lexical-binding: t; -*-
 
-;; HOLD MY BEER
+;; AUCTeX needs "style hooks" generated for style files.  You could
+;; just run `TeX-auto-generate-global' over your TeX installation and
+;; generate them for you, but I never remember to do that.  This will
+;; call `TeX-auto-generate' when loading a style file for which an
+;; automatic .el file has never been created.
 ;;
-;; AUCTeX doesn't recursively parse style files, from everything I've
-;; read.  That's unsatisfactory.  Let's try and implement recursive
-;; style file parsing.  What could go wrong?
+;; Important functions to look at if you want to understand this:
 ;;
-;; This relies on kpsewhich to find style files.  You may need to set
-;; up e.g. TEXINPUTS appropriately.
+;; `TeX-run-style-hooks'
+;; `TeX-auto-generate'
+;; `TeX-load-style' (which is what I advise below)
+;;
+;; Variable `TeX-style-hook-list' holds the style hooks for loaded
+;; styles.
+;;
+;; The regexps searched for live around `TeX-auto-regexp-list'.
+;; Functions such as `LaTeX-common-initialization' might alter the
+;; list to include, e.g., LaTeX-specific regexps.  The members of this
+;; list then do things like setting up buffer-local variables
+;; (including hash tables, oh goodie) containing all the information
+;; about commands and labels and such that are parsed from the current
+;; buffer.
+
+;; I want variable `TeX-auto-default' but I"m not quite sure of the
+;; right way to make sure AUCTeX gets loaded.  I am hoping this will
+;; work for users who install AUCTeX via package.el, or using a
+;; distro-provided AUCTeX.  But really, just load this file inside
+;; "(with-eval-after-load 'tex ...)" or the like.
+;;
+;; This better at least make the byte compiler happy.
+;;
+;; Note that Emacs does not, as of this writing, ship a tex.el.
+(require 'tex)
+
+(defvar my:TeX-auto-generate-on-demand-dir TeX-auto-default)
 
 (defun my:TeX-find-style-file (style)
   (let (temp-buffer)
@@ -25,23 +52,18 @@
       (when temp-buffer
         (kill-buffer temp-buffer)))))
 
-(defvar TeX-parse-self)
-(defvar TeX-style-hook-list)
-(declare-function TeX-auto-write "tex")
-
-(define-advice TeX-load-style
-    (:around (orig-fun style &rest args) my:find-styles-and-auto-parse)
+(defun my:TeX-find-styles-and-auto-parse (orig-fun style &rest args)
   ;; I have witnessed STYLE having a trailing space.  Should maybe
   ;; file upstream bug report.
   (setq style (string-trim style))
+  ;; If STYLE was already searched for, or if STYLE looks like it
+  ;; might contain path information, defer entirely to
+  ;; `TeX-load-style'.  Note that, for paths, `TeX-load-style' will do
+  ;; a recursive call to itself after stripping out path information
+  ;; from STYLE, so you'll end up back here with a nice non-path STYLE
+  ;; value.
   (if (or (assoc style TeX-style-hook-list)
-          ;; Better not have a path, I don't do paths.
           (string-match-p "[./\\]" style))
-      ;; If STYLE was already searched for, or if STYLE looks like
-      ;; it might contain path information, defer to TeX-load-style.
-      ;; Note that TeX-load-style will do a recursive call to itself
-      ;; after stripping out path information from STYLE, if
-      ;; applicable.
       (apply orig-fun style args)
     ;; STYLE is a bare style name.  Let TeX-load-style try to load
     ;; the style information.
@@ -49,28 +71,27 @@
     ;; Did it find something?
     (unless (cdr (assoc style TeX-style-hook-list))
       ;; No, it didn't, or at least it didn't produce any hook
-      ;; information.  Let's try a little harder.  First let's try
-      ;; and find the style file.
-      (message "Trying hard to load information for style %S" style)
+      ;; information.  Let's try and auto-parse the style file.  But
+      ;; first we have to try and *find* the style file.
       (when-let ((style-file (my:TeX-find-style-file style)))
+        (unless (file-directory-p my:TeX-auto-generate-on-demand-dir)
+          (message "Creating directory %s" my:TeX-auto-generate-on-demand-dir)
+          (condition-case err
+              (make-directory my:TeX-auto-generate-on-demand-dir t)
+            (t
+             (user-error (concat "Can not create directory %S,"
+                                 " check value of variable"
+                                 " `my:TeX-auto-generate-on-demand-dir': %S")
+                         my:TeX-auto-generate-on-demand-dir
+                         err))))
         ;; Found a style file.
-        (let ((TeX-parse-self t)
-              style-buf)
-          (unwind-protect
-               (progn
-                 (with-current-buffer
-                     (setq style-buf
-                           (find-file-noselect style-file t nil nil))
-                   ;; This will try to write the auto/*.el file.
-                   ;; I'm not sure if this is necessary in a buffer
-                   ;; that we just created: AUCTeX may already parse
-                   ;; it at open.  For an already-open buffer,
-                   ;; however, and especially when the user doesn't
-                   ;; have `TeX-parse-self' turned on, I suspect
-                   ;; this is highly necessary.  And maybe also a
-                   ;; little rude, if we just did something naughty
-                   ;; to your already-open buffer, but let's ignore
-                   ;; that for now.
-                   (TeX-auto-write)))
-            (when style-buf
-              (kill-buffer style-buf))))))))
+        (message "Auto-parsing %S on demand" style-file)
+        ;; Generate the "foo.el" file for style "foo".
+        (TeX-auto-generate style-file my:TeX-auto-generate-on-demand-dir)
+        ;; Now load that generated "foo.el" file.  This call to
+        ;; `TeX-load-style-file' is what `TeX-load-style' does
+        ;; normally.
+        (TeX-load-style-file
+         (expand-file-name style my:TeX-auto-generate-on-demand-dir))))))
+
+(advice-add 'TeX-load-style :around #'my:TeX-find-styles-and-auto-parse)
