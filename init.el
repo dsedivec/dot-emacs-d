@@ -626,7 +626,14 @@ it returns the node that your EDIT-FORM changed)."
 
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
 
-(setq TeX-newline-function 'newline-and-indent)
+(setq TeX-newline-function 'newline-and-indent
+      ;; "AUCTeX depends heavily on being able to extract information
+      ;; from the buffers by parsing them.  Since parsing the buffer
+      ;; can be somewhat slow, the parsing is initially disabled.  You
+      ;; are encouraged to enable them by adding the following lines
+      ;; to your '.emacs' file."
+      TeX-parse-self t
+      TeX-auto-save t)
 
 (setq LaTeX-includegraphics-read-file
       #'LaTeX-includegraphics-read-file-relative)
