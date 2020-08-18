@@ -702,6 +702,7 @@ it returns the node that your EDIT-FORM changed)."
   #'flycheck-mode
   #'show-paren-mode
   #'auto-fill-mode
+  #'outline-minor-mode
   #'my:warn-white-space-mode
   #'my:LaTeX-mode-hook)
 
