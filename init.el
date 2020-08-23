@@ -3176,6 +3176,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :lighter " ESL")
 
 
+;;; replace
+
+;; I get bothered when I can't do M-s o for `occur' in buffers using
+;; `paredit-mode', which squats on M-s.
+(bind-keys ("M-m s o" . occur))
+
+
 ;;; saveplace
 
 (save-place-mode 1)
