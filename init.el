@@ -3952,12 +3952,26 @@ a string or comment."
 
 ;;; undo-tree
 
+;; Undoing/redoing in a region confuses me, mostly because I'm always
+;; doing it by accident.  I don't think I've ever used this
+;; functionality on purpose.  Forcibly disable it.
+
+(defun my:undo-only-but-never-in-a-region ()
+  (interactive)
+  (deactivate-mark)
+  (call-interactively #'undo-only))
+
+(defun my:undo-redo-but-never-in-a-region ()
+  (interactive)
+  (deactivate-mark)
+  (call-interactively #'undo-redo))
+
 (if (and (>= emacs-major-version 28) (fboundp 'undo-redo))
     ;; Trying new `undo-redo' in Emacs 28.
-    (bind-keys ("C-/" . undo-only)
-               ("s-z" . undo-only)
-               ("M-_" . undo-redo)
-               ("s-Z" . undo-redo))
+    (bind-keys ("C-/" . my:undo-only-but-never-in-a-region)
+               ("s-z" . my:undo-only-but-never-in-a-region)
+               ("M-_" . my:undo-redo-but-never-in-a-region)
+               ("s-Z" . my:undo-redo-but-never-in-a-region))
   (global-undo-tree-mode)
 
   (bind-keys :map undo-tree-map
