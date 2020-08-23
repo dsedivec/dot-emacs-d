@@ -3126,6 +3126,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (pyvenv-tracking-mode 1)
 
 
+;;; rainbow-mode
+
+(with-eval-after-load 'rainbow-mode
+  (add-to-list 'rainbow-html-colors-major-mode-list 'web-mode))
+
+
 ;;; recentf-mode
 
 (setq recentf-max-saved-items 1000)
@@ -3169,11 +3175,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :program "eslint-reformat"
     :lighter " ESL")
 
-
-;;; rainbow-mode
-
-(with-eval-after-load 'rainbow-mode
-  (add-to-list 'rainbow-html-colors-major-mode-list 'web-mode))
 
 ;;; saveplace
 
