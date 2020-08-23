@@ -15,11 +15,19 @@
   (insert TeX-grcl TeX-grcl)
   (LaTeX-indent-line))
 
-(with-eval-after-load 'tex
-  (TeX-add-style-hook "glossaries"
-                      (lambda ()
-                        (TeX-add-symbols
-                         '("newacronym" "Key" "Acronym" "Expansion")
-                         '("newglossaryentry" "Key" my:LaTeX-arg-glossary-entry)
-                         '("gls" "Key")
-                         '("glsdisp" "Key" "Text")))))
+(defun my:LaTeX-style-hook-glossaries ()
+  (TeX-add-symbols
+   '("newacronym" "Key" "Acronym" "Expansion")
+   '("newglossaryentry" "Key" my:LaTeX-arg-glossary-entry)
+   '("gls" "Key")
+   '("glsdisp" "Key" "Text")))
+
+(defun my:LaTeX-style-hook-glossaries-extra ()
+  (TeX-add-symbols
+   '("newabbreviation"
+     ["options" "description="] "Key" "Abbreviation" "Expansion")))
+
+(TeX-add-style-hook "glossaries" #'my:LaTeX-style-hook-glossaries
+                    :latex)
+(TeX-add-style-hook "glossaries-extra" #'my:LaTeX-style-hook-glossaries-extra
+                    :latex)

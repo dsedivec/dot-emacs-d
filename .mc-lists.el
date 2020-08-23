@@ -22,6 +22,7 @@
         faux-indent-remove-indentation
         forward-sexp
         indent-for-tab-command
+        insert-char
         insert-parentheses
         kill-sexp
         markdown-insert-code
@@ -76,6 +77,7 @@
         describe-key-briefly
         edit-indirect-region
         frame-resize
+        goto-address-at-point
         ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
