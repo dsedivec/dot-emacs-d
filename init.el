@@ -3905,11 +3905,15 @@ a string or comment."
 
 ;;; swiper
 
-(bind-keys ("s-s" . swiper)
-           ;; Doesn't DWIM with `ivy--regex-ignore-order' right now.
-           ;; Maybe because "isearch is not line-based"?
-           ("C-s" . swiper-isearch)
-           ("C-r" . swiper-isearch-backward))
+;; Note that `swiper-isearch' doesn't seem to be obeying
+;; `ivy--regex-ignore-order'.  Maybe because "isearch is not
+;; line-based"?
+
+(bind-keys ("C-s" . swiper-isearch)
+           ("C-r" . swiper-isearch-backward)
+           ;; Put the old commands somewhere easy enough.
+           ("s-s" . isearch-forward)
+           ("s-r" . isearch-backward))
 
 (setq swiper-goto-start-of-match t)
 
