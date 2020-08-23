@@ -59,25 +59,34 @@ If t, motion will search for any non-nil face property.")
     (user-error "No last search to repeat"))
   (cl-destructuring-bind (faces . backward) face-search--last-search
     (cl-loop
-       with search-func = (if backward
-                              #'previous-single-property-change
-                            #'next-single-property-change)
-       for pos = (point) then next-match
-       for next-match = (funcall search-func pos 'face)
-       unless next-match do (user-error "No matching faces found")
-       for face = (get-text-property next-match 'face)
-       when (and face
-                 (or (eq faces t)
-                     (when (listp face)
-                       (seq-some (lambda (elt) (memq elt faces)) face))
-                     (memq face faces)))
-       do (progn
-            (when backward
-              (setq next-match
-                    (or (previous-single-property-change next-match 'face)
-                        (point-min))))
-            (goto-char next-match))
-       and return t)))
+      with search-func = (if backward
+                             #'previous-single-property-change
+                           #'next-single-property-change)
+      for pos = (point) then next-match
+      for next-match = (or (funcall search-func pos 'face)
+                           ;; The part of the buffer we're trying to
+                           ;; search through may not have been
+                           ;; fontified yet.  Try and force
+                           ;; fontification.
+                           (progn
+                             (if backward
+                                 (font-lock-ensure (point-min) pos)
+                               (font-lock-ensure pos (point-max)))
+                             (funcall search-func pos 'face)))
+      unless next-match do (user-error "No matching faces found")
+      for face = (get-text-property next-match 'face)
+      when (and face
+                (or (eq faces t)
+                    (when (listp face)
+                      (seq-some (lambda (elt) (memq elt faces)) face))
+                    (memq face faces)))
+      do (progn
+           (when backward
+             (setq next-match
+                   (or (previous-single-property-change next-match 'face)
+                       (point-min))))
+           (goto-char next-match))
+      and return t)))
 
 (defvar face-search--get-faces-history)
 
