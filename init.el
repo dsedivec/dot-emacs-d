@@ -426,6 +426,15 @@ it returns the node that your EDIT-FORM changed)."
 ;; window being split.
 (setq window-combination-resize t)
 
+;; Default is to convert yanked text in a search to lower case.  That
+;; really screws me up, turn that off.
+(setq search-upper-case t)
+
+;; In fact, having a search/replace for "foo bar" → "baz eek" convert
+;; to replacing "Foo bar" → "baz eek" seems dangerous, let's just make
+;; case folding explicit (M-c).
+(setq-default case-fold-search nil)
+
 (put 'downcase-region 'disabled nil)
 (put 'list-timers 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
