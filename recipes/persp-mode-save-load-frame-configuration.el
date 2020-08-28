@@ -7,6 +7,27 @@
 ;; persp-mode thinks will print unreadably, otherwise it will not save
 ;; our frameset when it saves perspectives.
 ;;
+;;
+;; THEMES
+;;
+;; I change which Emacs theme is in use based on macOS dark mode.
+;; This means that, if I exit Emacs while macOS is in dark mode, the
+;; initial frame will be dark---but subsequent frames will be my
+;; default theme (which is to say, not really any theme but the
+;; default Emacs theme with my overlays, see
+;; themes/dsedivec-theme.el).  To get around this, I'm applying the
+;; technique suggested at https://superuser.com/a/1155381 and
+;; https://gist.github.com/vividsnow/0609b55bd684d325e7cb: if
+;; `my:persp-mode-save-restore-themes' is non-nil, we'll save the
+;; active theme(s) and enable any missing ones at startup.  Actually,
+;; since my process for going in/out of dark mode requires
+;; disabling/enabling the light theme and enabling/disabling the light
+;; theme, we'll also disable themes that weren't enabled.  In other
+;; words, `custom-enabled-themes' will hopefully have the same value
+;; when restoring is complete as it did when the persp-mode save was
+;; created.
+;;
+;;
 ;; CHILD FRAMES
 ;;
 ;; frameset.el will merrily save/restore child frames, such as those
@@ -22,8 +43,12 @@
 
 (require 'cl-lib)
 (require 'subr-x)
+(require 'custom)
 
 (require 'persp-mode)
+
+(defvar my:persp-mode-save-restore-themes t
+  "If non-nil, save active themes and restore them at load time.")
 
 (defun my:persp-mode-serializable-p (obj)
   (and (or (memq (type-of obj) '(bool-vector
@@ -80,18 +105,50 @@
 
 (defun my:persp-mode-save-frame-configuration (&rest _)
   (set-persp-parameter 'my:frame-configuration (my:persp-mode-get-frameset)
-                       nil))
+                       nil)
+  (when (and my:persp-mode-save-restore-themes (boundp 'custom-enabled-themes))
+    (set-persp-parameter 'my:enabled-themes custom-enabled-themes nil)))
 
 (defun my:persp-mode-restore-frame-configuration (&rest _)
-  (condition-case err
-      (when-let ((frameset (persp-parameter 'my:frame-configuration nil)))
-        (delete-persp-parameter 'my:frame-configuration nil)
-        (let ((frameset-filter-alist
-               (append '((persp . my:persp-mode-filter-persp-frame-property))
-                       frameset-filter-alist)))
-          (frameset-restore frameset :reuse-frames t :cleanup-frames t)))
+  (condition-case-unless-debug err
+      (progn
+        (when-let ((frameset (persp-parameter 'my:frame-configuration nil)))
+          (delete-persp-parameter 'my:frame-configuration nil)
+          (let ((frameset-filter-alist
+                 (append '((persp . my:persp-mode-filter-persp-frame-property))
+                         frameset-filter-alist)))
+            (frameset-restore frameset :reuse-frames t :cleanup-frames t))))
     (t
-     (warn "failed to restore frames: %S" err))))
+     (warn "Failed to restore frames: %S" err)))
+  (condition-case-unless-debug err
+      (when-let ((themes (and my:persp-mode-save-restore-themes
+                              (persp-parameter 'my:enabled-themes nil))))
+        ;; First disable themes we shouldn't have.
+        (dolist (theme custom-enabled-themes)
+          (unless (or (memq theme themes)
+                      ;; The "user" and "changed" themes are special,
+                      ;; see the docstring on `custom-known-themes'.
+                      ;; I don't think we should ever see these in
+                      ;; `custom-enabled-themes', but just in case I
+                      ;; do *not* want to try disabling them.
+                      (memq theme '(user changed)))
+            (disable-theme theme)))
+        ;; Now enable themes we should have.  (It's possible we should
+        ;; really disable all themes, then re-enable them in the right
+        ;; order, since I think the order of loading does matter, but
+        ;; for now I don't need to worry about this, personally.)
+        (dolist (theme (reverse themes))
+          (unless (custom-theme-enabled-p theme)
+            ;; I've had "weirdness" when calling `load-theme' on a
+            ;; theme that was already loaded.  In particular,
+            ;; `load-theme' followed by `disable-theme' for a current
+            ;; theme seemed to break.  For that reason, call
+            ;; `load-theme' only if the theme is not known.
+            (if (custom-theme-p theme)
+                (enable-theme theme)
+              (load-theme theme)))))
+    (t
+     (warn "Failed to restore themes: %S" err))))
 
 (with-eval-after-load 'persp-mode
   (add-hook 'persp-before-save-state-to-file-functions
