@@ -1,5 +1,5 @@
 ;; -*- lexical-binding: t; -*-
-;;
+
 ;; Add an Ivy "t" action to turn on tracing for a function from
 ;; `counsel-describe-function'.
 

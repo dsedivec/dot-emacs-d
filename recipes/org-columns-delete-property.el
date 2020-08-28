@@ -8,7 +8,7 @@
 (defun my:org-columns-delete-property (&rest key)
   "Delete property value for the current column in columns mode."
   (interactive)
-  ;; Most of this function is copied from org-columns-edit-value.
+  ;; Most of this function is copied from `org-columns-edit-value'.
   (let* ((col (current-column))
          (bol (line-beginning-position))
          (pom (or (get-text-property bol 'org-hd-marker) (point)))
