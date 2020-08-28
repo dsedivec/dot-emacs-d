@@ -662,9 +662,11 @@ it returns the node that your EDIT-FORM changed)."
 
 (with-eval-after-load 'latex
   (my:load-recipes 'auctex-aggressively-load-styles
-                   'auctex-company-glossaries-backend
                    'auctex-wrap-in-gls-commands
                    'auctex-glossaries-package)
+
+  (with-eval-after-load 'company
+    (my:load-recipes 'auctex-company-glossaries-backend))
 
   (bind-keys :map LaTeX-mode-map
              ;; Spacemacs overrides the default LaTeX-insert-item binding
@@ -980,11 +982,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
   (add-to-list 'bs-configurations
                '("files-and-dirs" nil nil nil my:visits-non-dired-non-file
-                 bs-sort-buffer-interns-are-last)))
+                 bs-sort-buffer-interns-are-last))
+
+  (my:load-recipes 'bs-abbreviate-file-names))
 
 (setq bs-default-configuration "files-and-dirs")
-
-(my:load-recipes 'bs-abbreviate-file-names)
 
 (setq my:bs-file-name-abbrev-alist
       `((,(concat "\\`" (regexp-quote (expand-file-name "~")) "/git/pippin/")
@@ -1783,9 +1785,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 
   ;; Prefer pylint to flake8.
   (setq flycheck-checkers (cons 'python-pylint
-                                (delq 'python-pylint flycheck-checkers))))
+                                (delq 'python-pylint flycheck-checkers)))
 
-(my:load-recipes 'flycheck-python-pylint-detect-tabs)
+  (my:load-recipes 'flycheck-python-pylint-detect-tabs))
 
 ;; "terraform validate" checker
 
@@ -2136,8 +2138,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (bind-keys ("M-m u i" . imenu-list-smart-toggle))
 
-(my:load-recipes 'imenu-list-in-side-buffer
-                 'imenu-list-sort)
+(with-eval-after-load 'imenu-list
+  (my:load-recipes 'imenu-list-in-side-buffer
+                   'imenu-list-sort))
 
 
 ;;; impatient-mode
@@ -2794,10 +2797,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (with-eval-after-load 'paredit
   (bind-keys :map paredit-mode-map
-             ("M-m j s" . paredit-split-sexp)))
+             ("M-m j s" . paredit-split-sexp))
 
-(my:load-recipes 'paredit-delsel
-                 'paredit-kill-whole-line)
+  (my:load-recipes 'paredit-delsel
+                   'paredit-kill-whole-line))
 
 
 ;;; paren
@@ -3092,8 +3095,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
-             ("M-m m i" . my:python-add-import)))
+             ("M-m m i" . my:python-add-import))
 
+  (my:load-recipes 'python-magic-quotes
+                   'python-toggle-triple-quotes
+                   'python-fix-dead-shell-font-lock-buffer
+                   'expand-region-python-fix-strings
+                   'python-edit-indirect-in-strings
+                   'python-add-import))
 (require 'editorconfig)
 
 (defun my:maybe-enable-black-format-on-save ()
@@ -3105,13 +3114,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
         (black-format-on-save-mode 1)))))
 
 (add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
-
-(my:load-recipes 'python-magic-quotes
-                 'python-toggle-triple-quotes
-                 'python-fix-dead-shell-font-lock-buffer
-                 'expand-region-python-fix-strings
-                 'python-edit-indirect-in-strings
-                 'python-add-import)
 
 
 ;;; pyvenv
@@ -3241,7 +3243,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; shackle
 
+(shackle-mode 1)
+
 (my:load-recipes 'shackle-dismiss-pop-up-window)
+
+(setq my:shackle-pop-up-buffer-predicate #'my:pop-up-buffer-p)
 
 (setq shackle-rules
       '(
@@ -3249,8 +3255,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
          :custom my:shackle-display-pop-up-window
          :popup t :align below :select t :size 0.33)
         ))
-
-(shackle-mode 1)
 
 
 ;;; shift-number
@@ -3887,9 +3891,10 @@ a string or comment."
                         ;; WTF sql.el?
                         "a" "c" "g" "k" "m" "p" "t"))
 
-(my:load-recipes 'sqlup-maybe-enable)
+(with-eval-after-load 'sql
+  (my:load-recipes 'sqlup-maybe-enable)
 
-(add-hook 'sql-mode-hook #'my:maybe-enable-sqlup-mode)
+  (add-hook 'sql-mode-hook #'my:maybe-enable-sqlup-mode))
 
 
 ;;; startup
@@ -4164,8 +4169,9 @@ a string or comment."
 
 (add-hook 'prog-mode-hook #'which-function-mode)
 
-(my:load-recipes 'which-function-in-header-line
-                 'which-function-update-while-in-minibuffer)
+(with-eval-after-load 'which-func
+  (my:load-recipes 'which-function-in-header-line
+                   'which-function-update-while-in-minibuffer))
 
 ;;; whitespace
 

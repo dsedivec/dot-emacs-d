@@ -3,6 +3,8 @@
 ;; Replace some vc-mode mode line names like "Git" and "Hg" with cute
 ;; icons.  Requires third-party package all-the-icons.
 
+(require 'all-the-icons)
+
 (defvar my:vc-mode-line-icons-alist
   `((Git . ,(all-the-icons-alltheicon "git" :v-adjust 0 :height 0.8))
     (Hg . ,(all-the-icons-fileicon "hg" :v-adjust -0.1 :height 0.8)))

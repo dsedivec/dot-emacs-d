@@ -13,6 +13,8 @@
 ;; few times just to bring it back from the dead.  In the end, it
 ;; turns out writing this function is the easiest solution, for me.
 
+(require 'elec-pair)
+
 (defun my:python-magic-single-quote (times)
   "Skip over single quotes when used as string delimiters.
 

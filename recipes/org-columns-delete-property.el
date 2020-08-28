@@ -2,13 +2,8 @@
 
 ;; Delete property in columns mode
 
-(defvar org-agenda-overriding-columns-format)
-(defvar org-columns-inhibit-recalculation)
-(defvar org-columns-current-fmt)
-(defvar org-columns-map)
-(declare-function org-columns--call "org-colview")
-(declare-function org-columns-redo "org-colview")
-(declare-function org-columns-update "org-colview")
+(require 'org)
+(require 'org-colview)
 
 (defun my:org-columns-delete-property (&rest key)
   "Delete property value for the current column in columns mode."
@@ -44,10 +39,9 @@
        (org-columns-update key)
        (org-move-to-column col)))))
 
-(with-eval-after-load 'org-colview
-  (bind-keys :map org-columns-map
-             ("DEL" . my:org-columns-delete-property)
-             ;; I get this in columns mode in an agenda buffer.  Mac port
-             ;; uses <delete>, NS port uses <deletechar>.
-             ("<delete>" . my:org-columns-delete-property)
-             ("<deletechar>" . my:org-columns-delete-property)))
+(bind-keys :map org-columns-map
+           ("DEL" . my:org-columns-delete-property)
+           ;; I get this in columns mode in an agenda buffer.  Mac port
+           ;; uses <delete>, NS port uses <deletechar>.
+           ("<delete>" . my:org-columns-delete-property)
+           ("<deletechar>" . my:org-columns-delete-property))

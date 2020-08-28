@@ -2,6 +2,10 @@
 
 ;; Sort imenu-list, with a command to toggle it on and off.
 
+(require 'imenu)
+
+(require 'imenu-list)
+
 (defun my:imenu-sort-index-alist (index-alist predicate)
   (setq index-alist (sort index-alist predicate))
   (mapc (lambda (entry)

@@ -3,7 +3,11 @@
 ;; New command `my:link-hint-multi-dispatch' either opens link at
 ;; point, or else invokes link-hint to open/copy some link on screen.
 
+(eval-when-compile
+  (require 'link-hint))
+
 (autoload 'link-hint--get-link-at-point "link-hint")
+(autoload 'link-hint--action-at-point "link-hint")
 
 (defun my:link-hint-multi-dispatch (copy-link)
   "Open or copy links using link-hint.

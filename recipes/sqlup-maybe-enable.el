@@ -3,9 +3,10 @@
 ;; Enable sqlup mode if it looks like the buffer has more upper case
 ;; SQL keywords than lower case.
 
+(require 'sqlup-mode)
+
 (defun my:maybe-enable-sqlup-mode ()
   (interactive)
-  (require 'sqlup-mode)
   (when sqlup-mode
     (user-error "`sqlup-mode' is already active in this buffer"))
   (save-excursion

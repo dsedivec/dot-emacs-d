@@ -27,6 +27,9 @@
 ;; Eval that source block without the below and I estimate it'll fail
 ;; to find "timesheet".
 
+(require 'org)
+(require 'org-element)
+
 (define-advice org-babel-read-element
     (:before-until (element) my:read-dynamic-block-elements)
   (when (eq (org-element-type element) 'dynamic-block)

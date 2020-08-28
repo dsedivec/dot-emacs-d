@@ -41,6 +41,9 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'projectile))
+
 (defvar counsel-auto-grep-candidate-commands
   '(("rg" . counsel-rg)
     ("ag" . counsel-ag)
@@ -83,6 +86,8 @@ cached command.")
     ;;
     ;;     --some --args -- pattern_here
     (counsel-auto-grep initial-input nil (or extra-args "") prompt)))
+
+(autoload 'projectile-project-root "projectile")
 
 ;;;###autoload
 (defun counsel-auto-grep-projectile (&optional initial-input extra-args prompt)

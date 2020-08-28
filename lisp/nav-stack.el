@@ -79,6 +79,8 @@ message *templates* (see `nav-stack-debug') matching the
 regexp will be output."
   :type '(choice boolean regexp))
 
+(defvar nav-stack-mode)
+
 ;; This is not working sometimes, such as in nav-stack-ivy, for no
 ;; reason that I can find.  Need to ask on mailing list.  XXX
 

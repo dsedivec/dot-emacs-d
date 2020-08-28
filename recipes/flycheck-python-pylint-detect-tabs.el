@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'flycheck)
+
 (defun my:flycheck-python-pylint-ensure-tabs-option ()
   (let ((command (flycheck-checker-get 'python-pylint 'command))
         (tabs-opt '(eval (when indent-tabs-mode
@@ -19,5 +21,4 @@
 (advice-add 'flycheck-define-command-checker :after
             #'my:flycheck-python-pylint-ensure-tabs-option-advice)
 
-(when (featurep 'flycheck)
-  (my:flycheck-python-pylint-ensure-tabs-option))
+(my:flycheck-python-pylint-ensure-tabs-option)

@@ -1,5 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'bs)
+
 (defvar my:bs-file-name-abbrev-alist nil
   "List of (REGEXP . REPLACEMENT) for file names shown by bs.")
 
@@ -17,8 +19,7 @@ Abbreviations are taken from `my:bs-file-name-abbrev-alist'."
                (text-properties-at 0 name))
       name)))
 
-(with-eval-after-load 'bs
-  (let ((file-col (assoc "File" bs-attributes-list)))
-    (if file-col
-        (setf (car (last file-col)) 'my:bs-get-abbreviated-file-name)
-      (warn "Couldn't find (and change) \"File\" in `bs-attributes-list'"))))
+(let ((file-col (assoc "File" bs-attributes-list)))
+  (if file-col
+      (setf (car (last file-col)) 'my:bs-get-abbreviated-file-name)
+    (warn "Couldn't find (and change) \"File\" in `bs-attributes-list'")))

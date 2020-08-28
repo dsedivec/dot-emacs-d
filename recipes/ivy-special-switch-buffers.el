@@ -15,6 +15,17 @@
 ;; `my:ivy-switch-to-buffer-other-frame' here.  Then I give it the
 ;; same special index treatment I have described above.
 
+(defvar my:ivy-additional-switch-buffer-commands
+  '(ivy-switch-buffer-other-window my:ivy-switch-to-buffer-other-frame)
+  "List of commands that should behave like `ivy-switch-buffer'.
+Note that you can only put Ivy-aware commands here, as the advice
+depends on the :caller key being available.")
+
+;; Might as well have all buffer commands sort the same way, too.
+(dolist (buffer-cmd my:ivy-additional-switch-buffer-commands)
+  (setf (alist-get buffer-cmd ivy-sort-matches-functions-alist)
+        #'ivy-sort-function-buffer))
+
 ;; Note that I tried to do this using `ivy-index-functions-alist'
 ;; instead of advice, but it doesn't seem to be possible.  (Which
 ;; explains `ivy--recompute-index' already having a special case for
@@ -39,14 +50,3 @@
 
 (define-key ivy-mode-map [remap switch-to-buffer-other-frame]
   #'my:ivy-switch-to-buffer-other-frame)
-
-(defvar my:ivy-additional-switch-buffer-commands
-  '(ivy-switch-buffer-other-window my:ivy-switch-to-buffer-other-frame)
-  "List of commands that should behave like `ivy-switch-buffer'.
-Note that you can only put Ivy-aware commands here, as the advice
-depends on the :caller key being available.")
-
-;; Might as well have all buffer commands sort the same way, too.
-(dolist (buffer-cmd my:ivy-additional-switch-buffer-commands)
-  (setf (alist-get buffer-cmd ivy-sort-matches-functions-alist)
-        #'ivy-sort-function-buffer))

@@ -10,6 +10,8 @@
 ;; \newabbreviation (from glossaries-extra).  If you want to be bad
 ;; ass then you figure out how to crawl into included glossary files.
 
+(require 'company)
+
 (defvar my:company-auctex-glossaries-gls-command
   "\\\\[Gg]ls\\(?:pl\\)?\\s-*\\(?:\\[.*?]\\)?{")
 

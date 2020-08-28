@@ -5,6 +5,8 @@
 ;; This is `kill-whole-line' but works in `paredit-mode' to keep
 ;; parens balanced.
 
+(require 'paredit)
+
 (defun my:paredit-kill-whole-line (&optional arg)
   "Like `kill-whole-line', but avoids breaking matched paredit pairs."
   (interactive "p")

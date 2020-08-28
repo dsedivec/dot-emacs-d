@@ -2,6 +2,8 @@
 
 ;; Make <backspace>/C-d work like you'd expect in `paredit-mode'.
 
+(require 'paredit)
+
 (defun my:paredit-delete-selection ()
   "To be used as `delete-selection' property on paredit commands.
 This is just `paredit-delete-region' but returns 'supersede so

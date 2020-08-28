@@ -27,8 +27,16 @@
 
 ;;; Code:
 
-(require 'windmove)
-(require 'ace-window)
+(eval-when-compile
+  (require 'windmove)
+  (require 'winner)
+
+  (require 'ace-window))
+
+(autoload 'aw-swap-window "ace-window")
+(autoload 'windmove-find-other-window "windmove")
+(autoload 'winner-undo "winner" nil t)
+(autoload 'winner-redo "winner" nil t)
 
 ;;;###autoload (autoload 'window-hydra/body "window-hydra" nil t)
 (defhydra window-hydra (:hint nil)

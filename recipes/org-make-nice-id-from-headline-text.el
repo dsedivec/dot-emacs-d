@@ -4,6 +4,9 @@
 ;; tries to make an ID from the headline text, which can make for
 ;; nicer/more descriptive IDs.  Only lightly tested!
 
+(require 'org)
+(require 'org-id)
+
 (defvar my:org-new-id-from-headline 40)
 
 (defun my:org-new-id-from-headline (&optional prefix pom)

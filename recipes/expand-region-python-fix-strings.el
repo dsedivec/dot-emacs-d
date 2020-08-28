@@ -10,6 +10,8 @@
 ;;
 ;; I should upstream this.
 
+(require 'python)
+
 (defun my:er/mark-python-string (mark-inside)
   "Mark the Python string that surrounds point.
 

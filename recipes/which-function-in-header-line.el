@@ -8,6 +8,13 @@
 ;; `header-line-format' globally, you'll have an empty, useless header
 ;; line in buffers where you're not using `which-function-mode'.
 
+;; XXX this calls `my:treepy-edit-mode-line-var', which is not
+;; something you can `require' right now, which presents some problems
+;; when byte compiling.  I should move those mode line editing things
+;; out somewhere I can require them.
+
+(require 'treepy)
+
 (defvar my:which-function-mode-line-spec nil)
 
 (with-eval-after-load 'which-func

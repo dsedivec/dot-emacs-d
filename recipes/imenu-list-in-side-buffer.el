@@ -14,6 +14,8 @@
 
 (require 'cl-lib)
 
+(require 'imenu-list)
+
 (defun my:imenu-list-install-display-buffer ()
   "Put imenu-list buffer on a dedicated side window with a preserved size."
   (let* ((side (cl-ecase imenu-list-position
@@ -44,9 +46,11 @@
                                 '(nil . t)))
             (dedicated . t)))))
 
+(my:imenu-list-install-display-buffer)
+
+;; This advice is probably not necessary, since
+;; `imenu-list-install-display-buffer' is---at least as of this
+;; writing---only called once, when imenu-list is loaded.  I'm adding
+;; it just to be on the safe side.
 (advice-add 'imenu-list-install-display-buffer :override
             #'my:imenu-list-install-display-buffer)
-
-(when (featurep 'imenu-list)
-  ;; Too late, imenu-list already loaded.  Call our new setup function.
-  (my:imenu-list-install-display-buffer))

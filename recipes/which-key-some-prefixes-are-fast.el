@@ -5,6 +5,8 @@
 ;; specified by `which-key-idle-delay'.  Any other prefixes will have
 ;; a delay as specified by `my:which-key-normal-idle-delay'.
 
+(require 'which-key)
+
 (defvar my:which-key-no-delay-prefixes nil
   "Prefixes in this list will have which-key help displayed quickly.
 If T is in this list then both the global and any buffer-local

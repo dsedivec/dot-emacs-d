@@ -27,6 +27,11 @@
 
 (require 'subr-x)
 
+(eval-when-compile
+  ;; We override persp-mode's prompt when killing a buffer from
+  ;; another perspective, if you're using persp-mode.
+  (require 'persp-mode nil t))
+
 (defgroup carousel nil "Delete old buffers"
   :group 'convenience)
 
@@ -69,6 +74,8 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
 (defvar carousel-never-viewed-buffer-info
   (make-hash-table :weakness 'key)
   "Keys are buffers, values are (last-seen . modified-tick).")
+
+(defvar carousel-mode)
 
 (defun carousel-buffer-last-used-time (buf)
   (if-let ((buf-disp-time (buffer-local-value 'buffer-display-time buf)))

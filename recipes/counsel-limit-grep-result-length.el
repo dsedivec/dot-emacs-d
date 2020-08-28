@@ -4,6 +4,8 @@
 ;; to supply something like -M to ripgrep which limits its output (in
 ;; *bytes* in ripgrep's case).
 
+(require 'ivy)
+
 (defvar my:counsel-git-grep-max-result-width 2.0
   "Maximum length of git-grep/ag/rg/etc. matches displayed in minibuffer.
 If this is a real number, it is multiplied by the width of the
