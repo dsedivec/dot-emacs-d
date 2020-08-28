@@ -25,6 +25,16 @@
  ;; '(org-mode-line-clock ((t nil)))
  '(org-todo
    ((t (:background "#ac1879" :foreground "#FFFFDBD8F387" :weight bold))))
+ ;; Defaults to using ns_selection_bg_color (and
+ ;; ns_selection_fg_color), but those are only read at startup.  If
+ ;; macOS is in dark mode when you start up Emacs, you'll get the
+ ;; darker value of ns_selection_bg_color, which makes things kind of
+ ;; fucking unreadable because I guess :distant-foreground only kicks
+ ;; in when colors are *even closer* to being the same.  The
+ ;; :background here is the value of
+ ;; NSColor.selectedTextBackgroundColor.usingColorSpace(NSColorSpace.sRGB)
+ ;; (in Swift).
+ '(region ((t :background "#b3d6ff" :distant-foreground "black" :extend t)))
  '(rst-level-1 ((t (:background "grey80"))))
  '(rst-level-2 ((t (:background "grey85"))))
  '(rst-level-3 ((t (:background "grey90"))))
