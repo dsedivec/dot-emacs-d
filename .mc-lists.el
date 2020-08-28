@@ -33,6 +33,7 @@
         my:python-magic-double-quote
         my:python-magic-single-quote
         my:sp-splice-sexp-repeat
+        my:sp-split-sexp-repeat
         org-beginning-of-line
         org-delete-char
         org-meta-return
@@ -76,6 +77,7 @@
         count-words-region
         describe-key-briefly
         edit-indirect-region
+        end-of-buffer
         frame-resize
         goto-address-at-point
         ivy-switch-buffer-other-window
