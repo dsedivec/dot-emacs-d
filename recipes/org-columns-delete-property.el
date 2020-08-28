@@ -21,7 +21,7 @@
        (org-columns--call action)
        ;; The following let preserves the current format, and makes
        ;; sure that in only a single file things need to be updated.
-       (let* ((org-agenda-overriding-columns-format org-columns-current-fmt)
+       (let* ((org-overriding-columns-format org-columns-current-fmt)
               (buffer (marker-buffer pom))
               (org-agenda-contributing-files
                (list (with-current-buffer buffer
