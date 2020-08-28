@@ -1,10 +1,5 @@
 ;; -*- lexical-binding: t; -*-
 
-(require 'cl-lib)
-(require 'subr-x)
-
-(require 'persp-mode)
-
 ;; Save/restore frame configuration along with persp-mode.  Adding
 ;; data to perspectives inspired by
 ;; https://gist.github.com/gilbertw1/8d963083efea41f28bfdc85ed3c93eb4.
@@ -24,6 +19,11 @@
 ;; should be saved?  Right now, though, I think my only use of child
 ;; frames are from posframe, and I have no circumstances where I want
 ;; a posframe child frame saved/restored.
+
+(require 'cl-lib)
+(require 'subr-x)
+
+(require 'persp-mode)
 
 (defun my:persp-mode-serializable-p (obj)
   (and (or (memq (type-of obj) '(bool-vector
