@@ -1616,10 +1616,24 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; faces
 
 (when (x-list-fonts "Fira Mono")
-  (set-face-attribute 'default nil :font "Fira Mono 8"))
+  (set-face-attribute 'default nil :font "Fira Mono 8")
+  ;; On macOS this was ending up as... Courier.
+  (cl-pushnew "Fira Mono" (alist-get "Monospace" face-font-family-alternatives
+                                     nil nil #'equal)
+              :test #'equal))
 
 (when (x-list-fonts "Helvetica")
   (set-face-attribute 'variable-pitch nil :font "Helvetica 10"))
+
+;; On macOS this was ending up as... Consolas?!  Courier looks just
+;; fine IMHO.
+(cl-pushnew "Courier" (alist-get "Monospace Serif" face-font-family-alternatives
+                                 nil nil #'equal)
+            :test #'equal)
+
+;; Trigger the customize :set function.
+(customize-set-variable 'face-font-family-alternatives
+                        face-font-family-alternatives)
 
 
 ;;; faux-indent
