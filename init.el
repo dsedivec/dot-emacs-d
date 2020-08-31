@@ -1194,8 +1194,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (counsel-mode 1)
 
-(setq counsel-find-file-at-point t)
-
 ;; Include directory in prompt when searching.
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
 
