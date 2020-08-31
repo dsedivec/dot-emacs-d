@@ -1201,7 +1201,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
 
 (my:load-recipes 'counsel-limit-grep-result-length
-                 'counsel-trace-function)
+                 'counsel-trace-function
+                 'counsel-git-grep-use-re-builder)
 
 ;; `counsel-find-file' doesn't leave the file you just found as the
 ;; current buffer.  This is because `counsel-find-file' →
@@ -2240,11 +2241,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       ;; involved ideas.
       ivy-truncate-lines nil)
 
-(dolist (command '(counsel-rg swiper-isearch))
-  (setf (alist-get command ivy-re-builders-alist) #'ivy--regex-plus))
-
 (my:load-recipes 'ivy-special-switch-buffers
-                 'ivy-fuzzy-regex-combo-matcher)
+                 'ivy-fuzzy-regex-combo-matcher
+                 'ivy-regex-plus-or-literal-regex)
+
+(dolist (command '(counsel-rg swiper-isearch))
+  (setf (alist-get command ivy-re-builders-alist)
+        #'my:ivy--regex-plus-or-literal-regex))
 
 
 ;;; ivy-bibtex
