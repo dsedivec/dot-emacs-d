@@ -437,6 +437,7 @@ it returns the node that your EDIT-FORM changed)."
 (setq-default case-fold-search nil)
 
 (put 'downcase-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
 (put 'list-timers 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 
