@@ -2405,13 +2405,20 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (with-eval-after-load 'markdown-mode
   (bind-keys :map gfm-mode-map
-             ("C-c '" . my:gfm-fcb-edit))
+             ("C-c '" . my:gfm-fcb-edit)
+             :map markdown-mode-map
+             ("M-m m c e" . my:markdown-mode-copy-as-html-email))
 
-  ;; Note that I do not have this wrapped in (with-eval-after-load
-  ;; 'edit-indirect ...) because this installs a hook into
-  ;; `markdown-mode-hook', so it needs to run up front, before we even
-  ;; know if we're going to be using edit-indirect in this buffer.
-  (my:load-recipes 'markdown-mode-unindent-when-editing-code-blocks))
+  (my:load-recipes 'markdown-mode-copy-as-html-email
+                   ;; Note that I do not wrap the loading of
+                   ;; markdown-mode-unindent-when-editing-code-blocks
+                   ;; in (with-eval-after-load 'edit-indirect ...)
+                   ;; because it installs a hook into
+                   ;; `markdown-mode-hook', so it needs to run when a
+                   ;; `markdown-mode' buffer is created, before we
+                   ;; even know whether or not we're going to be using
+                   ;; edit-indirect.
+                   'markdown-mode-unindent-when-editing-code-blocks))
 
 (setq markdown-command "pandoc -f markdown -t html --standalone"
       markdown-header-scaling t
