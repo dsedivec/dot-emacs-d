@@ -2404,9 +2404,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; markdown-mode
 
 (with-eval-after-load 'markdown-mode
-  (bind-keys :map gfm-mode-map
-             ("C-c '" . my:gfm-fcb-edit)
-             :map markdown-mode-map
+  (bind-keys :map markdown-mode-map
              ("M-m m c e" . my:markdown-mode-copy-as-html-email))
 
   (my:load-recipes 'markdown-mode-copy-as-html-email
@@ -2434,8 +2432,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   #'visual-line-mode
   #'electric-pair-local-mode
   #'my:markdown-mode-hook)
-
-(my:load-recipes 'markdown-mode-edit-gfm-code-blocks)
 
 
 ;;; minibuffer
