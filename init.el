@@ -663,8 +663,10 @@ it returns the node that your EDIT-FORM changed)."
 
 (with-eval-after-load 'latex
   (my:load-recipes 'auctex-aggressively-load-styles
-                   'auctex-wrap-in-gls-commands
-                   'auctex-glossaries-package)
+                   'auctex-auto-braces-mode
+                   'auctex-glossaries-package
+                   'auctex-normalize-space-in-outline-name
+                   'auctex-wrap-in-gls-commands)
 
   (with-eval-after-load 'company
     (my:load-recipes 'auctex-company-glossaries-backend))
