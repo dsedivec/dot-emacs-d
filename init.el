@@ -6,8 +6,7 @@
 ;; from getting in trouble if I forget to byte compile.
 (setq load-prefer-newer t)
 
-(defvar my:local-packages-dir
-  (expand-file-name "lisp" (file-name-directory load-file-name)))
+(defvar my:local-packages-dir (expand-file-name "lisp" user-emacs-directory))
 
 (add-to-list 'load-path my:local-packages-dir)
 
