@@ -4383,18 +4383,7 @@ for this command) must be an arrow key."
              ("<backtab>" . my:yaml-backtab))
 
   (add-to-list 'yaml-imenu-generic-expression
-               '("Ansible" "^-\\s-+name: \\(.*\\)" 1))
-
-  ;; Temporary fix for https://github.com/yoshiki/yaml-mode/issues/79.
-  (let ((expected-re (concat "[^#]*: *\\(?:&.*\\|{ *\\|"
-                             yaml-tag-re
-                             " *\\)?$")))
-    (if (string= yaml-nested-map-re expected-re)
-        (setq yaml-nested-map-re (concat "[^#\n]*: *\\(?:&.*\\|{ *\\|"
-                                         yaml-tag-re
-                                         " *\\)?$"))
-      (warn "`yaml-nested-map-re' has changed, remove your fix in init.el"))))
-
+               '("Ansible" "^-\\s-+name: \\(.*\\)" 1)))
 
 
 ;;; yasnippet
