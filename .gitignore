@@ -2,6 +2,7 @@
 .DS_Store
 /.cache
 /.last-package-update-day
+/.org-id-locations
 /amx-items
 /anaconda-mode
 /auctex/auto
