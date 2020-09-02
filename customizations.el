@@ -105,6 +105,7 @@
      multi-line
      multiple-cursors
      mwim
+     nhexl-mode
      ns-copy-html
      olivetti
      org-plus-contrib
@@ -132,6 +133,7 @@
      sqlup-mode
      sticky-region
      swiper
+     systemd
      terraform-doc
      terraform-mode
      transpose-frame
