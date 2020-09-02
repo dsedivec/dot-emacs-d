@@ -2455,6 +2455,45 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (minions-mode 1)
 
 
+;;; modus-vivendi-theme
+
+(setq modus-vivendi-theme-intense-hl-line t
+      modus-vivendi-theme-intense-paren-match t)
+
+(defun my:set-theme-for-macos-system-theme (&optional toggle)
+  (interactive "P")
+  (let* ((scpt (concat "tell application \"System Events\" to"
+                       " get the dark mode of appearance preferences"
+                       " as integer"))
+         (theme (cond
+                  (toggle
+                   (if (memq 'modus-vivendi custom-enabled-themes)
+                       'light
+                     'dark))
+                  ((zerop (ns-do-applescript scpt))
+                   'light)
+                  (t
+                   'dark))))
+    (message "Setting themes for macOS %s theme" theme)
+    (unless (custom-theme-p 'modus-vivendi)
+      (load-theme 'modus-vivendi t t))
+    (cl-ecase theme
+      (light
+       (disable-theme 'modus-vivendi)
+       (enable-theme 'dsedivec))
+      (dark
+       (disable-theme 'dsedivec)
+       (enable-theme 'modus-vivendi)))))
+
+;; My persp-mode frame restoration can end up restoring the initial
+;; frame to look however it was when you exited it, even though
+;; subsequent frames will be created with my default theme.  This
+;; fixes that problem.  Moreover, though, it generally addresses the
+;; desire, "I want Emacs to have the proper theme whether I start it
+;; during the day or during the night."
+(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
+
+
 ;;; move-text
 
 (move-text-default-bindings)

@@ -101,6 +101,7 @@
      magit
      markdown-mode
      minions
+     modus-vivendi-theme
      move-text
      multi-line
      multiple-cursors
