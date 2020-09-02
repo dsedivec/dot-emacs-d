@@ -1375,6 +1375,10 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq dtrt-indent-min-quality 70.0)
 
+;; I get real annoyed with dtrt-indent doesn't engage in sh-mode
+;; buffers, just because sh-mode uses SMIE.
+(setq dtrt-indent-run-after-smie t)
+
 (dtrt-indent-global-mode 1)
 
 ;; If dtrt-indent changed buffer settings like indent-tabs-mode,
