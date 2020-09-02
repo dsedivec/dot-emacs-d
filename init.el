@@ -2855,6 +2855,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (bind-keys ("C-$" . osx-dictionary-search-pointer))
 
 
+;;; outline
+
+(with-eval-after-load 'outline
+  (bind-keys :map outline-minor-mode-map
+             ("C-c C-2" . outline-hydra/body)))
+
+
 ;;; package-build
 
 (setq package-build-recipes-dir "~/repositories/melpa/recipes")
