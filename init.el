@@ -653,10 +653,6 @@ it returns the node that your EDIT-FORM changed)."
 (with-eval-after-load 'font-latex
   (font-latex-update-sectioning-faces))
 
-(defun my:LaTeX-insert-combining-acute-accent ()
-  (interactive)
-  (insert ?\u0301))
-
 ;; Let company-mode start idle completion after typing a hyphen, such
 ;; as in "\gls{foo-".
 (put 'LaTeX-babel-insert-hyphen 'company-begin t)
