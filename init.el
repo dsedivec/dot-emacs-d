@@ -8,6 +8,8 @@
 
 (defvar my:local-packages-dir (expand-file-name "lisp" user-emacs-directory))
 
+(defvar my:private-lisp-dir (expand-file-name "private" user-emacs-directory))
+
 (add-to-list 'load-path my:local-packages-dir)
 
 (require 'cl-lib)
@@ -2795,9 +2797,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;; Private stuff that doesn't get checked into Git.
 (dolist (file-name '("org" "open-ticket"))
-  (load (expand-file-name (concat "private/" file-name)
-                          user-emacs-directory)
-        t))
+  (load (expand-file-name file-name my:private-lisp-dir) t))
 
 
 ;;; osx-dictionary
