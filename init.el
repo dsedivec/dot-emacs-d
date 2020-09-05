@@ -2101,7 +2101,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (with-eval-after-load 'hippie-exp
   (setq hippie-expand-try-functions-list
-        (delq 'try-expand-line hippie-expand-try-functions-list)))
+        (seq-difference hippie-expand-try-functions-list
+                        '(try-expand-line try-expand-list))))
 
 
 ;;; hl-line+
