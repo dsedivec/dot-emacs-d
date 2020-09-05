@@ -2460,7 +2460,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; modus-vivendi-theme
 
 (setq modus-vivendi-theme-intense-hl-line t
+      ;; Doesn't play well with F.lux unless you also have my mod to
+      ;; bg-paren-match-intense color, below.
       modus-vivendi-theme-intense-paren-match t)
+
+(setq modus-vivendi-theme-override-colors-alist
+      '(("bg-paren-match-intense" . "#8E00C2")))
 
 (defun my:set-theme-for-macos-system-theme (&optional toggle)
   (interactive "P")
