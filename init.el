@@ -3243,6 +3243,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :program "yapf"
     :lighter "Yapf")
 
+(reformatter-define autopep8-format
+    :program "autopep8"
+    :args '("-aa" "-")
+    :lighter "AP8")
+
 (reformatter-define docformatter
     :program "docformatter"
     :args '("-")
