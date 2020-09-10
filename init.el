@@ -1395,7 +1395,17 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq dumb-jump-selector 'ivy)
 
-(bind-keys ("C-M-." . dumb-jump-go))
+;; `dumb-jump-default-project' seems to default to "~", which I think
+;; means it will search your entire home directory by default?  That
+;; is... an interesting choice, one that I wish to avoid, personally.
+(setq dumb-jump-default-project nil)
+
+(when (executable-find "rg")
+  ;; Per the docs, prefer rg, just in case ag is installed.  (ag's
+  ;; gitignore handling is still unsatisfactory.)
+  (setq dumb-jump-prefer-searcher 'rg))
+
+(my:load-recipes 'dumb-jump-only-if-no-tags)
 
 
 ;;; edebug
