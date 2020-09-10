@@ -3390,6 +3390,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (when (executable-find "sbcl")
   (setq inferior-lisp-program "sbcl"))
 
+(defun my:sly-dont-enable-for-fennel (&rest args)
+  (not (derived-mode-p 'fennel-mode)))
+
+(advice-add 'sly-editing-mode :before-while #'my:sly-dont-enable-for-fennel)
+
 
 ;;; smartparens
 
