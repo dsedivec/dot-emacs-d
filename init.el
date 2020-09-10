@@ -952,7 +952,9 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; day, but it was broken in Emacs master.  See comments in recipe for
 ;; more details.
 
-(my:load-recipes 'find-url)
+(autoload 'my:find-url (expand-file-name "find-url" my:recipes-dir)
+  "Load a URL into a buffer."
+  t)
 
 
 ;;; bs

@@ -9,10 +9,9 @@
 ;; try and get you a "better" major mode than `fundamental-mode',
 ;; which is probably at least 50% a bad idea.
 
-(eval-when-compile (require 'mailcap)
-                   (require 'mm-decode))
-
-(autoload 'browse-url-interactive-arg "browse-url")
+(require 'mailcap)
+(require 'mm-decode)
+(require 'browse-url)
 
 (defun my:find-url (url)
   (interactive (list (car (browse-url-interactive-arg "URL: "))))
