@@ -2346,12 +2346,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; lisp-mode
 
-(add-hook 'lisp-mode-hook #'paredit-mode)
-
 (defun my:lisp-mode-hook ()
   (setq indent-tabs-mode nil))
 
-(add-hook 'lisp-mode-hook #'my:lisp-mode-hook)
+(my:add-hooks 'lisp-mode-hook
+  #'paredit-mode
+  #'aggressive-indent-mode
+  #'my:lisp-mode-hook)
 
 
 ;;; loccur
