@@ -845,11 +845,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; auto-yasnippet
 
-(bind-keys ("C-o" . aya-open-line)
-           ;; Spacemacs bindings
-           ("M-m i c" . aya-create)
-           ("M-m i e" . aya-expand)
-           ("M-m i w" . aya-persist-snippet))
+;; Bindings copied from Spacemacs
+(bind-keys
+ ("M-m i c" . aya-create)
+ ("M-m i e" . aya-expand)
+ ("M-m i w" . aya-persist-snippet))
 
 (with-eval-after-load 'auto-yasnippet
   (add-to-list 'which-key-replacement-alist
