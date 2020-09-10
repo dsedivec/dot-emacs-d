@@ -22,7 +22,9 @@
                       (car insert-ptr) #'dumb-jump-xref-activate)
               ;; No insertion point found, just put dumb-jump at the
               ;; end.
-              (nconc xref-backend-functions '(dumb-jump-xref-activate)))))
+              (setq xref-backend-functions
+                    (nconc xref-backend-functions
+                           '(dumb-jump-xref-activate))))))
       (add-hook 'xref-backend-functions #'dumb-jump-xref-activate nil t))))
 
 (add-hook 'find-file-hook #'my:dumb-jump-activate-unless-TAGS-exists)
