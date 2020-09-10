@@ -60,6 +60,7 @@
      emmet-mode
      exec-path-from-shell
      expand-region
+     fennel-mode
      flx
      flycheck
      flycheck-clj-kondo
@@ -102,6 +103,7 @@
      markdown-mode
      minions
      modus-vivendi-theme
+     monroe
      move-text
      multi-line
      multiple-cursors
