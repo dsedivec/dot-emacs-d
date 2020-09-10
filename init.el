@@ -2474,6 +2474,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; modus-vivendi-theme
 
+(when (featurep 'modus-vivendi-theme)
+  (warn "modus-vivendi-theme loaded before we could set our settings"))
+
 (setq modus-vivendi-theme-intense-hl-line t
       ;; Doesn't play well with F.lux unless you also have my mod to
       ;; bg-paren-match-intense color, below.
