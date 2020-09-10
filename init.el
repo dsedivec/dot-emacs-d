@@ -542,8 +542,8 @@ it returns the node that your EDIT-FORM changed)."
         (and (stringp node)
              (string-match-p "^ \\{2,\\}$" node)
              (eq (-some-> zip
-                          treepy-right
-                          treepy-node)
+                   treepy-right
+                   treepy-node)
                  'mode-line-position)))
       (treepy-replace zip " "))
   (warn "couldn't remove spaces before buffer position in mode line"))
