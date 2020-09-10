@@ -1079,8 +1079,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; comint
 
-(setq-default comint-scroll-to-bottom-on-input 'this
-              comint-input-ignoredups t)
+(setq comint-scroll-to-bottom-on-input 'this
+      comint-input-ignoredups t)
 
 
 ;;; comment-dwim-2
