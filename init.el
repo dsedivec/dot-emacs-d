@@ -1152,7 +1152,20 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   (company-tng-mode 1)
 
   (bind-keys :map company-mode-map
-             ("<C-return>" . my:company-complete-or-other-backend))
+             ("<C-return>" . my:company-complete-or-other-backend)
+             :map company-active-map
+             ;; If you don't unbind these then hitting e.g. <down>
+             ;; will either select the next candidate for completion,
+             ;; or else it will FUCKING ABORT COMPLETION, neither of
+             ;; which is what I want in tng mode.  (Sorry, but I'm mad
+             ;; because it took me way too long to figure out that
+             ;; company-mode has <up> and <down> behave differently
+             ;; when there's only one candidate.)
+             ;;
+             ;; With these unbound you can hit <up> or <down> to move
+             ;; the cursor, leaving a selected candidate if any.
+             ("<down>" . nil)
+             ("<up>" . nil))
 
   ;; C-<digit> to select a completion
   (dotimes (n 10)
