@@ -2567,6 +2567,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       ;; know, we've upgraded or something.
       (my:delete-compiled-theme 'modus-vivendi)
       (load-theme 'modus-vivendi t t))
+    (modify-all-frames-parameters `((ns-appearance . ,theme)))
     (cl-ecase theme
       (light
        (disable-theme 'modus-vivendi)
