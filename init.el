@@ -427,10 +427,6 @@ it returns the node that your EDIT-FORM changed)."
 ;; window being split.
 (setq window-combination-resize t)
 
-;; Don't recenter while scrolling.  (But see also
-;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=42653.)
-(setq scroll-conservatively 101)
-
 ;; Default is to convert yanked text in a search to lower case.  That
 ;; really screws me up, turn that off.
 (setq search-upper-case t)
