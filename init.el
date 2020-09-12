@@ -2490,7 +2490,54 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; modus-vivendi-theme
 
 (when (featurep 'modus-vivendi-theme)
-  (warn "modus-vivendi-theme loaded before we could set our settings"))
+  (warn (concat "modus-vivendi-theme has been loaded too early,"
+                " `modus-vivendi-theme-override-colors-alist' may not"
+                " be respected")))
+
+;; I'm pretty sure that `modus-vivendi-theme-override-colors-alist' is
+;; not used (whether partially or at all) when the theme is byte
+;; compiled, so I go out of my way to ignore any byte-compiled version
+;; of the theme, such as what you get if you install it with
+;; package.el.  Note that the theme is not byte compiled in
+;; forthcoming-as-of-this-writing Emacs 28.
+
+(require 'custom)
+
+(defun my:delete-compiled-theme (theme-name)
+  (let* ((theme-name (if (symbolp theme-name)
+                         (symbol-name theme-name)
+                       theme-name))
+         ;; This is taken from `load-theme'.
+         (theme-file (locate-file (concat theme-name "-theme.el")
+                                  (custom-theme--load-path)
+                                  '("" "c")))
+         ;; You might end up with "foo-theme.elcc" here, but we end up
+         ;; never using this variable if theme-file ends in "elc", so
+         ;; it doesn't matter.
+         (theme-elc (concat theme-file "c")))
+    (cond
+      ((string-match-p (rx ".elc" eos) theme-file)
+       (warn (concat "%s will probably be loaded from"
+                     " compiled file %S which has no matching source file")
+             theme-name theme-file))
+      ((not (file-exists-p theme-elc))
+       ;; Nothing to do
+       nil)
+      ((not (string-match-p (rx bos
+                                (literal (file-name-as-directory
+                                          (expand-file-name package-user-dir))))
+                            theme-file))
+       (warn (concat "%s will probably be loaded from"
+                     " compiled file %S, which is not under `package-user-dir'"
+                     " and so we don't delete the elc file")
+             theme-name theme-file))
+      (t
+       ;; elc file exists, it's under `package-user-dir', let's delete
+       ;; it.
+       (delete-file theme-elc)
+       (message "init.el deleted %S" theme-elc)))))
+
+(my:delete-compiled-theme 'modus-vivendi)
 
 (setq modus-vivendi-theme-intense-hl-line t
       ;; Doesn't play well with F.lux unless you also have my mod to
@@ -2516,6 +2563,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                    'dark))))
     (message "Setting themes for macOS %s theme" theme)
     (unless (custom-theme-p 'modus-vivendi)
+      ;; We did this at start time, but do it again in case, I don't
+      ;; know, we've upgraded or something.
+      (my:delete-compiled-theme 'modus-vivendi)
       (load-theme 'modus-vivendi t t))
     (cl-ecase theme
       (light
