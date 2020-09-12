@@ -1145,7 +1145,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
   ;; Among a few other things this makes it so TAB completes, not RET,
   ;; which I really need because it's annoying to hit enter at EOL to
   ;; insert a newline and instead a completion slips in instead.
-  (company-tng-configure-default)
+  ;;
+  ;; NOTE: Turning on `company-tng-mode' makes many changes, such as
+  ;; changes to `company-active-map', that are NOT reversed by
+  ;; turning it off.
+  (company-tng-mode 1)
 
   (bind-keys :map company-mode-map
              ("<C-return>" . my:company-complete-or-other-backend))
