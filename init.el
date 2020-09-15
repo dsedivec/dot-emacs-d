@@ -1220,7 +1220,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (counsel-mode 1)
 
 (setq counsel-find-file-ignore-regexp
-      (regexp-opt completion-ignored-extensions))
+      (rx (regexp (regexp-opt completion-ignored-extensions)) eos))
 
 ;; Include directory in prompt when searching.
 (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
