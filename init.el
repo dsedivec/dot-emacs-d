@@ -770,6 +770,12 @@ it returns the node that your EDIT-FORM changed)."
 (add-hook 'visual-line-mode-hook #'my:turn-on-adaptive-wrap-prefix-mode)
 
 
+;;; aggressive-indent
+
+(with-eval-after-load 'aggressive-indent
+  (my:load-recipes 'aggressive-indent-fix-timer))
+
+
 ;;; all-the-icons
 
 ;; These apparently don't get autoloaded.
