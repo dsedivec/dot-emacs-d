@@ -17,16 +17,15 @@
     (when (buffer-live-p buffer)
       (el-patch-splice 3 0
         (if (not (buffer-live-p buffer))
-            (cancel-timer aggressive-indent--idle-timer)
+            (aggressive-indent--maybe-cancel-timer)
           (with-current-buffer buffer
             (when (and aggressive-indent-mode aggressive-indent--changed-list)
               (save-excursion
                 (save-selected-window
                   (aggressive-indent--while-no-input
-                    (aggressive-indent--proccess-changed-list-and-indent))))
+                    (aggressive-indent--process-changed-list-and-indent))))
               (el-patch-remove
-                (when (timerp aggressive-indent--idle-timer)
-                  (cancel-timer aggressive-indent--idle-timer))))))))))
+                (aggressive-indent--maybe-cancel-timer)))))))))
 
 (el-patch-validate 'aggressive-indent--indent-if-changed 'defun t)
 
@@ -34,8 +33,7 @@
   "Store the limits (L and R) of each change in the buffer."
   (when aggressive-indent-mode
     (push (list l r) aggressive-indent--changed-list)
-    (when (timerp aggressive-indent--idle-timer)
-      (cancel-timer aggressive-indent--idle-timer))
+    (aggressive-indent--maybe-cancel-timer)
     (setq aggressive-indent--idle-timer
           (run-with-idle-timer aggressive-indent-sit-for-time
                                (el-patch-swap t nil)
