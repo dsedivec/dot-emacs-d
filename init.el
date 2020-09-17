@@ -2615,6 +2615,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (bind-keys ("C-a" . mwim-beginning-of-code-or-line)
            ("C-e" . mwim-end-of-line-or-code))
 
+(my:load-recipes 'mwim-set-bol-eol-funcs-in-visual-line-mode)
+
 
 ;;; multiple-cursors
 
