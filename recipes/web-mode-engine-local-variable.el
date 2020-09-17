@@ -32,7 +32,7 @@ set the engine for the file upon loading.")
   "Set web-mode engine from `my:web-mode-local-engine', if set."
   (when (boundp 'my:web-mode-local-engine)
     (let ((engine my:web-mode-local-engine))
-      (when (symbolp engine)
+      (when (and engine (symbolp engine))
         (setq engine (symbol-name engine)))
       (when (stringp engine)
         (web-mode-set-engine engine)))))
