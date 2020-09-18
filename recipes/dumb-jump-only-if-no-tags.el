@@ -12,10 +12,11 @@
 (defun my:dumb-jump-activate-unless-TAGS-exists ()
   (when (eq my:use-dumb-jump-this-buffer 'unknown)
     (setq my:use-dumb-jump-this-buffer
-          (if (and buffer-file-name
-                   (locate-dominating-file buffer-file-name "TAGS"))
-              nil
-            (dumb-jump-xref-activate))))
+          (let ((start (or buffer-file-name default-directory)))
+            (if (and start
+                     (locate-dominating-file start "TAGS"))
+                nil
+              (dumb-jump-xref-activate)))))
   my:use-dumb-jump-this-buffer)
 
 (add-hook 'xref-backend-functions #'my:dumb-jump-activate-unless-TAGS-exists)
