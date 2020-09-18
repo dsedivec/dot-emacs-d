@@ -544,17 +544,22 @@ it returns the node that your EDIT-FORM changed)."
       (treepy-replace zip " "))
   (warn "couldn't remove spaces before buffer position in mode line"))
 
-;; Remove fixed width for position output, causes too much extra space
-;; after (line,col) in mode line.
-(unless
-    (my:treepy-edit-mode-line-var
-        (mode-line-position zip)
-      ;; Note there is also a %C variant which I don't use.
-      (and (equal (treepy-node zip) " (%l,%c)")
-           (treepy-up zip)
-           (-some-> zip treepy-left treepy-node numberp))
-      (treepy-replace (treepy-up zip) (treepy-node zip)))
-  (warn "couldn't remove width specification from `mode-line-position'"))
+;; I am no longer seeing excessive spacing around the (line,col)
+;; position information in Emacs 28.0.50.  Check (probably) new
+;; variable `mode-line-position-column-line-format' if it becomes a
+;; problem again.
+(when (< emacs-major-version 28)
+  ;; Remove fixed width for position output, causes too much extra
+  ;; space after (line,col) in mode line.
+  (unless
+      (my:treepy-edit-mode-line-var
+          (mode-line-position zip)
+        ;; Note there is also a %C variant which I don't use.
+        (and (equal (treepy-node zip) " (%l,%c)")
+             (treepy-up zip)
+             (-some-> zip treepy-left treepy-node numberp))
+        (treepy-replace (treepy-up zip) (treepy-node zip)))
+    (warn "couldn't remove width specification from `mode-line-position'")))
 
 
 ;;;; Configure various packages
