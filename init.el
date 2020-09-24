@@ -2244,7 +2244,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (with-eval-after-load 'imenu-list
   (my:load-recipes 'imenu-list-in-side-buffer
-                   'imenu-list-sort))
+                   'imenu-list-sort
+                   'imenu-list-stop-when-window-deleted))
 
 
 ;;; impatient-mode
