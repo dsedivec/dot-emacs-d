@@ -2734,6 +2734,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                            ("P" . org-set-property)
                            ("S" . widen)
                            ("x" . org-cut-subtree))
+ ;; 'expert stops C-c C-t from popping up a (jarring) temporary
+ ;; window.
+ org-use-fast-todo-selection 'expert
  org-use-speed-commands (lambda ()
                           (and (org-at-heading-p)
                                (looking-back "^\\**"
