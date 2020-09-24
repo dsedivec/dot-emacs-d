@@ -176,6 +176,7 @@ same as NAME."
                                      '(mac bmu 1 key lit))))
     (hl-line+ :fetcher wiki)
     (blackout :fetcher github :repo "raxod502/blackout")
+    ,(my:quelpa-git-local-or-github 'deft)
     ,(my:quelpa-git-local-or-github 'eltu nil
                                     :files '(:defaults "eltu_update_tags.py"))
     ,(my:quelpa-git-local-or-github 'ns-copy-html)
