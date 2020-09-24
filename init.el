@@ -67,12 +67,50 @@
 (setq custom-file (expand-file-name "customizations.el" user-emacs-directory))
 (load custom-file)
 
+(my:load-recipes 'custom-format-selected-packages
+                 'custom-delete-compiled-theme)
+
+(add-to-list 'my:never-compiled-themes 'modus-vivendi)
+
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
 
-(load-theme 'dsedivec t)
+(defun my:set-theme-for-macos-system-theme (&optional toggle)
+  (interactive "P")
+  (let* ((scpt (concat "tell application \"System Events\" to"
+                       " get the dark mode of appearance preferences"
+                       " as integer"))
+         (theme (cond
+                  (toggle
+                   (if (memq 'modus-vivendi custom-enabled-themes)
+                       'light
+                     'dark))
+                  ((zerop (ns-do-applescript scpt))
+                   'light)
+                  (t
+                   'dark))))
+    (message "Setting themes for macOS %s theme" theme)
+    (unless (custom-theme-p 'modus-vivendi)
+      ;; We did this at start time, but do it again in case, I don't
+      ;; know, we've upgraded or something.
+      (my:delete-compiled-theme 'modus-vivendi)
+      (load-theme 'modus-vivendi t t))
+    (modify-all-frames-parameters `((ns-appearance . ,theme)))
+    (cl-ecase theme
+      (light
+       (disable-theme 'modus-vivendi)
+       (enable-theme 'dsedivec))
+      (dark
+       (disable-theme 'dsedivec)
+       (enable-theme 'modus-vivendi)))))
 
-(my:load-recipes 'custom-format-selected-packages)
+;; My persp-mode frame restoration can end up restoring the initial
+;; frame to look however it was when you exited it, even though
+;; subsequent frames will be created with my default theme.  This
+;; fixes that problem.  Moreover, though, it generally addresses the
+;; desire, "I want Emacs to have the proper theme whether I start it
+;; during the day or during the night."
+(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
 
 
 ;;; package.el with auto-package-update
@@ -2510,51 +2548,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                 " `modus-vivendi-theme-override-colors-alist' may not"
                 " be respected")))
 
-;; I'm pretty sure that `modus-vivendi-theme-override-colors-alist' is
-;; not used (whether partially or at all) when the theme is byte
-;; compiled, so I go out of my way to ignore any byte-compiled version
-;; of the theme, such as what you get if you install it with
-;; package.el.  Note that the theme is not byte compiled in
-;; forthcoming-as-of-this-writing Emacs 28.
-
-(require 'custom)
-
-(defun my:delete-compiled-theme (theme-name)
-  (let* ((theme-name (if (symbolp theme-name)
-                         (symbol-name theme-name)
-                       theme-name))
-         ;; This is taken from `load-theme'.
-         (theme-file (locate-file (concat theme-name "-theme.el")
-                                  (custom-theme--load-path)
-                                  '("" "c")))
-         ;; You might end up with "foo-theme.elcc" here, but we end up
-         ;; never using this variable if theme-file ends in "elc", so
-         ;; it doesn't matter.
-         (theme-elc (concat theme-file "c")))
-    (cond
-      ((string-match-p (rx ".elc" eos) theme-file)
-       (warn (concat "%s will probably be loaded from"
-                     " compiled file %S which has no matching source file")
-             theme-name theme-file))
-      ((not (file-exists-p theme-elc))
-       ;; Nothing to do
-       nil)
-      ((not (string-match-p (rx bos
-                                (literal (file-name-as-directory
-                                          (expand-file-name package-user-dir))))
-                            theme-file))
-       (warn (concat "%s will probably be loaded from"
-                     " compiled file %S, which is not under `package-user-dir'"
-                     " and so we don't delete the elc file")
-             theme-name theme-file))
-      (t
-       ;; elc file exists, it's under `package-user-dir', let's delete
-       ;; it.
-       (delete-file theme-elc)
-       (message "init.el deleted %S" theme-elc)))))
-
-(my:delete-compiled-theme 'modus-vivendi)
-
 (setq modus-vivendi-theme-intense-hl-line t
       ;; Doesn't play well with F.lux unless you also have my mod to
       ;; bg-paren-match-intense color, below.
@@ -2562,43 +2555,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (setq modus-vivendi-theme-override-colors-alist
       '(("bg-paren-match-intense" . "#8E00C2")))
-
-(defun my:set-theme-for-macos-system-theme (&optional toggle)
-  (interactive "P")
-  (let* ((scpt (concat "tell application \"System Events\" to"
-                       " get the dark mode of appearance preferences"
-                       " as integer"))
-         (theme (cond
-                  (toggle
-                   (if (memq 'modus-vivendi custom-enabled-themes)
-                       'light
-                     'dark))
-                  ((zerop (ns-do-applescript scpt))
-                   'light)
-                  (t
-                   'dark))))
-    (message "Setting themes for macOS %s theme" theme)
-    (unless (custom-theme-p 'modus-vivendi)
-      ;; We did this at start time, but do it again in case, I don't
-      ;; know, we've upgraded or something.
-      (my:delete-compiled-theme 'modus-vivendi)
-      (load-theme 'modus-vivendi t t))
-    (modify-all-frames-parameters `((ns-appearance . ,theme)))
-    (cl-ecase theme
-      (light
-       (disable-theme 'modus-vivendi)
-       (enable-theme 'dsedivec))
-      (dark
-       (disable-theme 'dsedivec)
-       (enable-theme 'modus-vivendi)))))
-
-;; My persp-mode frame restoration can end up restoring the initial
-;; frame to look however it was when you exited it, even though
-;; subsequent frames will be created with my default theme.  This
-;; fixes that problem.  Moreover, though, it generally addresses the
-;; desire, "I want Emacs to have the proper theme whether I start it
-;; during the day or during the night."
-(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
 
 
 ;;; move-text
