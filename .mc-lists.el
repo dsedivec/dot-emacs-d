@@ -80,6 +80,7 @@
         end-of-buffer
         frame-resize
         goto-address-at-point
+        ivy-switch-buffer
         ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
         minions-minor-modes-menu
