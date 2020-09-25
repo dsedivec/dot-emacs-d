@@ -90,19 +90,14 @@
                   (t
                    'dark))))
     (message "Setting themes for macOS %s theme" theme)
-    (unless (custom-theme-p 'modus-vivendi)
-      ;; We did this at start time, but do it again in case, I don't
-      ;; know, we've upgraded or something.
-      (my:delete-compiled-theme 'modus-vivendi)
-      (load-theme 'modus-vivendi t t))
     (modify-all-frames-parameters `((ns-appearance . ,theme)))
     (cl-ecase theme
       (light
        (disable-theme 'modus-vivendi)
-       (enable-theme 'dsedivec))
+       (load-theme 'dsedivec t))
       (dark
        (disable-theme 'dsedivec)
-       (enable-theme 'modus-vivendi)))))
+       (load-theme 'modus-vivendi t)))))
 
 ;; My persp-mode frame restoration can end up restoring the initial
 ;; frame to look however it was when you exited it, even though
