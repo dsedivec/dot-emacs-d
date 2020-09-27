@@ -16,7 +16,9 @@
                           "\\)\\_>"))
           (num-lower 0)
           (num-upper 0))
-      (while (re-search-forward regexp magic-mode-regexp-match-limit 'noerror)
+      (while (let ((case-fold-search t))
+               (re-search-forward regexp magic-mode-regexp-match-limit
+                                  'noerror))
         (when (and (sqlup-capitalizable-p (point))
                    (not (sqlup-blacklisted-p (downcase (match-string 0)))))
           (let ((first-char (char-after (match-beginning 0))))
