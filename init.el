@@ -2505,8 +2505,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                    'markdown-mode-delete-trailing-space))
 
 (setq markdown-command "pandoc -f markdown -t html --standalone"
-      markdown-header-scaling t
-      markdown-enable-math t)
+      markdown-enable-math t
+      markdown-footnote-location 'immediately
+      markdown-header-scaling t)
 
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil)
