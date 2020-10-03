@@ -634,7 +634,8 @@ it returns the node that your EDIT-FORM changed)."
   "M-m m" "major mode"
   "M-m s" "search"
   "M-m u" "utils"
-  "M-m v" "vc")
+  "M-m v" "vc"
+  "M-m x" "smartparens")
 
 
 ;;; wspc-hydra
