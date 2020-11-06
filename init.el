@@ -6,6 +6,17 @@
 ;; from getting in trouble if I forget to byte compile.
 (setq load-prefer-newer t)
 
+(when (fboundp 'native-compile)
+  ;; I believe the primary author of the native-comp branch explicitly
+  ;; does not recommend speed 3 for normal use, maybe only for use in
+  ;; special cases where extra performance is needed.
+  ;;(setq comp-speed 3)
+
+  ;; Emacs is going to be running ld early and often, it needs to run
+  ;; the one from MacPorts that might know about libgccjit.  Note that
+  ;; this will later be overwritten by my use of exec-path-from-shell.
+  (setenv "PATH" (concat "/opt/local/bin:" (or (getenv "PATH") ""))))
+
 (defvar my:local-packages-dir (expand-file-name "lisp" user-emacs-directory))
 
 (defvar my:private-lisp-dir (expand-file-name "private" user-emacs-directory))
