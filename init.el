@@ -1516,6 +1516,15 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; elec-pair
 
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=44245
+
+(defun my:electric-pair-wont-use-region-if-mode-is-not-on (orig-fun &rest args)
+  (and electric-pair-mode
+       (apply orig-fun args)))
+
+(advice-add 'electric-pair-will-use-region :around
+            #'my:electric-pair-wont-use-region-if-mode-is-not-on)
+
 (add-hook 'prog-mode-hook #'electric-pair-local-mode)
 
 (defun my:electric-pair-default-plus-before-word-inhibit (char)
