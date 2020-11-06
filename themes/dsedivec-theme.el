@@ -44,6 +44,7 @@
  '(secondary-selection ((t (:background "pale turquoise" :distant-foreground "black"))))
  '(sh-heredoc ((t (:foreground "#DF5169350000"))))
  '(web-mode-html-tag-face ((t (:foreground "dark violet"))))
- '(web-mode-symbol-face ((t (:foreground "#D64880F70000")))))
+ '(web-mode-symbol-face ((t (:foreground "#D64880F70000"))))
+ '(which-func ((t (:foreground "#ddddff" :distant-foreground "blue1")))))
 
 (provide-theme 'dsedivec)
