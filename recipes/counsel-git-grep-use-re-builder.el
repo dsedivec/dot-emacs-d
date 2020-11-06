@@ -10,6 +10,9 @@
 (require 'ivy)
 (require 'swiper)
 
+(eval-when-compile
+  (require 'el-patch))
+
 (el-patch-feature counsel)
 
 (el-patch-defun counsel-git-grep-action (x)

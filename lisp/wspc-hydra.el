@@ -27,9 +27,10 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'whitespace)
 
 (eval-when-compile
-  (require 'whitespace))
+  (require 'hydra))
 
 (defvar wspc-hydra-buffer-local-whitespace-style nil
   "When true, `whitespace-style' will be made buffer local if we change it.

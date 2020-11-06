@@ -9,6 +9,9 @@
 
 (require 'aggressive-indent)
 
+(eval-when-compile
+  (require 'el-patch))
+
 (el-patch-feature aggressive-indent)
 
 (el-patch-defun aggressive-indent--indent-if-changed (buffer)

@@ -7,6 +7,9 @@
 
 (require 'paredit)
 
+(eval-when-compile
+  (require 'el-patch))
+
 (defun my:paredit-kill-whole-line (&optional arg)
   "Like `kill-whole-line', but avoids breaking matched paredit pairs."
   (interactive "p")

@@ -31,7 +31,8 @@
   (require 'windmove)
   (require 'winner)
 
-  (require 'ace-window))
+  (require 'ace-window)
+  (require 'hydra))
 
 (autoload 'aw-swap-window "ace-window")
 (autoload 'windmove-find-other-window "windmove")
