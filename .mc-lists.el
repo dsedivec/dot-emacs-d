@@ -34,6 +34,7 @@
         my:python-magic-single-quote
         my:sp-splice-sexp-repeat
         my:sp-split-sexp-repeat
+        my:undo-only-but-never-in-a-region
         org-beginning-of-line
         org-delete-char
         org-meta-return
