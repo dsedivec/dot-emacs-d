@@ -2792,8 +2792,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
    'org-insert-heading-ignore-invisibility
    'org-jump-over-priority-after-setting-it
    'org-make-nice-id-from-headline-text
-   'org-property-drawer-fixes
-   )
+   'org-property-drawer-fixes)
 
   (bind-keys :map org-mode-map
              ("C-c a" . org-agenda)
