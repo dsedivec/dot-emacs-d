@@ -91,24 +91,21 @@
   (let* ((scpt (concat "tell application \"System Events\" to"
                        " get the dark mode of appearance preferences"
                        " as integer"))
-         (theme (cond
-                  (toggle
-                   (if (memq 'modus-vivendi custom-enabled-themes)
-                       'light
-                     'dark))
-                  ((zerop (ns-do-applescript scpt))
-                   'light)
-                  (t
-                   'dark))))
-    (message "Setting themes for macOS %s theme" theme)
-    (modify-all-frames-parameters `((ns-appearance . ,theme)))
-    (cl-ecase theme
-      (light
-       (disable-theme 'modus-vivendi)
-       (load-theme 'dsedivec t))
-      (dark
-       (disable-theme 'dsedivec)
-       (load-theme 'modus-vivendi t)))))
+         (emacs-theme (if (string= (face-background 'default) "white")
+                          'light
+                        'dark))
+         (target-theme (cond
+                         (toggle (cl-ecase emacs-theme
+                                   (light 'dark)
+                                   (dark 'light)))
+                         ((zerop (ns-do-applescript scpt))
+                          'light)
+                         (t 'dark))))
+    (message "Configuring Emacs for %s theme" target-theme)
+    (cl-assert (memq target-theme '(light dark)))
+    (unless (eq emacs-theme target-theme)
+      (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
+      (invert-face 'default))))
 
 ;; My persp-mode frame restoration can end up restoring the initial
 ;; frame to look however it was when you exited it, even though
@@ -514,9 +511,21 @@ it returns the node that your EDIT-FORM changed)."
   ;; configured right, that leaves you with just the colors from the
   ;; "Developer" colors in your `x-colors' variable.  This is the
   ;; quick-and-dirty fix, I hope.
-  (setq x-colors (ns-list-colors)))
+  (setq x-colors (ns-list-colors))
 
-;; Mode line mods
+  ;; Demand higher contrast, particularly when running under
+  ;; (invert-face 'default).  This was determined by looking at the
+  ;; `color-distance' between the region face's background and
+  ;; font-lock-comment-face's foreground, which is currently >150,000
+  ;; for me.  For reference, perhaps:
+  ;;
+  ;;     (color-distance "black" "white") → 589800
+  (setq face-near-same-color-threshold 160000)
+  ;; Docstring for `face-near-same-color-threshold' says to do this.
+  (clear-face-cache))
+
+
+;;; Mode line mods
 
 ;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
 (unless
