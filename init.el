@@ -2481,33 +2481,36 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; magit
 
-;; I want this everywhere (recommended by the Magit manual's "Getting
-;; Started" section).
-(bind-keys ("C-x g" . magit-status))
-
-;; Spacemacs uses <Leader>gfd to run `magit-diff-buffer-file-popup',
-;; but (a) I don't like that prefix (why not "v" for "version
-;; control", so it can potentially apply to all version control
-;; systems, rather than "g" for (presumably) "Git"), and (b) I want
-;; to just straight to the diff, no pop-up needed.
+;; By default (as of https://github.com/magit/magit/pull/4237), Magit
+;; will bind:
 ;;
-;; So I'm breaking with Spacemacs and making my own bindings here.
-;; #Rebel
-(with-eval-after-load 'magit
-  (bind-keys
-   :map magit-file-mode-map
-   ("M-m v f" . magit-find-file)
-   ("M-m v F" . magit-file-dispatch)
-   ("M-m v d" . magit-diff-buffer-file)))
+;;     key             binding
+;;     ---             -------
+;;     C-x g           magit-status
+;;     C-x M-g         magit-dispatch
+;;     C-c M-g         magit-file-dispatch
+;;
+;; I was already doing C-x g.  I actually have C-c M-g bound in
+;; AUCTeX, and while I don't currently use that binding much (and in
+;; fact I am currently questioning whether it should exist), I see no
+;; reason to clobber it.  Therefore I'm disabling Magit's global
+;; binding of these keys and I'll set up the bindings I like below.
 
+(setq magit-define-global-key-bindings nil)
+
+(bind-keys ("C-x g" . magit-status)
+           ;; These bindings were originally derived from what is in
+           ;; Spacemacs, just in case you're wondering.
+           ("M-m v f" . magit-find-file)
+           ("M-m v F" . magit-file-dispatch)
+           ("M-m v d" . magit-diff-buffer-file))
+
+;; Sometimes I might still M-x magit.
 (autoload 'magit "magit" nil t)
 
 (setq magit-diff-refine-hunk 'all
       magit-diff-refine-ignore-whitespace nil
       magit-bury-buffer-function 'magit-mode-quit-window)
-
-(my:load-recipes 'magit-file-mode-autoload)
-
 
 ;; truncate-lines does not work well for me when viewing diffs and such.
 
