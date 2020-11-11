@@ -2512,7 +2512,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       magit-diff-refine-ignore-whitespace nil
       magit-bury-buffer-function 'magit-mode-quit-window)
 
-;; truncate-lines does not work well for me when viewing diffs and such.
+;; `truncate-lines' does not work well for me when viewing diffs and
+;; such.
 
 (defun my:magit-mode-hook ()
   (setq truncate-lines nil))
