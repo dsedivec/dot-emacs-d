@@ -76,7 +76,7 @@
 (my:load-recipe 'timestamp-messages)
 
 
-;;; Customization
+;;; customize and themes
 
 ;; Set this early before I potentially install packages, which will
 ;; modify customizable variable `package-selected-packages'.
