@@ -91,12 +91,14 @@
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
 
+(load-theme 'dsedivec t)
+
 (defun my:set-theme-for-macos-system-theme (&optional toggle)
   (interactive "P")
   (let* ((scpt (concat "tell application \"System Events\" to"
                        " get the dark mode of appearance preferences"
                        " as integer"))
-         (emacs-theme (if (string= (face-background 'default) "white")
+         (emacs-theme (if (cl-equalp (face-background 'default) "white")
                           'light
                         'dark))
          (target-theme (cond
