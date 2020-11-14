@@ -1499,10 +1499,20 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; is... an interesting choice, one that I wish to avoid, personally.
 (setq dumb-jump-default-project nil)
 
-(when (executable-find "rg")
-  ;; Per the docs, prefer rg, just in case ag is installed.  (ag's
-  ;; gitignore handling is still unsatisfactory.)
-  (setq dumb-jump-prefer-searcher 'rg))
+(with-eval-after-load 'dumb-jump
+  (when (executable-find "rg")
+    ;; Force dumb-jump to always use ripgrep instead of ag
+    ;; (unsatisfactory gitignore handling) or git-grep (only searches
+    ;; tracked files).
+    (setq dumb-jump-force-searcher 'rg)
+    ;; Ignore .gitignore when using ripgrep from dumb-jump.  You might
+    ;; want this, for example, to have it search ~/.emacs.d/elpa,
+    ;; which I have in a .gitignore.
+    (let ((args (cons "-u"
+                      (split-string-and-unquote (or dumb-jump-rg-search-args
+                                                    "")))))
+      (setq dumb-jump-rg-search-args
+            (combine-and-quote-strings (seq-uniq args))))))
 
 (my:load-recipes 'dumb-jump-only-if-no-tags)
 
