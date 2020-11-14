@@ -112,7 +112,18 @@
     (cl-assert (memq target-theme '(light dark)))
     (unless (eq emacs-theme target-theme)
       (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
-      (invert-face 'default))))
+      (invert-face 'default)
+      ;; Function `org-mode' sets up face org-hide based on the
+      ;; current background color.  Changing the background color thus
+      ;; requires restarting org-mode.  I think I can do this in just
+      ;; one buffer and it'll change the org-hide face globally.
+      (when-let ((org-buf (seq-some (lambda (buf)
+                                      (with-current-buffer buf
+                                        (when (derived-mode-p 'org-mode)
+                                          buf)))
+                                    (buffer-list))))
+        (with-current-buffer org-buf
+          (org-mode-restart))))))
 
 ;; My persp-mode frame restoration can end up restoring the initial
 ;; frame to look however it was when you exited it, even though
