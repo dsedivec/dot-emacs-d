@@ -45,13 +45,13 @@
   "Don't tell the user when you've swapped functions."
   :type 'boolean)
 
-(defcustom chaos-max-tries 100
-  "Maximum number of tries to find compatible functions to swap."
+(defcustom chaos-num-samples 20
+  "How hard to try and find functions to swap in `obarray'."
   :type 'integer)
 
 (defvar chaos-swapped-functions nil)
 
-(defun chaos-compatible-arities (f1 f2)
+(defun chaos--compatible-arities (f1 f2)
   (pcase-let ((`(,f1-min . ,f1-max) (func-arity f1))
               (`(,f2-min . ,f2-max) (func-arity f2)))
     (and (= f1-min f2-min)
@@ -61,44 +61,65 @@
          ;; (func-arity 'min) → (1 . many)
          (eql f1-max f2-max))))
 
-(defun chaos-swap-random-function-pair ()
+;; Reservoir sampling courtesy
+;; https://en.wikipedia.org/wiki/Reservoir_sampling#An_optimal_algorithm
+(defun chaos--random-sample-functions (sample-size)
+  (cl-assert (> sample-size 0))
+  (let* ((samples (make-vector sample-size nil))
+         (num-funcs 0)
+         (W (exp (/ (log (cl-random 1.0)) sample-size)))
+         (i (+ sample-size (floor (/ (log (cl-random 1.0))
+                                     (log (- 1 W)))))))
+    (mapatoms (lambda (sym)
+                (when (and (functionp sym)
+                           (not (string-match-p chaos-forbidden-symbol-regexp
+                                                (symbol-name sym)))
+                           (ignore-errors
+                             (not (eq (cdr (func-arity sym)) 'unevalled))))
+                  (cond
+                    ((< num-funcs sample-size)
+                     (aset samples num-funcs sym))
+                    ((= num-funcs i)
+                     (aset samples (random sample-size) sym)
+                     (setq W (exp (/ (log (cl-random 1.0)) sample-size))
+                           i (+ i 1 (floor (/ (log (cl-random 1.0))
+                                              (log (- 1 W))))))))
+                  (cl-incf num-funcs))))
+    samples))
+
+(defun chaos--swap-random-function-pair ()
   (catch 'swapped
-    (dotimes (_ chaos-max-tries)
-      (let* ((s1 (seq-random-elt obarray))
-             (s2 (seq-random-elt obarray)))
-        (when (and (functionp s1)
-                   (functionp s2)
-                   (not (string-match-p chaos-forbidden-symbol-regexp
-                                        (symbol-name s1)))
-                   (not (string-match-p chaos-forbidden-symbol-regexp
-                                        (symbol-name s2)))
-                   (ignore-errors (chaos-compatible-arities s1 s2)))
-          ;; `ignore-errors' because sometimes fset fails?
-          (when (ignore-errors
-                  (let ((f2 (symbol-function s2)))
-                    (fset s2 (symbol-function s1))
-                    (fset s1 f2)
-                    t))
-            (push (cons s1 s2) chaos-swapped-functions)
-            (unless chaos-quiet
-              (message "Ye gods, %s and %s have swapped bodies!" s1 s2))
-            (throw 'swapped nil)))))
+    (let ((funcs (seq-into (chaos--random-sample-functions chaos-num-samples)
+                           'list)))
+      (while (cdr funcs)
+        (let ((s1 (pop funcs)))
+          (dolist (s2 funcs)
+            ;; `ignore-errors' because sometimes fset fails?
+            (when (ignore-errors
+                    (let ((f2 (symbol-function s2)))
+                      (fset s2 (symbol-function s1))
+                      (fset s1 f2)
+                      t))
+              (push (cons s1 s2) chaos-swapped-functions)
+              (unless chaos-quiet
+                (message "Ye gods, %s and %s have swapped bodies!" s1 s2))
+              (throw 'swapped nil))))))
     (unless chaos-quiet
       (message "You have escaped chaos... for now."))))
 
-(defvar chaos-timer nil)
+(defvar chaos--timer nil)
 
 ;;;###autoload
 (define-minor-mode chaos-mode
     "Randomly swap function definitions."
   :global t
   :lighter " 乱"
-  (when (timerp chaos-timer)
-    (cancel-timer chaos-timer)
-    (setq chaos-timer nil))
+  (when (timerp chaos--timer)
+    (cancel-timer chaos--timer)
+    (setq chaos--timer nil))
   (when chaos-mode
-    (setq chaos-timer (run-with-timer t chaos-frequency
-                                      #'chaos-swap-random-function-pair))))
+    (setq chaos--timer (run-with-timer t chaos-frequency
+                                       #'chaos--swap-random-function-pair))))
 
 (provide 'chaos-mode)
 ;;; chaos-mode.el ends here
