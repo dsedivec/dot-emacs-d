@@ -42,19 +42,27 @@
 ;;;###autoload (autoload 'window-hydra/body "window-hydra" nil t)
 (defhydra window-hydra (:hint nil)
   "
-  ^_j_^                  _1_ single window   _2_^ split window      _b_alance windows
-_h_   _l_  move buffer   _o_ther window      _\\_ transpose frame   s_w_ap window
-  ^_k_^                  _←_ winner-undo     _0_^ delete window     _→_ winner redo
-"
-  ("j" (aw-swap-window (windmove-find-other-window 'up)))
-  ("h" (aw-swap-window (windmove-find-other-window 'left)))
-  ("l" (aw-swap-window (windmove-find-other-window 'right)))
-  ("k" (aw-swap-window (windmove-find-other-window 'down)))
+^^^^switch or MOVE^^^^   _o_ther window         _1_ one window      winner:
+^^^^    window    ^^^^   s_w_ap windows         _2_ split window    _←_ undo
+     ^^_j_/_J_^^         _b_alance windows      _0_ delete window   _→_ redo
+ _h_/_H_     _l_/_L_     _\\_ transpose frame
+     ^^_k_/_K_^^         CCW _[_ _]_ CW rotate frame                _q_uit
+  "
+  ("j" (windmove-up))
+  ("h" (windmove-left))
+  ("l" (windmove-right))
+  ("k" (windmove-down))
+  ("J" (aw-swap-window (windmove-find-other-window 'up)))
+  ("H" (aw-swap-window (windmove-find-other-window 'left)))
+  ("L" (aw-swap-window (windmove-find-other-window 'right)))
+  ("K" (aw-swap-window (windmove-find-other-window 'down)))
   ("1" delete-other-windows)
   ("2" split-window-below)
   ("b" balance-windows)
   ("o" ace-window)
   ("\\" transpose-frame)
+  ("[" rotate-frame-anticlockwise)
+  ("]" rotate-frame-clockwise)
   ("w" ace-swap-window)
   ("<left>" winner-undo)
   ("0" delete-window)
