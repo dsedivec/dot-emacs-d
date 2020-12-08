@@ -1798,9 +1798,19 @@ surround \"foo\" with (in this example) parentheses.  I want
                     (keywords-regexp
                      (regexp-opt (nconc (mapcar #'upcase keywords)
                                         keywords))))
-               (cons (rx (* (any space ?\n))
+               (cons (rx bos (* (any space ?\n))
                          symbol-start
-                         (regexp keywords-regexp))
+                         (or (regexp keywords-regexp)
+                             (: (| "with" "WITH")
+                                (+ (any space ?\n))
+                                (? (| "recursive" "RECURSIVE")
+                                   (+ (any space ?\n)))
+                                (+ (not (any space ?\n)))
+                                (+ (any space ?\n))
+                                (| "as" "AS")
+                                (+ (any space ?\n))
+                                ?\(
+                                )))
                      'sql-mode)))
 
 (my:load-recipes 'files-delete-auto-save-after-revert-buffer
