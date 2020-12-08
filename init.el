@@ -2401,6 +2401,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
 (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
 
+;; It's been a while since I wrote this, but IIRC, these commands
+;; don't work well with my fuzzy matcher, or probably with any out of
+;; order matcher such as `ivy--regex-ignore-order'.  And/or they were
+;; horribly slow with something like `ivy--regex-fuzzy'.  Hence
+;; forcing a different regexp builder here.
 (dolist (command '(counsel-rg swiper-isearch))
   (setf (alist-get command ivy-re-builders-alist)
         #'my:ivy--regex-plus-or-literal-regex))
