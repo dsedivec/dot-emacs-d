@@ -2398,6 +2398,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                  'ivy-fuzzy-regex-combo-matcher
                  'ivy-regex-plus-or-literal-regex)
 
+;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
+(setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
+
 (dolist (command '(counsel-rg swiper-isearch))
   (setf (alist-get command ivy-re-builders-alist)
         #'my:ivy--regex-plus-or-literal-regex))
