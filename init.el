@@ -2370,7 +2370,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
            ;; modifier when typing the space in something like "foo: "
            ;; and then I wonder "WTF where did my input go?"
            ("C-SPC" . ivy-restrict-to-matches)
-           ("S-SPC" . nil))
+           ("S-SPC" . nil)
+           ;; This will rotate through `ivy-preferred-re-builders',
+           ;; which I set below.
+           ("M-r" . ivy-rotate-preferred-builders))
 
 ;; ivy-initial-inputs-alist makes "^" the default for a bunch of
 ;; commands, like counsel-M-x, which I generally dislike.
@@ -2400,6 +2403,18 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
 (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
+
+;; First is my default, as above.  Second is `ivy--regex-ignore-order'
+;; because that is the matcher I most frequently use instead of fuzzy.
+;; Third is just "try and make a regexp if it looks like you have
+;; groups, otherwise `ivy--regex-plus'".
+;;
+;; This is used by `ivy-rotate-preferred-builders', which I have bound
+;; above.
+(setq ivy-preferred-re-builders
+      '((my:ivy--regex-regular-or-fuzzy . "auto-fuzzy")
+        (ivy--regex-ignore-order . "order")
+        (my:ivy--regex-plus-or-literal-regex . "regexp")))
 
 ;; It's been a while since I wrote this, but IIRC, these commands
 ;; don't work well with my fuzzy matcher, or probably with any out of
