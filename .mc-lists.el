@@ -34,6 +34,7 @@
         my:python-magic-single-quote
         my:sp-splice-sexp-repeat
         my:sp-split-sexp-repeat
+        my:sql-mode-electric-apostrophe
         my:undo-only-but-never-in-a-region
         org-beginning-of-line
         org-delete-char
@@ -58,6 +59,7 @@
         paredit-semicolon
         paredit-splice-sexp
         paredit-split-sexp
+        paredit-wrap-round
         shift-number-up
         undo-only
         web-mode-element-vanish
