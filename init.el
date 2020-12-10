@@ -173,8 +173,13 @@
 
 ;; I always forget to run `package-refresh-contents' before trying to
 ;; install.
-(define-advice package-install (:before (&rest _args) my:package-refresh-maybe)
-  (my:package-refresh-maybe))
+
+(defun my:package-install-refresh-maybe (&rest _args)
+  (interactive (lambda (spec)
+                 (my:package-refresh-maybe)
+                 (advice-eval-interactive-spec spec))))
+
+(advice-add 'package-install :before #'my:package-install-refresh-maybe)
 
 (defun my:quelpa-git-local-or-github (name &optional repo-name &rest plist)
   "Return Quelpa recipe for package NAME.
