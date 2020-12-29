@@ -89,6 +89,7 @@
         minions-minor-modes-menu
         my:delete-window-that-direction
         my:link-hint-multi-dispatch
+        sql-product-interactive
         sql-send-paragraph
         zop-up-to-char
         ))
