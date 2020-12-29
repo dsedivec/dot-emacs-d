@@ -1227,7 +1227,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (my:load-recipes 'company-dont-complete-numbers
                  'company-dabbrev-code-work-with-other-prefixes
-                 'company-remove-dabbrev-code-duplicates
+                 'company-remove-duplicates-ignoring-annotations
                  'company-complete-or-other-backend)
 
 (with-eval-after-load 'company
