@@ -39,7 +39,9 @@ company-prescient).  If a `company-dabbrev-code' candidate has a
 duplicate later in the of candidates, the `company-dabbrev-code'
 candidate will be replaced by the candidate that appears later in
 the list."
-  (let* ((default-backend (car company-backend))
+  (let* ((default-backend (if (listp company-backend)
+                              (car company-backend)
+                            company-backend))
          (best-cands (make-hash-table :test #'equal))
          has-duplicates)
     ;; First pass: Put the best candidate in hash table best-cands.
