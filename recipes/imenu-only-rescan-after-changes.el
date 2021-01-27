@@ -5,15 +5,16 @@
 ;; rescan if the buffer changed.
 
 (defvar-local my:imenu-auto-rescan-last-modification nil
-  "Value of `buffer-modified-tick' last time `imenu--index-alist' was rebuilt.")
+  "`buffer-chars-modified-tick' when `imenu--index-alist' was last rebuilt.")
 
 (defun my:only-update-imenu-index-after-modification (orig-fun &rest args)
   (let ((imenu-auto-rescan (or (null my:imenu-auto-rescan-last-modification)
-                               (> (buffer-modified-tick)
+                               (> (buffer-chars-modified-tick)
                                   my:imenu-auto-rescan-last-modification))))
     (prog1
         (apply orig-fun args)
-      (setq my:imenu-auto-rescan-last-modification (buffer-modified-tick)))))
+      (setq my:imenu-auto-rescan-last-modification
+            (buffer-chars-modified-tick)))))
 
 (advice-add 'imenu--make-index-alist :around
             #'my:only-update-imenu-index-after-modification)
