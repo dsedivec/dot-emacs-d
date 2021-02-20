@@ -25,6 +25,7 @@
         insert-char
         insert-parentheses
         kill-sexp
+        markdown-cycle
         markdown-insert-code
         markdown-outdent-or-delete
         mwim-beginning-of-code-or-line
@@ -74,6 +75,7 @@
         ace-window
         avy-goto-char
         beginning-of-buffer
+        copy-to-register
         counsel-M-x
         counsel-describe-function
         counsel-projectile-find-file
