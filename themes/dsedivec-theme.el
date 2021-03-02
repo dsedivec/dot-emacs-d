@@ -14,8 +14,6 @@
    ((t (:background "darkseagreen2" :foreground "black" :weight normal))))
  ;; XXX not using bm these days
  '(bm-face ((t (:background "DarkOrange1" :distant-foreground "white"))))
- '(bmkp-light-non-autonamed
-   ((t (:background "DarkSeaGreen1" :distant-foreground "grey20"))))
  '(highlight ((t (:background "darkseagreen2" :distant-foreground "black"))))
  '(isearch ((t (:background "magenta3" :foreground "white"))))
  '(mode-line ((t (:background "#228" :foreground "white" :box (:line-width -1 :style released-button)))))

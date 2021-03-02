@@ -4,7 +4,6 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(ahs-idle-interval 0.5)
- '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks")
  '(org-modules
    '(org-tempo org-id ol-w3m ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-irc ol-mhe ol-rmail ol-eww))
  '(package-selected-packages
@@ -24,7 +23,6 @@
      avy
      bind-key
      blackout
-     bookmark+
      buttercup
      cider
      clean-aindent-mode

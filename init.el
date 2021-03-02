@@ -201,12 +201,7 @@ same as NAME."
                       plist)))))
 
 (defvar my:quelpa-packages
-  `((bookmark+ :fetcher wiki
-               :files ,(cons "bookmark+.el"
-                             (mapcar (lambda (suffix)
-                                       (format "bookmark+-%s.el" suffix))
-                                     '(mac bmu 1 key lit))))
-    (hl-line+ :fetcher wiki)
+  `((hl-line+ :fetcher wiki)
     (blackout :fetcher github :repo "raxod502/blackout")
     ,(my:quelpa-git-local-or-github 'deft)
     ,(my:quelpa-git-local-or-github 'eltu nil
@@ -999,43 +994,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (my:load-recipes 'bookmark-auto-save)
 
 
-;;; bookmark+
-
-;; I require all of bookmark+ to get its keys loaded.  bookmark+ also
-;; sets up a mode hook that tries to change menus in `dired-mode-map',
-;; menus which I move elsewhere.  Best of all, the mode hook is a
-;; lambda, so I can't get at it by name.  Therefore I engage in the
-;; following horrible, awful maneuver to try and keep the hook happy.
-
-(if (featurep 'bookmark+)
-    (warn "Too late, bookmark+ loaded, dired menus are screwed")
-
-  (add-hook
-   'dired-mode-hook
-   (underlings-define-menu-mover 'dired-mode "Subdir" "Dired"
-                                 :func-name 'my:dired-bmkp-hide-subdir-menu))
-
-  (require 'bookmark+)
-
-  (add-hook
-   'dired-mode-hook
-   (underlings-define-menu-mover 'dired-mode
-                                 '[("Dired" "Subdir")]
-                                 nil
-                                 :func-name 'my:dired-bmkp-show-subdir-menu)))
-
-(setq bmkp-auto-light-when-set 'all-in-buffer
-      bmkp-auto-light-when-jump 'any-bookmark)
-
-(with-eval-after-load 'which-key
-  (add-to-list 'which-key-replacement-alist
-               '(("C-x p c" . "Prefix Command") . (nil . "create")))
-  (add-to-list 'which-key-replacement-alist
-               '(("C-x p t" . "Prefix Command") . (nil . "tags"))))
-
-(my:load-recipes 'bookmark+-speed-up)
-
-
 ;;; browse-url
 
 ;; OK, this doesn't really belong here, probably.  `my:find-url' only
@@ -1463,13 +1421,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;;; dired
 
 ;; Combine all bordering-on-abusively-numerous dired menus into a
-;; single menu item.  macOS users rejoice.  Note that I also move the
-;; "Subdir" menu, but I have to do that in a stupid way because of
-;; bookmark+; see my init code for that package elsewhere in this file
+;; single menu item.  macOS users rejoice.
 (underlings-move-menu-with-one-time-hook 'dired-mode
                                          ;; Quoted for indentation, sigh.
                                          '["Operate" "Mark" "Regexp"
-                                           "Immediate"]
+                                           "Immediate" "Subdir"]
                                          "Dired")
 
 
@@ -2794,12 +2750,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  ;; Maybe don't be executing Elisp in table formulas in some random
  ;; org file I downloaded.  (Thanks wasamasa.)
  org-table-allow-automatic-line-recalculation nil
- ;; I don't want or like org creating bookmarks, especially since
- ;; Bookmark+ then highlights the bookmarks.
+ ;; I don't want or like org creating bookmarks, especially if you
+ ;; want to use Bookmark+ (which I no longer do) because it will
+ ;; highlight the bookmarks.
  org-bookmark-names-plist nil
- ;; I never use this bookmark, and now with Bookmark+ I seem to be
- ;; getting the last thing I capture visualized, which I actively
- ;; don't want.
+ ;; I never use this bookmark, and when I was using Bookmark+, it
+ ;; seemed to be visualizing the last thing I captured somehow, which
+ ;; annoys me to no end.
  org-capture-bookmark nil
  org-capture-templates '(("t" "Todo" entry
                           (file+headline "~/todo.org" "Inbox")
