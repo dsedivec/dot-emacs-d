@@ -4315,7 +4315,14 @@ a string or comment."
   (setq indent-tabs-mode t
         tab-width 4)
   (push '(company-web-html company-dabbrev-code)
-        (my:buffer-local-value 'company-backends)))
+        (my:buffer-local-value 'company-backends))
+  ;; I have no idea how `web-mode-enable-auto-quoting' is supposed to
+  ;; work: It wants to insert a space after it turns attr= into
+  ;; attr="", *unless* the quotes it just inserted are followed by \n
+  ;; or >.  The > makes sense if typing < inserts a >, a la electric
+  ;; pairing.  Except that I don't see if/how/where web-mode does
+  ;; that.  Sigh.  Just tell elec-pair to pair < with >.
+  (add-to-list (make-local-variable 'electric-pair-pairs) '(?< . ?>)))
 
 (my:add-hooks 'web-mode-hook
   #'my:web-mode-hook
