@@ -1897,7 +1897,10 @@ surround \"foo\" with (in this example) parentheses.  I want
                               ;; template.
                               web-mode)
       ;; Defaults to 400, sadly too few for some of my files at work.
-      flycheck-checker-error-threshold 2000
+      ;; However, I ran with 2000 for a while, and I think I can say
+      ;; that, when you have even 1100 errors, Emacs slows down too
+      ;; much.  Let's try 1000 instead.
+      flycheck-checker-error-threshold 1000
       ;; These default to "python3", which annoys me when I have to
       ;; work on Python 2.
       flycheck-python-pycompile-executable "python"
