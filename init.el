@@ -3627,7 +3627,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                          'my:sql-mark-statement 'er/mark-next-accessor))
 
 (my:add-hooks 'sql-mode-hook
-  #'sqlind-minor-mode
+  #'faux-indent-mode
   #'smart-tabs-mode
   #'my:sql-mode-hook)
 
