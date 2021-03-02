@@ -112,7 +112,13 @@
     (cl-assert (memq target-theme '(light dark)))
     (unless (eq emacs-theme target-theme)
       (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
-      (invert-face 'default)
+      (cl-ecase target-theme
+        (light
+         (disable-theme 'modus-vivendi)
+         (load-theme 'dsedivec t))
+        (dark
+         (disable-theme 'dsedivec)
+         (load-theme 'modus-vivendi t)))
       ;; Function `org-mode' sets up face org-hide based on the
       ;; current background color.  Changing the background color thus
       ;; requires restarting org-mode.  I think I can do this in just
