@@ -1652,6 +1652,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (advice-add 'python-mode :before #'elpy-enable)
 
+;; Double the default, for big files at work.  (This may or may not be
+;; a good idea.  It seemed fine the one time I tried it.)
+(setq elpy-rpc-ignored-buffer-size (* 200 1024))
+
 (with-eval-after-load 'elpy
   (setq elpy-modules (delq 'elpy-module-highlight-indentation elpy-modules))
 
