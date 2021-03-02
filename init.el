@@ -1839,10 +1839,10 @@ surround \"foo\" with (in this example) parentheses.  I want
                #'my:frame-resize-window-default t)
 
   (dolist (func '(
-                  kill-buffer-and-window
                   ediff-toggle-split
-                  my:delete-window-that-direction
                   imenu-list-quit-window
+                  kill-buffer-and-window
+                  my:delete-window-that-direction
                   transpose-frame
                   treemacs
                   winner-undo
