@@ -333,8 +333,8 @@ NEW-ELEMENT."
     (error "`my:setq-local' needs pairs but got odd number of args"))
   `(progn
      ,@(cl-loop for next-binding on bindings by #'cddr
-          collect `(set (make-local-variable ',(car next-binding))
-                        ,(cadr next-binding)))))
+         collect `(set (make-local-variable ',(car next-binding))
+                       ,(cadr next-binding)))))
 
 (defun my:add-hooks (hook-var &rest hook-funcs)
   (declare (indent 1))
