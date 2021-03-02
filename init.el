@@ -2733,6 +2733,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ("C-r" . phi-search-backward)))
 
 
+;;; mwheel
+
+;; Make horizontal scrolling work like every other application.
+;; Maybe.  Credit to parsnip!
+(setq mouse-wheel-tilt-scroll t
+      mouse-wheel-flip-direction t)
+
+
 ;;; nav-stack
 
 ;; (setq nav-stack-debug-enabled t)
