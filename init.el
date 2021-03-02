@@ -3122,16 +3122,16 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     (warn (concat "`ivy-prescient-sort-commands' is no longer a :not"
                   " by default, fix init.el"))
   (cl-loop
-     for func in '(counsel-rg
-                   counsel-yank-pop)
-     if (memq func ivy-prescient-sort-commands)
-     do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
-              func)
-     else
-     collect func into funcs-to-add
-     finally
-       (setq ivy-prescient-sort-commands (nconc ivy-prescient-sort-commands
-                                                funcs-to-add))))
+    for func in '(counsel-rg
+                  counsel-yank-pop)
+    if (memq func ivy-prescient-sort-commands)
+    do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
+             func)
+    else
+    collect func into funcs-to-add
+    finally
+     (setq ivy-prescient-sort-commands (nconc ivy-prescient-sort-commands
+                                              funcs-to-add))))
 
 
 ;;; prog-mode
