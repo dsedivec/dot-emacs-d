@@ -317,6 +317,21 @@ dominates (see the documentation for
               "`frame-resize' error undoing size preservation: %S"
             (apply #'window-preserve-size args)))))))
 
+;; I considered using `window-configuration-change-hook' instead of
+;; `post-command-hook'.  I decided against it for two reasons:
+;;
+;; First, I was worried that changing the frame/window sizes within
+;; `window-configuration-change-hook' was probably a bad idea.  The
+;; docs lightly warn that this could be a bad idea.  I could see some
+;; sort of loop happening.
+;;
+;; Second, I was worried it would fire too often.  Our
+;; `post-command-hook' is firing *constantly*, of course, but it's
+;; very terse.  I fear `window-configuration-change-hook' could fire
+;; very often itself, such as anytime the minibuffer gets invoked, but
+;; then it would haul off and call `frame-resize' which is probably
+;; considerably more expensive than our post-command hook function.
+
 (defun auto-frame-resize--maybe-resize-frame ()
   "Call `frame-resize' if `this-command' is in `auto-frame-resize-commands'."
   (with-demoted-errors
