@@ -1104,6 +1104,20 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (setq lisp-loop-keyword-indentation 2
       lisp-loop-forms-indentation 3)
 
+;; Since I use `common-lisp-indent-function' in Elisp, and Elisp often
+;; has some deeply nested lists (and CL probably does too), turning
+;; this up lets examples like this be formatted nicely:
+;;
+;;     (custom-set-faces
+;;      '(default ((t (:inverse-video  nil
+;;                     :box            nil
+;;                     :strike-through nil)))))
+;;
+;; The default value of 3 means the keyword plist above would be
+;; indented funny starting with the :box line.  (Try indenting that
+;; with `lisp-indent-function' to see what I mean.
+(setq lisp-indent-maximum-backtracking 10)
+
 
 ;;; clean-aindent-mode
 
