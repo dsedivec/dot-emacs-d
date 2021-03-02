@@ -1417,6 +1417,17 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
 
 
+;;; dired
+
+;; Combine all bordering-on-abusively-numerous dired menus into a
+;; single menu item.  macOS users rejoice.
+(underlings-move-menu-with-one-time-hook 'dired-mode
+                                         ;; Quoted for indentation, sigh.
+                                         '["Operate" "Mark" "Regexp"
+                                           "Immediate" "Subdir"]
+                                         "Dired")
+
+
 ;;; dired-ranger
 
 (with-eval-after-load 'dired
@@ -1429,17 +1440,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
              ("W" . dired-ranger-copy)
              ("X" . dired-ranger-move)
              ("Y" . dired-ranger-paste)))
-
-
-;;; dired
-
-;; Combine all bordering-on-abusively-numerous dired menus into a
-;; single menu item.  macOS users rejoice.
-(underlings-move-menu-with-one-time-hook 'dired-mode
-                                         ;; Quoted for indentation, sigh.
-                                         '["Operate" "Mark" "Regexp"
-                                           "Immediate" "Subdir"]
-                                         "Dired")
 
 
 ;;; dired-x
