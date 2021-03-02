@@ -1842,6 +1842,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                   ediff-toggle-split
                   imenu-list-quit-window
                   kill-buffer-and-window
+                  magit-mode-bury-buffer
                   my:delete-window-that-direction
                   transpose-frame
                   treemacs
