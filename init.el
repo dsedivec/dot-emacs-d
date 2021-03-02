@@ -2061,6 +2061,15 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq git-commit-summary-max-length 50)
 
 
+;;; go-mode
+
+(defun my:go-mode-hook ()
+  (setq-local tab-width 4)
+  (add-hook 'before-save-hook 'gofmt-before-save nil t))
+
+(add-hook 'go-mode-hook #'my:go-mode-hook)
+
+
 ;;; goto-addr --- Keywords: link url follow open
 
 ;; `goto-address-mode' "[buttonizes] URLs and e-mail addresses".

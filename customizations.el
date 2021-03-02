@@ -66,6 +66,7 @@
      flycheck-package
      flycheck-pos-tip
      free-keys
+     go-mode
      graphviz-dot-mode
      groovy-mode
      haskell-mode
