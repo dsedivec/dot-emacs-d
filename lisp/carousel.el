@@ -35,9 +35,18 @@
 (defgroup carousel nil "Delete old buffers"
           :group 'convenience)
 
+(defcustom carousel-file-buffer-max-age (* 72 60 60)
+  "How old, in seconds, a file-backed buffer must be before it is kill-able.
+
+If nil, file-backed buffers will never be killed in Carousel."
+  :type '(choice integer (const nil))
+  :group 'carousel)
+
 (defcustom carousel-non-file-buffer-max-age 3600
-  "How old a non-file buffer can be before it's killed."
-  :type 'integer
+  "How old, in seconds, a non-file buffer must be before it is kill-able.
+
+If nil, non-file buffers will never be killed in Carousel."
+  :type '(choice integer (const nil))
   :group 'carousel)
 
 (defcustom carousel-safe-buffer-regexps
@@ -94,42 +103,48 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
   (when carousel-debug
     (message "carousel-kill-buffers running"))
   (let ((now (float-time))
-        (oldest-survivor 0))
+        (next-run (min carousel-file-buffer-max-age
+                       carousel-non-file-buffer-max-age)))
     (dolist (buf (buffer-list))
-      (unless (or (not (buffer-live-p buf))
-                  (buffer-file-name buf)
-                  (get-buffer-process buf)
-                  ;; midnight does this.  Not sure if it's necessary,
-                  ;; but my guess is that maybe a buffer could be
-                  ;; visible but not yet have its
-                  ;; `buffer-display-time' set.
-                  (get-buffer-window buf 'visible)
-                  (let ((buf-name (buffer-name buf)))
-                    (seq-some (lambda (regexp)
-                                (string-match-p regexp buf-name))
-                              carousel-safe-buffer-regexps))
-                  (let ((buf-mode (buffer-local-value 'major-mode buf)))
-                    (seq-some (lambda (mode)
-                                (eq mode buf-mode))
-                              carousel-safe-buffer-modes)))
-        (let* ((buf-used-time (or (carousel-buffer-last-used-time buf) now))
-               (secs-since-last-viewed
-                (- now buf-used-time)))
-          (when carousel-debug
-            (message "Considering %S, %S s old" buf secs-since-last-viewed))
-          (if (< secs-since-last-viewed carousel-non-file-buffer-max-age)
-              (setq oldest-survivor (max oldest-survivor
-                                         secs-since-last-viewed))
-            (message "Carousel killing buffer %S" (buffer-name buf))
-            (unless carousel-dry-run
-              (kill-buffer buf))))))
+      (let ((max-age (if (buffer-file-name buf)
+                         carousel-file-buffer-max-age
+                       carousel-non-file-buffer-max-age)))
+        (unless (or (not (buffer-live-p buf))
+                    ;; Buffers connected to a process/socket should
+                    ;; never be killed.
+                    (get-buffer-process buf)
+                    ;; midnight does this.  Not sure if it's necessary,
+                    ;; but my guess is that maybe a buffer could be
+                    ;; visible but not yet have its
+                    ;; `buffer-display-time' set.
+                    (get-buffer-window buf 'visible)
+                    ;; If the appropriate max-age variable is nil then
+                    ;; we don't kill these types of buffers.
+                    max-age
+                    (let ((buf-name (buffer-name buf)))
+                      (seq-some (lambda (regexp)
+                                  (string-match-p regexp buf-name))
+                                carousel-safe-buffer-regexps))
+                    (let ((buf-mode (buffer-local-value 'major-mode buf)))
+                      (seq-some (lambda (mode)
+                                  (eq mode buf-mode))
+                                carousel-safe-buffer-modes)))
+          (let* ((buf-used-time (or (carousel-buffer-last-used-time buf) now))
+                 (secs-since-last-viewed (- now buf-used-time))
+                 (secs-left (- max-age secs-since-last-viewed)))
+            (when carousel-debug
+              (message "Considering %S, %S s old, %S left to live"
+                       buf secs-since-last-viewed secs-left))
+            (if (> secs-left 0)
+                (setq next-run (min next-run secs-left))
+              (message "Carousel killing buffer %S" (buffer-name buf))
+              (unless carousel-dry-run
+                (kill-buffer buf)))))))
     (when carousel-mode
-      (cl-assert (< oldest-survivor carousel-non-file-buffer-max-age) t)
       (when (timerp carousel-timer)
         (cancel-timer carousel-timer))
-      (setq carousel-timer (run-at-time (- carousel-non-file-buffer-max-age
-                                           oldest-survivor)
-                                        nil #'carousel-kill-buffers)))))
+      (setq carousel-timer (run-at-time next-run nil
+                                        #'carousel-kill-buffers)))))
 
 (define-advice carousel-kill-buffers
     (:around (orig-fun &rest args) my:carousel-override-persp-mode)
