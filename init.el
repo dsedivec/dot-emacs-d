@@ -1101,7 +1101,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; These variables claim to have been introduced in 28.1 and their
 ;; default value is 6, which looks whack to me, even/especially in
 ;; Elisp.
-
 (setq lisp-loop-keyword-indentation 2
       lisp-loop-forms-indentation 3)
 
