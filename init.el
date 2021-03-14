@@ -415,6 +415,11 @@ taken from the docstring of a minor mode function defined by
   (put repeat-cmd-name 'function-documentation
        (format "Repeatable version of `%S'." regular-cmd-name)))
 
+(defun my:insert-time-stamp ()
+  (interactive)
+  (insert (format-time-string "%FT%T%:::z")))
+
+
 ;; Utilities to edit the mode line using treepy zippers.
 
 (require 'treepy)
