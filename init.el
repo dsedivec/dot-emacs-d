@@ -1483,6 +1483,18 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;; Binds C-x C-j.  Probably does other stuff I care about.
 (require 'dired-x)
 
+;; Add more LaTeX extensions to ignore.  I'm not turning on
+;; `dired-omit-mode' by default because I think changing the default
+;; behavior of dired in such a way that it hides some files from me
+;; would be far too error-prone.
+(dolist (ext '(".fdb_latexmk" ".fls"))
+  (if (member ext dired-latex-unclean-extensions)
+      (warn (concat "%S is already in `dired-latex-unclean-extensions',"
+                    " update init.el")
+            ext)
+    (add-to-list 'dired-latex-unclean-extensions ext)
+    (add-to-list 'dired-omit-extensions ext)))
+
 
 ;;; dtrt-indent
 
