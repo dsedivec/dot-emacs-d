@@ -96,6 +96,7 @@
      literate-calc-mode
      loccur
      lorem-ipsum
+     lsp-mode
      lua-mode
      macrostep
      magit
