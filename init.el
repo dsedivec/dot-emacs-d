@@ -3116,21 +3116,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       (setf (cdr last-cell) (list (car last-cell))
             (car last-cell) #'my:persp-mode-dont-save-buffers-without-files))))
 
-;; Perspective-aware buffer switching with Ivy, courtesy
-;; https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
-;; (linked from persp-mode.el project).  I decided that I did not need
-;; all of the code there, so this is just a subset, and a modified
-;; subset at that.
-
-(defun my:persp-mode-ivy-filter-buffers (buffer)
-  (when-let ((persp (and persp-mode (get-current-persp))))
-    (not (persp-contain-buffer-p buffer persp))))
-
-(my:with-eval-after-all-load '(persp-mode ivy)
-  (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
-
 (my:load-recipes 'persp-mode-save-load-frame-configuration
-                 'persp-mode-auto-save-configuration)
+                 'persp-mode-auto-save-configuration
+                 'persp-mode-ivy-buffer-switching)
 
 ;; Must set this before turning on persp-mode for it to have an effect.
 (setq persp-auto-resume-time 0.1)
@@ -3344,7 +3332,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                    'python-edit-indirect-in-strings
                    'python-add-import
                    'python-reformat-region-or-buffer
-                   'python-shell-send-dwim)
+                   'python-shell-send-dwim
+                   'python-enable-black-from-editorconfig)
 
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
@@ -3354,18 +3343,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
              ("M-m m i" . my:python-add-import)))
-
-(require 'editorconfig)
-
-(defun my:maybe-enable-black-format-on-save ()
-  ;; Guard on `buffer-file-name' needed to avoid Elpy stuffing Python
-  ;; into temporary buffers when sending code to the REPL.
-  (when buffer-file-name
-    (let ((props (funcall editorconfig-get-properties-function)))
-      (when (equal (gethash 'org.codefu/python_formatter props) "black")
-        (black-format-on-save-mode 1)))))
-
-(add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
 
 
 ;;; pyvenv
