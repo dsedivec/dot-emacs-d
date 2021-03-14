@@ -2641,6 +2641,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                    ;; even know whether or not we're going to be using
                    ;; edit-indirect.
                    'markdown-mode-unindent-when-editing-code-blocks
+                   'markdown-mode-shifttab-unindents-lists
                    'markdown-mode-better-previous-line-indent
                    'markdown-mode-delete-trailing-space))
 
