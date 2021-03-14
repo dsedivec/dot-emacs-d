@@ -3002,25 +3002,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (with-eval-after-load 'org-clock
   (my:load-recipes 'org-compact-clock-in-mode-line
                    'org-clock-update-mode-line-on-clock-in-out
-                   'org-switch-to-pending-on-clock-in))
-
-;; You can use this as a :formatter in clocktables where you've
-;; forcibly narrowed headlines and don't want bracketed links to be
-;; truncated, as they often are since the link target (e.g. a URI
-;; which doesn't have any spaces) comes first in such a construct.
-;; This just converts the link to its descriptive text.
-(defun my:org-clocktable-formatter-strip-links (ipos tables params)
-  ;; I *think* it's OK to destructively modify TABLES.  I think the
-  ;; formatter is the one and only user of this value.  See
-  ;; org-dblock-write:clocktable.
-  (mapc (lambda (file)
-          (mapc (lambda (entry)
-                  (setf (nth 1 entry)
-                        (replace-regexp-in-string org-bracket-link-regexp
-                                                  "\\3" (nth 1 entry))))
-                (nth 2 file)))
-        tables)
-  (funcall org-clock-clocktable-formatter ipos tables params))
+                   'org-switch-to-pending-on-clock-in
+                   'org-clock-table-omit-link-urls))
 
 (defvar my:org-todo-files (mapcar #'expand-file-name
                                   '("~/todo.org" "~/todo.org_archive")))
