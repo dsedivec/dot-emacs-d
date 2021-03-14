@@ -3336,14 +3336,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
-(defun my:python-reformat-region-or-buffer ()
-  (interactive)
-  (if (use-region-p)
-      (black-format-region (region-beginning) (region-end))
-    (save-some-buffers)
-    (isort-format-buffer)
-    (black-format-buffer)))
-
 (defun my:python-shell-send-dwim ()
   (interactive)
   (cond
@@ -3360,6 +3352,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
      (python-shell-send-region start end))))
 
 (with-eval-after-load 'python
+  (my:load-recipes 'python-magic-quotes
+                   'python-toggle-triple-quotes
+                   'python-fix-dead-shell-font-lock-buffer
+                   'expand-region-python-fix-strings
+                   'python-edit-indirect-in-strings
+                   'python-add-import
+                   'python-reformat-region-or-buffer)
+
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
              ("C-c '" . my:python-edit-indirect-dwim)
@@ -3367,14 +3367,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
-             ("M-m m i" . my:python-add-import))
+             ("M-m m i" . my:python-add-import)))
 
-  (my:load-recipes 'python-magic-quotes
-                   'python-toggle-triple-quotes
-                   'python-fix-dead-shell-font-lock-buffer
-                   'expand-region-python-fix-strings
-                   'python-edit-indirect-in-strings
-                   'python-add-import))
 (require 'editorconfig)
 
 (defun my:maybe-enable-black-format-on-save ()
