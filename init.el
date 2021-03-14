@@ -3336,21 +3336,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
-(defun my:python-shell-send-dwim ()
-  (interactive)
-  (cond
-    ((use-region-p)
-     (call-interactively #'python-shell-send-region))
-    ((python-info-current-defun)
-     (call-interactively #'python-shell-send-defun))
-    (t
-     (save-excursion
-       (python-nav-beginning-of-statement)
-       (setq start (point))
-       (python-nav-end-of-statement)
-       (setq end (point)))
-     (python-shell-send-region start end))))
-
 (with-eval-after-load 'python
   (my:load-recipes 'python-magic-quotes
                    'python-toggle-triple-quotes
@@ -3358,7 +3343,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                    'expand-region-python-fix-strings
                    'python-edit-indirect-in-strings
                    'python-add-import
-                   'python-reformat-region-or-buffer)
+                   'python-reformat-region-or-buffer
+                   'python-shell-send-dwim)
 
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
