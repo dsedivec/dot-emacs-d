@@ -748,6 +748,37 @@ it returns the node that your EDIT-FORM changed)."
 (put 'LaTeX-babel-insert-hyphen 'company-begin t)
 
 (with-eval-after-load 'latex
+  ;; This auto-insert skeleton only loaded after 'latex because it
+  ;; (ab)uses `LaTeX-arg-usepackage-read-packages-with-options'.
+  (with-eval-after-load 'autoinsert
+    (setf (alist-get "\\.[Ss][Tt][Yy]\\'" auto-insert-alist nil nil #'equal)
+          '(nil
+            "\\NeedsTeXFormat{LaTeX2e}[1994/06/01]\n"
+            "\\ProvidesPackage{"
+            (if buffer-file-name
+                (file-name-base buffer-file-name)
+              (read-string "Package name: "))
+            "}\n"
+            ;; AUCTeX doesn't help us indent here...
+            ;; >
+            ;; ...so we'll just insert our own indent.
+            "  ["
+            (format-time-string "%Y/%m/%d")
+            " v001 "
+            (read-string "This package's description: ")
+            "]\n\n"
+            (cl-loop
+              for (packages . options)
+               = (LaTeX-arg-usepackage-read-packages-with-options)
+              while packages
+              do (progn
+                   (insert "\\RequirePackage")
+                   (LaTeX-arg-usepackage-insert packages options)
+                   (insert "\n")))
+            & "\n"
+            -
+            "\n\n\\endinput\n")))
+
   (my:load-recipes 'auctex-aggressively-load-styles
                    'auctex-auto-braces-mode
                    'auctex-glossaries-package
