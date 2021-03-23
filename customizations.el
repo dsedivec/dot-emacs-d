@@ -127,6 +127,7 @@
      quelpa
      rainbow-mode
      reformatter
+     rg
      scss-mode
      shackle
      shift-number

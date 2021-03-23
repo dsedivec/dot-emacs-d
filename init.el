@@ -3407,6 +3407,27 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (bind-keys ("M-m s o" . occur))
 
 
+;;; rg
+
+(setq rg-ignore-case 'smart
+      rg-keymap-prefix (kbd "M-m s r")
+      rg-default-alias-fallback "everything"
+      rg-hide-command nil)
+
+(rg-enable-default-bindings)
+
+(rg-define-search rg-everything
+    "Search everything."
+  :files "everything"
+  :confirm prefix
+  :menu ("Search" "e" "Everything"))
+
+(with-eval-after-load 'rg
+  (bind-keys :map rg-mode-map
+             ("N" . next-error)
+             ("P" . previous-error)))
+
+
 ;;; saveplace
 
 (save-place-mode 1)
