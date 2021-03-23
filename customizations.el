@@ -41,6 +41,7 @@
      crontab-mode
      crux
      csv-mode
+     ctrlf
      dash
      deft
      diff-hl

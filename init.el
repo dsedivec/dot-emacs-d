@@ -1431,6 +1431,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
             #'my:css-mode-fill-paragraph-indented-comments)
 
 
+;;; ctrlf
+
+(ctrlf-mode 1)
+
+
 ;;; deft
 
 (setq deft-directory "~/Dropbox/dropsync/Notes"
@@ -4143,11 +4148,8 @@ a string or comment."
 ;; `ivy--regex-ignore-order'.  Maybe because "isearch is not
 ;; line-based"?
 
-(bind-keys ("C-s" . swiper-isearch)
-           ("C-r" . swiper-isearch-backward)
-           ;; Put the old commands somewhere easy enough.
-           ("s-s" . isearch-forward)
-           ("s-r" . isearch-backward))
+(bind-keys ("s-s" . swiper-isearch)
+           ("s-r" . swiper-isearch-backward))
 
 (setq swiper-goto-start-of-match t)
 
