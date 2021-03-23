@@ -103,7 +103,7 @@
      magit
      markdown-mode
      minions
-     modus-vivendi-theme
+     modus-themes
      monroe
      move-text
      multi-line

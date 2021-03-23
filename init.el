@@ -2711,17 +2711,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq modus-vivendi-theme-override-colors-alist
       '(("bg-paren-match-intense" . "#8E00C2")))
 
-(with-eval-after-load 'modus-vivendi-theme
-  (modus-vivendi-theme-with-color-variables
-    (custom-theme-set-faces
-     'modus-vivendi
-     ;; Remove :box from these because it screws up column alignment
-     ;; in column mode in agenda buffers.
-     `(org-done ((,class :background ,bg-dim :foreground ,green
-                         :inherit modus-theme-variable-pitch)))
-     `(org-todo ((,class :background ,bg-dim :foreground ,red-alt
-                         :inherit modus-theme-variable-pitch))))))
-
 
 ;;; move-text
 
