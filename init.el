@@ -178,12 +178,16 @@
     (package-refresh-contents)))
 
 ;; I always forget to run `package-refresh-contents' before trying to
-;; install.
+;; install.  We call `my:package-refresh-maybe' twice: once in the
+;; interactive form so that we can get package name completion if we
+;; need to refresh, again in the body of the function in case we were
+;; called non-interactively (as in `my:packages-sync' for example).
 
 (defun my:package-install-refresh-maybe (&rest _args)
   (interactive (lambda (spec)
                  (my:package-refresh-maybe)
-                 (advice-eval-interactive-spec spec))))
+                 (advice-eval-interactive-spec spec)))
+  (my:package-refresh-maybe))
 
 (advice-add 'package-install :before #'my:package-install-refresh-maybe)
 
