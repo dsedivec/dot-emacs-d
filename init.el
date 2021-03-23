@@ -4185,6 +4185,16 @@ a string or comment."
   (treemacs-resize-icons 11))
 
 
+;;; two-column
+
+;; I keep activating this by accident, and I have never, ever wanted
+;; to use this mode.  I have nothing but sympathy for people who must
+;; write two-column plain text documents.
+(if (eq (lookup-key global-map (kbd "<f2>")) '2C-command)
+    (unbind-key "<f2>")
+  (warn "<f2> is no longer `2C-command', update your init.el"))
+
+
 ;;; undo-tree
 
 ;; Undoing/redoing in a region confuses me, mostly because I'm always
