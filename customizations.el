@@ -78,10 +78,10 @@
      hl-line+
      hl-todo
      hlint-refactor
+     htmlize
      hydra
      imenu-list
      impatient-mode
-     intero
      ivy
      ivy-avy
      ivy-bibtex

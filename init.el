@@ -2382,17 +2382,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq Info-hide-note-references 'hide)
 
 
-;;; intero
-
-(with-eval-after-load 'haskell-mode
-  (intero-global-mode 1))
-
-(defun my:intero-mode-hook ()
-  (my:company-group-existing-backend 'intero-company '(company-dabbrev-code)))
-
-(add-hook 'intero-mode-hook #'my:intero-mode-hook)
-
-
 ;;; isearch
 
 (my:load-recipes 'isearch-exit-at-beginning-of-match)
