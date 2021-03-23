@@ -149,6 +149,7 @@
      unicode-fonts
      vcl-mode
      volatile-highlights
+     vterm
      web-beautify
      web-mode
      webpaste

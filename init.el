@@ -4275,6 +4275,32 @@ a string or comment."
 (volatile-highlights-mode 1)
 
 
+;;; vterm
+
+(setq vterm-max-scrollback 100000
+      ;; vterm-kill-buffer-on-exit nil
+      vterm-buffer-name-string "vterm: %s")
+
+(defun my:vterm-quote-next (char)
+  (interactive (list (let ((inhibit-quit t)) (read-char))))
+  (let ((base-char (event-basic-type char))
+        (modifiers (event-modifiers char)))
+    (vterm-send-key (string base-char)
+                    (memq 'shift modifiers)
+                    (memq 'meta modifiers)
+                    (memq 'control modifiers))))
+
+(with-eval-after-load 'vterm
+  (customize-set-variable 'vterm-keymap-exceptions
+                          (cons "M-m" (seq-difference vterm-keymap-exceptions
+                                                      '("C-l" "C-u"))))
+
+  (bind-keys :map vterm-mode-map
+             ("C-c C-c" . vterm-send-C-c)
+             ("C-q" . my:vterm-quote-next)
+             ("C-c C-t" . vterm-copy-mode)))
+
+
 ;;; web-mode
 
 (setq web-mode-enable-auto-expanding t
