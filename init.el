@@ -2692,7 +2692,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       ;; Doesn't play well with F.lux unless you also have my mod to
       ;; bg-paren-match-intense color, below.
       modus-vivendi-theme-intense-paren-match t
-      modus-vivendi-theme-scale-headings t)
+      modus-vivendi-theme-scale-headings nil)
 
 ;; modus-vivendi theme sizes are too small for my tastes, make the
 ;; increase in sizes 4x more.
