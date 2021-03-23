@@ -57,8 +57,8 @@ writing/debugging/renaming advice in Elisp."
                              :history 'counsel-advice-remove-history
                              :caller 'counsel-advice-remove)))
           advice)
-     (advice-mapc (lambda (function _props)
-                    (push function advice))
+     (advice-mapc (lambda (function props)
+                    (push (or (alist-get 'name props) function) advice))
                   symbol)
      (list symbol
            (intern (ivy-read "Advice to remove: "
