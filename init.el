@@ -2975,14 +2975,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                                               funcs-to-add))))
 
 
-;;; prog-mode
-
-;; This may be a bad idea.
-(with-eval-after-load 'prog-mode
-  (bind-keys :map prog-mode-map
-             ("RET" . newline-and-indent)))
-
-
 ;;; projectile
 
 (projectile-mode 1)
