@@ -3382,8 +3382,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  ("M-m x b" . my:sp-forward-barf-sexp-repeat)
  ("M-m x B" . my:sp-backward-barf-sexp-repeat))
 
-(my:load-recipes 'smartparens-split-python-triple-quoted-strings)
-
 
 ;;; sql
 
