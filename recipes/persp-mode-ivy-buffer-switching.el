@@ -10,5 +10,6 @@
   (when-let ((persp (and persp-mode (get-current-persp))))
     (not (persp-contain-buffer-p buffer persp))))
 
-(my:with-eval-after-all-load '(persp-mode ivy)
-  (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers))
+(with-eval-after-load 'persp-mode
+  (with-eval-after-load 'ivy
+    (add-hook 'ivy-ignore-buffers #'my:persp-mode-ivy-filter-buffers)))
