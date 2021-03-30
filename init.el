@@ -2505,11 +2505,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                 " `modus-vivendi-theme-override-colors-alist' may not"
                 " be respected")))
 
-(setq modus-vivendi-theme-intense-hl-line t
+(setq modus-themes-intense-hl-line t
       ;; Doesn't play well with F.lux unless you also have my mod to
       ;; bg-paren-match-intense color, below.
-      modus-vivendi-theme-intense-paren-match t
-      modus-vivendi-theme-scale-headings nil)
+      modus-themes-paren-match 'intense
+      modus-themes-headings '((t . no-bold)))
 
 ;; modus-vivendi theme sizes are too small for my tastes, make the
 ;; increase in sizes 4x more.
