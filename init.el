@@ -2839,6 +2839,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                           (file "~/Documents/blog/ideas.org")
                           "* %?"
                           :kill-buffer t))
+ org-clock-ask-before-exiting nil
  org-clock-display-default-range 'untilnow
  org-clock-out-remove-zero-time-clocks t
  org-clock-report-include-clocking-task t
