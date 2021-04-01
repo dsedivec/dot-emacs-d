@@ -22,20 +22,16 @@
   (with-eval-after-load 'warnings
     (add-to-list 'warning-suppress-types '(comp))))
 
-(defvar my:local-packages-dir (expand-file-name "lisp" user-emacs-directory))
-
-(defvar my:private-lisp-dir (expand-file-name "private" user-emacs-directory))
-
-(add-to-list 'load-path my:local-packages-dir)
-
 (require 'cl-lib)
 (require 'subr-x)
 (require 'seq)
 
-(require 'dash)
-
 
 ;;; Local packages
+
+(defvar my:local-packages-dir (expand-file-name "lisp" user-emacs-directory))
+
+(add-to-list 'load-path my:local-packages-dir)
 
 (defvar my:local-packages-autoload-file
   (expand-file-name "autoloads.el" my:local-packages-dir))
@@ -56,6 +52,10 @@
 (if (file-exists-p my:local-packages-autoload-file)
     (load my:local-packages-autoload-file)
   (my:update-local-package-autoloads))
+
+;; Not "packages", but bits of Elisp I need to keep out of my public
+;; Git repo.
+(defvar my:private-lisp-dir (expand-file-name "private" user-emacs-directory))
 
 
 ;;; "Recipes"
@@ -79,68 +79,117 @@
 (my:load-recipe 'timestamp-messages)
 
 
-;;; customize and themes
+;;; Set custom-file and prepare to install packages
 
 ;; Set this early before I potentially install packages, which will
 ;; modify customizable variable `package-selected-packages'.
 (setq custom-file (expand-file-name "customizations.el" user-emacs-directory))
+;; I can't remember why I have to do this myself.
 (load custom-file)
 
-(my:load-recipes 'custom-format-selected-packages
-                 'custom-delete-compiled-theme)
 
-(add-to-list 'my:never-compiled-themes 'modus-vivendi)
+;; I like `package-selected-packages' to stay sorted.
+(my:load-recipes 'custom-format-selected-packages)
 
-(add-to-list 'custom-theme-load-path
-             (expand-file-name "themes" user-emacs-directory))
 
-(load-theme 'dsedivec t)
+;;; straight.el, because it's good and I need AUCTeX from Git
 
-(defun my:set-theme-for-macos-system-theme (&optional toggle)
-  (interactive "P")
-  (let* ((scpt (concat "tell application \"System Events\" to"
-                       " get the dark mode of appearance preferences"
-                       " as integer"))
-         (emacs-theme (if (cl-equalp (face-background 'default) "white")
-                          'light
-                        'dark))
-         (target-theme (cond
-                         (toggle (cl-ecase emacs-theme
-                                   (light 'dark)
-                                   (dark 'light)))
-                         ((zerop (ns-do-applescript scpt))
-                          'light)
-                         (t 'dark))))
-    (message "Configuring Emacs for %s theme" target-theme)
-    (cl-assert (memq target-theme '(light dark)))
-    (unless (eq emacs-theme target-theme)
-      (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
-      (cl-ecase target-theme
-        (light
-         (disable-theme 'modus-vivendi)
-         (load-theme 'dsedivec t))
-        (dark
-         (disable-theme 'dsedivec)
-         (load-theme 'modus-vivendi t)))
-      ;; Function `org-mode' sets up face org-hide based on the
-      ;; current background color.  Changing the background color thus
-      ;; requires restarting org-mode.  I think I can do this in just
-      ;; one buffer and it'll change the org-hide face globally.
-      (when-let ((org-buf (seq-some (lambda (buf)
-                                      (with-current-buffer buf
-                                        (when (derived-mode-p 'org-mode)
-                                          buf)))
-                                    (buffer-list))))
-        (with-current-buffer org-buf
-          (org-mode-restart))))))
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el"
+                         user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;; My persp-mode frame restoration can end up restoring the initial
-;; frame to look however it was when you exited it, even though
-;; subsequent frames will be created with my default theme.  This
-;; fixes that problem.  Moreover, though, it generally addresses the
-;; desire, "I want Emacs to have the proper theme whether I start it
-;; during the day or during the night."
-(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
+;; As of Emacs 485622bbd1a you/I need AUCTeX > 13.0.5, or else you
+;; get errors when reftex tries to create labels.
+(straight-use-package '(auctex :source el-get))
+;; See the :load bits of
+;; https://github.com/dimitri/el-get/blob/master/recipes/auctex.rcp,
+;; which are not supported by straight.el as of this writing.  Without
+;; these you will get built-in Emacs LaTeX modes, not AUCTeX.
+(require 'tex-site)
+(require 'preview-latex)
+
+;; Well shit, company-auctex depends on AUCTeX, so straight.el is
+;; going to install that too.  Fuck, here comes company through
+;; straight.el too.  Lord.  OK, I guess I'm incrementally moving to
+;; straight.el now?
+
+(defun my:straight-use-packages (packages)
+  (mapc #'straight-use-package packages))
+
+(my:straight-use-packages '(
+                            ace-window
+                            amx
+                            ;; This next one feels... wrong.
+                            auto-package-update
+                            auto-yasnippet
+                            avy
+                            cider
+                            company
+                            company-prescient
+                            company-reftex
+                            company-shell
+                            company-terraform
+                            company-web
+                            counsel
+                            counsel-css
+                            counsel-projectile
+                            dired-narrow
+                            dired-ranger
+                            dash
+                            dumb-jump
+                            elpy
+                            flycheck
+                            flycheck-clj-kondo
+                            flycheck-haskell
+                            flycheck-package
+                            flycheck-pos-tip
+                            groovy-mode
+                            haskell-snippets
+                            highlight-indentation
+                            hcl-mode
+                            hydra
+                            ivy
+                            ivy-avy
+                            ivy-bibtex
+                            ivy-hydra
+                            ivy-prescient
+                            ivy-xref
+                            ivy-yasnippet
+                            js2-mode
+                            js2-refactor
+                            literate-calc-mode
+                            link-hint
+                            lsp-mode
+                            magit
+                            markdown-mode
+                            minions
+                            multi-line
+                            multiple-cursors
+                            pandoc-mode
+                            paradox
+                            prescient
+                            projectile
+                            pyvenv
+                            rg
+                            smartparens
+                            swiper
+                            terraform-mode
+                            treemacs
+                            wgrep
+                            winum
+                            yasnippet
+                            yasnippet-snippets
+                            ))
 
 
 ;;; package.el with auto-package-update
@@ -377,6 +426,10 @@ upgraded."
 
 ;;; Mode line mods
 
+;; (Couldn't require this at top, has to come after packages are
+;; installed.)
+(require 'dash)
+
 ;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
 (unless
     (my:treepy-edit-mode-line-var
@@ -466,6 +519,64 @@ upgraded."
     (warn "couldn't remove width specification from `mode-line-position'")))
 
 
+;;; Themes
+
+(my:load-recipes 'custom-delete-compiled-theme)
+
+(add-to-list 'my:never-compiled-themes 'modus-vivendi)
+
+(add-to-list 'custom-theme-load-path
+             (expand-file-name "themes" user-emacs-directory))
+
+(load-theme 'dsedivec t)
+
+(defun my:set-theme-for-macos-system-theme (&optional toggle)
+  (interactive "P")
+  (let* ((scpt (concat "tell application \"System Events\" to"
+                       " get the dark mode of appearance preferences"
+                       " as integer"))
+         (emacs-theme (if (cl-equalp (face-background 'default) "white")
+                          'light
+                        'dark))
+         (target-theme (cond
+                         (toggle (cl-ecase emacs-theme
+                                   (light 'dark)
+                                   (dark 'light)))
+                         ((zerop (ns-do-applescript scpt))
+                          'light)
+                         (t 'dark))))
+    (message "Configuring Emacs for %s theme" target-theme)
+    (cl-assert (memq target-theme '(light dark)))
+    (unless (eq emacs-theme target-theme)
+      (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
+      (cl-ecase target-theme
+        (light
+         (disable-theme 'modus-vivendi)
+         (load-theme 'dsedivec t))
+        (dark
+         (disable-theme 'dsedivec)
+         (load-theme 'modus-vivendi t)))
+      ;; Function `org-mode' sets up face org-hide based on the
+      ;; current background color.  Changing the background color thus
+      ;; requires restarting org-mode.  I think I can do this in just
+      ;; one buffer and it'll change the org-hide face globally.
+      (when-let ((org-buf (seq-some (lambda (buf)
+                                      (with-current-buffer buf
+                                        (when (derived-mode-p 'org-mode)
+                                          buf)))
+                                    (buffer-list))))
+        (with-current-buffer org-buf
+          (org-mode-restart))))))
+
+;; My persp-mode frame restoration can end up restoring the initial
+;; frame to look however it was when you exited it, even though
+;; subsequent frames will be created with my default theme.  This
+;; fixes that problem.  Moreover, though, it generally addresses the
+;; desire, "I want Emacs to have the proper theme whether I start it
+;; during the day or during the night."
+(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
+
+
 ;;;; Configure various packages
 
 ;;; which-key
@@ -543,6 +654,10 @@ upgraded."
 ;; anyone potentially starts using el-patch.
 
 (my:load-recipe 'el-patch-clean-up-buffers-after-validation)
+
+;; Setting this early, since after I switched to straight, something
+;; is hitting this all the time.  I strongly suspect it's el-patch.
+(setq vc-follow-symlinks t)
 
 
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
@@ -4061,7 +4176,9 @@ a string or comment."
 
 ;;; vc
 
-(setq vc-follow-symlinks t)
+;; Note that I set `vc-follow-symlinks' where I set up el-patch,
+;; otherwise I think my init.el will trip the "follow symlink" prompt
+;; numerous times, due to `el-patch-validate' calls.
 
 (bind-keys ("M-m v g" . vc-annotate))
 
