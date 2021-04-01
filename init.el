@@ -110,7 +110,14 @@
 
 ;; As of Emacs 485622bbd1a you/I need AUCTeX > 13.0.5, or else you
 ;; get errors when reftex tries to create labels.
-(straight-use-package '(auctex :source el-get))
+;;
+;; The el-get recipe won't work for AUCTeX because (I assume) el-get
+;; runs Elisp right out of the repo it clones to, which contains
+;; support files (ex. styles/*.el) that won't be there if you use that
+;; same recipe with straight.el.  Hence we make our own recipe.
+(straight-use-package '(auctex :source el-get
+                        :files ("*.el" "*.info" "dir"
+                                "doc" "etc" "images" "latex" "style")))
 ;; See the :load bits of
 ;; https://github.com/dimitri/el-get/blob/master/recipes/auctex.rcp,
 ;; which are not supported by straight.el as of this writing.  Without
