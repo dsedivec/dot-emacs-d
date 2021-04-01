@@ -347,6 +347,52 @@ upgraded."
   (quelpa (assq package my:quelpa-packages) :upgrade t))
 
 
+;; In case you ever need to recursively determine package dependents,
+;; here you go.  These are not robust in the slightest, and indeed I
+;; expect they'll break as package.el evolves.
+
+(defun my:package-immediate-dependents (&rest pkgs)
+  (let (result)
+    (dolist (pkg pkgs)
+      (let ((desc (car (alist-get pkg (package--alist)))))
+        (unless desc
+          (error "Unknown package: %S" pkg))
+        (dolist (dep (mapcar #'package-desc-name
+                             (package--used-elsewhere-p desc nil t)))
+          (cl-pushnew dep result))))
+    result))
+
+(defun my:package-dependents (&rest pkgs)
+  (let ((queue pkgs)
+        results)
+    (while queue
+      (dolist (dep (my:package-immediate-dependents (pop queue)))
+        (cl-assert (symbolp dep))
+        (unless (memq dep results)
+          (cl-pushnew dep queue)
+          (push dep results))))
+    results))
+
+;; And now dependenCIES.
+
+(defun my:package-dependencies (&rest pkgs)
+  ;; Calling `package--alist' might not really be necessary and/or
+  ;; wise.  I started using it in `my:package-immediate-dependents'
+  ;; because I saw package.el doing it.  It's possible I should just
+  ;; refer to variable `package-alist'.
+  (let ((package-alist (package--alist))
+        (queue pkgs)
+        results)
+    (while queue
+      (when-let ((desc (cadr (assoc (pop queue) (package--alist)))))
+        (dolist (dep (mapcar #'car (package-desc-reqs desc)))
+          ;; We ignore the "emacs" dependency almost everything has.
+          (unless (or (eq dep 'emacs) (memq dep results))
+            (cl-pushnew dep queue)
+            (push dep results)))))
+    results))
+
+
 ;;; Utility functions
 
 (require 'dsedivec-utils)
