@@ -9,6 +9,7 @@
 /auto-save-list
 /bookmarks
 /company-statistics-cache.el
+/eln-cache/
 /elpa
 /elpy
 /lisp/autoloads.el
@@ -27,4 +28,3 @@
 /transient
 /url
 /var
-/eln-cache/
