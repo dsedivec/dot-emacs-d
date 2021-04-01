@@ -1468,6 +1468,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; dired
 
+(with-eval-after-load 'dired
+  (bind-keys :map dired-mode-map
+             ("<mouse-1>" . dired-mouse-find-file)
+             ("<mouse-2>" . dired-mouse-find-file)))
+
 ;; Combine all bordering-on-abusively-numerous dired menus into a
 ;; single menu item.  macOS users rejoice.
 (underlings-move-menu-with-one-time-hook 'dired-mode
