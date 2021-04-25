@@ -340,6 +340,20 @@ upgraded."
 ;; installed:
 (require 'auto-compile)
 
+;; Warn if there's overlap between stuff we've installed with straight
+;; and stuff we've installed with package.el.  (I should really move
+;; entirely to straight.)
+(let (double-installed-pkgs)
+  (straight--map-repo-packages
+   (lambda (pkg)
+     (when (and (package-installed-p (intern pkg))
+                ;; let-alist is built-in.  Maybe others in future.
+                (not (member pkg '("let-alist"))))
+       (push pkg double-installed-pkgs))))
+  (when double-installed-pkgs
+    (warn "Packages installed via both straight.el and package.el: %s"
+          (string-join double-installed-pkgs " "))))
+
 ;; Useful command to upgrade a single Quelpa package.  I should
 ;; probably make a command to upgrade a single package.el package some
 ;; day.
