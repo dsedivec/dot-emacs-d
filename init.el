@@ -1610,6 +1610,8 @@ surround \"foo\" with (in this example) parentheses.  I want
   (or (electric-pair-default-inhibit char)
       (eq (char-syntax (following-char)) ?w)))
 
+(my:load-recipes 'elec-pair-skip-inside-quotes)
+
 
 ;;; electric
 
