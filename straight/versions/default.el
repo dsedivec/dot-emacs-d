@@ -48,6 +48,7 @@
  ("link-hint.el" . "09ba5727d8ba4a2e5d4f5ce924aaebbc7478ff13")
  ("literate-calc-mode.el" . "211eec1e8b03503a53fa3eb4528375f36972f759")
  ("lsp-mode" . "57dccd67c289d62323b0656edffd10c2caba4b29")
+ ("lsp-ui" . "efae00eb6a733d5271cb33e9d92c3d8c2fa98dde")
  ("magit" . "abb61935c65bc02815a6397c0e5d867aebcf5e54")
  ("markdown-mode" . "051734091aba17a54af96b81beebdbfc84c26459")
  ("melpa" . "80c4f9e9f3e398dd6d230068ae2a42b060bd84cd")

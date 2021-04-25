@@ -177,6 +177,7 @@
                             literate-calc-mode
                             link-hint
                             lsp-mode
+                            lsp-ui
                             magit
                             markdown-mode
                             minions
