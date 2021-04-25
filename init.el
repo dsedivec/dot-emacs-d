@@ -1479,6 +1479,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 ;;; dired
 
+(setq dired-dwim-target t)
+
 (with-eval-after-load 'dired
   (bind-keys :map dired-mode-map
              ("<mouse-1>" . dired-mouse-find-file)
