@@ -4290,13 +4290,6 @@ a string or comment."
 
 (require 'unicode-fonts)
 
-;; I build Emacs NeXTStep with the color fonts patch (for Apple Color
-;; Emoji, natch).  Must override unicode-fonts turning said color
-;; fonts off.
-(when (memq window-system '(ns mac))
-  (setq unicode-fonts-skip-font-groups (delq 'multicolor
-                                             unicode-fonts-skip-font-groups)))
-
 (unicode-fonts-setup)
 
 ;; Need barf emoji.
