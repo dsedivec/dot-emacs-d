@@ -3376,7 +3376,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
-             ("M-m m i" . my:python-add-import)))
+             ("M-m m i" . my:python-add-import))
+
+  (with-eval-after-load 'elpy
+    (bind-keys :map elpy-mode-map
+               ("C-c C-c" . my:python-shell-send-dwim))))
 
 
 ;;; pyvenv
