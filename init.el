@@ -2122,6 +2122,18 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; go-mode
 
+(defun my:gofmt--gofumpt-set-up-environment (orig-func &rest args)
+  (let ((process-environment process-environment))
+    (unless (getenv "GOFUMPT_SPLIT_LONG_LINES")
+      (setq process-environment (cons  "GOFUMPT_SPLIT_LONG_LINES=on"
+                                       process-environment)))
+    (apply orig-func args)))
+
+(with-eval-after-load 'go-mode
+  (when (executable-find "gofumpt")
+    (setq gofmt-command "gofumpt")
+    (advice-add 'gofmt :around #'my:gofmt--gofumpt-set-up-environment)))
+
 (defun my:go-mode-hook ()
   (setq-local tab-width 4)
   (add-hook 'before-save-hook 'gofmt-before-save nil t))
