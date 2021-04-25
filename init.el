@@ -4299,6 +4299,12 @@ a string or comment."
 
 (unicode-fonts-setup)
 
+;; Need barf emoji.
+(cl-pushnew "Apple Color Emoji"
+            (car (alist-get "Supplemental Symbols and Pictographs"
+                            unicode-fonts-block-font-mapping
+                            nil nil #'equal)))
+
 
 ;;; vc
 
