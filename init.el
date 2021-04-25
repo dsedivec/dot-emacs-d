@@ -2576,6 +2576,20 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (autoload 'loccur "loccur" nil t)
 
 
+;;; lsp
+
+(which-key-add-keymap-based-replacements lsp-command-map
+    "=" '("LSP format")
+    "F" '("LSP folders")
+    "G" '("LSP peek")
+    "T" '("LSP toggles")
+    "a" '("LSP actions/lenses")
+    "g" '("LSP find/go")
+    "h" '("LSP help")
+    "r" '("LSP refactor")
+    "s" '("LSP sessions"))
+
+
 ;;; lua-mode
 
 ;; There doesn't seem to be a great deal of consensus over how to
