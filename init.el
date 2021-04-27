@@ -2160,7 +2160,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (setq-local tab-width 4)
   (add-hook 'before-save-hook 'gofmt-before-save nil t))
 
-(add-hook 'go-mode-hook #'my:go-mode-hook)
+(my:add-hooks 'go-mode-hook
+  #'lsp
+  #'subword-mode
+  #'my:go-mode-hook)
 
 
 ;;; goto-addr --- Keywords: link url follow open
