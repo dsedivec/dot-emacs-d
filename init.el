@@ -4479,8 +4479,11 @@ a string or comment."
 
 ;;; webpaste
 
-;; I should upstream this.
 (with-eval-after-load 'webpaste
+  (setq webpaste-provider-priority
+        (cons "bpa.st" (remove "bpa.st" webpaste-provider-priority)))
+
+  ;; I should upstream this.
   (let* ((provider (alist-get "ix.io" webpaste-providers-alist
                               nil nil #'string=))
          (langs (memq :lang-overrides provider)))
