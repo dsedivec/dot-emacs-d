@@ -2606,16 +2606,17 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; lsp
 
-(which-key-add-keymap-based-replacements lsp-command-map
-    "=" '("LSP format")
-    "F" '("LSP folders")
-    "G" '("LSP peek")
-    "T" '("LSP toggles")
-    "a" '("LSP actions/lenses")
-    "g" '("LSP find/go")
-    "h" '("LSP help")
-    "r" '("LSP refactor")
-    "s" '("LSP sessions"))
+(with-eval-after-load 'lsp-mode
+  (which-key-add-keymap-based-replacements lsp-command-map
+      "=" '("LSP format")
+      "F" '("LSP folders")
+      "G" '("LSP peek")
+      "T" '("LSP toggles")
+      "a" '("LSP actions/lenses")
+      "g" '("LSP find/go")
+      "h" '("LSP help")
+      "r" '("LSP refactor")
+      "s" '("LSP sessions")))
 
 
 ;;; lua-mode
