@@ -3422,39 +3422,38 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; reformatter
 
-(reformatter-define black-format
-    :program "black"
-    :args '("-l" "80" "--quiet" "--fast" "-")
-    :lighter "Bl")
-
-(reformatter-define isort-format
-    :program "isort"
-    :args '("-")
-    :lighter "Ist")
-
-(reformatter-define yapf-format
-    :program "yapf"
-    :lighter "Yapf")
-
 (reformatter-define autopep8-format
     :program "autopep8"
     :args '("-aa" "-")
     :lighter "AP8")
+
+(reformatter-define black-format
+    :program "black"
+    :args '("-l" "80" "--quiet" "--fast" "-")
+    :lighter "Bl")
 
 (reformatter-define docformatter
     :program "docformatter"
     :args '("-")
     :lighter "Df")
 
-(reformatter-define rufo
-    :program "rufo-emacs-wrapper"
-    :lighter " Rufo")
-
-
 (reformatter-define eslint-format
     ;; This is a script of my own.
     :program "eslint-reformat"
     :lighter " ESL")
+
+(reformatter-define isort-format
+    :program "isort"
+    :args '("-")
+    :lighter "Ist")
+
+(reformatter-define rufo
+    :program "rufo-emacs-wrapper"
+    :lighter " Rufo")
+
+(reformatter-define yapf-format
+    :program "yapf"
+    :lighter "Yapf")
 
 
 ;;; replace
