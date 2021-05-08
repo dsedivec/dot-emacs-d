@@ -58,6 +58,11 @@
 ;; point, growing stack.  Also, maybe the initial prefix should be
 ;; remembered for successive moves in this DWIM command M-,.
 
+;; TODO case to fix: open TeX file, move to middle of doc, do ESC C-e,
+;; moves to EOF.  Now M-, but you go back somewhere else, not
+;; necessarily where you started.  Did this with MD file.  May need
+;; some nearby internal movements/actions first.
+
 ;;; Code:
 
 (require 'cl-lib)
