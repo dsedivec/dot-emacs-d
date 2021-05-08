@@ -3041,6 +3041,25 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (add-hook 'org-mode-hook #'visual-line-mode)
 
+;; XXX recipe---though maybe I should do that text property thing I
+;; talked about
+;;
+;; Give us a way to allow certain languages to run without
+;; confirmation via org-babel using a local variable.  Otherwise you
+;; either have to turn off all confirmations for a file, or put up
+;; with confirmation every time you evaluate.
+
+(defvar-local my:org-no-confirm-babel-evaluate-languages nil
+  "A list of languages that will be run by org-babel without confirmation.")
+
+(defun my:org-babel-optional-confirm-evaluate (lang body)
+  "Bypass confirmation for languages included in
+`my:org-no-confirm-babel-evaluate-languages', confirm for
+everything else."
+  (not (member lang my:org-no-confirm-babel-evaluate-languages)))
+
+(setq org-confirm-babel-evaluate #'my:org-babel-optional-confirm-evaluate)
+
 ;; Clock persistence between restarts.
 
 (setq org-clock-persist t
