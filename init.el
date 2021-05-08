@@ -140,6 +140,7 @@
 (my:straight-use-packages '(
                             ace-window
                             amx
+                            auth-source-xoauth2
                             ;; This next one feels... wrong.
                             auto-package-update
                             auto-yasnippet
@@ -202,6 +203,34 @@
                             yasnippet
                             yasnippet-snippets
                             ))
+
+;; mu4e needs to build mu, which is non-trivial, so enable parallel
+;; building.
+(let* ((num-cpus (max (cl-labels ((get-stdout-num (cmd)
+                                    (string-to-number
+                                     (shell-command-to-string cmd))))
+                        (cond
+                          ((fboundp 'w32-get-nproc)
+                           (w32-get-nproc))
+                          ((executable-find "getconf")
+                           (get-stdout-num "getconf NPROCESSORS_ONLN"))
+                          ((executable-find "nproc")
+                           (get-stdout-num "nproc"))
+                          (t 1)))
+                      1))
+       (process-environment (cons (format "MAKEFLAGS=-j%d" num-cpus)
+                                  process-environment)))
+  (straight-use-package '(mu4e
+                          :source el-get
+                          ;; The el-get recipe also ends up making
+                          ;; .emacs.d/straight/build/mu4e/mu4e or
+                          ;; something like that, and it doesn't
+                          ;; install the mu binary, so fix that.
+                          :files ("mu4e/*" "mu/mu"))))
+
+;; This stays near where we have told straight to install the mu
+;; binary.
+(setq mu4e-mu-binary (expand-file-name "mu" (straight--build-dir "mu4e")))
 
 
 ;;; package.el with auto-package-update
@@ -924,6 +953,51 @@ upgraded."
 ;;; atomic-chrome
 
 (atomic-chrome-start-server)
+
+
+;;; auth-source-xoauth2
+
+;; Patch auth-source-xoauth2 to accept that the function it calls from
+;; `auth-source-xoauth2-creds' might return the :access-token, as it
+;; will in my case where I get it from the same script I use with
+;; mbsync.
+
+(el-patch-feature auth-source-xoauth2)
+
+(with-eval-after-load 'auth-source-xoauth2
+  (el-patch-cl-defun auth-source-xoauth2--search (host user port)
+    "Get the XOAuth2 authentication data for the given HOST, USER, and PORT."
+    (when-let ((token
+                (cond
+                  ((functionp auth-source-xoauth2-creds)
+                   (funcall auth-source-xoauth2-creds host user port))
+                  ((stringp auth-source-xoauth2-creds)
+                   (auth-source-xoauth2--file-creds
+                    auth-source-xoauth2-creds host user port))
+                  (t auth-source-xoauth2-creds))))
+      (when-let ((token-url (plist-get token :token-url))
+                 (client-id (plist-get token :client-id))
+                 (client-secret (plist-get token :client-secret))
+                 (refresh-token (plist-get token :refresh-token)))
+        (when-let (secret
+                   (el-patch-wrap 2 0
+                     (or (plist-get token :access-token)
+                         (cdr (assoc 'access_token
+                                     (auth-source-xoauth2--url-post
+                                      token-url
+                                      (concat "client_id=" client-id
+                                              "&client_secret=" client-secret
+                                              "&refresh_token=" refresh-token
+                                              "&grant_type=refresh_token")))))))
+          ;; We log this secret in plain text because it is both a
+          ;; temporary secret, and one that can not be memorized on
+          ;; sight. Anybody that can copy this secret already has access
+          ;; to the computer.
+          (auth-source-do-debug "XOAUTH2 access token (user=%s host=%s): %s"
+                                user host secret)
+          (list :host host :port port :user user :secret secret)))))
+
+  (el-patch-validate 'auth-source-xoauth2--search 'defun t))
 
 
 ;;; auto-highlight-symbol
@@ -2774,6 +2848,53 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; move-text
 
 (move-text-default-bindings)
+
+
+;;; mu4e
+
+;; For the future:
+;; https://vxlabs.com/2019/07/03/send-queued-mails-in-background-with-mu4e/
+;; https://gitlab.com/shackra/goimapnotify
+;; https://github.com/chmouel/goimapnotify/commit/d262750de303279a749062da52b7fa2a7a7e63c2
+;; https://www.reddit.com/r/emacs/comments/g6ujzs/sending_richtext_emails_from_emacs_with_markdown/
+
+(setq mu4e-use-fancy-chars t)
+
+(with-eval-after-load 'mu4e
+  (load (expand-file-name "mu4e-config" my:private-lisp-dir))
+  (auth-source-xoauth2-enable))
+
+(defun my:mu4e-compose-mode-hook ()
+  (setq use-hard-newlines nil)
+  (turn-off-auto-fill)
+  (visual-line-mode 1))
+
+(add-hook 'mu4e-compose-mode-hook #'my:mu4e-compose-mode-hook)
+
+(defun my:mu4e-view-mode-hook ()
+  ;; You have to set this to nil, lest gnus come along and re-wrap
+  ;; what shr may have already wrapped (or what shr didn't wrap
+  ;; because you asked it not to wrap).
+  ;;
+  ;; Naturally, you have to set this up in `gnus-summary-buffer': see
+  ;; `mu4e~view-gnus' where this is let-bound, and then
+  ;; `gnus-treat-article' where this is used.
+  ;;
+  ;; BTW, the default for the predicate condition
+  ;; `gnus-treat-fill-long-lines' is (typep "text/plain"), which is
+  ;; usually not going to pass if we're rendering with shr, but the
+  ;; way mu4e uses gnus to display the message, it ends up calling
+  ;; `gnus-treat-article' with a type of "text/plain": see
+  ;; `gnus-display-mime' for where that happens.  This all seems a
+  ;; little bit off, since `mu4e~view-gnus' calls `mu4e~view-path',
+  ;; which calls `gnus-article-prepare-display', but then
+  ;; `mu4e~view-gnus' calls `gnus-artocle-prepare-display' again?
+  ;; This second time is where the MIME type seems to fall through as
+  ;; "text/plain", and hence the wrapping happens.
+  (with-current-buffer (or gnus-summary-buffer (current-buffer))
+    (setq-local gnus-treat-fill-long-lines nil)))
+
+(add-hook 'mu4e-view-mode-hook #'my:mu4e-view-mode-hook)
 
 
 ;;; mule
