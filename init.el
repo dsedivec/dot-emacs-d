@@ -3451,6 +3451,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :program "rufo-emacs-wrapper"
     :lighter " Rufo")
 
+(reformatter-define sqlformat
+    :program "~/.vpy/3.9/bin/sqlformat"
+    :args '("-r" "--indent_width" "4" "-a" "-s" "--wrap_after" "79"
+            "-k" "upper" "-")
+    :lighter " sqlfmt")
+
 (reformatter-define yapf-format
     :program "yapf"
     :lighter "Yapf")
