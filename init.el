@@ -3743,6 +3743,15 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                          "-r" "--indent_width" "4" "-a" "-s"
                          "--wrap_after" "79" "-k" "upper" "-")))
 
+(defun my:sql-postgres-override-pspg-settings ()
+  (when (eq sql-product 'postgres)
+    ;; Using `sql-send-string' makes you get an extra prompt, which is
+    ;; annoying.
+    (sql-input-sender (get-buffer-process (current-buffer))
+                      "\\pset border 1 \\pset linestyle ascii")))
+
+(add-hook 'sql-login-hook #'my:sql-postgres-override-pspg-settings)
+
 
 ;;; sql-indent
 
