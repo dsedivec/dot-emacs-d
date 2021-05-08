@@ -2344,6 +2344,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
         (seq-difference hippie-expand-try-functions-list
                         '(try-expand-line try-expand-list))))
 
+(my:load-recipes 'he-dabbrev-obey-dabbrev-skip-leading-regexp)
+
 
 ;;; hl-line+
 
@@ -2981,6 +2983,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
    'org-fix-faces-after-goto
    'org-insert-heading-ignore-invisibility
    'org-jump-over-priority-after-setting-it
+   'org-make-dabbrev-ignore-emphasis
    'org-make-nice-id-from-headline-text
    'org-property-drawer-fixes
    'org-fix-C-e)
