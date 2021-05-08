@@ -3704,6 +3704,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   #'smart-tabs-mode
   #'my:sql-mode-hook)
 
+(with-eval-after-load 'sql
+  (my:load-recipes 'sql-mode-electric-apostrophe))
+
 ;; sql-mode installs hook(s) that will screw up things like
 ;; column-marker or whitespace-mode initially in a buffer, and also
 ;; (I think) whenever you change products.  This is here to
