@@ -1055,7 +1055,8 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (bind-key "C-x C-b" 'bs-show)
 
 (with-eval-after-load 'persp-mode
-  (my:load-recipes 'bs-persp-mode))
+  (my:load-recipes 'bs-persp-mode
+                   'bs-display-actions))
 
 (defun my:visits-non-dired-non-file (buffer)
   "Returns T if buffer is neither a file nor a Dired buffer."
