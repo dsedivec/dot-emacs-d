@@ -2975,9 +2975,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  org-agenda-start-on-weekday 0
  org-agenda-todo-ignore-deadlines 'far
  org-agenda-todo-ignore-scheduled 1
- ;; Maybe don't be executing Elisp in table formulas in some random
- ;; org file I downloaded.  (Thanks wasamasa.)
- org-table-allow-automatic-line-recalculation nil
  ;; I don't want or like org creating bookmarks, especially if you
  ;; want to use Bookmark+ (which I no longer do) because it will
  ;; highlight the bookmarks.
@@ -3027,18 +3024,21 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                            ("P" . org-set-property)
                            ("S" . widen)
                            ("x" . org-cut-subtree))
- ;; 'expert stops C-c C-t from popping up a (jarring) temporary
- ;; window.
- org-use-fast-todo-selection 'expert
- org-use-speed-commands (lambda ()
-                          (and (org-at-heading-p)
-                               (looking-back "^\\**"
-                                             (line-beginning-position))))
  ;; I think I always want indentation preserved in my source
  ;; blocks.
  org-src-preserve-indentation t
  org-src-window-setup 'other-window
- org-tags-column -76)
+ ;; Maybe don't be executing Elisp in table formulas in some random
+ ;; org file I downloaded.  (Thanks wasamasa.)
+ org-table-allow-automatic-line-recalculation nil
+ ;; 'expert stops C-c C-t from popping up a (jarring) temporary
+ ;; window.
+ org-tags-column -76
+ org-use-fast-todo-selection 'expert
+ org-use-speed-commands (lambda ()
+                          (and (org-at-heading-p)
+                               (looking-back "^\\**"
+                                             (line-beginning-position)))))
 
 (with-eval-after-load 'org-agenda
   ;; This actually visits org-default-notes-file, so we don't load
