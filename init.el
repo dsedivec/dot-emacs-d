@@ -498,6 +498,31 @@ upgraded."
   ;; Docstring for `face-near-same-color-threshold' says to do this.
   (clear-face-cache))
 
+;; macOS trashing: inspired first by
+;; https://github.com/emacsorphanage/osx-trash, but then by
+;; https://gist.github.com/dabrahams/14fedc316441c350b382528ea64bc09c
+;; (from https://apple.stackexchange.com/a/162354).
+;; `ns-do-applescript' seems fast enough to me.
+
+(defun my:ns-move-files-to-trash (&rest paths)
+  (let ((as-paths
+         (mapconcat
+          (lambda (path)
+            (format "the POSIX file \"%s\"" (replace-regexp-in-string
+                                             (rx (group (any ?\\ ?\")))
+                                             "\\\\\\1"
+                                             (expand-file-name path))))
+          paths
+          ", ")))
+    (ns-do-applescript
+     (format "tell application \"Finder\" to move {%s} to trash" as-paths))))
+
+(when (and (eq system-type 'darwin)
+           (not (fboundp 'system-move-file-to-trash)))
+  (defalias 'system-move-file-to-trash #'my:ns-move-files-to-trash))
+
+(setq delete-by-moving-to-trash t)
+
 
 ;;; Mode line mods
 
