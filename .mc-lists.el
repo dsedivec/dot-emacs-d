@@ -91,7 +91,9 @@
         minions-minor-modes-menu
         my:delete-window-that-direction
         my:link-hint-multi-dispatch
+        my:save-some-buffers-default-no-query
         sql-product-interactive
         sql-send-paragraph
+        wgrep-finish-edit
         zop-up-to-char
         ))
