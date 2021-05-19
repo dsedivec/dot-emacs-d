@@ -145,6 +145,9 @@
 ;; straight.el too.  Lord.  OK, I guess I'm incrementally moving to
 ;; straight.el now?
 
+(straight-use-package '(org :host github :repo "dsedivec/org-mode"))
+(straight-use-package 'org-contrib)
+
 (defun my:straight-use-packages (packages)
   (mapc #'straight-use-package packages))
 
@@ -226,10 +229,6 @@
 (require 'package)
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
-(add-to-list 'package-archives
-             '("my:org" . "~/repositories/org-mode/"))
-(add-to-list 'package-pinned-packages '(org-plus-contrib . "my:org"))
 
 ;; Remove this when Emacs 26 is definitely dead.
 (unless package--initialized
