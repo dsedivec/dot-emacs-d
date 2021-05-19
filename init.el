@@ -1921,6 +1921,12 @@ surround \"foo\" with (in this example) parentheses.  I want
     (sqlind-minor-mode -1)))
 
 
+;;; fennel-mode
+
+(with-eval-after-load 'fennel-mode
+  (unbind-key "M-'" fennel-mode-map))
+
+
 ;;; files
 
 (setq make-backup-files nil
