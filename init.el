@@ -3020,10 +3020,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  ;; Nice indentation.  Use with visual-line-mode.
  org-startup-indented t
  org-special-ctrl-a/e t
- org-speed-commands-user '(("a" . org-archive-subtree-default)
-                           ("P" . org-set-property)
-                           ("S" . widen)
-                           ("x" . org-cut-subtree))
  ;; I think I always want indentation preserved in my source
  ;; blocks.
  org-src-preserve-indentation t
@@ -3094,6 +3090,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ;; for `org-priority' got superceded by one of my other
              ;; modes/mods/settings (`org-replace-disputed-keys'?).
              ("C-M-," . org-priority))
+
+  (setf (alist-get "a" org-speed-commands nil nil #'equal)
+        'org-archive-subtree-default)
 
   ;; Allow org-open-at-point (C-c C-o) to open OS X message: links.
   (org-link-set-parameters "message"
