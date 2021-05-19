@@ -199,6 +199,7 @@
                             minions
                             multi-line
                             multiple-cursors
+                            org-roam
                             pandoc-mode
                             paradox
                             prescient
@@ -3192,6 +3193,37 @@ everything else."
 ;; Private stuff that doesn't get checked into Git.
 (dolist (file-name '("org" "open-ticket"))
   (load (expand-file-name file-name my:private-lisp-dir) t))
+
+
+;;; org-roam
+
+(setq org-roam-directory "~/Documents/org-roam"
+      org-roam-dailies-directory "daily/")
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         #'org-roam-capture--get-point
+         "* %?"
+         :file-name "daily/%<%Y-%m-%d>"
+         :head "#+title: %<%Y-%m-%d>\n\n")))
+
+(add-hook 'after-init-hook 'org-roam-mode)
+
+(my:add-hooks 'org-roam-file-setup-hook
+  #'idle-save-buffer-mode)
+
+(with-eval-after-load 'org-roam
+  (bind-keys :map org-roam-mode-map
+             ("M-m r r" . org-roam)
+             ("M-m r f" . org-roam-find-file)
+             ("M-m r i" . org-roam-insert)
+             ("M-m r d d" . org-roam-dailies-find-directory)
+             ("M-m r d f t" . org-roam-dailies-find-today)
+             ("M-m r d c t" . org-roam-dailies-capture-today)
+             ("M-m r d f m" . org-roam-dailies-find-yesterday)
+             ("M-m r d c m" . org-roam-dailies-capture-yesterday)
+             ("M-m r d f d" . org-roam-dailies-find-date)
+             ("M-m r d c d" . org-roam-dailies-capture-date)))
 
 
 ;;; osx-dictionary
