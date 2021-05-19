@@ -117,20 +117,28 @@
 ;; On macOS, MacTeX might not be on my path by the time you get here.
 ;; The AUCTeX build process wants to use pdftex, so let's temporarily
 ;; put it on the path.
-(let ((exec-path (append exec-path '("/Library/TeX/texbin"))))
-  ;; The el-get recipe won't work for AUCTeX because (I assume) el-get
-  ;; runs Elisp right out of the repo it clones to, which contains
-  ;; support files (ex. styles/*.el) that won't be there if you use
-  ;; that same recipe with straight.el.  Hence we make our own recipe.
-  (straight-use-package '(auctex :source el-get
-                          :files ("*.el" "*.info" "dir"
-                                  "doc" "etc" "images" "latex" "style"))))
-;; See the :load bits of
-;; https://github.com/dimitri/el-get/blob/master/recipes/auctex.rcp,
-;; which are not supported by straight.el as of this writing.  Without
-;; these you will get built-in Emacs LaTeX modes, not AUCTeX.
-(require 'tex-site)
-(require 'preview-latex)
+
+(defvar my:texbin-dir "/Library/TeX/texbin")
+
+(defvar my:tex-available-p (file-directory-p my:texbin-dir))
+
+;; MacTeX not on work computer.  (Yet...)  AUCTeX will not build
+;; without LaTeX.
+(when my:tex-available-p
+  (let ((exec-path (append exec-path (list my:texbin-dir))))
+    ;; The el-get recipe won't work for AUCTeX because (I assume) el-get
+    ;; runs Elisp right out of the repo it clones to, which contains
+    ;; support files (ex. styles/*.el) that won't be there if you use
+    ;; that same recipe with straight.el.  Hence we make our own recipe.
+    (straight-use-package '(auctex :source el-get
+                            :files ("*.el" "*.info" "dir"
+                                    "doc" "etc" "images" "latex" "style")))
+    ;; See the :load bits of
+    ;; https://github.com/dimitri/el-get/blob/master/recipes/auctex.rcp,
+    ;; which are not supported by straight.el as of this writing.  Without
+    ;; these you will get built-in Emacs LaTeX modes, not AUCTeX.
+    (require 'tex-site)
+    (require 'preview-latex)))
 
 ;; Well shit, company-auctex depends on AUCTeX, so straight.el is
 ;; going to install that too.  Fuck, here comes company through
@@ -150,7 +158,6 @@
                             cider
                             company
                             company-prescient
-                            company-reftex
                             company-shell
                             company-terraform
                             company-web
@@ -174,7 +181,6 @@
                             hydra
                             ivy
                             ivy-avy
-                            ivy-bibtex
                             ivy-hydra
                             ivy-prescient
                             ivy-xref
@@ -205,6 +211,14 @@
                             yasnippet
                             yasnippet-snippets
                             ))
+
+(when my:tex-available-p
+  ;; These are guarded so that straight doesn't try to pull in AUCTeX
+  ;; against my will.
+  (my:straight-use-packages '(
+                              company-reftex
+                              ivy-bibtex
+                              )))
 
 
 ;;; package.el with auto-package-update
