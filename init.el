@@ -95,6 +95,8 @@
 
 ;;; straight.el, because it's good and I need AUCTeX from Git
 
+(setq straight-repository-branch "develop")
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el"
