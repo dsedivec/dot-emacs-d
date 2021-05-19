@@ -1630,7 +1630,8 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
       (setq dumb-jump-rg-search-args
             (combine-and-quote-strings (seq-uniq args))))))
 
-(my:load-recipes 'dumb-jump-only-if-no-tags)
+(my:load-recipes 'dumb-jump-only-if-no-tags
+                 'dumb-jump-better-project-root-errors)
 
 
 ;;; edebug
