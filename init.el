@@ -350,10 +350,13 @@ upgraded."
 (let (double-installed-pkgs)
   (straight--map-repo-packages
    (lambda (pkg)
-     (when (and (package-installed-p (intern pkg))
-                ;; let-alist is built-in.  Maybe others in future.
-                (not (member pkg '("let-alist"))))
-       (push pkg double-installed-pkgs))))
+     (let ((pkg (intern pkg)))
+       (when (and (package-installed-p pkg)
+                  ;; Ignore built-in packages.  (Why *are* these
+                  ;; installed by straight, anyway?  let-alist and
+                  ;; transient are my current culprits.)
+                  (not (package-built-in-p pkg)))
+         (push pkg double-installed-pkgs)))))
   (when double-installed-pkgs
     (warn "Packages installed via both straight.el and package.el: %s"
           (string-join double-installed-pkgs " "))))
