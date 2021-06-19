@@ -172,6 +172,7 @@
                             dash
                             dumb-jump
                             elpy
+                            direnv
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
@@ -1591,6 +1592,11 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
             ext)
     (add-to-list 'dired-latex-unclean-extensions ext)
     (add-to-list 'dired-omit-extensions ext)))
+
+
+;;; direnv
+
+(direnv-mode 1)
 
 
 ;;; dtrt-indent
@@ -3483,8 +3489,6 @@ everything else."
 
 (underlings-move-menu-with-one-time-hook 'pyvenv-mode "Virtual Envs" "Minors"
                                          :dest-map global-map :visible t)
-
-(pyvenv-tracking-mode 1)
 
 
 ;;; rainbow-mode
