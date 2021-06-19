@@ -3253,14 +3253,15 @@ everything else."
          :file-name "daily/%<%Y-%m-%d>"
          :head "#+title: %<%Y-%m-%d>\n\n")))
 
-(add-hook 'after-init-hook 'org-roam-mode)
-
 (my:add-hooks 'org-roam-file-setup-hook
   #'idle-save-buffer-mode)
 
 (defun my:org-roam-search ()
   (interactive)
   (counsel-auto-grep nil org-roam-directory))
+
+(when (file-directory-p org-roam-directory)
+  (add-hook 'after-init-hook 'org-roam-mode))
 
 (with-eval-after-load 'org-roam
   (bind-keys :map org-roam-mode-map
