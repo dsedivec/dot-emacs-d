@@ -193,6 +193,7 @@
                             literate-calc-mode
                             link-hint
                             lsp-mode
+                            lsp-pyright
                             lsp-ui
                             magit
                             markdown-mode
@@ -2711,6 +2712,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (my:load-recipes 'lsp-mode-truncate-headerline-breadcrumbs
                  'lsp-mode-turn-on-with-local-variable
                  'lsp-mode-update-breadcrumbs-while-in-minibuffer)
+
+
+;;; lsp-pyright
+
+(my:with-eval-after-all-load '(python lsp-mode)
+  (require 'lsp-pyright))
 
 
 ;;; lua-mode
