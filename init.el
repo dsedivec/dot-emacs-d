@@ -197,7 +197,6 @@
                             magit
                             markdown-mode
                             minions
-                            multi-line
                             multiple-cursors
                             org-roam
                             pandoc-mode
@@ -286,8 +285,7 @@ same as NAME."
                       plist)))))
 
 (defvar my:quelpa-packages
-  `((hl-line+ :fetcher wiki)
-    (blackout :fetcher github :repo "raxod502/blackout")
+  `((blackout :fetcher github :repo "raxod502/blackout")
     ,(my:quelpa-git-local-or-github 'deft)
     ,(my:quelpa-git-local-or-github 'eltu nil
                                     :files '(:defaults "eltu_update_tags.py"))
@@ -959,11 +957,6 @@ upgraded."
 ;;; amx
 
 (setq amx-history-length 500)
-
-
-;;; anzu
-
-(global-anzu-mode 1)
 
 
 ;;; atomic-chrome
@@ -2428,18 +2421,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (my:load-recipes 'he-dabbrev-obey-dabbrev-skip-leading-regexp)
 
 
-;;; hl-line+
-
-(with-eval-after-load 'hl-line
-  (require 'hl-line+)
-
-  ;; This makes hl-line appear above org-mode columns view, which is
-  ;; the effect I was going for.  I'm setting this globally for now,
-  ;; but this might turn out to be a bad idea, and instead I should
-  ;; set it only in org-mode or something like that.
-  (setq hl-line-overlay-priority 1))
-
-
 ;;; hl-todo
 
 (global-hl-todo-mode 1)
@@ -2864,11 +2845,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (with-eval-after-load 'mule
   (add-to-list 'which-key-replacement-alist
                '(("C-x RET" . "Prefix Command") . (nil . "mule"))))
-
-
-;;; multi-line
-
-(bind-key "C-c d" 'multi-line)
 
 
 ;;; mwim

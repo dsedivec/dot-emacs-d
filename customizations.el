@@ -11,7 +11,6 @@
      adaptive-wrap
      aggressive-indent
      all-the-icons
-     anzu
      atomic-chrome
      auto-compile
      auto-highlight-symbol
@@ -45,7 +44,6 @@
      highlight-indent-guides
      highlight-parentheses
      hindent
-     hl-line+
      hl-todo
      hlint-refactor
      htmlize
