@@ -2594,7 +2594,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;; https://github.com/mooz/js2-mode/issues/529
 ;; (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js2-jsx-mode))
-(add-hook 'js-mode-hook #'js2-minor-mode)
+
+(defun my:maybe-turn-on-js2-minor-mode ()
+  (unless (eq major-mode 'json-mode)
+    (js2-minor-mode 1)))
+
+(add-hook 'js-mode-hook #'my:maybe-turn-on-js2-minor-mode)
 
 (defun my:js2-mode-hook ()
   ;; Prevailing JS style seems to be indenting with spaces.
