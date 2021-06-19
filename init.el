@@ -4365,8 +4365,6 @@ a string or comment."
 (setq treemacs-python-executable "/opt/local/bin/python3"
       treemacs-width 50)
 
-(add-hook 'treemacs-hook #'treemacs-tag-follow-mode)
-
 (bind-keys ("M-m u t" . treemacs))
 
 (with-eval-after-load 'treemacs
