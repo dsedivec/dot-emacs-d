@@ -2739,6 +2739,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (require 'lsp-pyright))
 
 
+;;; lsp-ui
+
+(setq lsp-ui-doc-enable nil)
+
+
 ;;; lua-mode
 
 ;; There doesn't seem to be a great deal of consensus over how to
