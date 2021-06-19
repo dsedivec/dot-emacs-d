@@ -1599,7 +1599,8 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
 
 ;;; direnv
 
-(direnv-mode 1)
+(when (executable-find "direnv")
+  (direnv-mode 1))
 
 
 ;;; dtrt-indent
