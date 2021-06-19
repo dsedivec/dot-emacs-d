@@ -541,6 +541,10 @@ upgraded."
 ;; installed.)
 (require 'dash)
 
+;; Fix for https://github.com/volrath/treepy.el/issues/9, necessary
+;; for treepy-remove to work right.
+(my:load-recipes 'treepy-remove-fix)
+
 ;; Don't take up mode line space if encoding is unspecified or Unicode-ish.
 (unless
     (my:treepy-edit-mode-line-var
