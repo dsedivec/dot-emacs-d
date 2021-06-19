@@ -193,8 +193,10 @@
                             js2-refactor
                             literate-calc-mode
                             link-hint
+                            lsp-ivy
                             lsp-mode
                             lsp-pyright
+                            lsp-treemacs
                             lsp-ui
                             magit
                             markdown-mode
@@ -211,6 +213,7 @@
                             swiper
                             terraform-mode
                             treemacs
+                            treemacs-projectile
                             wgrep
                             winum
                             yasnippet
