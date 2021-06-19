@@ -16,7 +16,7 @@
   ;; the one from MacPorts that might know about libgccjit.  Note that
   ;; this will later be overwritten by my use of exec-path-from-shell.
   (setenv "PATH" (concat "/opt/local/bin:/usr/local/bin:"
-                         (or (getenv "PATH") "")))
+                         (or (getenv "PATH") "/bin:/usr/bin")))
 
   ;; Don't pop up *Warnings* for native-comp warnings because the
   ;; async native-comp warnings are far too numerous.
