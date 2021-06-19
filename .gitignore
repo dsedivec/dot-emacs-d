@@ -1,6 +1,8 @@
 *.elc
 .DS_Store
 /.cache
+/.emacs.desktop
+/.emacs.desktop.lock
 /.last-package-update-day
 /.lsp-session-v1
 /.org-id-locations
@@ -17,7 +19,6 @@
 /network-security.data
 /org-clock-save.el
 /pbcopyhtml
-/persp-confs
 /places
 /private
 /projectile-bookmarks.eld

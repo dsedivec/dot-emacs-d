@@ -67,7 +67,6 @@
      osx-dictionary
      package-build
      paredit
-     persp-mode
      phi-search
      python
      quelpa

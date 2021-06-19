@@ -489,11 +489,6 @@ upgraded."
         ;; application switchers.  Let's just disable file type icons.
         ns-icon-type-alist nil)
 
-  ;; Saving/restoring frames via persp-mode seems to affect this
-  ;; somehow.  Setting this seems to put us back where we belong,
-  ;; without a friggin' white title bar (WTF).
-  (setf (alist-get 'ns-transparent-titlebar default-frame-alist) nil)
-
   ;; If you google "emacs mac x-colors" you will see lots of people
   ;; commenting that they're missing colors.  I think there's some
   ;; kind of timing bug during build, or something else isn't
@@ -683,12 +678,7 @@ upgraded."
         (with-current-buffer org-buf
           (org-mode-restart))))))
 
-;; My persp-mode frame restoration can end up restoring the initial
-;; frame to look however it was when you exited it, even though
-;; subsequent frames will be created with my default theme.  This
-;; fixes that problem.  Moreover, though, it generally addresses the
-;; desire, "I want Emacs to have the proper theme whether I start it
-;; during the day or during the night."
+;; Set the correct theme whenever starting Emacs.
 (add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
 
 
@@ -1092,9 +1082,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (bind-key "C-x C-b" 'bs-show)
 
-(with-eval-after-load 'persp-mode
-  (my:load-recipes 'bs-persp-mode
-                   'bs-display-actions))
+(my:load-recipes 'bs-display-actions)
 
 (defun my:visits-non-dired-non-file (buffer)
   "Returns T if buffer is neither a file nor a Dired buffer."
@@ -1507,6 +1495,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 ;;; descr-text
 
 (bind-keys ("M-m h d c" . describe-char))
+
+
+;;; desktop
+
+(desktop-save-mode 1)
 
 
 ;;; diff-hl
@@ -2795,7 +2788,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                        flycheck-mode
                        isort-format-on-save-mode
                        multiple-cursors-mode
-                       persp-mode
                        yapf-format-on-save-mode
                        ))
 
@@ -3232,63 +3224,6 @@ everything else."
 ;;; paren
 
 (add-hook 'prog-mode-hook #'show-paren-mode)
-
-
-;;; persp-mode
-
-(setq persp-add-buffer-on-after-change-major-mode 'free
-      ;; C-x 5 2 shouldn't copy e.g. window layout.  I hope this still
-      ;; means additional frames will be saved with the perspective!
-      ;; (If not, perhaps see `persp-ignore-wconf-once' here?)
-      persp-init-new-frame-behaviour-override nil)
-
-(with-eval-after-load 'persp-mode
-  ;; Document C-c p o, which is a lambda.
-  (add-to-list 'which-key-replacement-alist
-               '(("C-c p o" . nil) . (nil . "persp-mode off"))))
-
-(add-hook 'persp-mode-hook
-          (underlings-define-menu-mover 'persp-mode "Perspectives" "Minors"
-                                        :dest-map global-map
-                                        :visible t))
-
-;; Don't save buffers that aren't backed by a file, lest you get a
-;; bunch of useless Magit and EPC buffers in `fundamental-mode' after
-;; loading the last saved perspective.  We insert this just before the
-;; last built-in persp-mode handler, which is the default that tries
-;; to save every buffer.  This way we let things like TRAMP and
-;; `dired-mode' buffers get handled by the earlier (and also built-in)
-;; handlers.
-
-(defun my:persp-mode-dont-save-buffers-without-files (b)
-  (unless (buffer-file-name b)
-    'skip))
-
-(with-eval-after-load 'persp-mode
-  (unless (memq #'my:persp-mode-dont-save-buffers-without-files
-                persp-save-buffer-functions)
-    (let ((last-cell (last persp-save-buffer-functions)))
-      (setf (cdr last-cell) (list (car last-cell))
-            (car last-cell) #'my:persp-mode-dont-save-buffers-without-files))))
-
-(my:load-recipes 'persp-mode-save-load-frame-configuration
-                 'persp-mode-auto-save-configuration
-                 'persp-mode-ivy-buffer-switching)
-
-;; Must set this before turning on persp-mode for it to have an effect.
-(setq persp-auto-resume-time 0.1)
-
-(when (bound-and-true-p persp-mode)
-  (warn "Set `persp-auto-resume-time' too late, persp-mode already on"))
-
-;; Never try and turn `persp-mode' on during init.
-;; `persp-auto-resume-time' being non-zero (see above) will cause
-;; `persp-mode' to set a timer, and that timer might run during init,
-;; especially in my case where `el-patch-validate' might do things
-;; that cause timers to fire.  You will be in a world of hurt.  Weird
-;; shit like `enable-local-variables' getting set to nil (by el-patch)
-;; will happen while your buffers are restored by persp-mode.
-(add-hook 'after-init-hook #'persp-mode)
 
 
 ;;; prescient.el
