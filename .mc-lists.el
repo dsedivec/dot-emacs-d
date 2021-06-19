@@ -22,6 +22,7 @@
         faux-indent-remove-indentation
         forward-sexp
         indent-for-tab-command
+        indent-region
         insert-char
         insert-parentheses
         kill-sexp
