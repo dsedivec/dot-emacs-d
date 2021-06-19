@@ -3097,6 +3097,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
    'org-babel-read-table-in-dblock
    'org-columns-delete-property
    'org-daily-time-summary
+   'org-fix-C-e
    'org-fix-faces-after-goto
    'org-insert-heading-ignore-invisibility
    'org-jump-over-priority-after-setting-it
@@ -3104,7 +3105,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
    'org-make-dabbrev-ignore-emphasis
    'org-make-nice-id-from-headline-text
    'org-property-drawer-fixes
-   'org-fix-C-e)
+   )
 
   (bind-keys :map org-mode-map
              ("C-c a" . org-agenda)
