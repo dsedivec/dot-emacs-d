@@ -3012,6 +3012,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  org-agenda-start-on-weekday 0
  org-agenda-todo-ignore-deadlines 'far
  org-agenda-todo-ignore-scheduled 1
+ ;; 'auto (default) doesn't do what I want.  I have a recipe,
+ ;; org-leave-blank-line-before-heading, that adds this 'preserve
+ ;; logic for 'heading.
+ org-blank-before-new-entry '((heading . preserve) (plain-list-item . nil))
  ;; I don't want or like org creating bookmarks, especially if you
  ;; want to use Bookmark+ (which I no longer do) because it will
  ;; highlight the bookmarks.
@@ -3096,6 +3100,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
    'org-fix-faces-after-goto
    'org-insert-heading-ignore-invisibility
    'org-jump-over-priority-after-setting-it
+   'org-leave-blank-line-before-heading
    'org-make-dabbrev-ignore-emphasis
    'org-make-nice-id-from-headline-text
    'org-property-drawer-fixes
