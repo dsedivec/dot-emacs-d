@@ -11,12 +11,19 @@
 
 (declare-function 'black-format-on-save-mode "../init.el")
 
+(defvar my:black-format-on-save-default t)
+
 (defun my:maybe-enable-black-format-on-save ()
   ;; Guard on `buffer-file-name' needed to avoid Elpy stuffing Python
   ;; into temporary buffers when sending code to the REPL.
   (when buffer-file-name
-    (let ((props (funcall editorconfig-get-properties-function)))
-      (when (equal (gethash 'org.codefu/python_formatter props) "black")
+    (let* ((default (gensym))
+           (props (funcall editorconfig-get-properties-function))
+           (formatter (gethash 'org.codefu/python_formatter props default)))
+      (when (or (equal formatter "black")
+                (and (eq formatter default)
+                     (executable-find "black")
+                     my:black-format-on-save-default))
         (black-format-on-save-mode 1)))))
 
 (add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
