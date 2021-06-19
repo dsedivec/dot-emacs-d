@@ -125,7 +125,8 @@
 ;; MacTeX not on work computer.  (Yet...)  AUCTeX will not build
 ;; without LaTeX.
 (when my:tex-available-p
-  (let ((exec-path (append exec-path (list my:texbin-dir))))
+  (let ((process-environment process-environment))
+    (setenv "PATH" (concat (or (getenv "PATH") "") ":" my:texbin-dir))
     ;; The el-get recipe won't work for AUCTeX because (I assume) el-get
     ;; runs Elisp right out of the repo it clones to, which contains
     ;; support files (ex. styles/*.el) that won't be there if you use
