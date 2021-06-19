@@ -4365,6 +4365,12 @@ a string or comment."
 (setq treemacs-python-executable "/opt/local/bin/python3"
       treemacs-width 50)
 
+(defun my:treemacs-mode-hook ()
+  (setq truncate-lines t))
+
+(my:add-hooks 'treemacs-mode-hook
+  #'my:treemacs-mode-hook)
+
 (bind-keys ("M-m u t" . treemacs))
 
 (with-eval-after-load 'treemacs
