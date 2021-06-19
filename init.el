@@ -2677,6 +2677,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; lsp
 
 (with-eval-after-load 'lsp-mode
+  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+  (setq gc-cons-threshold 1600000
+        read-process-output-max (* 1024 1024))
+
   (which-key-add-keymap-based-replacements lsp-command-map
       "=" '("LSP format")
       "F" '("LSP folders")
