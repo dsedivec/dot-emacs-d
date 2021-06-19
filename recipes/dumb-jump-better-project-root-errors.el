@@ -3,6 +3,8 @@
 ;; Better error message than wrong-type-argument when dumb-jump can't
 ;; determine the project root.
 
+(require 'el-patch)
+
 (declare-function dumb-jump-get-config "dumb-jump")
 (defvar dumb-jump-project)
 

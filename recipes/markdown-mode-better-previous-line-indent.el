@@ -8,6 +8,8 @@
 ;; of exactly why I wanted these behaviors, but I don't have them at
 ;; hand right now.)
 
+(require 'el-patch)
+
 (el-patch-feature markdown-mode)
 
 (el-patch-defun markdown-calc-indents ()

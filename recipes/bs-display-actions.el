@@ -6,6 +6,8 @@
 ;; This patch gives Shackle et al. a shot at influencing just
 ;; how/where the bs window will be displayed.
 
+(require 'el-patch)
+
 (el-patch-feature bs)
 
 (with-eval-after-load 'bs
