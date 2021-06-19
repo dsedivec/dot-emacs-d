@@ -446,7 +446,7 @@ upgraded."
 
 ;; My nav-stack package uses circular lists, try not to stack overflow
 ;; when I accidentally end up printing one during debugging.  (Why is
-;; this nil nby default, anyway?)
+;; this nil by default, anyway?)
 (setq print-circle t)
 
 ;; Doubling these as I kept running out of undo history (at least, I
