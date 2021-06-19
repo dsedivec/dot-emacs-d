@@ -15,6 +15,7 @@
 /eln-cache/
 /elpa
 /elpy
+/init-local.el
 /lisp/autoloads.el
 /network-security.data
 /org-clock-save.el

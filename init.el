@@ -4818,6 +4818,8 @@ for this command) must be an arrow key."
 
 ;;; Epilogue
 
+(load (expand-file-name "init-local" user-emacs-directory) t)
+
 ;; Sometimes init.el doesn't get to load all the way to the end, but
 ;; errors get swallowed and don't appear in *Messages*?  WTF.
 (message "init.el loaded successfully")
