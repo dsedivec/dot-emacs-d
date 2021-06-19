@@ -2690,7 +2690,15 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       "g" '("LSP find/go")
       "h" '("LSP help")
       "r" '("LSP refactor")
-      "s" '("LSP sessions")))
+      "s" '("LSP sessions"))
+
+  (dolist (dir-name '(".venv" ".direnv" ".pytest_cache" ".mypy_cache"
+                      "__pycache__"))
+    (add-to-list 'lsp-file-watch-ignored-directories
+                 (rx (char ?/ ?\\) (literal dir-name) eos)))
+
+  (add-to-list 'lsp-file-watch-ignored-files
+               (rx (char ?/ ?\\) (+ (not (any ?/ ?\\))) ".pyc" eos)))
 
 
 ;;; lua-mode
