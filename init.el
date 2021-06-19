@@ -3254,11 +3254,16 @@ everything else."
 (my:add-hooks 'org-roam-file-setup-hook
   #'idle-save-buffer-mode)
 
+(defun my:org-roam-search ()
+  (interactive)
+  (counsel-auto-grep nil org-roam-directory))
+
 (with-eval-after-load 'org-roam
   (bind-keys :map org-roam-mode-map
              ("M-m r r" . org-roam)
              ("M-m r f" . org-roam-find-file)
              ("M-m r i" . org-roam-insert)
+             ("M-m r /" . my:org-roam-search)
              ("M-m r d d" . org-roam-dailies-find-directory)
              ("M-m r d f t" . org-roam-dailies-find-today)
              ("M-m r d c t" . org-roam-dailies-capture-today)
