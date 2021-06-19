@@ -131,6 +131,35 @@ taken from the docstring of a minor mode function defined by
   (interactive)
   (insert (format-time-string "%FT%T%:::z")))
 
+;; `benchmark-run' insists on an integer, but `benchmark-call' will
+;; happily take a float (see its docstring).  This is
+;; `benchmark-run' with the conditional modified to accept a float.  I
+;; should upstream this.
+;;
+;; I also modify the return value to add the average time per run as
+;; the first element of the returned list when REPETITIONS is a float.
+;; That I should maybe not upstream.
+(defmacro my:benchmark-run (&optional repetitions &rest forms)
+  "Time execution of FORMS.
+If REPETITIONS is an integer, run FORMS that many times,
+accounting for the overhead of the resulting loop.  If
+REPETITIONS is a floating point number, run for at least that
+many seconds.  Otherwise run FORMS once.
+
+See `benchmark-call' for more information."
+  (declare (indent 1) (debug t))
+  (unless (or (and (numberp repetitions) (not (cl-minusp repetitions)))
+              (and repetitions (symbolp repetitions)))
+    (setq forms (cons repetitions forms)
+          repetitions 1))
+  (let ((s-reps (gensym))
+        (s-result (gensym)))
+    `(let* ((,s-reps ,repetitions)
+            (,s-result (benchmark-call (lambda () ,@forms) ,s-reps)))
+       (if (floatp ,s-reps)
+           (cons (/ (cadr ,s-result) (car ,s-result)) ,s-result)
+         ,s-result))))
+
 
 ;; Utilities to edit the mode line using treepy zippers.
 
