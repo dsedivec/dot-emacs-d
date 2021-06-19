@@ -2708,6 +2708,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq lsp-signature-render-documentation nil
       lsp-pyls-plugins-pylint-enabled t)
 
+(my:load-recipes 'lsp-mode-truncate-headerline-breadcrumbs
+                 'lsp-mode-turn-on-with-local-variable
+                 'lsp-mode-update-breadcrumbs-while-in-minibuffer)
+
 
 ;;; lua-mode
 
