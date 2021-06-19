@@ -2011,8 +2011,10 @@ surround \"foo\" with (in this example) parentheses.  I want
                   kill-buffer-and-window
                   magit-mode-bury-buffer
                   my:delete-window-that-direction
+                  org-roam
                   transpose-frame
                   treemacs
+                  treemacs-quit
                   winner-undo
                   ))
     (add-to-list 'auto-frame-resize-commands func)))
