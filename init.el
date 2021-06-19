@@ -2715,6 +2715,19 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq lsp-signature-render-documentation nil
       lsp-pyls-plugins-pylint-enabled t)
 
+(defun my:lsp-mode-hook ()
+  (when (and lsp-enable-symbol-highlighting
+             (bound-and-true-p auto-highlight-symbol-mode))
+    (auto-highlight-symbol-mode -1)))
+
+(add-hook 'lsp-mode-hook #'my:lsp-mode-hook)
+
+(defun my:lsp-headerline-breadcrumb-mode-hook ()
+  (setq-local which-func-mode nil))
+
+(add-hook 'lsp-headerline-breadcrumb-mode-hook
+          #'my:lsp-headerline-breadcrumb-mode-hook)
+
 (my:load-recipes 'lsp-mode-truncate-headerline-breadcrumbs
                  'lsp-mode-turn-on-with-local-variable
                  'lsp-mode-update-breadcrumbs-while-in-minibuffer)
