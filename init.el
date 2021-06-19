@@ -1808,7 +1808,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; elpy
 
-(setq elpy-eldoc-show-current-function nil)
+(setq elpy-eldoc-show-current-function nil
+      elpy-rpc-python-command "python3")
 
 (advice-add 'python-mode :before #'elpy-enable)
 
