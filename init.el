@@ -527,9 +527,10 @@ upgraded."
     (ns-do-applescript
      (format "tell application \"Finder\" to move {%s} to trash" as-paths))))
 
-(when (and (eq system-type 'darwin)
-           (not (fboundp 'system-move-file-to-trash)))
-  (defalias 'system-move-file-to-trash #'my:ns-move-files-to-trash))
+(when (eq system-type 'darwin)
+  (if (fboundp 'system-move-file-to-trash)
+      (warn "`system-move-file-to-trash' already defined, check your init.el")
+    (defalias 'system-move-file-to-trash #'my:ns-move-files-to-trash)))
 
 (setq delete-by-moving-to-trash t)
 
