@@ -122,8 +122,7 @@
 
 (defvar my:tex-available-p (file-directory-p my:texbin-dir))
 
-;; MacTeX not on work computer.  (Yet...)  AUCTeX will not build
-;; without LaTeX.
+;; AUCTeX will not build without LaTeX.
 (when my:tex-available-p
   (let ((process-environment process-environment))
     (setenv "PATH" (concat (or (getenv "PATH") "") ":" my:texbin-dir))
