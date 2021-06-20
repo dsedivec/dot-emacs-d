@@ -3,6 +3,7 @@
 ;; Fix for https://github.com/volrath/treepy.el/issues/9.
 
 (require 'el-patch)
+(eval-when-compile (require 'treepy))
 
 (el-patch-feature treepy)
 
