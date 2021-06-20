@@ -170,9 +170,9 @@
                             dired-narrow
                             dired-ranger
                             dash
+                            direnv
                             dumb-jump
                             elpy
-                            direnv
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
