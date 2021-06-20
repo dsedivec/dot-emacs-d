@@ -2852,6 +2852,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (setq completion-styles '(basic partial-completion initials flex))
 
+(my:load-recipes 'minibuffer-flex-completion-ignore-long-candidates)
 
 ;;; minions
 
