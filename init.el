@@ -540,6 +540,20 @@ upgraded."
 (setq delete-by-moving-to-trash t)
 
 
+;;; el-patch
+
+;; This is way, way early because I'm about to use it to patch
+;; `treepy-remove', and I needd my treepy-remove-fix recipe.  In
+;; general, it needs to be early because I use this a decent number of
+;; times throughout my init.el.
+
+(my:load-recipe 'el-patch-clean-up-buffers-after-validation)
+
+;; Setting this early, since after I switched to straight, something
+;; is hitting this all the time.  I strongly suspect it's el-patch.
+(setq vc-follow-symlinks t)
+
+
 ;;; Mode line mods
 
 ;; (Couldn't require this at top, has to come after packages are
@@ -761,18 +775,6 @@ upgraded."
 
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
-
-
-;;; el-patch
-
-;; This is out of alphabetical order so it gets installed before
-;; anyone potentially starts using el-patch.
-
-(my:load-recipe 'el-patch-clean-up-buffers-after-validation)
-
-;; Setting this early, since after I switched to straight, something
-;; is hitting this all the time.  I strongly suspect it's el-patch.
-(setq vc-follow-symlinks t)
 
 
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
