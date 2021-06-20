@@ -295,7 +295,6 @@ same as NAME."
     ,(my:quelpa-git-local-or-github 'eltu nil
                                     :files '(:defaults "eltu_update_tags.py"))
     ,(my:quelpa-git-local-or-github 'ns-copy-html)
-    ,(my:quelpa-git-local-or-github 'python "python-el")
     ,(my:quelpa-git-local-or-github 'smart-tabs)
     ;; I have a fork of sql-indent, hopefully just temporarily.
     ,(my:quelpa-git-local-or-github 'sql-indent "emacs-sql-indent")
@@ -3495,15 +3494,24 @@ everything else."
 (add-hook 'inferior-python-mode-hook #'electric-pair-local-mode)
 
 (with-eval-after-load 'python
-  (my:load-recipes 'python-magic-quotes
-                   'python-toggle-triple-quotes
-                   'python-fix-dead-shell-font-lock-buffer
-                   'expand-region-python-fix-strings
-                   'python-edit-indirect-in-strings
-                   'python-add-import
-                   'python-reformat-region-or-buffer
-                   'python-shell-send-dwim
-                   'python-enable-black-from-editorconfig)
+  (my:load-recipes
+   'expand-region-python-fix-strings
+   'python-add-import
+   'python-better-imenu
+   'python-colon-doesnt-add-indentation
+   'python-dont-assume-next-line-starts-block
+   'python-edit-indirect-in-strings
+   'python-enable-black-from-editorconfig
+   'python-fix-dead-shell-font-lock-buffer
+   'python-fix-indent-line-columns-vs-characters
+   'python-indent-multi-line-strings
+   'python-magic-quotes
+   'python-multi-line-string-content-starts-on-own-line
+   'python-reformat-region-or-buffer
+   'python-shell-send-dwim
+   'python-toggle-triple-quotes
+   'python-up-list-in-strings-and-comments
+   )
 
   (bind-keys :map python-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
