@@ -23,7 +23,6 @@
      crontab-mode
      crux
      csv-mode
-     ctrlf
      deft
      diff-hl
      dockerfile-mode

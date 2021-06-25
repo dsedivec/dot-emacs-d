@@ -159,6 +159,7 @@
                             auto-yasnippet
                             avy
                             cider
+                            ctrlf
                             company
                             company-prescient
                             company-shell
