@@ -11,7 +11,7 @@
   ;; support for this buffer".
   ;;
   ;; lsp-mode innards fail when `buffer-file-name' is nil.
-  (with-current-buffer buffer
+  (with-current-buffer (or buffer (current-buffer))
     (when buffer-file-name
       (let ((warning-suppress-log-types '((lsp-mode))))
         (stringp (lsp-buffer-language))))))
