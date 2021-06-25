@@ -13,7 +13,7 @@
                     ;; Separator, optional locker (only after colon separator)
                     "\\(?:[-@!?]\\|:\\(?:[^:]+:\\)?\\)"
                     ;; Prefix of branch name, followed by any excess
-                    ".\\{,10\\}\\)\\(.*\\)")
+                    ".\\{,13\\}\\)\\(.*\\)")
                    (lambda (match)
                      (if (zerop (length (match-string 2 vc-mode)))
                          match
