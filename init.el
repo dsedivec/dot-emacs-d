@@ -1478,16 +1478,10 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (require 'ctrlf)
 
-;; `ctrlf-mode-bindings' needs to be modified *before* you turn on
-;; `ctrlf-mode'.
-(cl-loop
-  for (remap . new-binding) in
-   '((isearch-forward . ctrlf-forward-fuzzy-regexp)
-     (isearch-backward . ctrlf-backward-fuzzy-regexp))
-  do (setf (alist-get `[remap ,remap] ctrlf-mode-bindings nil nil #'equal)
-           new-binding))
-
 (ctrlf-mode 1)
+
+(setq ctrlf-default-search-style 'fuzzy-regexp
+      ctrlf-alternate-search-style 'literal)
 
 
 ;;; deft
