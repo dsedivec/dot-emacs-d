@@ -4373,8 +4373,7 @@ a string or comment."
 
 ;;; treemacs
 
-(setq treemacs-python-executable "/opt/local/bin/python3"
-      treemacs-width 50)
+(setq treemacs-width 50)
 
 (defun my:treemacs-mode-hook ()
   (setq truncate-lines t))
