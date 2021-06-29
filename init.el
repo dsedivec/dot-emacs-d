@@ -3559,7 +3559,7 @@ everything else."
 
 (reformatter-define black-format
     :program "black"
-    :args '("-l" "80" "--quiet" "--fast" "-")
+    :args '("--quiet" "--fast" "-")
     :lighter "Bl")
 
 (reformatter-define docformatter
