@@ -27,6 +27,10 @@
 (require 'subr-x)
 (require 'seq)
 
+;; Load local init.el stuff early, since it might e.g. set up SSL
+;; settings or something.
+(load (expand-file-name "init-local" user-emacs-directory) t)
+
 
 ;;; Local packages
 
@@ -4827,8 +4831,6 @@ for this command) must be an arrow key."
 
 
 ;;; Epilogue
-
-(load (expand-file-name "init-local" user-emacs-directory) t)
 
 ;; Sometimes init.el doesn't get to load all the way to the end, but
 ;; errors get swallowed and don't appear in *Messages*?  WTF.
