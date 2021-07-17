@@ -175,9 +175,9 @@
                             dired-narrow
                             dired-ranger
                             dash
-                            direnv
                             dumb-jump
                             elpy
+                            envrc
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
@@ -1595,12 +1595,6 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
             ext)
     (add-to-list 'dired-latex-unclean-extensions ext)
     (add-to-list 'dired-omit-extensions ext)))
-
-
-;;; direnv
-
-(when (executable-find "direnv")
-  (direnv-mode 1))
 
 
 ;;; dtrt-indent
@@ -4828,6 +4822,13 @@ for this command) must be an arrow key."
 ;;; zop-to-char
 
 (bind-keys ("M-z" . zop-up-to-char))
+
+
+;;; envrc
+
+;; Per the suggestion of envrc's README, this comes very late.
+
+(envrc-global-mode)
 
 
 ;;; Epilogue
