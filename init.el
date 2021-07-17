@@ -1247,6 +1247,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq company-selection-wrap-around t
       company-show-numbers t
+      company-show-quick-access t
       company-tooltip-align-annotations t
       company-minimum-prefix-length 2
       company-idle-delay 0.2
