@@ -1536,33 +1536,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
                                            "Immediate" "Subdir"]
                                          "Dired")
 
-;; Temporary patch for https://debbugs.gnu.org/cgi/bugreport.cgi?bug=48461.
-
-(el-patch-feature dired-aux)
-
-(with-eval-after-load 'dired-aux
-  (el-patch-defun dired-rename-file (file newname ok-if-already-exists)
-    "Rename FILE to NEWNAME.
-Signal a `file-already-exists' error if a file NEWNAME already exists
-unless OK-IF-ALREADY-EXISTS is non-nil."
-    (dired-handle-overwrite newname)
-    (dired-maybe-create-dirs (file-name-directory newname))
-    (if (and dired-vc-rename-file
-             (vc-backend file)
-             (ignore-errors (vc-responsible-backend newname)))
-        (vc-rename-file file newname)
-      ;; error is caught in -create-files
-      (rename-file file newname ok-if-already-exists))
-    ;; Silently rename the visited file of any buffer visiting this file.
-    (and (get-file-buffer file)
-         (with-current-buffer (get-file-buffer file)
-           (set-visited-file-name newname nil t)))
-    (dired-remove-file file)
-    ;; See if it's an inserted subdir, and rename that, too.
-    (when (file-directory-p (el-patch-swap file newname))
-      (dired-rename-subdir file newname)))
-
-  (el-patch-validate 'dired-rename-file 'defun t))
+(my:load-recipes 'dired-fix-48461-directory-renames)
 
 
 ;;; dired-ranger
