@@ -551,7 +551,7 @@ upgraded."
 ;; general, it needs to be early because I use this a decent number of
 ;; times throughout my init.el.
 
-(my:load-recipe 'el-patch-clean-up-buffers-after-validation)
+(my:load-recipe 'el-patch-dont-kill-my-buffers)
 
 ;; Setting this early, since after I switched to straight, something
 ;; is hitting this all the time.  I strongly suspect it's el-patch.
