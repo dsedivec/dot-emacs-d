@@ -158,6 +158,7 @@
 (my:straight-use-packages '(
                             ace-window
                             amx
+                            apheleia
                             ;; This next one feels... wrong.
                             auto-package-update
                             auto-yasnippet
@@ -963,6 +964,17 @@ upgraded."
 ;;; amx
 
 (setq amx-history-length 500)
+
+
+;;; apheleia
+
+(my:load-recipes 'apheleia-tools-produce-rcs-patch)
+
+(setf (alist-get 'darker apheleia-formatters)
+      '(rcs "darker-rcs-wrapper" filepath "--quiet"))
+
+(when (executable-find "darker-rcs-wrapper")
+  (setf (alist-get 'python-mode apheleia-mode-alist) 'darker))
 
 
 ;;; atomic-chrome
