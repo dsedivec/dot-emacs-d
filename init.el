@@ -1258,7 +1258,6 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (add-hook 'prog-mode-hook #'company-mode)
 
 (setq company-selection-wrap-around t
-      company-show-numbers t
       company-show-quick-access t
       company-tooltip-align-annotations t
       company-minimum-prefix-length 2
@@ -1331,12 +1330,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
              ;; With these unbound you can hit <up> or <down> to move
              ;; the cursor, leaving a selected candidate if any.
              ("<down>" . nil)
-             ("<up>" . nil))
-
-  ;; C-<digit> to select a completion
-  (dotimes (n 10)
-    (bind-key (kbd (format "C-%d" n)) 'company-complete-number
-              company-active-map)))
+             ("<up>" . nil)))
 
 (defun my:company-group-existing-backend (backend other-backends
                                           &optional globally no-warn)
