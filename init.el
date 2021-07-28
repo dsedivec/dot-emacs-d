@@ -968,13 +968,14 @@ upgraded."
 
 ;;; apheleia
 
-(my:load-recipes 'apheleia-tools-produce-rcs-patch)
+(with-eval-after-load 'apheleia
+  (my:load-recipes 'apheleia-tools-produce-rcs-patch)
 
-(setf (alist-get 'darker apheleia-formatters)
-      '(rcs "darker-rcs-wrapper" filepath "--quiet"))
+  (setf (alist-get 'darker apheleia-formatters)
+        '(rcs "darker-rcs-wrapper" filepath "--quiet"))
 
-(when (executable-find "darker-rcs-wrapper")
-  (setf (alist-get 'python-mode apheleia-mode-alist) 'darker))
+  (when (executable-find "darker-rcs-wrapper")
+    (setf (alist-get 'python-mode apheleia-mode-alist) 'darker)))
 
 
 ;;; atomic-chrome
