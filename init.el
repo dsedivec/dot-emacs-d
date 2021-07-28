@@ -3237,10 +3237,9 @@ everything else."
   (interactive)
   (counsel-auto-grep nil org-roam-directory))
 
-(when (file-directory-p org-roam-directory)
-  (add-hook 'after-init-hook 'org-roam-mode))
-
 (with-eval-after-load 'org-roam
+  (org-roam-setup)
+
   (bind-keys :map org-roam-mode-map
              ("M-m r r" . org-roam)
              ("M-m r f" . org-roam-find-file)
