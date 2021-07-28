@@ -139,5 +139,37 @@ anything (ex. line was already indented), then we call
                                  detectors)))
           (hs-toggle-hiding))))))
 
+;; BONUS FUN
+;;
+;; `hs-toggle-hiding' uses `event-end' to try and figure out where you
+;; clicked.  However, `event-end' seems to return `posn-at-point' when
+;; I trigger `hs-toggle-hiding' with a keyboard event, and
+;; `posn-at-point' seems to return the point at the end of an
+;; invisible overlay if point is in such an overlay---you know, like
+;; the kind of overlays hideshow creates.  If you have el-patch
+;; installed, we'll use it here to work around this behavior, so that
+;; hitting TAB *in* a hideshow hidden block (rather than *in front* of
+;; it) actually works.
+;;
+;; See also Emacs bug #4094, which was not resolved.
+
+(when (require 'el-patch nil t)
+  (el-patch-feature hideshow)
+
+  (el-patch-defun hs-toggle-hiding (&optional e)
+    "Toggle hiding/showing of a block.
+See `hs-hide-block' and `hs-show-block'.
+Argument E should be the event that triggered this action."
+    (interactive)
+    (hs-life-goes-on
+     (el-patch-wrap 2 0
+       (when e
+         (posn-set-point (event-end e))))
+     (if (hs-already-hidden-p)
+         (hs-show-block)
+       (hs-hide-block))))
+
+  (el-patch-validate 'hs-toggle-hiding 'defun t))
+
 (provide 'hideshow-tab)
 ;;; hideshow-tab.el ends here
