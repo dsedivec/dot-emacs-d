@@ -1260,6 +1260,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (setq company-selection-wrap-around t
       company-show-quick-access t
+      company-quick-access-modifier 'control
       company-tooltip-align-annotations t
       company-minimum-prefix-length 2
       company-idle-delay 0.2
@@ -1286,6 +1287,9 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
                                       company-xcode company-cmake
                                       company-oddmuse)))
                       company-backends))
+
+  ;; Pick up my changes to `company-quick-access-modifier'.
+  (customize-set-variable 'company-quick-access-modifier company-quick-access-modifier)
 
   (with-eval-after-load 'counsel
     (define-key company-mode-map [remap completion-at-point] 'counsel-company)
