@@ -80,18 +80,21 @@ current line."
        (save-excursion
          (back-to-indentation)
          (setq go-back-to-indentation (<= start (point)))
-         (when indent-tabs-mode
-           ;; Delete any spaces after tabs on a single line.  The idea
-           ;; is that we're about to insert tabs, and so we assume any
-           ;; spaces after tabs in the indentation were for alignment,
-           ;; which will now be wrecked by the new tab, so do the user
-           ;; a favor and delete the alignment spaces.  Maybe this
-           ;; should be conditional on a user setting?
-           (let ((indent-start (point)))
-             (delete-region indent-start
-                            (+ indent-start (skip-chars-backward " ")))))
-         (insert-char (if indent-tabs-mode ?\t ?\s)
-                      (if indent-tabs-mode levels (* levels tab-width))))
+         (if indent-tabs-mode
+             (let ((indent-start (point)))
+               ;; Delete any spaces after tabs on a single line.  The
+               ;; idea is that we're about to insert tabs, and so we
+               ;; assume any spaces after tabs in the indentation were
+               ;; for alignment, which will now be wrecked by the new
+               ;; tab, so do the user a favor and delete the alignment
+               ;; spaces.  Maybe this should be conditional on a user
+               ;; setting?
+               (delete-region indent-start
+                              (+ indent-start (skip-chars-backward " ")))
+               (insert-char ?\t levels))
+           (insert-char ?\s (let* ((num-spaces (* levels tab-width))
+                                   (overshoot (mod (current-column) tab-width)))
+                              (- num-spaces overshoot)))))
        (when go-back-to-indentation
          (back-to-indentation))))))
 
