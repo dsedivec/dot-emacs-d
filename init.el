@@ -3458,7 +3458,14 @@ everything else."
   ;; False" block, rather than the "if True" block *where you
   ;; manually de-indented to*.
   (add-hook 'electric-indent-functions
-            #'my:python-mode-inhibit-electric-indent nil t))
+            #'my:python-mode-inhibit-electric-indent nil t)
+
+  (when (bound-and-true-p adaptive-fill-mode)
+    ;; Teach `adaptive-fill-mode' about "#:" comments for Sphinx.
+    (rx-let ((any-indent-space (* (any " \t"))))
+      (setq-local adaptive-fill-regexp
+                  (rx (or (: any-indent-space "#:" any-indent-space)
+                          (regexp adaptive-fill-regexp)))))))
 
 (my:add-hooks 'python-mode-hook
   #'my:python-mode-hook
