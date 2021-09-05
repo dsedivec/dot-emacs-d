@@ -3581,7 +3581,7 @@ everything else."
     :lighter " Rufo")
 
 (reformatter-define sqlformat
-    :program "~/.vpy/3.9/bin/sqlformat"
+    :program "sqlformat"
     :args '("-r" "--indent_width" "4" "-a" "-s" "--wrap_after" "79"
             "-k" "upper" "-")
     :lighter " sqlfmt")
