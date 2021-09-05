@@ -2715,9 +2715,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (add-hook 'lsp-headerline-breadcrumb-mode-hook
           #'my:lsp-headerline-breadcrumb-mode-hook)
 
-(my:load-recipes 'lsp-mode-truncate-headerline-breadcrumbs
+(my:load-recipes 'lsp-mode-extra-checkers
+                 'lsp-mode-truncate-headerline-breadcrumbs
                  'lsp-mode-turn-on-with-local-variable
                  'lsp-mode-update-breadcrumbs-while-in-minibuffer)
+
+(setf (alist-get 'python-mode my:lsp-flycheck-extra-checkers-alist)
+      '(python-pylint python-mypy))
 
 
 ;;; lsp-pyright
