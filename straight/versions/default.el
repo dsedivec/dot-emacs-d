@@ -87,6 +87,7 @@
  ("spinner" . "34905eae12a236753fa88abc831eff1e41e8576e")
  ("straight.el" . "08b0ecf525b4b53e0952c1575644f82f52264961")
  ("swiper" . "bde2176e89aa38344f700e9e7f9fc5c7b4fc471f")
+ ("string-inflection" . "73b9a35e80e09ba744f2c364db4291f2d6f0a17a")
  ("terraform-mode" . "e560caaa9d9a11b0868adf6d9dcae5ebb5055730")
  ("transient" . "efdf91980a6f8bcb151debb877302ead8751ab65")
  ("treemacs" . "b572bc78daa01264a1845dc8143f7d47152faefb")

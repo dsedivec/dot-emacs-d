@@ -216,6 +216,7 @@
                             pyvenv
                             rg
                             smartparens
+                            string-inflection
                             swiper
                             terraform-mode
                             treemacs
