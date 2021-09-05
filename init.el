@@ -3232,38 +3232,40 @@ everything else."
 ;;; org-roam
 
 (setq org-roam-directory "~/Documents/org-roam"
-      org-roam-dailies-directory "daily/")
+      org-roam-dailies-directory "daily/"
+      org-roam-v2-ack t)
 
-(setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
-         #'org-roam-capture--get-point
-         "* %?"
-         :file-name "daily/%<%Y-%m-%d>"
-         :head "#+title: %<%Y-%m-%d>\n\n")))
-
-(my:add-hooks 'org-roam-file-setup-hook
+(my:add-hooks 'org-roam-find-file-hook
   #'idle-save-buffer-mode)
 
 (defun my:org-roam-search ()
   (interactive)
   (counsel-auto-grep nil org-roam-directory))
 
-(with-eval-after-load 'org-roam
-  (org-roam-setup)
+(bind-keys ("M-m r r" . org-roam-buffer-toggle)
+           ("M-m r f" . org-roam-node-find)
+           ("M-m r i" . org-roam-node-insert)
+           ("M-m r /" . my:org-roam-search)
+           ("M-m r d d" . org-roam-dailies-find-directory)
+           ("M-m r d f t" . org-roam-dailies-goto-today)
+           ("M-m r d c t" . org-roam-dailies-capture-today)
+           ("M-m r d f y" . org-roam-dailies-goto-yesterday)
+           ("M-m r d c y" . org-roam-dailies-capture-yesterday)
+           ("M-m r d f d" . org-roam-dailies-goto-date)
+           ("M-m r d c d" . org-roam-dailies-capture-date))
 
-  (bind-keys :map org-roam-mode-map
-             ("M-m r r" . org-roam)
-             ("M-m r f" . org-roam-find-file)
-             ("M-m r i" . org-roam-insert)
-             ("M-m r /" . my:org-roam-search)
-             ("M-m r D" . org-roam-find-directory)
-             ("M-m r d d" . org-roam-dailies-find-directory)
-             ("M-m r d f t" . org-roam-dailies-find-today)
-             ("M-m r d c t" . org-roam-dailies-capture-today)
-             ("M-m r d f y" . org-roam-dailies-find-yesterday)
-             ("M-m r d c y" . org-roam-dailies-capture-yesterday)
-             ("M-m r d f d" . org-roam-dailies-find-date)
-             ("M-m r d c d" . org-roam-dailies-capture-date)))
+(with-eval-after-load 'org-roam
+  (org-roam-db-autosync-mode)
+
+  ;; https://www.orgroam.com/manual.html#Configuring-the-Org_002droam-buffer-display
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+                 (display-buffer-in-side-window)
+                 (side . right)
+                 (slot . 0)
+                 (window-width . 0.33)
+                 (window-parameters . ((no-other-window . t)
+                                       (no-delete-other-windows . t))))))
 
 
 ;;; osx-dictionary
