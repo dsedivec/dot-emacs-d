@@ -438,16 +438,16 @@
 
 ;;; el-patch
 
+;; Setting this early, since after I switched to straight, something
+;; is hitting this all the time.  I strongly suspect it's el-patch.
+(setq vc-follow-symlinks t)
+
 ;; This is way, way early because I'm about to use it to patch
 ;; `treepy-remove', and I needd my treepy-remove-fix recipe.  In
 ;; general, it needs to be early because I use this a decent number of
 ;; times throughout my init.el.
 
 (my:load-recipe 'el-patch-dont-kill-my-buffers)
-
-;; Setting this early, since after I switched to straight, something
-;; is hitting this all the time.  I strongly suspect it's el-patch.
-(setq vc-follow-symlinks t)
 
 
 ;;; Mode line mods
