@@ -84,20 +84,17 @@
 (my:load-recipe 'timestamp-messages)
 
 
-;;; Set custom-file and prepare to install packages
+;;; Set custom-file
 
-;; Set this early before I potentially install packages, which will
-;; modify customizable variable `package-selected-packages'.
+;; Set this early before anything in customize can haul off and do
+;; stupid shit I will later find disagreeable.
 (setq custom-file (expand-file-name "customizations.el" user-emacs-directory))
-;; I can't remember why I have to do this myself.
+;; I can't remember why I have to do this myself.  I think it's just
+;; the way things are meant to work.
 (load custom-file)
 
 
-;; I like `package-selected-packages' to stay sorted.
-(my:load-recipes 'custom-format-selected-packages)
-
-
-;;; straight.el, because it's good and I need AUCTeX from Git
+;;; straight.el, for all your packaging needs
 
 (setq straight-repository-branch "develop")
 
@@ -114,6 +111,15 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; I'm going to get auto-compile very early and turn it on, in hopes
+;; that it'll auto-compile anything that needs it.  This is probably
+;; pointless, at least for packages installed by straight.el, but it
+;; should also be harmless.  I suspect nothing will need to get
+;; compiled until I start doing some `my:load-recipes' later on.
+(straight-use-package 'auto-compile)
+(auto-compile-on-load-mode)
+(auto-compile-on-save-mode)
 
 ;; As of Emacs 485622bbd1a you/I need AUCTeX > 13.0.5, or else you
 ;; get errors when reftex tries to create labels.
@@ -144,27 +150,47 @@
     (require 'tex-site)
     (require 'preview-latex)))
 
-;; Well shit, company-auctex depends on AUCTeX, so straight.el is
-;; going to install that too.  Fuck, here comes company through
-;; straight.el too.  Lord.  OK, I guess I'm incrementally moving to
-;; straight.el now?
-
 (straight-use-package '(org :host github :repo "dsedivec/org-mode"))
 (straight-use-package 'org-contrib)
+
+(dolist (pkg-def '(
+                   deft
+                   (eltu :files (:defaults "eltu_update_tags.py"))
+                   ns-copy-html
+                   smart-tabs
+                   sticky-region
+                   )
+         )
+  (straight-use-package (nconc (if (consp pkg-def)
+                                   (copy-tree pkg-def)
+                                 (list pkg-def))
+                               (list :host 'github
+                                     :repo (format "dsedivec/%s"
+                                                   (if (consp pkg-def)
+                                                       (car pkg-def)
+                                                     pkg-def))))))
 
 (defun my:straight-use-packages (packages)
   (mapc #'straight-use-package packages))
 
 (my:straight-use-packages '(
                             ace-window
+                            adaptive-wrap
+                            aggressive-indent
+                            all-the-icons
                             amx
                             apheleia
-                            ;; This next one feels... wrong.
-                            auto-package-update
+                            atomic-chrome
+                            auto-highlight-symbol
                             auto-yasnippet
                             avy
+                            bind-key
+                            blackout
+                            buttercup
                             cider
-                            ctrlf
+                            clean-aindent-mode
+                            command-log-mode
+                            comment-dwim-2
                             company
                             company-prescient
                             company-shell
@@ -173,22 +199,50 @@
                             counsel
                             counsel-css
                             counsel-projectile
+                            crontab-mode
+                            crux
+                            csv-mode
+                            ctrlf
+                            dash
+                            deft
+                            diff-hl
                             dired-narrow
                             dired-ranger
-                            dash
+                            dockerfile-mode
+                            dtrt-indent
                             dumb-jump
+                            edit-indirect
+                            editorconfig
+                            el-patch
                             elpy
+                            embrace
+                            emmet-mode
                             envrc
+                            exec-path-from-shell
+                            expand-region
+                            fennel-mode
+                            flx
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
                             flycheck-package
                             flycheck-pos-tip
+                            free-keys
+                            go-mode
+                            graphviz-dot-mode
                             groovy-mode
                             haskell-snippets
-                            highlight-indentation
                             hcl-mode
+                            highlight-indent-guides
+                            highlight-indentation
+                            highlight-parentheses
+                            hindent
+                            hl-todo
+                            hlint-refactor
+                            htmlize
                             hydra
+                            imenu-list
+                            impatient-mode
                             ivy
                             ivy-avy
                             ivy-hydra
@@ -197,34 +251,82 @@
                             ivy-yasnippet
                             js2-mode
                             js2-refactor
-                            literate-calc-mode
+                            json-mode
+                            key-chord
                             link-hint
+                            literate-calc-mode
+                            loccur
+                            lorem-ipsum
                             lsp-ivy
                             lsp-mode
                             lsp-pyright
                             lsp-treemacs
                             lsp-ui
+                            lua-mode
+                            macrostep
                             magit
                             markdown-mode
                             minions
+                            modus-themes
+                            monroe
+                            move-text
                             multiple-cursors
+                            mwim
+                            nhexl-mode
+                            ns-copy-html
+                            olivetti
                             org-roam
+                            orgtbl-aggregate
+                            osx-dictionary
                             pandoc-mode
                             paradox
+                            paredit
+                            phi-search
                             prescient
                             projectile
+                            python
                             pyvenv
+                            quelpa
+                            rainbow-mode
+                            reformatter
                             rg
+                            rustic
+                            scss-mode
+                            shackle
+                            shift-number
+                            sly
+                            smart-tabs
                             smartparens
+                            sql-indent
+                            sqlup-mode
+                            sticky-region
                             string-inflection
                             swiper
+                            systemd
+                            terraform-doc
                             terraform-mode
+                            transpose-frame
+                            ;; tree-sitter
+                            ;; tree-sitter-langs
                             treemacs
                             treemacs-projectile
+                            treepy
+                            undo-tree
+                            unfill
+                            unicode-fonts
+                            vcl-mode
+                            volatile-highlights
+                            vterm
+                            web-beautify
+                            web-mode
+                            webpaste
                             wgrep
+                            which-key
                             winum
+                            yaml-mode
                             yasnippet
                             yasnippet-snippets
+                            zop-to-char
                             ))
 
 (when my:tex-available-p
@@ -234,218 +336,6 @@
                               company-reftex
                               ivy-bibtex
                               )))
-
-
-;;; package.el with auto-package-update
-
-(require 'package)
-
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
-;; Remove this when Emacs 26 is definitely dead.
-(unless package--initialized
-  (package-initialize))
-
-;; May not be installed yet.
-(require 'auto-compile nil t)
-
-;; We will require 'auto-compile again after we install packages, so
-;; this may not run until then.
-(with-eval-after-load 'auto-compile
-  (auto-compile-on-load-mode)
-  (auto-compile-on-save-mode))
-
-(defvar my:package-last-refresh 0)
-
-(defvar my:package-max-age-before-refresh 3600)
-
-(define-advice package-refresh-contents
-    (:after (&rest _args) my:note-last-refresh-time)
-  (setq my:package-last-refresh (float-time)))
-
-(defun my:package-refresh-maybe (&optional force-refresh)
-  (when (or force-refresh
-            (>= (- (float-time) my:package-last-refresh)
-                my:package-max-age-before-refresh))
-    (package-refresh-contents)))
-
-;; I always forget to run `package-refresh-contents' before trying to
-;; install.  We call `my:package-refresh-maybe' twice: once in the
-;; interactive form so that we can get package name completion if we
-;; need to refresh, again in the body of the function in case we were
-;; called non-interactively (as in `my:packages-sync' for example).
-
-(defun my:package-install-refresh-maybe (&rest _args)
-  (interactive (lambda (spec)
-                 (my:package-refresh-maybe)
-                 (advice-eval-interactive-spec spec)))
-  (my:package-refresh-maybe))
-
-(advice-add 'package-install :before #'my:package-install-refresh-maybe)
-
-(defun my:quelpa-git-local-or-github (name &optional repo-name &rest plist)
-  "Return Quelpa recipe for package NAME.
-REPO-NAME is optional local and GitHub repo name if it is not the
-same as NAME."
-  (let* ((repo-name (or repo-name (symbol-name name)))
-         (local-repo (expand-file-name (concat "~/repositories/" repo-name))))
-    (cons name
-          (if (file-directory-p local-repo)
-              (cl-list* :fetcher 'git :url (concat "file://" local-repo)
-                        plist)
-            (cl-list* :fetcher 'github :repo (concat "dsedivec/" repo-name)
-                      plist)))))
-
-(defvar my:quelpa-packages
-  `((blackout :fetcher github :repo "raxod502/blackout")
-    ,(my:quelpa-git-local-or-github 'deft)
-    ,(my:quelpa-git-local-or-github 'eltu nil
-                                    :files '(:defaults "eltu_update_tags.py"))
-    ,(my:quelpa-git-local-or-github 'ns-copy-html)
-    ,(my:quelpa-git-local-or-github 'smart-tabs)
-    ;; I have a fork of sql-indent, hopefully just temporarily.
-    ,(my:quelpa-git-local-or-github 'sql-indent "emacs-sql-indent")
-    ,(my:quelpa-git-local-or-github 'sticky-region)))
-
-;; Don't update MELPA at startup.
-(setq quelpa-update-melpa-p nil)
-
-(defun my:packages-sync (&optional upgrade)
-  "Install, (maybe) upgrade, and remove packages.
-
-Selected but missing packages are installed.  Missing packages
-from `my:quelpa-packages' are installed.  Packages that are
-neither selected nor in `my:quelpa-packages' are removed via
-`package-autoremove'.
-
-If UPGRADE is true, or if this command is invoked with a prefix
-argument, packages (both package.el and Quelpa) are
-upgraded."
-  (interactive "P")
-  (unless (package-installed-p 'quelpa)
-    (package-install 'quelpa))
-  (let* ((quelpa-pkg-names
-          (mapcar (lambda (pkg)
-                    (let ((pkg-name (car pkg)))
-                      (condition-case-unless-debug err
-                          (quelpa pkg :upgrade upgrade)
-                        (t
-                         (warn "Quelpa error %s %s: %S"
-                               (if upgrade
-                                   "installing/upgrading"
-                                 "installing")
-                               pkg-name
-                               err)))
-                      pkg-name))
-                  my:quelpa-packages))
-         ;; Must remove Quelpa packages from `package-activated-list'
-         ;; so that `auto-package-update-now' doesn't bitch about not
-         ;; recognizing them.
-         (package-activated-list (seq-remove (lambda (pkg)
-                                               (memq pkg quelpa-pkg-names))
-                                             package-activated-list)))
-    (when upgrade
-      ;; This calls `package-refresh-contents'.
-      (auto-package-update-now))
-    (unless (seq-every-p #'package-installed-p package-selected-packages)
-      (my:package-refresh-maybe)
-      (package-install-selected-packages)))
-  ;; Interestingly this will not remove Quelpa packages because Quelpa
-  ;; puts our requested packages into `package-selected-packages'.  I
-  ;; don't know if that's sane, but it works for me right now.
-  (package-autoremove))
-
-;; Don't show the package update buffer if nothing was updated.
-(define-advice apu--write-results-buffer
-    (:around (orig-fun contents &rest args) my:suppress-empty-results-buffer)
-  (when (string-match-p "\n" contents)
-    (apply orig-fun contents args)))
-
-;; Delete old versions of packages.
-(setq auto-package-update-delete-old-versions t)
-
-(my:packages-sync)
-
-;; In case it didn't get loaded before, presumably because it wasn't
-;; installed:
-(require 'auto-compile)
-
-;; Warn if there's overlap between stuff we've installed with straight
-;; and stuff we've installed with package.el.  (I should really move
-;; entirely to straight.)
-(let (double-installed-pkgs)
-  (straight--map-repo-packages
-   (lambda (pkg)
-     (let ((pkg (intern pkg)))
-       (when (and (package-installed-p pkg)
-                  ;; Ignore built-in packages.  (Why *are* these
-                  ;; installed by straight, anyway?  let-alist and
-                  ;; transient are my current culprits.)
-                  (not (package-built-in-p pkg)))
-         (push pkg double-installed-pkgs)))))
-  (when double-installed-pkgs
-    (warn "Packages installed via both straight.el and package.el: %s"
-          (string-join double-installed-pkgs " "))))
-
-;; Useful command to upgrade a single Quelpa package.  I should
-;; probably make a command to upgrade a single package.el package some
-;; day.
-
-(defvar my:quelpa-upgrade--history nil)
-
-(defun my:quelpa-upgrade (package)
-  (interactive (list
-                (intern (completing-read "Package: "
-                                         (mapcar #'car my:quelpa-packages)
-                                         nil t ""
-                                         'my:quelpa-upgrade--history))))
-  (quelpa (assq package my:quelpa-packages) :upgrade t))
-
-
-;; In case you ever need to recursively determine package dependents,
-;; here you go.  These are not robust in the slightest, and indeed I
-;; expect they'll break as package.el evolves.
-
-(defun my:package-immediate-dependents (&rest pkgs)
-  (let (result)
-    (dolist (pkg pkgs)
-      (let ((desc (car (alist-get pkg (package--alist)))))
-        (unless desc
-          (error "Unknown package: %S" pkg))
-        (dolist (dep (mapcar #'package-desc-name
-                             (package--used-elsewhere-p desc nil t)))
-          (cl-pushnew dep result))))
-    result))
-
-(defun my:package-dependents (&rest pkgs)
-  (let ((queue pkgs)
-        results)
-    (while queue
-      (dolist (dep (my:package-immediate-dependents (pop queue)))
-        (cl-assert (symbolp dep))
-        (unless (memq dep results)
-          (cl-pushnew dep queue)
-          (push dep results))))
-    results))
-
-;; And now dependenCIES.
-
-(defun my:package-dependencies (&rest pkgs)
-  ;; Calling `package--alist' might not really be necessary and/or
-  ;; wise.  I started using it in `my:package-immediate-dependents'
-  ;; because I saw package.el doing it.  It's possible I should just
-  ;; refer to variable `package-alist'.
-  (let ((package-alist (package--alist))
-        (queue pkgs)
-        results)
-    (while queue
-      (when-let ((desc (cadr (assoc (pop queue) (package--alist)))))
-        (dolist (dep (mapcar #'car (package-desc-reqs desc)))
-          ;; We ignore the "emacs" dependency almost everything has.
-          (unless (or (eq dep 'emacs) (memq dep results))
-            (cl-pushnew dep queue)
-            (push dep results)))))
-    results))
 
 
 ;;; Utility functions
@@ -3278,11 +3168,6 @@ everything else."
 (with-eval-after-load 'outline
   (bind-keys :map outline-minor-mode-map
              ("C-c C-2" . outline-hydra/body)))
-
-
-;;; package-build
-
-(setq package-build-recipes-dir "~/repositories/melpa/recipes")
 
 
 ;;; paredit
