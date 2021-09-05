@@ -2003,7 +2003,9 @@ surround \"foo\" with (in this example) parentheses.  I want
                   kill-buffer-and-window
                   magit-mode-bury-buffer
                   my:delete-window-that-direction
-                  org-roam
+                  org-roam-buffer
+                  org-roam-buffer-display-dedicated
+                  org-roam-buffer-toggle
                   transpose-frame
                   treemacs
                   treemacs-quit
