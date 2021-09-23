@@ -408,7 +408,9 @@
   ;;     (color-distance "black" "white") → 589800
   (setq face-near-same-color-threshold 160000)
   ;; Docstring for `face-near-same-color-threshold' says to do this.
-  (clear-face-cache))
+  (clear-face-cache)
+
+  (my:load-recipes 'ns-paste-as-org))
 
 ;; macOS trashing: inspired first by
 ;; https://github.com/emacsorphanage/osx-trash, but then by
