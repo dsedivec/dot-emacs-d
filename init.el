@@ -275,6 +275,7 @@
                             nhexl-mode
                             ns-copy-html
                             olivetti
+                            org-download
                             org-roam
                             orgtbl-aggregate
                             osx-dictionary
@@ -3007,6 +3008,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  org-enforce-todo-dependencies t
  org-hide-leading-stars t
  org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+ org-image-actual-width nil
  org-link-search-must-match-exact-headline nil
  org-log-into-drawer t
  org-mouse-1-follows-link nil
@@ -3195,6 +3197,11 @@ everything else."
 ;; Private stuff that doesn't get checked into Git.
 (dolist (file-name '("org" "open-ticket"))
   (load (expand-file-name file-name my:private-lisp-dir) t))
+
+
+;;; org-download
+
+(my:load-recipes 'org-download-macos-applescript)
 
 
 ;;; org-roam
