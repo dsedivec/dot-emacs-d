@@ -6,7 +6,7 @@
 ;; and I wanted to override my usual tab indentation in SQL to
 ;; indenting with spaces when coming from a Python file with spaces.
 
-(defvar my:edit-indirect-vars-to-clone '(indent-tabs-mode)
+(defvar my:edit-indirect-vars-to-clone '(indent-tabs-mode sql-product)
   "List of variables cloned from parent buffer into edit-indirect buffers.")
 
 (defvar my:edit-indirect-cloned-parent-vars nil)

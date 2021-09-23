@@ -40,6 +40,7 @@
         my:undo-only-but-never-in-a-region
         org-beginning-of-line
         org-delete-char
+        org-end-of-line
         org-meta-return
         org-metaright
         org-self-insert-command

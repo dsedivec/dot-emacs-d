@@ -11,7 +11,8 @@
 
 (declare-function 'black-format-on-save-mode "../init.el")
 
-(defvar my:black-format-on-save-default t)
+(defvar my:black-format-on-save t)
+(put 'my:black-format-on-save 'safe-local-variable #'booleanp)
 
 (defun my:maybe-enable-black-format-on-save ()
   ;; Guard on `buffer-file-name' needed to avoid Elpy stuffing Python
@@ -23,7 +24,12 @@
       (when (or (equal formatter "black")
                 (and (eq formatter default)
                      (executable-find "black")
-                     my:black-format-on-save-default))
+                     my:black-format-on-save))
         (black-format-on-save-mode 1)))))
 
-(add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save)
+(defun my:maybe-enable-black-format-on-save-later ()
+  "Maybe enable `black-format-on-save-mode' after local variables are loaded."
+  (add-hook 'hack-local-variables-hook #'my:maybe-enable-black-format-on-save
+            nil t))
+
+(add-hook 'python-mode-hook #'my:maybe-enable-black-format-on-save-later)

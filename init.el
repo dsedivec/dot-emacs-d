@@ -150,7 +150,7 @@
     (require 'tex-site)
     (require 'preview-latex)))
 
-(straight-use-package '(org :host github :repo "dsedivec/org-mode"))
+(straight-use-package '(org :repo "git@github-personal:dsedivec/org-mode.git"))
 (straight-use-package 'org-contrib)
 
 (dolist (pkg-def '(
@@ -1385,6 +1385,15 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (require 'ctrlf)
 
+;; `ctrlf-mode-bindings' needs to be modified *before* you turn on
+;; `ctrlf-mode'.
+;; (cl-loop
+;;   for (remap . new-binding) in
+;;    '((isearch-forward . ctrlf-forward-fuzzy-regexp)
+;;      (isearch-backward . ctrlf-backward-fuzzy-regexp))
+;;   do (setf (alist-get `[remap ,remap] ctrlf-mode-bindings nil nil #'equal)
+;;            new-binding))
+
 (ctrlf-mode 1)
 
 (setq ctrlf-default-search-style 'fuzzy-regexp
@@ -1693,7 +1702,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 (setq elpy-eldoc-show-current-function nil
       elpy-rpc-python-command "python3")
 
-(advice-add 'python-mode :before #'elpy-enable)
+;; (advice-add 'python-mode :before #'elpy-enable)
 
 ;; Double the default, for big files at work.  (This may or may not be
 ;; a good idea.  It seemed fine the one time I tried it.)
@@ -1721,6 +1730,22 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("C-c C-o" . nil)))
 
 (my:load-recipes 'elpy-nav-block-always-move)
+
+(defun my:elpy-mode-hook ()
+  (when (memq 'elpy--xref-backend xref-backend-functions)
+    ;; Get in line behind TAGS and, I guess, dumb jump.
+    (add-hook 'xref-backend-functions 'elpy--xref-backend 50 t)))
+
+(add-hook 'elpy-mode-hook #'my:elpy-mode-hook)
+
+;; XXX upstream recipe something
+
+(defun my:elpy-module-eldoc-really-remove-function (&rest args)
+  (unless elpy-mode
+    (remove-hook 'eldoc-documentation-functions #'elpy-eldoc-documentation t)))
+
+(advice-add #'elpy-module-eldoc :after
+            #'my:elpy-module-eldoc-really-remove-function)
 
 
 ;;; embrace
@@ -1881,7 +1906,11 @@ surround \"foo\" with (in this example) parentheses.  I want
 (defun my:frame-resize-window-default (window)
   (unless (or (window-preserved-size window t)
               (window-parameter window 'window-side))
-    '(80 nil)))
+    '(
+      ;; 80
+      88
+      ;; 95
+      nil)))
 
 (with-eval-after-load 'frame-resize
   (add-to-list 'frame-resize-window-size-functions
@@ -2036,6 +2065,29 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
         (t
          (flycheck-add-next-checker 'terraform-tflint
                                     'my:terraform-validate))))))
+
+;; ;; Mypy really needs a working directory other than CWD.
+;; ;; Encountered when I had a module called logging.py.  Cribbed from
+;; ;; https://github.com/flycheck/flycheck/pull/1771.  Delete this when
+;; ;; that's merged.
+;; (defun my:flycheck-python-find-project-root (_checker)
+;;   (let ((start (if buffer-file-name
+;;                    (file-name-directory buffer-file-name)
+;;                  default-directory)))
+;;     (or (flycheck--locate-dominating-file-matching
+;;          start (regexp-opt '("pyproject.toml" "setup.cfg" "mypy.ini"
+;;                              "pyrightconfig.json")))
+;;         (locate-dominating-file
+;;          start (lambda (dir)
+;;                  (not (file-exists-p (expand-file-name "__init__.py" dir))))))))
+;; 
+;; (with-eval-after-load 'flycheck
+;;   (when (fboundp 'flycheck-python-find-project-root)
+;;     (warn (concat "https://github.com/flycheck/flycheck/pull/1771"
+;;                   " probably merged, update your init.el")))
+;; 
+;;   (setf (flycheck-checker-get 'python-mypy 'working-directory)
+;;         #'my:flycheck-python-find-project-root))
 
 
 ;;; flycheck-clj-kondo
@@ -2599,6 +2651,23 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (add-hook 'lsp-mode-hook #'my:lsp-mode-hook)
 
+;; (defun my:disable-elpy-before-lsp (orig-fun arg &rest _args)
+;;   (let ((yas-minor-mode ))
+;;     (when (and (bound-and-true-p elpy-mode)
+;;                (cond
+;;                  ((eq arg 'toggle)
+;;                   (not lsp-mode))
+;;                  ((and
+;;                    (numberp arg)
+;;                    (< arg 1))
+;;                   nil)
+;;                  (t t)))
+;;       (elpy-mode -1)
+;;       ;; Sigh, elpy doesn't remove itself from `xref-backend-functions'.
+;;       (remove-hook 'xref-backend-functions 'elpy--xref-backend t))))
+;; 
+;; (advice-add #'lsp-mode :before #'my:disable-elpy-before-lsp)
+
 (defun my:lsp-headerline-breadcrumb-mode-hook ()
   (setq-local which-func-mode nil))
 
@@ -2688,6 +2757,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; markdown-mode
 
+;; If you get
+;;
+;;     which-func-ff-hook error: (wrong-type-argument consp nil)
+;;
+;; try eval'ing `markdown-imenu-create-nested-index'.  Maybe native
+;; comp problem?  https://github.com/jrblevin/markdown-mode/issues/578
+
 (with-eval-after-load 'markdown-mode
   (bind-keys :map markdown-mode-map
              ("M-m m c e" . my:markdown-mode-copy-as-html-email))
@@ -2734,6 +2810,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq minions-mode-line-lighter "🄼"
       minions-direct '(
                        black-format-on-save-mode
+                       ;; darker-format-on-save-mode
                        docformatter-on-save-mode
                        flycheck-mode
                        isort-format-on-save-mode
@@ -2907,7 +2984,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  ;; annoys me to no end.
  org-capture-bookmark nil
  org-capture-templates '(("t" "Todo" entry
-                          (file+headline "~/todo.org" "Inbox")
+                          ;; (file+headline "~/todo.org" "Inbox")
+                          (file "~/todo.org")
                           "* NEW %?" :prepend t)
                          ("j" "Journal" entry
                           (file "~/journal.org")
@@ -3404,6 +3482,17 @@ everything else."
   (with-eval-after-load 'elpy
     (bind-keys :map elpy-mode-map
                ("C-c C-c" . my:python-shell-send-dwim))))
+
+;; (defun darker-format-buffer ()
+;;   (interactive)
+;;   ())
+;; 
+;; (define-minor-mode darker-format-on-save-mode
+;;     "Reformat file with darker on save."
+;;   :lighter "Drk"
+;;   (if darker-format-on-save-mode
+;;       (add-hook 'after-save-hook #'darker-format-buffer nil t)
+;;     (remove-hook 'after-save-hook #'darker-format-buffer t)))
 
 
 ;;; pyvenv
@@ -4257,13 +4346,17 @@ a string or comment."
 
 ;;; treemacs
 
-(setq treemacs-width 50)
+(setq ;; treemacs-python-executable "/opt/local/bin/python3"
+ treemacs-width 50)
 
 (defun my:treemacs-mode-hook ()
   (setq truncate-lines t))
 
 (my:add-hooks 'treemacs-mode-hook
   #'my:treemacs-mode-hook)
+
+;; (my:add-hooks 'treemacs-hook
+;;   #'treemacs-follow-mode)
 
 (bind-keys ("M-m u t" . treemacs))
 
