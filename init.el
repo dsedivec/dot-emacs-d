@@ -2632,6 +2632,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       "r" '("LSP refactor")
       "s" '("LSP sessions"))
 
+  (bind-keys :map lsp-mode-map
+             ("M-<f7>" . lsp-find-references))
+
   (dolist (dir-name '(".venv" ".direnv" ".pytest_cache" ".mypy_cache"
                       "__pycache__"))
     (add-to-list 'lsp-file-watch-ignored-directories
