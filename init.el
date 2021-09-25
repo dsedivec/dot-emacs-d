@@ -154,7 +154,6 @@
 (straight-use-package 'org-contrib)
 
 (dolist (pkg-def '(
-                   deft
                    (eltu :files (:defaults "eltu_update_tags.py"))
                    ns-copy-html
                    smart-tabs
@@ -273,7 +272,6 @@
                             multiple-cursors
                             mwim
                             nhexl-mode
-                            ns-copy-html
                             olivetti
                             org-download
                             org-roam
@@ -296,11 +294,9 @@
                             shackle
                             shift-number
                             sly
-                            smart-tabs
                             smartparens
                             sql-indent
                             sqlup-mode
-                            sticky-region
                             string-inflection
                             swiper
                             systemd
