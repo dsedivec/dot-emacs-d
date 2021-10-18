@@ -76,6 +76,5 @@ Only works when electric-pair-mode is on."
 (defvar python-mode-map)
 
 (with-eval-after-load 'python
-  (bind-keys :map python-mode-map
-             ("'" . my:python-magic-single-quote)
-             ("\"" . my:python-magic-double-quote)))
+  (define-key python-mode-map (kbd "'") #'my:python-magic-single-quote)
+  (define-key python-mode-map (kbd "\"") #'my:python-magic-double-quote))

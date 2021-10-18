@@ -18,6 +18,9 @@
 
 (require 'el-patch)
 
+;; Needed for `python-rx' macro.
+(eval-when-compile (require 'python))
+
 (el-patch-feature python)
 
 (with-eval-after-load 'python
