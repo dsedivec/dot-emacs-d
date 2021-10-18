@@ -3211,6 +3211,11 @@ everything else."
 
 ;;; org-download
 
+(setq org-download-image-org-width 400)
+
+(with-eval-after-load 'org
+  (require 'org-download))
+
 (my:load-recipes 'org-download-macos-applescript)
 
 
