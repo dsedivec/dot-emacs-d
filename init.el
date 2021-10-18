@@ -1252,6 +1252,11 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
       (setq company-backends backends))))
 
 
+;;; company-shell
+
+(setq company-shell-dont-fetch-meta t)
+
+
 ;;; conf-mode
 
 ;; conf-mode doesn't derive from anything.  Run prog-mode-hook by
