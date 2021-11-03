@@ -2687,11 +2687,25 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setf (alist-get 'python-mode my:lsp-flycheck-extra-checkers-alist)
       '(python-pylint python-mypy))
 
+(setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
+
 
 ;;; lsp-pyright
 
 (my:with-eval-after-all-load '(python lsp-mode)
-  (require 'lsp-pyright))
+  (require 'lsp-pyright)
+
+  ;; Prevent other language servers from being used for Python.
+  ;; (Pyright is the least bad, *probably*, for now.)
+  (dolist (server '(pyls pylsp))
+    (cl-pushnew server (alist-get 'python-mode lsp-disabled-clients)))
+
+  ;; You get better import completion with this.  I still think some
+  ;; file in the project has to be using a given import in order for
+  ;; Pyright to offer you auto-import completions (along with this
+  ;; setting).  See also:
+  ;; https://github.com/fannheyward/coc-pyright/issues/90#issuecomment-813804148
+  (setq lsp-pyright-diagnostic-mode "workspace"))
 
 
 ;;; lsp-ui
