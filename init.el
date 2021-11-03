@@ -859,12 +859,10 @@
 ;;; apheleia
 
 (with-eval-after-load 'apheleia
-  (my:load-recipes 'apheleia-tools-produce-rcs-patch)
-
   (setf (alist-get 'darker apheleia-formatters)
-        '(rcs "darker-rcs-wrapper" filepath "--quiet"))
+        '("darker" filepath "--isort" "--quiet" "--stdout"))
 
-  (when (executable-find "darker-rcs-wrapper")
+  (when (executable-find "darker")
     (setf (alist-get 'python-mode apheleia-mode-alist) 'darker)))
 
 
