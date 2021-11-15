@@ -2828,15 +2828,15 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; minions
 
 (setq minions-mode-line-lighter "🄼"
-      minions-direct '(
-                       black-format-on-save-mode
-                       ;; darker-format-on-save-mode
-                       docformatter-on-save-mode
-                       flycheck-mode
-                       isort-format-on-save-mode
-                       multiple-cursors-mode
-                       yapf-format-on-save-mode
-                       ))
+      minions-prominent-modes '(
+                                black-format-on-save-mode
+                                ;; darker-format-on-save-mode
+                                docformatter-on-save-mode
+                                flycheck-mode
+                                isort-format-on-save-mode
+                                multiple-cursors-mode
+                                yapf-format-on-save-mode
+                                ))
 
 (minions-mode 1)
 
