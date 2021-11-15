@@ -3799,11 +3799,11 @@ everything else."
   ;; you're inside of $$ or "" quoting, respectively.  Add them here.
   ;; I should upstream this.
   (unless (equal (sql-get-product-feature 'postgres :prompt-cont-regexp)
-                 "^[[:alnum:]_]*[-(][#>] ")
+                 "^[-[:alnum:]_]*[-'(][#>] ")
     (warn "sql.el changed PostgreSQL :prompt-cont-regexp, edit your init."))
 
   (sql-set-product-feature 'postgres :prompt-cont-regexp
-                           "^[[:alnum:]_]*[-($\"'][#>] ")
+                           "^[-[:alnum:]_]*[-'($\"][#>] ")
 
   ;; With readline on (or libedit on macOS?) things like
   ;; `sql-send-buffer' will sometimes apparently corrupt the data sent
