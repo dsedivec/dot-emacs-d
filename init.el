@@ -2643,12 +2643,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (add-to-list 'lsp-file-watch-ignored-files
                (rx (char ?/ ?\\) (+ (not (any ?/ ?\\))) ".pyc" eos)))
 
+(setq lsp-keep-workspace-alive nil
+      lsp-pyls-plugins-pylint-enabled t)
+
 ;; `lsp-signature-render-documentation' is much too intrusive in the
 ;; echo area, renders potentially lots of documentation.  You can turn
 ;; this off but still leave on the signatures (in an eldoc-esque
 ;; fashion).
-(setq lsp-signature-render-documentation nil
-      lsp-pyls-plugins-pylint-enabled t)
+(setq lsp-signature-render-documentation nil)
 
 (defun my:lsp-mode-hook ()
   (when (and lsp-enable-symbol-highlighting
