@@ -1935,6 +1935,12 @@ surround \"foo\" with (in this example) parentheses.  I want
                   ))
     (add-to-list 'auto-frame-resize-commands func)))
 
+(defun my:auto-frame-resize-after-advice (&rest _)
+  (frame-resize))
+
+(advice-add 'display-buffer-in-side-window :after
+            #'my:auto-frame-resize-after-advice)
+
 (when (display-graphic-p)
   (auto-frame-resize-mode 1))
 
