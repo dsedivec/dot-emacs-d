@@ -188,6 +188,7 @@
                             buttercup
                             cider
                             clean-aindent-mode
+                            clj-refactor
                             command-log-mode
                             comment-dwim-2
                             company
@@ -1126,6 +1127,18 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 
 (bind-keys :map clean-aindent-mode--keymap
            ([remap backward-kill-word] . nil))
+
+
+;;; clj-refactor
+
+(defun my:clj-refactor-mode-hook ()
+  (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+(my:add-hooks 'clj-refactor-mode-hook
+  #'my:clj-refactor-mode-hook)
+
+(my:add-hooks 'clojure-mode-hook
+  #'clj-refactor-mode)
 
 
 ;;; clojure-mode
