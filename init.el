@@ -316,7 +316,11 @@
                             vterm
                             web-beautify
                             web-mode
-                            webpaste
+                            ;; Seems like these folks have changed the
+                            ;; default branch from "master" to "main",
+                            ;; but maybe the MELPA recipe didn't get
+                            ;; updated?
+                            (webpaste :branch "main")
                             wgrep
                             which-key
                             winum
