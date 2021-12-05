@@ -17,7 +17,7 @@
  '(highlight ((t (:background "darkseagreen2" :distant-foreground "black"))))
  '(isearch ((t (:background "magenta3" :foreground "white"))))
  '(mode-line ((t (:background "#228" :foreground "white" :box (:line-width -1 :style released-button)))))
- '(mode-line-inactive ((t (:inherit mode-line :inverse-video t :box (:line-width -1 :color "grey75") :weight light))))
+ '(mode-line-inactive ((t (:inherit (mode-line variable-pitch) :inverse-video t :box (:line-width -1 :color "grey75") :weight light))))
  '(org-done
    ((t (:background "ForestGreen" :foreground "#e4fee4" :weight bold))))
  ;; '(org-mode-line-clock ((t nil)))
