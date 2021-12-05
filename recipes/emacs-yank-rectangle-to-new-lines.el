@@ -14,4 +14,4 @@
   (save-excursion (newline (length killed-rectangle)))
   (yank-rectangle))
 
-(bind-keys ("C-x r C-y" . my:yank-rectangle-to-new-lines))
+(define-key global-map (kbd "C-x r C-y") #'my:yank-rectangle-to-new-lines)
