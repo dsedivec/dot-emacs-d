@@ -432,9 +432,17 @@
      (format "tell application \"Finder\" to move {%s} to trash" as-paths))))
 
 (when (eq system-type 'darwin)
-  (if (fboundp 'system-move-file-to-trash)
-      (warn "`system-move-file-to-trash' already defined, check your init.el")
-    (defalias 'system-move-file-to-trash #'my:ns-move-files-to-trash)))
+  (let ((emacs-29 (>= emacs-major-version 29))
+        (trash-defined (fboundp 'system-move-file-to-trash)))
+    (if trash-defined
+        (if emacs-29
+            (message "Using Emacs 29 built-in trash rather than AppleScript")
+          (warn (concat "`system-move-file-to-trash' shouldn't be defined,"
+                        " check your init.el")))
+      (when emacs-29
+        (warn (concat "Using AppleScript trash support, but it should be"
+                      " built-in for Emacs 29; maybe build newer Emacs?")))
+      (defalias 'system-move-file-to-trash #'my:ns-move-files-to-trash))))
 
 (setq delete-by-moving-to-trash t)
 
