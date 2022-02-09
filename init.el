@@ -286,7 +286,6 @@
                             projectile
                             python
                             pyvenv
-                            quelpa
                             rainbow-mode
                             reformatter
                             rg
