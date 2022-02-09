@@ -2656,17 +2656,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (setq gc-cons-threshold 1600000
         read-process-output-max (* 1024 1024))
 
-  ;; I wrote this before I knew about `lsp-enable-which-key-integration'.
-  (which-key-add-keymap-based-replacements lsp-command-map
-      "=" '("LSP format")
-      "F" '("LSP folders")
-      "G" '("LSP peek")
-      "T" '("LSP toggles")
-      "a" '("LSP actions/lenses")
-      "g" '("LSP find/go")
-      "h" '("LSP help")
-      "r" '("LSP refactor")
-      "s" '("LSP sessions"))
+  (add-hook 'lsp-mode-hook 'lsp-enable-which-key-integration)
 
   (bind-keys :map lsp-mode-map
              ("M-<f7>" . lsp-find-references))
