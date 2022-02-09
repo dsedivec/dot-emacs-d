@@ -97,6 +97,7 @@
         my:save-some-buffers-default-no-query
         sql-product-interactive
         sql-send-paragraph
+        toggle-input-method
         wgrep-finish-edit
         zop-up-to-char
         ))
