@@ -681,7 +681,13 @@
 ;; example, try to launch a spelling checker via `flyspell-mode'.
 
 (when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+
+  ;; Need to pick up SSH_ASKPASS from shell on Darwin, which may be set
+  ;; to the path to my own ssh-askpass clone that uses pinentry since we
+  ;; have no good ssh-askpass on macOS AFAIK.
+  (exec-path-from-shell-copy-envs '("SSH_ASKPASS")))
+
 
 
 ;;; AUCTeX, RefTeX, and other LaTeX-related stuff
