@@ -2876,28 +2876,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                 " `modus-vivendi-theme-override-colors-alist' may not"
                 " be respected")))
 
-(setq modus-themes-intense-hl-line t
-      ;; Doesn't play well with F.lux unless you also have my mod to
-      ;; bg-paren-match-intense color, below.
-      modus-themes-paren-match 'intense
-      modus-themes-headings '((t . no-bold)))
-
-;; modus-vivendi theme sizes are too small for my tastes, make the
-;; increase in sizes 4x more.
-(cl-loop
-  ;; These were copied from the source, naturally.  Too hard otherwise
-  ;; to get them directly from the theme, since loading the file
-  ;; defines the theme, which I need to happen *after* I change these
-  ;; variables.
-  with scale-defaults = '(1.05 1.1 1.15 1.2 1.3)
-  with multiplier = 4
-  for i from 1 to (length scale-defaults)
-  for default in scale-defaults
-  do (set (intern (format "modus-vivendi-theme-scale-%d" i))
-          (+ (* (- default 1.0) multiplier) 1.0)))
-
-(setq modus-vivendi-theme-override-colors-alist
-      '(("bg-paren-match-intense" . "#8E00C2")))
+(setq  modus-themes-paren-match '(intense)
+       modus-themes-headings '((1 . (1.3))
+                               (2 . (1.2))
+                               (3 . (1.15))
+                               (4 . (1.1))
+                               (5 . (1.05))
+                               (t . (no-bold))))
 
 
 ;;; move-text
