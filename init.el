@@ -877,11 +877,10 @@
 ;;; apheleia
 
 (with-eval-after-load 'apheleia
-  ;; I *still* need a wrapper around Darker because it's adding a
-  ;; newline at EOF in stdout mode.  Should report this upstream.
+  ;; Note: Need Darker >= 1.4.0 to remove stray EOL in --stdout mode.
   (setf (alist-get 'darker apheleia-formatters)
-        '("darker-wrapper" filepath "--isort" "--quiet" "--stdout"))
-  (when (executable-find "darker-wrapper")
+        '("darker" "--isort" "--quiet" "--stdout" file))
+  (when (executable-find "darker")
     (setf (alist-get 'python-mode apheleia-mode-alist) 'darker)))
 
 
