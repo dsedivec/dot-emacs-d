@@ -303,8 +303,8 @@
                             terraform-doc
                             terraform-mode
                             transpose-frame
-                            ;; tree-sitter
-                            ;; tree-sitter-langs
+                            tree-sitter
+                            tree-sitter-langs
                             treemacs
                             treemacs-projectile
                             treepy
@@ -4386,6 +4386,16 @@ a string or comment."
 ;;; tool-bar
 
 (tool-bar-mode -1)
+
+
+;;; tree-sitter
+
+(require 'tree-sitter)
+(require 'tree-sitter-langs)
+
+(add-hook 'tree-sitter-mode-hook 'tree-sitter-hl-mode)
+
+(global-tree-sitter-mode 1)
 
 
 ;;; treemacs
