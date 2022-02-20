@@ -4374,12 +4374,28 @@ a string or comment."
 ;;; terraform-mode
 
 (defun my:terraform-mode-hook ()
-  (push '(company-terraform company-dabbrev-code)
-        (my:buffer-local-value 'company-backends)))
+  ;; `company-capf' here for LSP's sake.
+  (my:company-set-local-backends '(company-capf
+                                   (company-terraform company-dabbrev-code)
+                                   company-files)))
 
 (my:add-hooks 'terraform-mode-hook
   #'terraform-format-on-save-mode
   #'my:terraform-mode-hook)
+
+;; Configuration for terraform-ls, from
+;; https://github.com/hashicorp/terraform-ls/blob/main/docs/USAGE.md.
+(with-eval-after-load 'terraform-mode
+  (require 'lsp-mode)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection
+                                     '("terraform-ls" "serve"))
+                    :major-modes '(terraform-mode)
+                    :server-id 'terraform-ls))
+
+  (setf (alist-get 'terraform-mode my:lsp-flycheck-extra-checkers-alist)
+        '(terraform-tflint)))
 
 
 ;;; tool-bar
