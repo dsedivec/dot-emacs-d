@@ -37,7 +37,8 @@ likely an invalid python file."
                  (pairs '(("elif" "elif" "if")
                           ("else" "if" "elif" "except" "for" "while")
                           ("except" "except" "try")
-                          ("finally" "else" "except" "try")))
+                          ("finally" "else" "except" "try")
+                          ("case" "case")))
                  (dedenter (match-string-no-properties 0))
                  (possible-opening-blocks (cdr (assoc-string dedenter pairs)))
                  (collected-indentations)
@@ -50,7 +51,8 @@ likely an invalid python file."
                 (let ((indentation (current-indentation)))
                   (when (and (not (memq indentation collected-indentations))
                              (or (not collected-indentations)
-                                 (< indentation (apply #'min collected-indentations)))
+                                 (< indentation
+                                    (apply #'min collected-indentations)))
                              ;; There must be no line with indentation
                              ;; smaller than `indentation' (except for
                              ;; blank lines) between the found opening
