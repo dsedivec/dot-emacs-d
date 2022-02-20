@@ -42,6 +42,6 @@
                                       buffer-file-name)))
              (message "MIME type %S buffer file name %S"
                       mime-type buffer-file-name)
-             (set-auto-mode))
-           (when url-buf
-             (kill-buffer url-buf))))))
+             (set-auto-mode)))
+      (when url-buf
+        (kill-buffer url-buf)))))
