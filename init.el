@@ -513,7 +513,7 @@
        (my:treepy-edit-mode-line-var
            (mode-line-position zip)
          (pcase (treepy-node zip)
-           (`(:propertize (" " mode-line-percent-position) . ,_) t))
+           (`(:propertize ("" mode-line-percent-position) . ,_) t))
          (treepy-remove zip))))
   (if (not percent-spec)
       (warn (concat "couldn't find `mode-line-percent-position'"
