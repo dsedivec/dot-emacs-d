@@ -2946,28 +2946,22 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; nav-stack
 
-;; (setq nav-stack-debug-enabled t)
-
 (nav-stack-mode 1)
 
-(require 'nav-stack-ivy)
+(defun my:nav-stack-auto-push-predicate ()
+  (not (or (my:pop-up-buffer-p))))
 
-(dolist (mode '(imenu-list-major-mode treemacs-mode))
-  (add-to-list 'nav-stack-post-command-excluded-major-modes mode))
+(setq nav-stack-auto-push-predicate #'my:nav-stack-auto-push-predicate)
 
-(defun my:nav-stack-move-predicate (location)
-  (let ((buffer (nav-stack-location-buffer location)))
-    (not (or (my:pop-up-buffer-p buffer)
-             (with-current-buffer buffer
-               ;; Empty *Backtrace* buffers.  Maybe I should just
-               ;; delete these.
-               (and (derived-mode-p 'debugger-mode)
-                    (= (point-max) 1)))))))
+(defun my:nav-stack-pop-predicate (win buf pos)
+  (with-current-buffer buf
+    ;; No empty *Backtrace* buffers (i.e. dead debugger buffers)
+    (not (and (derived-mode-p 'debugger-mode)
+              (zerop (buffer-size))))))
 
-(add-to-list 'nav-stack-move-predicates
-             #'my:nav-stack-move-predicate t)
+(setq nav-stack-pop-predicate #'my:nav-stack-pop-predicate)
 
-(add-hook 'nav-stack-after-move-hook #'my:highlight-line-after-movement)
+(add-hook 'nav-stack-post-pop-hook #'my:highlight-line-after-movement)
 
 
 ;;; newcomment
