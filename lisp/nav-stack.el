@@ -76,11 +76,11 @@ popped to, and the position within that buffer to pop to."
 (defvar nav-stack--global-stack (list 0))
 (defvar-local nav-stack--buffer-stack nil)
 
-(defun nav-stack-push (&optional force)
+(defun nav-stack-push (&optional force win buf pos)
   (interactive (list t))
-  (let* ((win (selected-window))
-         (buf (current-buffer))
-         (pos (point))
+  (let* ((win (or win (selected-window)))
+         (buf (or buf (current-buffer)))
+         (pos (or pos (point)))
          (window-stack (or (window-parameter win 'nav-stack--stack)
                            (set-window-parameter win 'nav-stack--stack (list 0))))
          (buffer-stack (or nav-stack--buffer-stack
@@ -112,6 +112,10 @@ popped to, and the position within that buffer to pop to."
         (push pos (cdr buffer-stack))
         (cl-incf (car buffer-stack))))))
 
+(defvar nav-stack--last-win nil)
+(defvar nav-stack--last-buf nil)
+(defvar nav-stack--last-pos nil)
+
 (defun nav-stack--post-command-hook ()
   (cond
     (nav-stack-no-auto-push
@@ -121,7 +125,13 @@ popped to, and the position within that buffer to pop to."
      ;; Do nothing, predicate inhibited auto-push
      )
     ((not (minibufferp (current-buffer)))
-     (nav-stack-push))))
+     (nav-stack-push nil
+                     nav-stack--last-win
+                     nav-stack--last-buf
+                     nav-stack--last-pos)
+     (setq nav-stack--last-win (selected-window)
+           nav-stack--last-buf (current-buffer)
+           nav-stack--last-pos (point)))))
 
 (defun nav-stack--can-go-to (win buf pos)
   (and (or (not nav-stack-global-pop-only-to-same-window)
@@ -226,14 +236,17 @@ popped to, and the position within that buffer to pop to."
               (throw 'done nil))))))
     (user-error "Buffer nav stack is empty")))
 
-(defun nav-stack-clear-all-stacks ()
+(defun nav-stack-reset ()
   (interactive)
   (setq nav-stack--global-stack (list 0))
   (dolist (frame (frame-list))
     (dolist (win (window-list frame))
       (set-window-parameter win 'nav-stack--stack (list 0))))
   (dolist (buf (buffer-list))
-    (setf (buffer-local-value 'nav-stack--buffer-stack buf) (list 0))))
+    (setf (buffer-local-value 'nav-stack--buffer-stack buf) (list 0)))
+  (setq nav-stack--last-win nil
+        nav-stack--last-buf nil
+        nav-stack--last-pos nil))
 
 (defvar nav-stack-mode-map
   (let ((map (make-sparse-keymap)))
@@ -247,7 +260,9 @@ popped to, and the position within that buffer to pop to."
   :lighter " NavStk"
   :keymap nav-stack-mode-map
   (if nav-stack-mode
-      (add-hook 'post-command-hook #'nav-stack--post-command-hook)
+      (progn
+        (nav-stack-reset)
+        (add-hook 'post-command-hook #'nav-stack--post-command-hook))
     (remove-hook 'post-command-hook #'nav-stack--post-command-hook)))
 
 (provide 'nav-stack)
