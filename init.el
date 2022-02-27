@@ -2953,8 +2953,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (setq nav-stack-auto-push-predicate #'my:nav-stack-auto-push-predicate)
 
-(defun my:nav-stack-pop-predicate (win buf pos)
-  (with-current-buffer buf
+(defun my:nav-stack-pop-predicate (win mark)
+  (with-current-buffer (marker-buffer mark)
     ;; No empty *Backtrace* buffers (i.e. dead debugger buffers)
     (not (and (derived-mode-p 'debugger-mode)
               (zerop (buffer-size))))))
