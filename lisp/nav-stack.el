@@ -46,7 +46,7 @@
   "Maximum number of elements in a buffer nav stack."
   :type 'integer)
 
-(defcustom nav-stack-significant-movement-threshold 2000
+(defcustom nav-stack-significant-movement-threshold 1000
   "Number of characters movement that constitutes a \"significant\" movement."
   :type 'integer)
 
