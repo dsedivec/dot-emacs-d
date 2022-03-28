@@ -2878,13 +2878,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                 " `modus-vivendi-theme-override-colors-alist' may not"
                 " be respected")))
 
-(setq  modus-themes-paren-match '(intense)
-       modus-themes-headings '((1 . (1.3))
-                               (2 . (1.2))
-                               (3 . (1.15))
-                               (4 . (1.1))
-                               (5 . (1.05))
-                               (t . (no-bold))))
+(setq modus-themes-paren-match '(intense))
 
 
 ;;; move-text
