@@ -2203,11 +2203,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (with-eval-after-load 'go-mode
   (when (executable-find "gofumpt")
     (setq gofmt-command "gofumpt")
-    (advice-add 'gofmt :around #'my:gofmt--gofumpt-set-up-environment)))
+    (advice-add 'gofmt :around #'my:gofmt--gofumpt-set-up-environment)
+    (setq lsp-go-use-gofumpt t)))
 
 (defun my:go-mode-hook ()
   (setq-local tab-width 4)
-  (add-hook 'before-save-hook 'gofmt-before-save nil t))
+  (add-hook 'before-save-hook 'gofmt-before-save nil t)
+  (when lsp-mode
+    (add-hook 'before-save-hook 'lsp-organize-imports nil t)))
 
 (my:add-hooks 'go-mode-hook
   #'lsp

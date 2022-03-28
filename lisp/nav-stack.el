@@ -193,7 +193,11 @@ location being popped: the window to be used, and a marker."
           (not (funcall nav-stack-auto-push-predicate)))
      ;; Do nothing, predicate inhibited auto-push
      )
-    ((not (minibufferp (current-buffer)))
+    ((and (not (minibufferp (current-buffer)))
+          ;; Can't push a location if the last marker's buffer has
+          ;; been deleted.
+          nav-stack--last-mark
+          (marker-buffer nav-stack--last-mark))
      ;; Doing a bit of a dance to avoid calling `point-marker' too
      ;; much.  Naïve benchmarking suggests that GC is a *huge* hit
      ;; compared to mutating an existing marker.
