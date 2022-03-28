@@ -182,6 +182,14 @@ location being popped: the window to be used, and a marker."
 (defvar nav-stack--last-win nil)
 (defvar nav-stack--last-mark nil)
 
+(defun nav-stack--pre-command-hook ()
+  (setq nav-stack--last-win (selected-window)
+        ;; In my limited testing, reusing the marker was much faster
+        ;; than calling `point-marker' each time, probably mostly due
+        ;; to GC.
+        nav-stack--last-mark (set-marker nav-stack--last-mark
+                                         (point) (current-buffer))))
+
 (defun nav-stack--post-command-hook ()
   (cond
     ;; This condition must be first, so we make sure to clear
@@ -190,24 +198,33 @@ location being popped: the window to be used, and a marker."
     (nav-stack-no-auto-push-this-command
      (setq nav-stack-no-auto-push-this-command nil))
     ((and nav-stack-auto-push-predicate
-          (not (funcall nav-stack-auto-push-predicate)))
+          (not (condition-case err
+                   (funcall nav-stack-auto-push-predicate)
+                 (t
+                  (warn "Error in `nav-stack-auto-push-predicate': %S" err)
+                  (signal (car err) (cdr err))))))
      ;; Do nothing, predicate inhibited auto-push
      )
     ((and (not (minibufferp (current-buffer)))
           ;; Can't push a location if the last marker's buffer has
-          ;; been deleted.
+          ;; been deleted.  `nav-stack--last-mark' should always be a
+          ;; marker, but we're being cautious here in
+          ;; `post-command-hook'.
           nav-stack--last-mark
           (marker-buffer nav-stack--last-mark))
-     ;; Doing a bit of a dance to avoid calling `point-marker' too
-     ;; much.  Naïve benchmarking suggests that GC is a *huge* hit
-     ;; compared to mutating an existing marker.
-     (if (or (nav-stack-push nil
-                             nav-stack--last-win
-                             nav-stack--last-mark)
-             (null nav-stack--last-mark))
-         (setq nav-stack--last-mark (point-marker))
-       (set-marker nav-stack--last-mark (point) (current-buffer)))
-     (setq nav-stack--last-win (selected-window)))))
+     (when (condition-case err
+               (nav-stack-push nil
+                               nav-stack--last-win
+                               nav-stack--last-mark)
+             (t
+              (warn "Error in `nav-stack-push', win=%S mark=%S"
+                    nav-stack--last-win nav-stack--last-mark)
+              (signal (car err) (cdr err))))
+       ;; `nav-stack--last-mark' is now on one or more stacks, so we
+       ;; don't want `nav-stack--pre-command-hook' (which see) to
+       ;; modify it.  Make a new mark for it to modify next time
+       ;; around.
+       (setq nav-stack--last-mark (point-marker))))))
 
 (defun nav-stack--can-go-to (win mark)
   (and (or nav-stack-global-pop-only-to-same-window
@@ -291,7 +308,13 @@ location being popped: the window to be used, and a marker."
     (with-current-buffer buf
       (kill-local-variable 'nav-stack--buffer-stack)))
   (setq nav-stack--last-win nil
-        nav-stack--last-mark nil))
+        nav-stack--last-mark (point-marker))
+  (if nav-stack-mode
+      (progn
+        (add-hook 'pre-command-hook #'nav-stack--pre-command-hook)
+        (add-hook 'post-command-hook #'nav-stack--post-command-hook))
+    (remove-hook 'post-command-hook #'nav-stack--post-command-hook)
+    (remove-hook 'pre-command-hook #'nav-stack--pre-command-hook)))
 
 (defvar nav-stack-mode-map
   (let ((map (make-sparse-keymap)))
@@ -304,10 +327,7 @@ location being popped: the window to be used, and a marker."
   :global t
   :lighter " NavStk"
   :keymap nav-stack-mode-map
-  (nav-stack-reset)
-  (if nav-stack-mode
-      (add-hook 'post-command-hook #'nav-stack--post-command-hook)
-    (remove-hook 'post-command-hook #'nav-stack--post-command-hook)))
+  (nav-stack-reset))
 
 (provide 'nav-stack)
 ;;;; nav-stack.el ends here
