@@ -162,4 +162,3 @@ Return nil if DIR is not an existing directory."
             (dired-advertise)))))
 
   (el-patch-validate 'dired-rename-subdir-1 'defun t))
-
