@@ -2403,10 +2403,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (global-hl-todo-mode 1)
 
-(if-let ((xxx-face (assoc "XXX+" hl-todo-keyword-faces)))
+(if-let ((xxx-face (assoc "XXXX*" hl-todo-keyword-faces)))
     (setf (cdr xxx-face)
           '(:inherit hl-todo :foreground "yellow" :background "red"))
-  (warn "Couldn't find XXX+ in `hl-todo-keyword-faces'"))
+  (warn "Couldn't find XXXX* in `hl-todo-keyword-faces'"))
 
 
 ;;; ielm

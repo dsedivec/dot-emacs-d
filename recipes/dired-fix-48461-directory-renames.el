@@ -11,6 +11,13 @@
 ;; doesn't also change the directory of all buffers with files within
 ;; that directory.  Rather, dired definitely tries to do it (as you
 ;; can see below), but fails due to some bugs.
+;;
+;; UPDATE 2022-04-20: I think e71c7a7c600 tried to address some/all of
+;; this.  I have a call to `file-truename' in `dired-rename-file', and
+;; I don't know why I [thought I] needed that.  I'm leaving my patch
+;; here for that, for now.  I also prefer my
+;; `my:file-in-directory-textually-p' to `dired-in-this-tree-p', which
+;; upstream used, so I'm keeping my patches for that.
 
 (require 'el-patch)
 
@@ -21,25 +28,24 @@
     "Rename FILE to NEWNAME.
 Signal a `file-already-exists' error if a file NEWNAME already exists
 unless OK-IF-ALREADY-EXISTS is non-nil."
-    (dired-handle-overwrite newname)
-    (dired-maybe-create-dirs (file-name-directory newname))
-    (el-patch-wrap 2 0
-      (let ((old-is-dir (file-directory-p file))
-            (old-truename (file-truename file)))
-        (if (and dired-vc-rename-file
-                 (vc-backend file)
-                 (ignore-errors (vc-responsible-backend newname)))
-            (vc-rename-file file newname)
-          ;; error is caught in -create-files
-          (rename-file file newname ok-if-already-exists))
-        ;; Silently rename the visited file of any buffer visiting this file.
-        (and (get-file-buffer file)
-             (with-current-buffer (get-file-buffer file)
-               (set-visited-file-name newname nil t)))
-        (dired-remove-file file)
-        ;; See if it's an inserted subdir, and rename that, too.
-        (when (el-patch-swap (file-directory-p file) old-is-dir)
-          (dired-rename-subdir (el-patch-swap file old-truename) newname)))))
+    (let ((file-is-dir-p (file-directory-p file))
+          (el-patch-add (old-truename (file-truename file))))
+      (dired-handle-overwrite newname)
+      (dired-maybe-create-dirs (file-name-directory newname))
+      (if (and dired-vc-rename-file
+               (vc-backend file)
+               (ignore-errors (vc-responsible-backend newname)))
+          (vc-rename-file file newname)
+        ;; error is caught in -create-files
+        (rename-file file newname ok-if-already-exists))
+      ;; Silently rename the visited file of any buffer visiting this file.
+      (and (get-file-buffer file)
+           (with-current-buffer (get-file-buffer file)
+             (set-visited-file-name newname nil t)))
+      (dired-remove-file file)
+      ;; See if it's an inserted subdir, and rename that, too.
+      (when file-is-dir-p
+        (dired-rename-subdir (el-patch-swap file old-truename) newname))))
 
   (el-patch-validate 'dired-rename-file 'defun t)
 
@@ -104,7 +110,7 @@ Return nil if DIR is not an existing directory."
       (while blist
         (with-current-buffer (car blist)
           (if (and buffer-file-name
-                   ((el-patch-swap file-in-directory-p
+                   ((el-patch-swap dired-in-this-tree-p
                                    my:file-in-directory-textually-p)
                     buffer-file-name expanded-from-dir))
               (let ((modflag (buffer-modified-p))
@@ -127,7 +133,7 @@ Return nil if DIR is not an existing directory."
       (while alist
         (setq elt (car alist)
               alist (cdr alist))
-        (if ((el-patch-swap file-in-directory-p
+        (if ((el-patch-swap dired-in-this-tree-p
                             my:file-in-directory-textually-p)
              (car elt) expanded-dir)
             ;; ELT's subdir is affected by the rename
