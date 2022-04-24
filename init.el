@@ -4591,8 +4591,6 @@ a string or comment."
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;; We're "special" at work.
-(add-to-list 'auto-mode-alist '("\\.html\\.translate\\'" . web-mode))
 
 ;; Open all HTML-looking files with `web-mode', not [m]html-mode.
 ;; BTW, can't `setf' the cdr of these pairs, I think the cons cells
