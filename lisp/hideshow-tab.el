@@ -55,7 +55,8 @@
   :group 'hideshow)
 
 (defcustom hideshow-tab-detect-action-functions
-  '(hideshow-tab-detect-buffer-modified-tick
+  '(hideshow-tab-must-press-twice
+    hideshow-tab-detect-buffer-modified-tick
     hideshow-tab-detect-point-moved)
   "List of functions called to determine if the normal binding did anything.
 This is important because if your normal binding for your
@@ -78,6 +79,12 @@ toggle visibility."
            (function-item hideshow-tab-detect-point-moved)
            (function-item hideshow-tab-detect-indentation-chars-changed)
            function)))
+
+(defun hideshow-tab-must-press-twice (state)
+  "Return non-nil if `last-command' is not the same as `this-command'."
+  (if state
+      (not (eq last-command this-command))
+    t))
 
 (defun hideshow-tab-detect-buffer-modified-tick (state)
   "Return non-nil if `buffer-modified-tick' is changed by the command."
