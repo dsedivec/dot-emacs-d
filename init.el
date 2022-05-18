@@ -2077,12 +2077,17 @@ surround \"foo\" with (in this example) parentheses.  I want
                  :level (intern (alist-get 'severity diag)))))
             diagnostics)))
 
+(defun my:flycheck-find-terraform-root-module (&optional _checker)
+  (and buffer-file-name
+       (locate-dominating-file buffer-file-name ".terraform")))
+
 (with-eval-after-load 'terraform-mode
   (with-eval-after-load 'flycheck
     (flycheck-define-checker my:terraform-validate
       "A Terraform checker with `terraform validate'.
 
 See URL `https://www.terraform.io/docs/commands/validate.html'."
+      :working-directory my:flycheck-find-terraform-root-module
       :command ("terraform" "validate" "-json")
       :error-parser my:flycheck-parse-terraform-validate
       :predicate flycheck-buffer-saved-p
