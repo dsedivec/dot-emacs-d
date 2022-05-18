@@ -4372,9 +4372,9 @@ a string or comment."
 
 (defun my:terraform-mode-hook ()
   ;; `company-capf' here for LSP's sake.
-  (my:company-set-local-backends '(company-capf
-                                   (company-terraform company-dabbrev-code)
-                                   company-files)))
+  (setq-local company-backends '(company-capf
+                                 (company-terraform company-dabbrev-code)
+                                 company-files)))
 
 (my:add-hooks 'terraform-mode-hook
   #'terraform-format-on-save-mode
