@@ -67,7 +67,7 @@ current line."
        (let ((end (region-end))
              (indent (if indent-tabs-mode
                          (make-string levels ?\t)
-                       (make-string (* levels tab-width) ?\s))))
+                       (make-string (* levels standard-indent) ?\s))))
          (goto-char (region-beginning))
          (forward-line 0)
          (while (< (point) end)
@@ -92,8 +92,9 @@ current line."
                (delete-region indent-start
                               (+ indent-start (skip-chars-backward " ")))
                (insert-char ?\t levels))
-           (insert-char ?\s (let* ((num-spaces (* levels tab-width))
-                                   (overshoot (mod (current-column) tab-width)))
+           (insert-char ?\s (let* ((num-spaces (* levels standard-indent))
+                                   (overshoot (mod (current-column)
+                                                   standard-indent)))
                               (- num-spaces overshoot)))))
        (when go-back-to-indentation
          (back-to-indentation))))))
@@ -105,7 +106,7 @@ current line."
                   `(if indent-tabs-mode
                        (format "^\t\\{1,%d\\}" levels)
                      (format "^\\(?: \\{%d\\}\\)\\{1,%d\\}"
-                             tab-width levels))))
+                             standard-indent levels))))
     (cond
       ((< levels 0)
        (faux-indent-add-indentation (- levels)))
@@ -114,7 +115,7 @@ current line."
        (save-excursion
          (goto-char (region-beginning))
          (forward-line 0)
-         ;; I haven't decided if this function should remove <tab-width
+         ;; I haven't decided if this function should remove <standard-indent
          ;; number of spaces.  Currently it does not.
          (let ((end (region-end))
                (indent-regexp (get-indent-regexp)))
@@ -129,7 +130,7 @@ current line."
          (back-to-indentation)
          (let* ((limit (if indent-tabs-mode
                            nil
-                         (- (point) (mod (current-column) tab-width))))
+                         (- (point) (mod (current-column) standard-indent))))
                 (spaces-before (- (skip-chars-backward " " limit))))
            (when (> spaces-before 0)
              (delete-char spaces-before)
@@ -174,9 +175,9 @@ indentation."
               (delete-char spaces-before)
             ;; Presumably this is removing a single tab.
             (delete-char -1)))
-      (let* ((align-spaces (mod (current-column) tab-width))
+      (let* ((align-spaces (mod (current-column) standard-indent))
              (limit (- (point) (if (zerop align-spaces)
-                                   tab-width
+                                   standard-indent
                                  align-spaces))))
         (delete-char (- (skip-chars-backward " " limit)))))))
 
