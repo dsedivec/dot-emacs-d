@@ -50,6 +50,10 @@
   "Number of characters movement that constitutes a \"significant\" movement."
   :type 'integer)
 
+(defcustom nav-stack-always-push-after-push-mark t
+  "Always push onto stack after a `push-mark'."
+  :type 'boolean)
+
 (defcustom nav-stack-global-pop-only-to-same-window nil
   "If non-nil, global nav stack items with a deleted window are ignored.
 Otherwise, popping a global nav stack item whose window is no
@@ -133,6 +137,11 @@ location being popped: the window to be used, and a marker."
          sentinel
        (signal (car err) (cdr err))))))
 
+(defvar nav-stack--push-mark-called nil)
+
+(defun nav-stack--push-mark-observer (&rest _args)
+  (setq nav-stack--push-mark-called t))
+
 (defvar nav-stack-no-auto-push-this-command nil)
 
 (defvar nav-stack--global-stack nil)
@@ -183,7 +192,9 @@ location being popped: the window to be used, and a marker."
 (defvar nav-stack--last-mark nil)
 
 (defun nav-stack--pre-command-hook ()
-  (setq nav-stack--last-win (selected-window)
+  (setq nav-stack-no-auto-push-this-command nil
+        nav-stack--push-mark-called nil
+        nav-stack--last-win (selected-window)
         ;; In my limited testing, reusing the marker was much faster
         ;; than calling `point-marker' each time, probably mostly due
         ;; to GC.
@@ -192,11 +203,9 @@ location being popped: the window to be used, and a marker."
 
 (defun nav-stack--post-command-hook ()
   (cond
-    ;; This condition must be first, so we make sure to clear
-    ;; `nav-stack-no-auto-push-this-command' after each command, if
-    ;; necessary.
     (nav-stack-no-auto-push-this-command
-     (setq nav-stack-no-auto-push-this-command nil))
+     ;; Noop
+     )
     ((and nav-stack-auto-push-predicate
           (not (condition-case err
                    (funcall nav-stack-auto-push-predicate)
@@ -213,7 +222,8 @@ location being popped: the window to be used, and a marker."
           nav-stack--last-mark
           (marker-buffer nav-stack--last-mark))
      (when (condition-case err
-               (nav-stack-push nil
+               (nav-stack-push (and nav-stack-always-push-after-push-mark
+                                    nav-stack--push-mark-called)
                                nav-stack--last-win
                                nav-stack--last-mark)
              (t
@@ -311,10 +321,12 @@ location being popped: the window to be used, and a marker."
         nav-stack--last-mark (point-marker))
   (if nav-stack-mode
       (progn
+        (advice-add 'push-mark :after #'nav-stack--push-mark-observer)
         (add-hook 'pre-command-hook #'nav-stack--pre-command-hook)
         (add-hook 'post-command-hook #'nav-stack--post-command-hook))
     (remove-hook 'post-command-hook #'nav-stack--post-command-hook)
-    (remove-hook 'pre-command-hook #'nav-stack--pre-command-hook)))
+    (remove-hook 'pre-command-hook #'nav-stack--pre-command-hook)
+    (advice-remove 'push-mark #'nav-stack--push-mark-observer)))
 
 (defvar nav-stack-mode-map
   (let ((map (make-sparse-keymap)))
