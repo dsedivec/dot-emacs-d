@@ -29,7 +29,36 @@ for dir in "${repos[@]}"; do
 	echo "$dir"
 	git fetch
 	if [ "$(git rev-parse HEAD)" != "$(git rev-parse "@{u}")" ]; then
-		bash -i
+		retry=1
+		while [ "$retry" -eq 1 ]; do
+			if ! bash -i; then
+				echo "Shell exited non-zero.  I'm worried for you."
+				answer=
+				while [ -z "$answer" ]; do
+					read -rp "Abort, Retry, Ignore? " answer
+					case "$answer" in
+						[Aa])
+							exit 1
+							;;
+
+						[Rr])
+							retry=1
+							;;
+
+						[Ii])
+							retry=0
+							;;
+
+						*)
+							echo "Invalid response, expected one of: A R I"
+							answer=
+							;;
+					esac
+				done
+			else
+				retry=0
+			fi
+		done
 	fi
 	popd
 done
