@@ -2730,6 +2730,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setf (alist-get 'python-mode my:lsp-flycheck-extra-checkers-alist)
       '(python-pylint python-mypy))
 
+(setf (alist-get 'sh-mode my:lsp-flycheck-extra-checkers-alist) '(sh-shellcheck))
+
 (setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
 
 
