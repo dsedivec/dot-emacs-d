@@ -410,6 +410,13 @@
   ;; Docstring for `face-near-same-color-threshold' says to do this.
   (clear-face-cache)
 
+  ;; As of 9370a4763aac, `ns-popup-font-panel' is apparently gone.
+  ;; The menu bar has its own `menu-set-font' that I'm going to crib
+  ;; from.
+  (unless (commandp 'ns-popup-font-panel)
+    (autoload 'menu-set-font "menu-bar")
+    (bind-key "s-t" 'menu-set-font))
+
   (my:load-recipes 'ns-paste-as-org))
 
 ;; macOS trashing: inspired first by
