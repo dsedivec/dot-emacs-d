@@ -275,7 +275,7 @@
                             nhexl-mode
                             olivetti
                             org-download
-                            org-roam
+                            (org-roam :branch "main")
                             orgtbl-aggregate
                             osx-dictionary
                             pandoc-mode
