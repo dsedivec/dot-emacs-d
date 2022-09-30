@@ -2830,7 +2830,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (with-eval-after-load 'markdown-mode
   (bind-keys :map markdown-mode-map
-             ("M-m m c e" . my:markdown-mode-copy-as-html-email))
+             ("M-m m c e" . my:markdown-mode-copy-as-html-email)
+             ;; This interferes with my global binding to link-hint.
+             ("C-c C-o" . nil))
 
   (my:load-recipes 'markdown-mode-copy-as-html-email
                    ;; Note that I do not wrap the loading of
