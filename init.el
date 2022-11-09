@@ -4719,7 +4719,7 @@ a string or comment."
 
 (with-eval-after-load 'whitespace
   (face-spec-set 'whitespace-line '((t (:background "#ffe7e7"
-                                        :foreground nil
+                                        :foreground "unspecified"
                                         :distant-foreground "black")))))
 
 
