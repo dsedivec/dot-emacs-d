@@ -56,9 +56,10 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
   ;; (provide 'files).
 
   (el-patch-defun (el-patch-swap file-in-directory-p my:file-in-directory-textually-p) (file dir)
-    "Return non-nil if FILE is in DIR or a subdirectory of DIR.
-A directory is considered to be \"in\" itself.
-Return nil if DIR is not an existing directory."
+    "Return non-nil if DIR is a parent directory of FILE.
+Value is non-nil if FILE is inside DIR or inside a subdirectory of DIR.
+A directory is considered to be a \"parent\" of itself.
+DIR must be an existing directory, otherwise the function returns nil."
     ;; I'm leaving the handlers in because why not.
     (let ((handler (or (find-file-name-handler file 'file-in-directory-p)
                        (find-file-name-handler dir  'file-in-directory-p))))
