@@ -1340,6 +1340,12 @@ plugin."
 
 (add-hook 'conf-mode-hook #'faux-indent-mode)
 
+(defun my:conf-toml-mode-hook ()
+  (setq indent-tabs-mode nil
+        tab-width 4))
+
+(add-hook 'conf-toml-mode-hook #'my:conf-toml-mode-hook)
+
 (with-eval-after-load 'conf-mode
   (bind-keys :map conf-mode-map
              ("RET" . newline-and-indent)))
