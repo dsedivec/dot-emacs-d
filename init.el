@@ -963,6 +963,26 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (advice-add 'ahs-highlight-p :before-while
             #'my:ahs-dont-highlight-while-command-in-progress)
 
+;;; XXX RECIPE
+(with-eval-after-load 'auto-highlight-symbol
+  (el-patch-defun ahs-change-range (&optional range nomsg)
+    "Current plugin change to `RANGE' plugin. `RANGE' defaults to next runnable
+plugin."
+    (interactive)
+    (el-patch-remove (ahs-clear (not nomsg)))
+
+    (when (if range (ahs-valid-plugin-p range)
+            (setq range (ahs-runnable-plugins t)))
+      (ahs-change-range-internal range)
+      (let ((ahs-suppress-log nomsg))
+        (ahs-log 'plugin-changed (ahs-decorated-current-plugin-name))))
+
+    (when (ahs-called-interactively-p 'interactive)
+      (ahs-idle-function))
+    (ahs-set-lighter))
+
+  (el-patch-validate 'ahs-change-range 'defun t))
+
 
 ;;; auto-yasnippet
 
