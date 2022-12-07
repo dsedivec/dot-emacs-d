@@ -19,8 +19,12 @@
 (defvar my:use-lsp nil)
 (put 'my:use-lsp 'safe-local-variable #'booleanp)
 
+(defvar my:use-lsp-no-lsp-hook nil
+  "Normal hook called after we decide we will not turn on `lsp-mode'.")
+
 (defun my:maybe-use-lsp ()
-  (when (and my:use-lsp (my:lsp-supported-buffer-p))
-    (lsp)))
+  (if (and my:use-lsp (my:lsp-supported-buffer-p))
+      (lsp)
+    (run-hooks 'my:use-lsp-no-lsp-hook)))
 
 (add-hook 'hack-local-variables-hook #'my:maybe-use-lsp)
