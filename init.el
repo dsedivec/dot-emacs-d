@@ -311,7 +311,6 @@
                             treepy
                             undo-tree
                             unfill
-                            unicode-fonts
                             vcl-mode
                             volatile-highlights
                             vterm
@@ -410,6 +409,14 @@
   (setq face-near-same-color-threshold 160000)
   ;; Docstring for `face-near-same-color-threshold' says to do this.
   (clear-face-cache)
+
+  ;; Per NEWS.28, this should get me Emoji support?  Please?
+  (set-fontset-font t 'emoji '("Apple Color Emoji" . "iso10646-1") nil 'prepend)
+  ;; Per people (rightfully?) bitching in
+  ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=54970, it seems I
+  ;; also need to do this for the "symbol script".  (You can see this
+  ;; in `describe-char' output.)
+  (set-fontset-font t 'symbol '("Apple Color Emoji" . "iso10646-1") nil 'prepend)
 
   ;; As of 9370a4763aac, `ns-popup-font-panel' is apparently gone.
   ;; The menu bar has its own `menu-set-font' that I'm going to crib
@@ -4450,23 +4457,6 @@ a string or comment."
 ;;; unfill
 
 (bind-key "M-q" 'unfill-toggle)
-
-
-;;; unicode-fonts
-
-;; The alternative:
-;; (set-fontset-font t 'symbol (font-spec :family "Apple Color Emoji") nil
-;;                   'prepend)
-
-(require 'unicode-fonts)
-
-;; Need barf emoji.
-(cl-pushnew "Apple Color Emoji"
-            (car (alist-get "Supplemental Symbols and Pictographs"
-                            unicode-fonts-block-font-mapping
-                            nil nil #'equal)))
-
-(unicode-fonts-setup)
 
 
 ;;; vc
