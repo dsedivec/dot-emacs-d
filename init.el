@@ -3029,8 +3029,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  ;; annoys me to no end.
  org-capture-bookmark nil
  org-capture-templates '(("t" "Todo" entry
-                          ;; (file+headline "~/todo.org" "Inbox")
-                          (file "~/todo.org")
+                          (file+headline "~/todo.org" "Inbox")
                           "* NEW %?" :prepend t)
                          ("j" "Journal" entry
                           (file "~/journal.org")
