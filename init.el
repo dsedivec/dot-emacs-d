@@ -2682,6 +2682,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                (rx (char ?/ ?\\) (+ (not (any ?/ ?\\))) ".pyc" eos)))
 
 (setq lsp-keep-workspace-alive nil
+      lsp-modeline-diagnostics-scope :file
       lsp-pyls-plugins-pylint-enabled t)
 
 ;; `lsp-signature-render-documentation' is much too intrusive in the
