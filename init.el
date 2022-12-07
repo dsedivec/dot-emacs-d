@@ -2716,7 +2716,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;; (advice-add #'lsp-mode :before #'my:disable-elpy-before-lsp)
 
 (defun my:lsp-headerline-breadcrumb-mode-hook ()
-  (setq-local which-func-mode nil))
+  (which-function-mode -1))
 
 (add-hook 'lsp-headerline-breadcrumb-mode-hook
           #'my:lsp-headerline-breadcrumb-mode-hook)
