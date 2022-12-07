@@ -2039,15 +2039,20 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (cons (car key-binding) "flycheck")
                        key-binding))))
 
-  ;; Run Pylint, then Mypy.
+  ;; Preference order of some Python checkers.
+  (let ((preferred-python-checkers '(python-mypy python-pyright python-pylint)))
+    (setq flycheck-checkers
+          (nconc (copy-tree preferred-python-checkers)
+                 (seq-remove (lambda (checker)
+                               (memq checker preferred-python-checkers))
+                             flycheck-checkers))))
 
-  (flycheck-add-next-checker 'python-pylint 'python-mypy)
+  ;; pylint is expensive to run, only run it on save.
+  (setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
 
-  (setf (flycheck-checker-get 'python-mypy 'next-checkers) nil)
-
-  ;; Prefer pylint to flake8.
-  (setq flycheck-checkers (cons 'python-pylint
-                                (delq 'python-pylint flycheck-checkers)))
+  ;; Chain pylint after Mypy or Pyright.
+  (dolist (checker '(python-mypy python-pyright))
+    (flycheck-add-next-checker checker 'python-pylint))
 
   (my:load-recipes 'flycheck-python-pylint-detect-tabs))
 
