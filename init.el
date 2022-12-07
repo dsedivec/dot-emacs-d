@@ -2733,6 +2733,12 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
 
+(cl-defun my:lsp-install-format-on-save (&key (format t) (imports t))
+  (when format
+    (add-hook 'before-save-hook #'lsp-format-buffer 90 t))
+  (when imports
+    (add-hook 'before-save-hook #'lsp-organize-imports 90 t)))
+
 
 ;;; lsp-pyright
 
