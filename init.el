@@ -2661,7 +2661,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (autoload 'loccur "loccur" nil t)
 
 
-;;; lsp
+;;; lsp-mode
 
 (with-eval-after-load 'lsp-mode
   ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
