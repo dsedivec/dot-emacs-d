@@ -178,6 +178,7 @@
                             aggressive-indent
                             all-the-icons
                             amx
+                            anaconda-mode
                             apheleia
                             atomic-chrome
                             auto-highlight-symbol
@@ -192,6 +193,7 @@
                             command-log-mode
                             comment-dwim-2
                             company
+                            company-anaconda
                             company-prescient
                             company-shell
                             company-terraform
@@ -214,7 +216,6 @@
                             edit-indirect
                             editorconfig
                             el-patch
-                            elpy
                             embrace
                             emmet-mode
                             envrc
@@ -879,6 +880,19 @@
 ;;; amx
 
 (setq amx-history-length 500)
+
+
+;;; anaconda-mode
+
+(defun my:anaconda-mode-turn-on ()
+  (anaconda-mode 1)
+  (anaconda-eldoc-mode 1)
+  (my:company-group-existing-backend 'company-capf '(company-anaconda)))
+
+(defun my:use-anaconda-mode-if-no-lsp ()
+  (add-hook 'my:use-lsp-no-lsp-hook #'my:anaconda-mode-turn-on nil t))
+
+(add-hook 'python-mode-hook #'my:use-anaconda-mode-if-no-lsp)
 
 
 ;;; apheleia
@@ -1734,57 +1748,6 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m d m" . macrostep-expand)))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
-
-
-;;; elpy
-
-(setq elpy-eldoc-show-current-function nil
-      elpy-rpc-python-command "python3")
-
-;; (advice-add 'python-mode :before #'elpy-enable)
-
-;; Double the default, for big files at work.  (This may or may not be
-;; a good idea.  It seemed fine the one time I tried it.)
-(setq elpy-rpc-ignored-buffer-size (* 200 1024))
-
-(with-eval-after-load 'elpy
-  (setq elpy-modules (delq 'elpy-module-highlight-indentation elpy-modules))
-
-  ;; https://github.com/jorgenschaefer/elpy/blob/1beb3b5ddb0590e7ccec744f353d7c71c2fbda09/docs/customization_tips.rst#use-flycheck-instead-of-flymake
-  (when (load "flycheck" t t)
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-  (bind-keys :map elpy-mode-map
-             ("<C-return>" . nil)
-             ;; Not having these as forward/backward-paragraph drives
-             ;; me nuts.
-             ("<C-up>" . nil)
-             ("<C-down>" . nil)
-             ;; auto-highlight-symbol uses these.
-             ("<M-left>" . nil)
-             ("<M-right>" . nil)
-             ;; I use this for opening links (and I never use
-             ;; `elpy-occur-definitions').
-             ("C-c C-o" . nil)))
-
-(my:load-recipes 'elpy-nav-block-always-move)
-
-(defun my:elpy-mode-hook ()
-  (when (memq 'elpy--xref-backend xref-backend-functions)
-    ;; Get in line behind TAGS and, I guess, dumb jump.
-    (add-hook 'xref-backend-functions 'elpy--xref-backend 50 t)))
-
-(add-hook 'elpy-mode-hook #'my:elpy-mode-hook)
-
-;; XXX upstream recipe something
-
-(defun my:elpy-module-eldoc-really-remove-function (&rest args)
-  (unless elpy-mode
-    (remove-hook 'eldoc-documentation-functions #'elpy-eldoc-documentation t)))
-
-(advice-add #'elpy-module-eldoc :after
-            #'my:elpy-module-eldoc-really-remove-function)
 
 
 ;;; embrace
@@ -3529,10 +3492,6 @@ everything else."
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
              ("M-m m i" . my:python-add-import))
-
-  (with-eval-after-load 'elpy
-    (bind-keys :map elpy-mode-map
-               ("C-c C-c" . my:python-shell-send-dwim))))
 
 ;; (defun darker-format-buffer ()
 ;;   (interactive)
