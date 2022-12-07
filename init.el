@@ -1865,7 +1865,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;;; files
 
 (setq make-backup-files nil
-      confirm-kill-emacs 'y-or-n-p)
+      confirm-kill-emacs 'y-or-n-p
+      require-final-newline t)
 
 ;; Detect SQL in strings!  Turns out that `magic-mode-alist' (and
 ;; `magic-fallback-mode-alist') set `case-fold-search' to nil when
