@@ -3049,6 +3049,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
  org-default-priority ?D
  org-duration-format '(("h" . t) (special . 2))
  org-enforce-todo-dependencies t
+ org-fold-catch-invisible-edits nil
+ ;; As of 2022-07-14, 'text-properties (the default) is way too buggy
+ ;; for my tastes.  (Disclaimer: it might be that my various mods to
+ ;; org-mode are what are causing bugs, but basically the behavior of
+ ;; org-mode folding changed, breaking how I want to use org-mode and
+ ;; with no discernible benefit to me.)
+ org-fold-core-style 'overlays
  org-hide-leading-stars t
  org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
  org-image-actual-width nil
