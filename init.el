@@ -3517,7 +3517,6 @@ everything else."
    'python-add-import
    'python-better-imenu
    'python-colon-doesnt-add-indentation
-   'python-dont-assume-next-line-starts-block
    'python-edit-indirect-in-strings
    'python-enable-black-from-editorconfig
    'python-fix-dead-shell-font-lock-buffer
