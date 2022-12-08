@@ -116,12 +116,8 @@
           ;; Insert a space to avoid invalid joining if necessary.
           ((let ((syn-before (char-syntax (char-before)))
                  (syn-after  (char-syntax (char-after))))
-             (or (and (eq syn-before ?\) )        ; Separate opposing
-                      (eq syn-after  ?\( ))       ;   parentheses,
-                 (and (eq syn-before ?\" )        ; string delimiter
-                      (eq syn-after  ?\" ))       ;   pairs,
-                 (and (memq syn-before '(?_ ?w))  ; or word or symbol
-                      (memq syn-after  '(?_ ?w))))) ;   constituents.
-           (insert " "))))
+             (and (memq syn-before '(?\) ?\" ?_ ?w))
+                  (memq syn-after '(?\( ?\" ?_ ?w))))
+           (save-excursion (insert " ")))))
 
   (el-patch-validate 'paredit-kill-sexps-on-whole-line 'defun t))
