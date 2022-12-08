@@ -1064,8 +1064,6 @@ plugin."
 
 (bind-key "C-x C-b" 'bs-show)
 
-(my:load-recipes 'bs-display-actions)
-
 (defun my:visits-non-dired-non-file (buffer)
   "Returns T if buffer is neither a file nor a Dired buffer."
   (and (bs-visits-non-file buffer)
