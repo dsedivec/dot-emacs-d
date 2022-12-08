@@ -7,7 +7,6 @@
  '(org-modules
    '(org-tempo org-id ol-w3m ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-irc ol-mhe ol-rmail ol-eww))
  '(package-selected-packages nil)
- '(paradox-github-token t)
  '(safe-local-variable-values
    '((elpy-rpc-virtualenv-path . current)
      (eltu-exuberant-ctags-additional-arguments "--python-kinds=-i" "--languages=-html,-php,-javascript"))))

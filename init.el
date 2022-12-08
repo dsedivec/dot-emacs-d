@@ -280,7 +280,6 @@
                             orgtbl-aggregate
                             osx-dictionary
                             pandoc-mode
-                            paradox
                             paredit
                             phi-search
                             prescient
