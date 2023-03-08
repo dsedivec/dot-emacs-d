@@ -900,6 +900,10 @@
 
 (add-hook 'python-mode-hook #'my:use-anaconda-mode-if-no-lsp)
 
+(with-eval-after-load 'anaconda-mode
+  (bind-keys :map anaconda-mode-map
+             ("M-," . nil)))
+
 
 ;;; apheleia
 
