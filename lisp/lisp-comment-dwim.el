@@ -3,6 +3,7 @@
 ;; Copyright (C) 2018  Dale Sedivec
 
 ;; Author: Dale Sedivec <dale@codefu.org>
+;; Version: 0.2
 ;; Keywords: lisp
 ;; Package-Requires: (smartparens)
 
