@@ -4,7 +4,7 @@
 ;; turned on.  You can thus drop `my:use-lsp' in a .dir-locals.el file
 ;; and turn on lsp-mode for a given project.
 
-(autoload 'lsp-buffer-language "lsp-mode")
+(autoload 'lsp--find-clients "lsp-mode")
 
 (defun my:lsp-supported-buffer-p (&optional buffer)
   ;; lsp-mode could probably use a better API for "does lsp-mode have
@@ -14,7 +14,7 @@
   (with-current-buffer (or buffer (current-buffer))
     (when buffer-file-name
       (let ((warning-suppress-log-types '((lsp-mode))))
-        (stringp (lsp-buffer-language))))))
+        (and (lsp--find-clients) t)))))
 
 (defvar my:use-lsp nil)
 (put 'my:use-lsp 'safe-local-variable #'booleanp)
