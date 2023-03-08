@@ -219,6 +219,7 @@
                             embrace
                             emmet-mode
                             envrc
+                            eterm-256color
                             exec-path-from-shell
                             expand-region
                             fennel-mode
@@ -4541,6 +4542,11 @@ a string or comment."
                     (memq 'control modifiers))))
 
 (with-eval-after-load 'vterm
+  (when (require 'eterm-256color nil t)
+    ;; Private function of eterm-256color that checks that you have
+    ;; the terminfo file for eterm-color installed in the right place.
+    (eterm-256color-compile)
+    (setq vterm-term-environment-variable "eterm-color"))
   (customize-set-variable 'vterm-keymap-exceptions
                           (cons "M-m" (seq-difference vterm-keymap-exceptions
                                                       '("C-l" "C-u"))))
