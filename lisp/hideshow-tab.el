@@ -4,7 +4,7 @@
 
 ;; Author: Dale Sedivec <dale@codefu.org>
 ;; Keywords: convenience
-;; Version: 0.1
+;; Version: 0.2
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -80,10 +80,21 @@ toggle visibility."
            (function-item hideshow-tab-detect-indentation-chars-changed)
            function)))
 
+(defcustom hideshow-tab-debug nil
+  "Enable debugging output for `hideshow-tab'."
+  :type 'boolean)
+
+(define-inline hideshow-tab--debug (msg &rest args)
+  `(when hideshow-tab-debug
+     (message ,(concat "hideshow-tab: "  msg) ,@args)))
+
 (defun hideshow-tab-must-press-twice (state)
   "Return non-nil if `last-command' is not the same as `this-command'."
   (if state
-      (not (eq last-command this-command))
+      (progn
+        (hideshow-tab--debug "last-command=%S this-command=%S"
+                             last-command this-command)
+        (not (eq last-command this-command)))
     t))
 
 (defun hideshow-tab-detect-buffer-modified-tick (state)
@@ -139,10 +150,14 @@ anything (ex. line was already indented), then we call
                                   hideshow-tab-detect-action-functions))))
         (unless (and normal-binding
                      (progn
+                       (hideshow-tab--debug "Calling normal indent")
                        (call-interactively normal-binding)
                        (seq-some (lambda (func-and-data)
-                                   (funcall (car func-and-data)
-                                            (cdr func-and-data)))
+                                   (let* ((func (car func-and-data))
+                                          (result (funcall func (cdr func-and-data))))
+                                     (hideshow-tab--debug "Detector %S = %S"
+                                                          func result)
+                                     result))
                                  detectors)))
           (hs-toggle-hiding))))))
 
