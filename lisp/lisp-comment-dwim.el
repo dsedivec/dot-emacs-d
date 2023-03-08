@@ -50,6 +50,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;; smartparens doesn't autoload these, but we don't want to suck in
 ;; smartparens before it's needed, so set it up.
 (autoload 'sp-get-thing "smartparens")
@@ -182,7 +184,7 @@
           ;; if we hit a scan-error due to unbalanced sexp.
           (condition-case _
               (while (< (point) line-end)
-                (or (plusp (skip-syntax-forward " " line-end))
+                (or (cl-plusp (skip-syntax-forward " " line-end))
                     (forward-sexp 1)))
             (scan-error))
           (comment-region start (point)))))))
