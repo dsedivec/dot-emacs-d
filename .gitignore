@@ -17,6 +17,8 @@
 /elpy
 /init-local.el
 /lisp/autoloads.el
+# This is probably created by lsp-mssql.
+/mssql
 /network-security.data
 /org-clock-save.el
 /org-roam.db

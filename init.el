@@ -260,6 +260,7 @@
                             loccur
                             lorem-ipsum
                             lsp-ivy
+                            lsp-mssql
                             lsp-mode
                             lsp-pyright
                             lsp-treemacs
@@ -3808,6 +3809,10 @@ everything else."
     (apply orig-fun args)))
 
 (with-eval-after-load 'sql
+  (with-eval-after-load 'lsp-mode
+    ;; Register LSP server for Microsoft SQL Server.  (Configuration
+    ;; in init-local.el.)
+    (require 'lsp-mssql nil t))
   (bind-keys :map sql-mode-map
              ;; C-c C-z should select the SQLi buffer, not just show it.
              ("C-c C-z" . sql-product-interactive)))
