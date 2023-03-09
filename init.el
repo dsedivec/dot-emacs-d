@@ -2530,10 +2530,11 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       ;; involved ideas.
       ivy-truncate-lines nil)
 
-(my:load-recipes 'ivy-special-switch-buffers
+(my:load-recipes 'ivy-dont-hide-collection-errors
                  'ivy-fuzzy-regex-combo-matcher
                  'ivy-regex-plus-or-literal-regex
-                 'ivy-rotate-preferred-builder-feedback)
+                 'ivy-rotate-preferred-builder-feedback
+                 'ivy-special-switch-buffers)
 
 ;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
 (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
