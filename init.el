@@ -577,10 +577,6 @@
 
 ;;; Themes
 
-(my:load-recipes 'custom-delete-compiled-theme)
-
-(add-to-list 'my:never-compiled-themes 'modus-vivendi)
-
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
 
