@@ -2039,7 +2039,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                        key-binding))))
 
   ;; Preference order of some Python checkers.
-  (let ((preferred-python-checkers '(python-mypy python-pyright python-pylint)))
+  (let ((preferred-python-checkers '(python-mypy python-pyright python-ruff python-pylint)))
     (setq flycheck-checkers
           (nconc (copy-tree preferred-python-checkers)
                  (seq-remove (lambda (checker)
@@ -2135,6 +2135,33 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;; 
 ;;   (setf (flycheck-checker-get 'python-mypy 'working-directory)
 ;;         #'my:flycheck-python-find-project-root))
+
+
+;; ruff
+(with-eval-after-load 'flycheck
+  (flycheck-define-checker python-ruff
+    "A Python syntax and style checker using the ruff utility.
+To override the path to the ruff executable, set
+`flycheck-python-ruff-executable'.
+See URL `http://pypi.python.org/pypi/ruff'."
+    :command ("ruff"
+              "--format=text"
+              (eval (when buffer-file-name
+                      (concat "--stdin-filename=" buffer-file-name)))
+              "-")
+    :standard-input t
+    :error-filter (lambda (errors)
+                    (let ((errors (flycheck-sanitize-errors errors)))
+                      (seq-map #'flycheck-flake8-fix-error-level errors)))
+    :error-patterns
+    ((warning line-start
+              (file-name) ":" line ":" (optional column ":") " "
+              (id (one-or-more (any alpha)) (one-or-more digit)) " "
+              (message (one-or-more not-newline))
+              line-end))
+    :modes python-mode)
+
+  (my:add-to-list-before 'flycheck-checkers 'python-ruff 'python-pylint))
 
 
 ;;; flycheck-clj-kondo
