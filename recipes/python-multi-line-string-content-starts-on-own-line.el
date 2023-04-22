@@ -14,10 +14,8 @@ JUSTIFY should be used (if applicable) as in `fill-paragraph'."
     (let* ((str-start-pos
             (set-marker
              (make-marker)
-             (or (python-syntax-context 'string)
-                 (and (equal (string-to-syntax "|")
-                             (syntax-after (point)))
-                      (point)))))
+             (python-info-triple-quoted-string-p)))
+           ;; JT@2021-09-21: Since bug#49518's fix this will always be 1
            (num-quotes (python-syntax-count-quotes
                         (char-after str-start-pos) str-start-pos))
            (el-patch-remove (str-line-start-pos
