@@ -3540,7 +3540,7 @@ everything else."
              ("M-m m F" . black-format-on-save-mode)
              ("C-c C-c" . my:python-shell-send-dwim)
              ("C-c C-b" . python-shell-send-buffer)
-             ("M-m m i" . my:python-add-import))
+             ("M-m m i" . my:python-add-import)))
 
 ;; (defun darker-format-buffer ()
 ;;   (interactive)
