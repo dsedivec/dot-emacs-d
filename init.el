@@ -2610,6 +2610,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; js2-mode
 
+;; Bigger files get parsed less often.  This should perhaps be halved
+;; to parse even less eagerly---it's really slow on "big" files.
+(setq js2-dynamic-idle-timer-adjust 8192)
+
 ;; https://elpa.gnu.org/packages/js2-mode.html
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
