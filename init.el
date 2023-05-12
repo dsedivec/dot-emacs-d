@@ -583,11 +583,13 @@
 
 (load-theme 'dsedivec t)
 
-(defun my:set-theme-for-macos-system-theme (&optional toggle)
+(defun my:set-theme-for-macos-system-theme (&optional toggle force)
   (interactive "P")
   (let* ((scpt (concat "tell application \"System Events\" to"
                        " get the dark mode of appearance preferences"
                        " as integer"))
+         ;; `cl-equalp' does case insensitive string comparison.
+         ;; "White" is the default background color on Emacs/macOS.
          (emacs-theme (if (cl-equalp (face-background 'default) "white")
                           'light
                         'dark))
@@ -598,9 +600,10 @@
                          ((zerop (ns-do-applescript scpt))
                           'light)
                          (t 'dark))))
-    (message "Configuring Emacs for %s theme" target-theme)
     (cl-assert (memq target-theme '(light dark)))
-    (unless (eq emacs-theme target-theme)
+    (if (and (not force) (eq emacs-theme target-theme))
+        (message "Emacs already configured for %s theme, no changes." target-theme)
+      (message "Configuring Emacs for %s theme." target-theme)
       (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
       (cl-ecase target-theme
         (light
@@ -621,8 +624,13 @@
         (with-current-buffer org-buf
           (org-mode-restart))))))
 
-;; Set the correct theme whenever starting Emacs.
-(add-hook 'after-init-hook #'my:set-theme-for-macos-system-theme)
+;; Forcibly set the correct theme whenever starting Emacs.  Forcing is
+;; important because desktop.el restores my theme, with all its
+;; parameters, including its background color, so the code in
+;; `my:set-theme-for-macos-system-theme' thinks the theme is set.  But
+;; it's not, and you end up with the first frame looking half-right,
+;; successive frames looking unthemed.
+(add-hook 'after-init-hook (lambda () (my:set-theme-for-macos-system-theme nil t)))
 
 
 ;;;; Configure various packages
