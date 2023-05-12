@@ -2817,6 +2817,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (smart-tabs-advise 'lua-indent-line 'lua-indent-level)
 
 
+;;; macrostep
+
+;; Until https://github.com/emacsorphanage/macrostep/issues/4 is fixed:
+(with-eval-after-load 'macrostep
+  (if (null (alist-get 'macrostep-mode minor-mode-map-alist))
+      (setf (alist-get 'macrostep-mode minor-mode-map-alist) macrostep-mode-keymap)
+    (warn "macrostep's keymap seems to be fixed, take this out of your init.el.")))
+
+
 ;;; magit
 
 ;; By default (as of https://github.com/magit/magit/pull/4237), Magit
