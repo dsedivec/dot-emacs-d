@@ -914,11 +914,34 @@
 ;;; apheleia
 
 (with-eval-after-load 'apheleia
-  ;; Note: Need Darker >= 1.4.0 to remove stray EOL in --stdout mode.
-  (setf (alist-get 'darker apheleia-formatters)
-        '("darker" "--isort" "--quiet" "--stdout" file))
-  (when (executable-find "darker")
-    (setf (alist-get 'python-mode apheleia-mode-alist) 'darker)))
+  (let ((have-isort (executable-find "isort"))
+        (have-darker (executable-find "darker"))
+        (python-modes '(python-mode python-ts-mode)))
+    (cond
+      (have-darker
+       ;; To my surprise, Darker works just fine on files outside any
+       ;; Git repository.  I assume it functions as Black in the
+       ;; absence of a Git repo.
+       ;;
+       ;; Need Darker >= 1.4.0 to remove stray EOL in --stdout mode.
+       (setf (alist-get 'darker apheleia-formatters)
+             (remq nil (list "darker"
+                             (when have-isort "--isort")
+                             "--quiet" "--stdout" 'file)))
+       (dolist (mode python-modes)
+         (setf (alist-get mode apheleia-mode-alist) 'darker)))
+      (have-isort
+       (dolist (mode python-modes)
+         (let* ((cell (assq mode apheleia-mode-alist))
+                (current-checkers (cdr cell)))
+           (if (or (eq current-checkers 'isort)
+                   (and (listp current-checkers) (memq 'isort current-checkers)))
+               (warn (concat "Apheleia has already set `isort' as a `%S'"
+                             " formatter?  Fix your init.el.")
+                     mode)
+             (setcdr cell (cons 'isort (if (consp current-checkers)
+                                           current-checkers
+                                         (list current-checkers)))))))))))
 
 
 ;;; atomic-chrome
