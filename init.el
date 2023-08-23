@@ -2804,6 +2804,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; lsp-pyright
 
+(setq lsp-pyright-multi-root nil)
+(when (featurep 'lsp-pyright)
+  (warn "Feature lsp-pyright present, set `lsp-pyright-multi-root' too late."))
+
 (my:with-eval-after-all-load '(python lsp-mode)
   (require 'lsp-pyright)
 
