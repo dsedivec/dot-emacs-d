@@ -913,7 +913,7 @@
 
 ;;; apheleia
 
-(with-eval-after-load 'apheleia
+(with-eval-after-load 'apheleia-core
   (let ((have-isort (executable-find "isort"))
         (have-darker (executable-find "darker"))
         (python-modes '(python-mode python-ts-mode)))
