@@ -58,10 +58,6 @@
     (load my:local-packages-autoload-file)
   (my:update-local-package-autoloads))
 
-;; Not "packages", but bits of Elisp I need to keep out of my public
-;; Git repo.
-(defvar my:private-lisp-dir (expand-file-name "private" user-emacs-directory))
-
 
 ;;; "Recipes"
 
@@ -3311,10 +3307,6 @@ everything else."
 ;; too.  But there's probably a better way to do this.
 (add-hook 'org-property-allowed-value-functions
           #'my:org-todo-allowed-projects)
-
-;; Private stuff that doesn't get checked into Git.
-(dolist (file-name '("org" "open-ticket"))
-  (load (expand-file-name file-name my:private-lisp-dir) t))
 
 
 ;;; org-download
