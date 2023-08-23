@@ -104,6 +104,16 @@ possibilities can be narrowed to specific indentation points."
         (`(,(or :inside-paren-newline-start-from-block) . ,start)
          (goto-char start)
          (+ (current-indentation)
-            (* python-indent-offset python-indent-def-block-scale))))))
+            (* python-indent-offset python-indent-def-block-scale)))
+        (`(,:inside-paren-from-block . ,start)
+         (goto-char start)
+         (let ((column (current-column)))
+           (if (and python-indent-block-paren-deeper
+                    (= column (+ (save-excursion
+                                   (python-nav-beginning-of-statement)
+                                   (current-indentation))
+                                 python-indent-offset)))
+               (+ column python-indent-offset)
+             column))))))
 
   (el-patch-validate 'python-indent--calculate-indentation 'defun t))
