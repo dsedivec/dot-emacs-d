@@ -3385,7 +3385,8 @@ everything else."
              ("M-m j s" . paredit-split-sexp))
 
   (my:load-recipes 'paredit-delsel
-                   'paredit-kill-whole-line))
+                   'paredit-kill-whole-line
+                   'paredit-fix-ielm))
 
 
 ;;; paren
