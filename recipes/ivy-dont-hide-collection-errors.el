@@ -17,7 +17,7 @@
                 (error
                  (el-patch-wrap 2 1
                    (condition-case nil
-                       (funcall (ivy-state-collection ivy-last) input nil nil)
+                       (funcall (ivy-state-collection ivy-last) input nil t)
                      (wrong-number-of-arguments
                       (signal (car err) (cdr err)))))))))
     (if (listp coll)

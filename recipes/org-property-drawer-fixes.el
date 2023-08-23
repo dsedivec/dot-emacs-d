@@ -159,8 +159,8 @@ narrowing."
               ;; Try to find existing drawer.
               (while (re-search-forward regexp end t)
                 (let ((element (org-element-at-point)))
-                  (when (eq (org-element-type element) 'drawer)
-                    (let ((cend  (org-element-property :contents-end element)))
+                  (when (org-element-type-p element 'drawer)
+                    (let ((cend  (org-element-contents-end element)))
                       (when (and (not org-log-states-order-reversed) cend)
                         (goto-char cend)))
                     (throw 'exit nil))))
@@ -194,11 +194,11 @@ narrowing."
           (org-end-of-meta-data org-log-state-notes-insert-after-drawers)
           (let ((endpos (point)))
             (skip-chars-forward " \t\n")
-            (beginning-of-line)
+            (forward-line 0)
             (unless org-log-states-order-reversed
               (org-skip-over-state-notes)
               (skip-chars-backward " \t\n")
-              (beginning-of-line 2))
+              (forward-line 1))
             ;; When current headline is at the end of buffer and does not
             ;; end with trailing newline the above can move to the
             ;; beginning of the headline.
