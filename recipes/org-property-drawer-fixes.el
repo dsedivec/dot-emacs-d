@@ -131,3 +131,78 @@
         ;; mode?)
         (forward-char -1)))
     removed))
+
+
+;;; 3. Newlines after drawer
+
+;; org-mode started leaving extra newline at end of drawer, and it's
+;; annoying to me.  This removes it.  See comment below.
+
+(el-patch-feature 'org)
+
+(with-eval-after-load 'org
+  (el-patch-defun org-log-beginning (&optional create)
+    "Return expected start of log notes in current entry.
+When optional argument CREATE is non-nil, the function creates
+a drawer to store notes, if necessary.  Returned position ignores
+narrowing."
+    (org-with-wide-buffer
+     (let ((drawer (org-log-into-drawer)))
+       (cond
+         (drawer
+          (org-end-of-meta-data)
+          (let ((regexp (concat "^[ \t]*:" (regexp-quote drawer) ":[ \t]*$"))
+                (end (if (org-at-heading-p) (point)
+                       (save-excursion (outline-next-heading) (point))))
+                (case-fold-search t))
+            (catch 'exit
+              ;; Try to find existing drawer.
+              (while (re-search-forward regexp end t)
+                (let ((element (org-element-at-point)))
+                  (when (eq (org-element-type element) 'drawer)
+                    (let ((cend  (org-element-property :contents-end element)))
+                      (when (and (not org-log-states-order-reversed) cend)
+                        (goto-char cend)))
+                    (throw 'exit nil))))
+              ;; No drawer found.  Create one, if permitted.
+              (when create
+                ;; Unless current heading is the last heading in buffer
+                ;; and does not have a newline, `org-end-of-meta-data'
+                ;; should move us somewhere below the heading.
+                ;; Avoid situation when we insert drawer right before
+                ;; first "*".  Otherwise, if the previous heading is
+                ;; folded, we are inserting after visible newline at
+                ;; the end of the fold, thus breaking the fold
+                ;; continuity.
+                (unless (eobp)
+                  (when (org-at-heading-p) (backward-char)))
+                (org-fold-core-ignore-modifications
+                  (unless (bolp) (insert-and-inherit "\n"))
+                  (let ((beg (point)))
+                    ;; Changes here to prevent extra newline added
+                    ;; after :END:.  Maybe ca. commit f63ff07441.
+                    (insert-and-inherit ":" drawer (el-patch-swap ":\n:END:\n"
+                                                                  ":\n:END:"))
+                    (el-patch-add
+                      (if (eolp)
+                          (forward-line 1)
+                        (insert-and-inherit "\n")))
+                    (org-indent-region beg (point))
+                    (org-fold-region (line-end-position -1) (1- (point)) t (if (eq org-fold-core-style 'text-properties) 'drawer 'outline)))))
+              (end-of-line -1))))
+         (t
+          (org-end-of-meta-data org-log-state-notes-insert-after-drawers)
+          (let ((endpos (point)))
+            (skip-chars-forward " \t\n")
+            (beginning-of-line)
+            (unless org-log-states-order-reversed
+              (org-skip-over-state-notes)
+              (skip-chars-backward " \t\n")
+              (beginning-of-line 2))
+            ;; When current headline is at the end of buffer and does not
+            ;; end with trailing newline the above can move to the
+            ;; beginning of the headline.
+            (when (< (point) endpos) (goto-char endpos))))))
+     (if (bolp) (point) (line-beginning-position 2))))
+
+  (el-patch-validate 'org-log-beginning 'defun t))
