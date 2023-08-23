@@ -4481,7 +4481,12 @@ a string or comment."
                     :server-id 'terraform-ls))
 
   (setf (alist-get 'terraform-mode my:lsp-flycheck-extra-checkers-alist)
-        '(terraform-tflint)))
+        '(terraform-tflint))
+
+  ;; Disable Hashicorp's less feature-ful (their claim) LSP server
+  ;; when the more feature-ful one is available.
+  (when (executable-find "terraform-lsp")
+    (cl-pushnew 'tfmls (alist-get 'terraform-mode lsp-disabled-clients))))
 
 
 ;;; tool-bar
