@@ -97,8 +97,7 @@ off/on.")
   '((default . (face tabs spaces trailing lines space-before-tab newline
                 indentation empty space-after-tab
                 space-mark tab-mark newline-mark))
-    (warn-white-space . (face trailing lines-tail empty space-before-tab
-                         indentation))))
+    (warn-white-space . (face trailing empty space-before-tab indentation))))
 
 ;;;###autoload
 (defun wspc-hydra-apply-style (style-name)
