@@ -3171,6 +3171,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
            ("M-m a o k g" . org-clock-goto))
 
 (with-eval-after-load 'org
+  (require 'ox-md)
+
   (my:load-recipes
    'org-babel-read-table-in-dblock
    'org-columns-delete-property
