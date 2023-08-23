@@ -3910,7 +3910,14 @@ everything else."
   (add-to-list 'sql-postgres-options "--no-readline")
 
   ;; PostgreSQL connections should ask for the port.
-  (add-to-list 'sql-postgres-login-params 'port t))
+  (add-to-list 'sql-postgres-login-params 'port t)
+
+  ;; Additional MSSQL keywords.
+  (push (sql-font-lock-keywords-builder 'font-lock-type-face nil "bigint")
+        sql-mode-ms-font-lock-keywords)
+  (push (sql-font-lock-keywords-builder 'font-lock-builtin-face
+                                        nil "sysdatetimeoffset")
+        sql-mode-ms-font-lock-keywords))
 
 ;; Used by my expand-region setup, see below.
 (defun my:sql-mark-statement ()
