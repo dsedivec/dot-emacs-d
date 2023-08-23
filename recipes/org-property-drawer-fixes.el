@@ -42,7 +42,7 @@
                (outline-hide-subtree))
               (t
                (re-search-forward org-property-drawer-re)
-               (org-hide-drawer-toggle t)))))))
+               (org-fold-hide-drawer-toggle t)))))))
 
 (advice-add 'org-insert-property-drawer :around
             #'my:org-hide-property-drawer-after-creation)
