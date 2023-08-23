@@ -127,6 +127,18 @@ taken from the docstring of a minor mode function defined by
   (put repeat-cmd-name 'function-documentation
        (format "Repeatable version of `%S'." regular-cmd-name)))
 
+(defmacro my:key-binding-with-modes-off (modes &optional command-keys-vector)
+  "Return the original binding of some command keys with all MODES off.
+
+Command keys vector defaults to the return value from
+`this-command-keys-vector', which should be the keys used to run
+the current command.
+
+I use this to find out what a key would be bound to with one or
+more minor modes turned off."
+  `(let (,@(mapcar (lambda (mode) (list mode nil)) modes))
+     (key-binding ,(or command-keys-vector '(this-command-keys-vector)))))
+
 (defun my:insert-time-stamp ()
   (interactive)
   (insert (format-time-string "%FT%T%:::z")))
