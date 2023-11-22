@@ -302,11 +302,10 @@
                             terraform-doc
                             terraform-mode
                             transpose-frame
-                            tree-sitter
-                            tree-sitter-langs
                             treemacs
                             treemacs-projectile
                             treepy
+                            treesit-auto
                             undo-tree
                             unfill
                             vcl-mode
@@ -4495,16 +4494,6 @@ a string or comment."
 (tool-bar-mode -1)
 
 
-;;; tree-sitter
-
-(require 'tree-sitter)
-(require 'tree-sitter-langs)
-
-(add-hook 'tree-sitter-mode-hook 'tree-sitter-hl-mode)
-
-(global-tree-sitter-mode 1)
-
-
 ;;; treemacs
 
 (setq ;; treemacs-python-executable "/opt/local/bin/python3"
@@ -4526,6 +4515,21 @@ a string or comment."
   ;; I have a high DPI display---but I don't think NS Emacs is able to
   ;; use it.  22 is too big, 44 is *way* too big!
   (treemacs-resize-icons 11))
+
+
+;;; treesit
+
+(setf (alist-get 'jsonnet treesit-language-source-alist)
+      '("https://github.com/sourcegraph/tree-sitter-jsonnet"))
+
+
+;;; treesit-auto
+
+(require 'treesit-auto)
+
+(setq treesit-auto-install 'prompt)
+
+(global-treesit-auto-mode 1)
 
 
 ;;; two-column
