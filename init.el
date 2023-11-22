@@ -4493,7 +4493,11 @@ a string or comment."
   ;; `company-capf' here for LSP's sake.
   (setq-local company-backends '(company-capf
                                  (company-terraform company-dabbrev-code)
-                                 company-files)))
+                                 company-files))
+  ;; `company-tng-mode' disables LSP snippets by default.  You really
+  ;; want these in Terraform.  Let's see if we can turn them on
+  ;; locally...
+  (setq-local lsp-enable-snippet t))
 
 (my:add-hooks 'terraform-mode-hook
   #'terraform-format-on-save-mode
