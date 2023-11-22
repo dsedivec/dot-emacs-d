@@ -41,6 +41,7 @@
         org-beginning-of-line
         org-delete-char
         org-end-of-line
+        org-force-self-insert
         org-meta-return
         org-metaright
         org-self-insert-command
@@ -65,6 +66,7 @@
         paredit-split-sexp
         paredit-wrap-round
         shift-number-up
+        transpose-sexps
         undo-only
         web-mode-element-vanish
         yaml-electric-backspace
