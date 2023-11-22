@@ -307,6 +307,7 @@
                             treemacs-projectile
                             treepy
                             treesit-auto
+                            typescript-mode
                             undo-tree
                             unfill
                             vcl-mode
@@ -4574,6 +4575,14 @@ a string or comment."
 (if (eq (lookup-key global-map (kbd "<f2>")) '2C-command)
     (unbind-key "<f2>")
   (warn "<f2> is no longer `2C-command', update your init.el"))
+
+
+;;; typescript-mode
+
+(defun my:typescript-mode-hook ()
+  (setq indent-tabs-mode nil))
+
+(add-hook 'typescript-mode #'my:typescript-mode-hook)
 
 
 ;;; undo-tree
