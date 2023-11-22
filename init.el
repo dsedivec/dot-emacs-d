@@ -273,6 +273,7 @@
                             multiple-cursors
                             mwim
                             nhexl-mode
+                            obsidian
                             olivetti
                             org-download
                             (org-roam :branch "main")
@@ -3048,6 +3049,30 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;;; newcomment
 
 (setq comment-empty-lines 'eol)
+
+
+;;; obsidian
+
+(obsidian-specify-path "~/Documents/Obsidian")
+
+(with-eval-after-load 'obsidian
+  (bind-keys :map obsidian-mode-map
+             ("C-c C-o" . obsidian-follow-link-at-point)
+             ("C-c C-l" . obsidian-insert-wikilink)
+             ("C-c C-b" . obsidian-backlink-jump)))
+
+(my:add-hooks 'obsidian-mode-hook
+  #'idle-save-buffer-mode)
+
+;; Activate detection of Obsidian vault
+(global-obsidian-mode t)
+
+(defvar my:obsidian-daily-prefix (file-name-concat obsidian-directory "Main"))
+
+(defun my:obsidian-daily ()
+  (interactive)
+  (let ((date-file-name (format-time-string "%Y-%m-%d.md")))
+    (find-file (expand-file-name date-file-name my:obsidian-daily-prefix))))
 
 
 ;;; olivetti
