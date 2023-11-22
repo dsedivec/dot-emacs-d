@@ -415,6 +415,12 @@
   ;; also need to do this for the "symbol script".  (You can see this
   ;; in `describe-char' output.)
   (set-fontset-font t 'symbol '("Apple Color Emoji" . "iso10646-1") nil 'prepend)
+  ;; I added these two when I found the SQUARED LATIN CAPITAL LETTER M
+  ;; (U+1F13C) (🄼) was no longer displaying, maybe after I upgraded to
+  ;; Ventura.  Apple Symbols has it, but I *think* I prefer the SF Pro
+  ;; version of it.
+  (set-fontset-font t 'symbol '("Apple Symbols" . "iso10646-1") nil 'prepend)
+  (set-fontset-font t 'symbol '("SF Pro" . "iso10646-1") nil 'prepend)
 
   ;; As of 9370a4763aac, `ns-popup-font-panel' is apparently gone.
   ;; The menu bar has its own `menu-set-font' that I'm going to crib
