@@ -12,6 +12,7 @@
 /auto-save-list
 /bookmarks
 /company-statistics-cache.el
+/elgrep-data.el
 /eln-cache/
 /elpa
 /elpy
@@ -32,7 +33,6 @@
 /straight/
 /tramp
 /transient
+/tree-sitter/
 /url
 /var
-/tree-sitter/
-/elgrep-data.el
