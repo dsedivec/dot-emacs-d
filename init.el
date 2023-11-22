@@ -207,6 +207,7 @@
                             dired-narrow
                             dired-ranger
                             dockerfile-mode
+                            dotenv-mode
                             dtrt-indent
                             dumb-jump
                             edit-indirect
