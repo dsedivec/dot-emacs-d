@@ -1936,17 +1936,16 @@ surround \"foo\" with (in this example) parentheses.  I want
 ;; Make `adaptive-fill-mode' recognize numbered lists as well.
 
 (unless (equal (my:get-standard-value 'adaptive-fill-regexp)
-               "[ \t]*\\([-–!|#%;>*·•‣⁃◦]+[ \t]*\\)*")
-  (warn "`adaptive-fill-regexp' changed from 27.0.50 value, check your mod"))
+               "[-–!|#%;>*·•‣⁃◦ \t]*")
+  (warn "`adaptive-fill-regexp' changed from 30.0.50 value, check your mod"))
 
-(setq adaptive-fill-regexp (rx (* (any ?\s ?\t))
-                               (* (group (or
-                                          ;; List of "bullet-like" characters
-                                          ;; taken from original value.
-                                          (1+ (any "-–!|#%;>*·•‣⁃◦"))
-                                          ;; Here's the numbered list bit.
-                                          (: (1+ digit) ?.))
-                                         (* (any ?\s ?\t))))))
+(setq adaptive-fill-regexp
+      (rx (or
+           ;; Original regexp.
+           (* (any "[-–!|#%;>*·•‣⁃◦ \t]*"))
+           ;; Numbered lists.  I wonder why RMS took this out...  (See
+           ;; comment in fill.el.)
+           (: (1+ digit) ?.))))
 
 
 ;;; find-func
