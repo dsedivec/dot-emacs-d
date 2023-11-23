@@ -999,7 +999,7 @@ Makes it hard to use things like `mc/mark-more-like-this-extended'."
 (advice-add 'ahs-highlight-p :before-while
             #'my:ahs-dont-highlight-while-command-in-progress)
 
-;;; XXX RECIPE
+;; XXX RECIPE
 (with-eval-after-load 'auto-highlight-symbol
   (el-patch-defun ahs-change-range (&optional range nomsg)
     "Current plugin change to `RANGE' plugin. `RANGE' defaults to next runnable
