@@ -1612,7 +1612,38 @@ plugin."
 
 ;; I get real annoyed with dtrt-indent doesn't engage in sh-mode
 ;; buffers, just because sh-mode uses SMIE.
-(setq dtrt-indent-run-after-smie t)
+;;(setq dtrt-indent-run-after-smie t)
+;;
+;; Wait, stop, don't use that setting.  It causes dtrt-indent to call
+;; `smie-config-guess', which behaves just horribly in sh-mode, and I
+;; bet it behaves horribly everywhere else too.
+;;
+;; Let's just patch out all this SMIE special-casing.
+
+(el-patch-feature 'dtrt-indent)
+
+(el-patch-define-minor-mode dtrt-indent-mode
+    "Toggle dtrt-indent mode.
+With no argument, this command toggles the mode.  Non-null prefix
+argument turns on the mode.  Null prefix argument turns off the
+mode.
+
+When dtrt-indent mode is enabled, the proper indentation offset
+and `indent-tabs-mode' will be guessed for newly opened files and
+adjusted transparently."
+  :lighter " dtrt-indent"
+  :group 'dtrt-indent
+  (if dtrt-indent-mode
+      (el-patch-splice 3 0
+        (if (and (featurep 'smie) (not (null smie-grammar)) (not (eq smie-grammar 'unset)))
+            (progn
+              (when (null smie-config--buffer-local) (smie-config-guess))
+              (when dtrt-indent-run-after-smie
+                (dtrt-indent-try-set-offset)))
+          (dtrt-indent-try-set-offset)))
+    (dtrt-indent-undo)))
+
+(el-patch-validate 'dtrt-indent-mode 'define-minor-mode t)
 
 (dtrt-indent-global-mode 1)
 
