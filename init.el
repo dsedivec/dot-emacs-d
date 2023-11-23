@@ -3790,7 +3790,7 @@ everything else."
 
 ;;; sh-script
 
-(defun my:sh-mode-hook ()
+(defun my:sh-base-mode-hook ()
   (my:setq-local indent-tabs-mode t
                  tab-width 4
                  ;; Mode name "Shell-script" too long!
@@ -3802,7 +3802,7 @@ everything else."
 
 ;; Probably do want `my:warn-white-space-mode' to come after
 ;; `my:sh-mode-hook' which sets `tab-width'.
-(my:add-hooks 'sh-mode-hook
+(my:add-hooks 'sh-base-mode-hook
   #'my:warn-white-space-mode
   #'smart-tabs-mode
   #'my:sh-mode-hook)
