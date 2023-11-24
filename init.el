@@ -2210,7 +2210,8 @@ To override the path to the ruff executable, set
 `flycheck-python-ruff-executable'.
 See URL `http://pypi.python.org/pypi/ruff'."
     :command ("ruff"
-              "--format=text"
+              "check"
+              "--output-format=text"
               (eval (when buffer-file-name
                       (concat "--stdin-filename=" buffer-file-name)))
               "-")
