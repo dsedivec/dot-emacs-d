@@ -18,7 +18,13 @@
                             (substring orig-quote 0 1)
                           (make-string 3 (elt orig-quote 0))))
              (start-mark (point-marker)))
-        (forward-sexp 1)
+        ;; `forward-sexp' is broken in Python modes.
+        ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=56135
+        ;;(forward-sexp 1)
+        ;; Best effort, buggy.  Will probably work 98% of the time.
+        (forward-char (length orig-quote))
+        (re-search-forward (regexp-quote orig-quote))
+        ;; End best effort, resume relatively normal code.
         (forward-char (- (length orig-quote)))
         (unless (looking-at orig-quote)
           (error "Did not find expected end quotes %S at %d."
