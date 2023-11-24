@@ -1622,8 +1622,9 @@ plugin."
 
 (el-patch-feature 'dtrt-indent)
 
-(el-patch-define-minor-mode dtrt-indent-mode
-    "Toggle dtrt-indent mode.
+(with-eval-after-load 'dtrt-indent
+  (el-patch-define-minor-mode dtrt-indent-mode
+      "Toggle dtrt-indent mode.
 With no argument, this command toggles the mode.  Non-null prefix
 argument turns on the mode.  Null prefix argument turns off the
 mode.
@@ -1631,19 +1632,19 @@ mode.
 When dtrt-indent mode is enabled, the proper indentation offset
 and `indent-tabs-mode' will be guessed for newly opened files and
 adjusted transparently."
-  :lighter " dtrt-indent"
-  :group 'dtrt-indent
-  (if dtrt-indent-mode
-      (el-patch-splice 3 0
-        (if (and (featurep 'smie) (not (null smie-grammar)) (not (eq smie-grammar 'unset)))
-            (progn
-              (when (null smie-config--buffer-local) (smie-config-guess))
-              (when dtrt-indent-run-after-smie
-                (dtrt-indent-try-set-offset)))
-          (dtrt-indent-try-set-offset)))
-    (dtrt-indent-undo)))
+    :lighter " dtrt-indent"
+    :group 'dtrt-indent
+    (if dtrt-indent-mode
+        (el-patch-splice 3 0
+          (if (and (featurep 'smie) (not (null smie-grammar)) (not (eq smie-grammar 'unset)))
+              (progn
+                (when (null smie-config--buffer-local) (smie-config-guess))
+                (when dtrt-indent-run-after-smie
+                  (dtrt-indent-try-set-offset)))
+            (dtrt-indent-try-set-offset)))
+      (dtrt-indent-undo)))
 
-(el-patch-validate 'dtrt-indent-mode 'define-minor-mode t)
+  (el-patch-validate 'dtrt-indent-mode 'define-minor-mode t))
 
 (dtrt-indent-global-mode 1)
 
