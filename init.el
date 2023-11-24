@@ -908,7 +908,7 @@
 (defun my:use-anaconda-mode-if-no-lsp ()
   (add-hook 'my:use-lsp-no-lsp-hook #'my:anaconda-mode-turn-on nil t))
 
-(add-hook 'python-mode-hook #'my:use-anaconda-mode-if-no-lsp)
+(add-hook 'python-base-mode-hook #'my:use-anaconda-mode-if-no-lsp)
 
 (with-eval-after-load 'anaconda-mode
   (bind-keys :map anaconda-mode-map
@@ -3656,7 +3656,7 @@ everything else."
    'python-up-list-in-strings-and-comments
    )
 
-  (bind-keys :map python-mode-map
+  (bind-keys :map python-base-mode-map
              ("M-m m q" . my:python-toggle-triple-quotes)
              ("C-c '" . my:python-edit-indirect-dwim)
              ("M-m m f" . my:python-reformat-region-or-buffer)
