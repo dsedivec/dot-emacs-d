@@ -3621,7 +3621,8 @@ everything else."
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
   #'smart-tabs-mode
-  #'subword-mode)
+  #'subword-mode
+  #'apheleia-mode)
 
 (smart-tabs-advise 'python-indent-line 'python-indent-offset)
 (smart-tabs-advise 'python-indent-region 'python-indent-offset)
