@@ -2225,7 +2225,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
               (id (one-or-more (any alpha)) (one-or-more digit)) " "
               (message (one-or-more not-newline))
               line-end))
-    :modes python-mode)
+    :modes (python-mode python-ts-mode))
 
   (my:add-to-list-before 'flycheck-checkers 'python-ruff 'python-pylint))
 
@@ -3616,7 +3616,7 @@ everything else."
                   (rx (or (: any-indent-space "#:" any-indent-space)
                           (regexp adaptive-fill-regexp)))))))
 
-(my:add-hooks 'python-mode-hook
+(my:add-hooks 'python-base-mode-hook
   #'my:python-mode-hook
   #'my:warn-white-space-mode
   #'electric-pair-local-mode
