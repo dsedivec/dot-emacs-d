@@ -1048,7 +1048,9 @@ plugin."
 
 (bind-keys ("C-'" . avy-goto-char)
            ("M-g g" . avy-goto-line)
-           ("M-g M-g" . avy-goto-line))
+           ("M-g M-g" . avy-goto-line)
+           ;; IntelliJ's limitations have broken me.
+           ("M-g M-l" . avy-goto-line))
 
 
 ;;; bibtex
