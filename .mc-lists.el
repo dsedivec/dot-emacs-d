@@ -11,6 +11,7 @@
         TeX-newline
         backward-sexp
         clojure-convert-collection-to-list
+        cycle-spacing
         dabbrev-expand
         delete-horizontal-space
         delete-indentation
