@@ -2780,7 +2780,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-hook 'lsp-mode-hook 'lsp-enable-which-key-integration)
 
   (bind-keys :map lsp-mode-map
-             ("M-<f7>" . lsp-find-references))
+             ("M-<f7>" . lsp-find-references)
+             ("M-<left>" . lsp-ui-find-prev-reference)
+             ("M-<right>" . lsp-ui-find-next-reference))
 
   (dolist (dir-name '(".venv" ".direnv" ".pytest_cache" ".mypy_cache"
                       "__pycache__"))
