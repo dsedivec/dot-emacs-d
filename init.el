@@ -1605,6 +1605,11 @@ plugin."
     (add-to-list 'dired-omit-extensions ext)))
 
 
+;;; display-line-numbers
+
+(setq display-line-numbers-width (+ 88 5))
+
+
 ;;; dtrt-indent
 
 ;; Do this before dtrt-indent gets loaded, hopefully.
@@ -2011,7 +2016,11 @@ surround \"foo\" with (in this example) parentheses.  I want
               (window-parameter window 'window-side))
     '(
       ;; 80
-      88
+      ;; 88
+      ;; 93 = 88 + 5 columns for line numbers
+      ;; 93
+      ;; 94 = 88 + 5 columns for line numbers + 1 columns for Lord RMS??
+      94
       ;; 95
       nil)))
 
