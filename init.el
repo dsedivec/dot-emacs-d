@@ -897,6 +897,37 @@
 
 (setq amx-history-length 500)
 
+;; XXX bug fix?
+
+(defun my:amx-post-eval-force-update-improved (orig-fun fundef &rest args)
+  "Schedule an amx update the next time Emacs is idle.
+
+But this time, don't keep invalidating the hook every time
+`ctrlf-local-mode' runs in the echo area due to eldoc, and ctrlf
+uses a lambda, and for some reason that triggers some weird
+`autoload-do-load' call, which ends up invalidating amx's cache
+every time eldoc runs, and you get weird pauses that eat C-g
+basically every time eldoc's idle hook runs.  Fuck me."
+  (let ((result (apply orig-fun fundef args)))
+    ;; Read the source for `autoload-do-load': there are various cases
+    ;; where it returns FUNDEF, all of which look like no-ops.  If we
+    ;; did a no-op, then don't trigger amx to rebuild its cache (which
+    ;; is quite expensive).
+    (unless (eq result fundef)
+      (condition-case-unless-debug err
+          (amx-post-eval-force-update)
+        (error
+         (warn "`my:amx-post-eval-force-update-improved' ignoring error: %S" err))))
+    result))
+
+(with-eval-after-load 'amx
+  (condition-case-unless-debug err
+      (advice-remove 'autoload-do-load #'amx-post-eval-force-update)
+    (error
+     (warn "Ignoring error removing amx advice from `autoload-do-load': %S" err))
+    (:success
+     (advice-add 'autoload-do-load :around #'my:amx-post-eval-force-update-improved))))
+
 
 ;;; anaconda-mode
 
@@ -1520,6 +1551,59 @@ plugin."
 
 (setq ctrlf-default-search-style 'fuzzy-regexp
       ctrlf-alternate-search-style 'literal)
+
+;; XXX bug fix?
+;;
+;; The `eval-after-load' is now calling some
+;; `cconv-make-interpreted-closure' function (I think that's the one),
+;; which in turn ends up in `macroexpand-1' eventually, which calls
+;; `autoload-do-load'--all told, *way* too fucking much is happening
+;; in `ctrlf-local-mode', and motherfucker runs every single time
+;; eldoc puts something in the echo area, for example (which may
+;; itself be unintended).  Try and take it out, see if this fixes the
+;; annoying AF pauses.
+
+(el-patch-feature ctrlf)
+
+(with-eval-after-load 'ctrlf
+  (el-patch-define-minor-mode ctrlf-local-mode
+      "Minor mode to use CTRLF in place of Isearch."
+    :keymap ctrlf-mode-map
+    (require 'map)
+    ;; Weird indentation to make things indent the same in both Emacs
+    ;; 28 and Emacs 29, because apparently something changed?
+    (let (( default-ctrlf-mode-bindings
+           (eval (car (get 'ctrlf-mode-bindings 'standard-value)))))
+      (when (and ctrlf-local-mode
+                 default-ctrlf-mode-bindings
+                 (not (equal ctrlf-mode-bindings default-ctrlf-mode-bindings)))
+        (when ctrlf--ctrlf-mode-bindings-deprecation-warning
+          (message "Variable `ctrlf-mode-bindings' is deprecated. Please use \
+`ctrlf-mode-map' to customize your keybindings instead.")
+          (setq ctrlf--ctrlf-mode-bindings-deprecation-warning nil))
+        ;; Hack to clear out keymap. Presumably there's a `clear-keymap'
+        ;; function lying around somewhere...?
+        (setcdr ctrlf-mode-map nil)
+        (map-apply
+         (lambda (key cmd)
+           (when (stringp key)
+             (setq key (kbd key)))
+           (define-key ctrlf-mode-map key cmd))
+         ctrlf-mode-bindings)))
+    (el-patch-splice 2 0
+      (with-eval-after-load 'ctrlf
+        ;; TODO: This appears to have a bug where if CTRLF is enabled
+        ;; globally, then disabled in a particular buffer, then the
+        ;; advice will be removed globally. Instead, it should be
+        ;; removed only when there are no buffers remaining with CTRLF
+        ;; enabled.
+        (if ctrlf-local-mode
+            (advice-add #'minibuffer-message :around
+                        #'ctrlf--minibuffer-message-condense)
+          (advice-remove #'minibuffer-message
+                         #'ctrlf--minibuffer-message-condense)))))
+
+  (el-patch-validate 'ctrlf-local-mode 'define-minor-mode t))
 
 
 ;;; deft
