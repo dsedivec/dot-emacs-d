@@ -2200,7 +2200,7 @@ surround \"foo\" with (in this example) parentheses.  I want
                        key-binding))))
 
   ;; Preference order of some Python checkers.
-  (let ((preferred-python-checkers '(python-mypy python-pyright python-ruff python-pylint)))
+  (let ((preferred-python-checkers '(python-ruff python-mypy python-pyright python-pylint)))
     (setq flycheck-checkers
           (nconc (copy-tree preferred-python-checkers)
                  (seq-remove (lambda (checker)
@@ -2209,10 +2209,6 @@ surround \"foo\" with (in this example) parentheses.  I want
 
   ;; pylint is expensive to run, only run it on save.
   (setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
-
-  ;; Chain pylint after Mypy or Pyright.
-  (dolist (checker '(python-mypy python-pyright))
-    (flycheck-add-next-checker checker 'python-pylint))
 
   (my:load-recipes 'flycheck-python-pylint-detect-tabs))
 
@@ -2322,6 +2318,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
               (message (one-or-more not-newline))
               line-end))
     :modes (python-mode python-ts-mode))
+
+  ;; Chain Pyright after Ruff.
+  (flycheck-add-next-checker 'python-ruff 'python-pyright)
 
   (my:add-to-list-before 'flycheck-checkers 'python-ruff 'python-pylint))
 
