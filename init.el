@@ -3904,7 +3904,7 @@ everything else."
 (my:add-hooks 'sh-base-mode-hook
   #'my:warn-white-space-mode
   #'smart-tabs-mode
-  #'my:sh-mode-hook)
+  #'my:sh-base-mode-hook)
 
 ;; XXX This is a bad idea, since it potentially steps on any other
 ;; modes that use smie.  Need to find a better way.
