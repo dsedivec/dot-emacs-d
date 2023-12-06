@@ -4695,6 +4695,12 @@ a string or comment."
 
 (setq treesit-auto-install 'prompt)
 
+;; It turns out that `yaml-ts-mode' is built-in, and somehow awful?
+;; It has no indentation settings as of 2023-11-25?
+;; https://redd.it/17gtxmr
+(setq treesit-auto-langs (seq-difference treesit-auto-langs
+                                         '(yaml)))
+
 (global-treesit-auto-mode 1)
 
 
