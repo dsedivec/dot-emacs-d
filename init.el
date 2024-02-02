@@ -15,7 +15,7 @@
   ;; Emacs is going to be running ld early and often, it needs to run
   ;; the one from MacPorts that might know about libgccjit.  Note that
   ;; this will later be overwritten by my use of exec-path-from-shell.
-  (setenv "PATH" (concat "/opt/local/bin:/usr/local/bin:"
+  (setenv "PATH" (concat "/opt/homebrew/bin:/opt/local/bin:/usr/local/bin:"
                          (or (getenv "PATH") "/bin:/usr/bin")))
 
   ;; Don't pop up *Warnings* for native-comp warnings because the
