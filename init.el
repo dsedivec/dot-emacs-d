@@ -1747,6 +1747,10 @@ adjusted transparently."
     (whitespace-mode -1)
     (whitespace-mode 1)))
 
+;; `conf-mode' and its derivatives are all based on
+;; `fundamental-mode', which dtrt-indent doesn't hook into.
+(add-hook 'conf-mode-hook #'dtrt-indent-mode)
+
 
 ;;; dumb-jump
 
@@ -2599,6 +2603,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;;; hl-todo
 
 (global-hl-todo-mode 1)
+
+(with-eval-after-load 'hl-todo
+  ;; `conf-mode' (and it's derivatives) derive from `fundamental-mode'
+  ;; (to my surprise).
+  (add-to-list 'hl-todo-include-modes 'conf-mode))
 
 (if-let ((xxx-face (assoc "XXXX*" hl-todo-keyword-faces)))
     (setf (cdr xxx-face)
