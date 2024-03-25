@@ -121,12 +121,16 @@ taken from the docstring of a minor mode function defined by
     (repeat nil)))
 
 (defun my:make-repeatable-command (repeat-cmd-name regular-cmd-name)
-  (fset repeat-cmd-name
-        (lambda (&rest _)
-          (my:repeat-command regular-cmd-name)))
-  (put repeat-cmd-name 'interactive-form (interactive-form regular-cmd-name))
-  (put repeat-cmd-name 'function-documentation
-       (format "Repeatable version of `%S'." regular-cmd-name)))
+  (unless (commandp regular-cmd-name)
+    (user-error "`%S' is not a command, this was made for use on commands."
+                regular-cmd-name))
+  ;; I used to just set the `interactive-form' property of a symbol to
+  ;; copy the interactive form from another function, but then
+  ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=54802#79 happened.
+  (eval `(defun ,repeat-cmd-name (&rest _)
+           ,(format "Repeatable version of `%S'." regular-cmd-name)
+           ,(interactive-form regular-cmd-name)
+           (my:repeat-command ',regular-cmd-name))))
 
 (defmacro my:key-binding-with-modes-off (modes &optional command-keys-vector)
   "Return the original binding of some command keys with all MODES off.
