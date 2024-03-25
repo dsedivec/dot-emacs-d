@@ -182,6 +182,7 @@
                             avy
                             bind-key
                             blackout
+                            bm
                             buttercup
                             cider
                             clean-aindent-mode
@@ -1104,6 +1105,40 @@ plugin."
 (require 'blackout)
 
 (blackout 'python-mode "Py")
+
+
+;;; bm
+
+;; XXX RECIPE?
+(el-patch-feature bm)
+
+(with-eval-after-load 'bm
+  (el-patch-defun bm-show-goto-bookmark ()
+    "Goto the bookmark on current line in the `bm-show-buffer-name' buffer."
+    (interactive)
+    (let ((buffer-name (get-text-property (point) 'bm-buffer))
+          (bookmark (get-text-property (point) 'bm-bookmark)))
+      (if (null buffer-name)
+          (when (> bm-verbosity-level  0)
+            (message "No bookmark at this line."))
+        (el-patch-remove
+          (pop-to-buffer (get-buffer buffer-name))
+          (bm-goto bookmark)
+          (when bm-electric-show (bm-show-quit-window)))
+        (el-patch-add
+          (when bm-electric-show
+            (bm-show-quit-window))
+          (switch-to-buffer (get-buffer buffer-name))
+          (bm-goto bookmark)))))
+
+  (el-patch-validate 'bm-show-goto-bookmark 'defun t))
+
+(bind-keys ("<f1>" . bm-toggle)
+           ("<f7>" . bm-previous)
+           ("<f8>" . bm-next)
+           ("M-<f1>" . bm-show-all))
+
+(setq bm-highlight-style 'bm-highlight-only-fringe)
 
 
 ;;; bookmark
@@ -3608,7 +3643,7 @@ everything else."
 
 (my:load-recipes 'find-cursor)
 
-(bind-keys ("<f8>" . my:find-cursor))
+(bind-keys ("C-<f8>" . my:find-cursor))
 
 
 ;;; python

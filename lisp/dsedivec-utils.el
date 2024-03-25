@@ -98,7 +98,8 @@ taken from the docstring of a minor mode function defined by
          ;; `ivy-occur-grep-mode' is derived from `compilation-mode', but
          ;; I don't want to treat it as pop-up.
          (not (derived-mode-p 'ivy-occur-grep-mode))
-         (derived-mode-p 'bs-mode
+         (derived-mode-p 'bm-show-mode
+                         'bs-mode
                          'compilation-mode
                          'flycheck-error-list-mode
                          'help-mode
