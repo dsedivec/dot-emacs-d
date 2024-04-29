@@ -2027,7 +2027,7 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (when (display-graphic-p)
   (when (x-list-fonts "Fira Mono")
-    (set-face-attribute 'default nil :font "Fira Mono 8")
+    (set-face-attribute 'default nil :font "Fira Mono 9")
     ;; On macOS this was ending up as... Courier.
     (cl-pushnew "Fira Mono" (alist-get "Monospace" face-font-family-alternatives
                                        nil nil #'equal)
