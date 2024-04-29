@@ -2046,6 +2046,7 @@ surround \"foo\" with (in this example) parentheses.  I want
   (customize-set-variable 'face-font-family-alternatives
                           face-font-family-alternatives))
 
+
 ;;; faux-indent
 
 (define-advice faux-indent-mode (:before (&optional arg)
