@@ -1585,7 +1585,8 @@ plugin."
 (ctrlf-mode 1)
 
 (setq ctrlf-default-search-style 'fuzzy-regexp
-      ctrlf-alternate-search-style 'literal)
+      ctrlf-alternate-search-style 'literal
+      ctrlf-go-to-end-of-match nil)
 
 ;; XXX bug fix?
 ;;
