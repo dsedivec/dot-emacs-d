@@ -175,7 +175,7 @@
                             adaptive-wrap
                             aggressive-indent
                             all-the-icons
-                            amx
+                            all-the-icons-completion
                             anaconda-mode
                             apheleia
                             atomic-chrome
@@ -197,9 +197,6 @@
                             company-shell
                             company-terraform
                             company-web
-                            counsel
-                            counsel-css
-                            counsel-projectile
                             crontab-mode
                             crux
                             csv-mode
@@ -223,7 +220,6 @@
                             exec-path-from-shell
                             expand-region
                             fennel-mode
-                            flx
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
@@ -245,12 +241,6 @@
                             hydra
                             imenu-list
                             impatient-mode
-                            ivy
-                            ivy-avy
-                            ivy-hydra
-                            ivy-prescient
-                            ivy-xref
-                            ivy-yasnippet
                             js2-mode
                             js2-refactor
                             json-mode
@@ -259,7 +249,6 @@
                             literate-calc-mode
                             loccur
                             lorem-ipsum
-                            lsp-ivy
                             lsp-mssql
                             lsp-mode
                             lsp-pyright
@@ -301,7 +290,6 @@
                             sql-indent
                             sqlup-mode
                             string-inflection
-                            swiper
                             systemd
                             terraform-doc
                             terraform-mode
@@ -337,8 +325,44 @@
   ;; against my will.
   (my:straight-use-packages '(
                               company-reftex
-                              ivy-bibtex
                               )))
+
+
+;; Completion framework
+
+(defvar my:completion-framework 'ivy)
+(cl-assert (memq my:completion-framework '(ivy vertico)))
+
+(cl-ecase my:completion-framework
+  (ivy
+   (my:straight-use-packages '(
+                               amx
+                               counsel
+                               counsel-css
+                               counsel-projectile
+                               flx
+                               ivy
+                               ivy-avy
+                               ivy-hydra
+                               ivy-prescient
+                               ivy-xref
+                               ivy-yasnippet
+                               lsp-ivy
+                               swiper)
+                             )
+   (when my:tex-available-p
+     (my:straight-use-packages '(ivy-bibtex))))
+
+  (vertico
+   (my:straight-use-packages '(
+                               consult
+                               consult-flycheck
+                               embark
+                               embark-consult
+                               marginalia
+                               orderless
+                               vertico
+                               ))))
 
 
 ;;; Utility functions
@@ -898,12 +922,13 @@
 
 ;;; amx
 
-(setq amx-history-length 500)
+(when (eq my:completion-framework 'ivy)
+  (setq amx-history-length 500)
 
-;; XXX bug fix?
+  ;; XXX bug fix?
 
-(defun my:amx-post-eval-force-update-improved (orig-fun fundef &rest args)
-  "Schedule an amx update the next time Emacs is idle.
+  (defun my:amx-post-eval-force-update-improved (orig-fun fundef &rest args)
+    "Schedule an amx update the next time Emacs is idle.
 
 But this time, don't keep invalidating the hook every time
 `ctrlf-local-mode' runs in the echo area due to eldoc, and ctrlf
@@ -911,25 +936,25 @@ uses a lambda, and for some reason that triggers some weird
 `autoload-do-load' call, which ends up invalidating amx's cache
 every time eldoc runs, and you get weird pauses that eat C-g
 basically every time eldoc's idle hook runs.  Fuck me."
-  (let ((result (apply orig-fun fundef args)))
-    ;; Read the source for `autoload-do-load': there are various cases
-    ;; where it returns FUNDEF, all of which look like no-ops.  If we
-    ;; did a no-op, then don't trigger amx to rebuild its cache (which
-    ;; is quite expensive).
-    (unless (eq result fundef)
-      (condition-case-unless-debug err
-          (amx-post-eval-force-update)
-        (error
-         (warn "`my:amx-post-eval-force-update-improved' ignoring error: %S" err))))
-    result))
+    (let ((result (apply orig-fun fundef args)))
+      ;; Read the source for `autoload-do-load': there are various cases
+      ;; where it returns FUNDEF, all of which look like no-ops.  If we
+      ;; did a no-op, then don't trigger amx to rebuild its cache (which
+      ;; is quite expensive).
+      (unless (eq result fundef)
+        (condition-case-unless-debug err
+            (amx-post-eval-force-update)
+          (error
+           (warn "`my:amx-post-eval-force-update-improved' ignoring error: %S" err))))
+      result))
 
-(with-eval-after-load 'amx
-  (condition-case-unless-debug err
-      (advice-remove 'autoload-do-load #'amx-post-eval-force-update)
-    (error
-     (warn "Ignoring error removing amx advice from `autoload-do-load': %S" err))
-    (:success
-     (advice-add 'autoload-do-load :around #'my:amx-post-eval-force-update-improved))))
+  (with-eval-after-load 'amx
+    (condition-case-unless-debug err
+        (advice-remove 'autoload-do-load #'amx-post-eval-force-update)
+      (error
+       (warn "Ignoring error removing amx advice from `autoload-do-load': %S" err))
+      (:success
+       (advice-add 'autoload-do-load :around #'my:amx-post-eval-force-update-improved)))))
 
 
 ;;; anaconda-mode
@@ -1457,30 +1482,31 @@ plugin."
 
 ;;; counsel
 
-(counsel-mode 1)
+(when (eq my:completion-framework 'ivy)
+  (counsel-mode 1)
 
-(setq counsel-find-file-ignore-regexp
-      (rx (regexp (regexp-opt completion-ignored-extensions)) eos))
+  (setq counsel-find-file-ignore-regexp
+        (rx (regexp (regexp-opt completion-ignored-extensions)) eos))
 
-;; Include directory in prompt when searching.
-(ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
+  ;; Include directory in prompt when searching.
+  (ivy-set-prompt 'counsel-ag #'counsel-prompt-function-dir)
 
-(my:load-recipes 'counsel-limit-grep-result-length
-                 'counsel-trace-function
-                 'counsel-git-grep-use-re-builder)
+  (my:load-recipes 'counsel-limit-grep-result-length
+                   'counsel-trace-function
+                   'counsel-git-grep-use-re-builder)
 
-;; `counsel-find-file' doesn't leave the file you just found as the
-;; current buffer.  This is because `counsel-find-file' →
-;; `counsel-find-file-action' → `with-ivy-window' →
-;; `with-selected-window' → `save-current-buffer'.  Your window does
-;; end up showing the new buffer, but Emacs's "current buffer" is
-;; still your old buffer during `post-command-hook', which breaks
-;; nav-stack.  I should probably report this upstream: it seems
-;; harmless but I bet it could break more than just nav-stack.  (OTOH,
-;; changing its behavior now might break even more...?)
-(define-advice counsel-find-file-action
-    (:after (&rest args) my:set-current-buffer-like-find-file)
-  (set-buffer (with-ivy-window (window-buffer))))
+  ;; `counsel-find-file' doesn't leave the file you just found as the
+  ;; current buffer.  This is because `counsel-find-file' →
+  ;; `counsel-find-file-action' → `with-ivy-window' →
+  ;; `with-selected-window' → `save-current-buffer'.  Your window does
+  ;; end up showing the new buffer, but Emacs's "current buffer" is
+  ;; still your old buffer during `post-command-hook', which breaks
+  ;; nav-stack.  I should probably report this upstream: it seems
+  ;; harmless but I bet it could break more than just nav-stack.  (OTOH,
+  ;; changing its behavior now might break even more...?)
+  (define-advice counsel-find-file-action
+      (:after (&rest args) my:set-current-buffer-like-find-file)
+    (set-buffer (with-ivy-window (window-buffer)))))
 
 
 ;;; counsel-auto-grep
@@ -1493,13 +1519,15 @@ plugin."
 
 ;;; counsel-css
 
-(add-hook 'css-mode-hook #'counsel-css-imenu-setup)
+(when (eq my:completion-framework 'ivy)
+  (add-hook 'css-mode-hook #'counsel-css-imenu-setup))
 
 
 ;;; counsel-projectile
 
-(with-eval-after-load 'projectile
-  (counsel-projectile-mode 1))
+(when (eq my:completion-framework 'ivy)
+  (with-eval-after-load 'projectile
+    (counsel-projectile-mode 1)))
 
 
 ;;; cperl-mode
@@ -2726,88 +2754,91 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; ivy
 
-(ivy-mode 1)
+(when (eq my:completion-framework 'ivy)
+  (ivy-mode 1)
 
-(require 'ivy-avy)
+  (require 'ivy-avy)
 
-(bind-keys ("<f6>" . ivy-resume)
-           :map ivy-minibuffer-map
-           ("<next>" . ivy-scroll-up-command)
-           ("<prior>" . ivy-scroll-down-command)
-           ;; Move ivy-restrict-to-matches to C-SPC because that's
-           ;; where I think I'm used to it from ido-mode, and also
-           ;; because I apparently sometimes hold down the space
-           ;; modifier when typing the space in something like "foo: "
-           ;; and then I wonder "WTF where did my input go?"
-           ("C-SPC" . ivy-restrict-to-matches)
-           ("S-SPC" . nil)
-           ;; This will rotate through `ivy-preferred-re-builders',
-           ;; which I set below.
-           ("M-r" . ivy-rotate-preferred-builders))
+  (bind-keys ("<f6>" . ivy-resume)
+             :map ivy-minibuffer-map
+             ("<next>" . ivy-scroll-up-command)
+             ("<prior>" . ivy-scroll-down-command)
+             ;; Move ivy-restrict-to-matches to C-SPC because that's
+             ;; where I think I'm used to it from ido-mode, and also
+             ;; because I apparently sometimes hold down the space
+             ;; modifier when typing the space in something like "foo: "
+             ;; and then I wonder "WTF where did my input go?"
+             ("C-SPC" . ivy-restrict-to-matches)
+             ("S-SPC" . nil)
+             ;; This will rotate through `ivy-preferred-re-builders',
+             ;; which I set below.
+             ("M-r" . ivy-rotate-preferred-builders))
 
-;; ivy-initial-inputs-alist makes "^" the default for a bunch of
-;; commands, like counsel-M-x, which I generally dislike.
-(setq ivy-initial-inputs-alist nil)
+  ;; ivy-initial-inputs-alist makes "^" the default for a bunch of
+  ;; commands, like counsel-M-x, which I generally dislike.
+  (setq ivy-initial-inputs-alist nil)
 
-;; I switch between ivy--regex-fuzzy (rarely) and
-;; ivy--regex-ignore-order, but as you'll see below, I'm currently
-;; using my own "hybrid" matcher.
-;;(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
-;;(setq ivy-re-builders-alist '((t . ivy--regex-plus)))
-;;(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
+  ;; I switch between ivy--regex-fuzzy (rarely) and
+  ;; ivy--regex-ignore-order, but as you'll see below, I'm currently
+  ;; using my own "hybrid" matcher.
+  ;;(setq ivy-re-builders-alist '((t . ivy--regex-ignore-order)))
+  ;;(setq ivy-re-builders-alist '((t . ivy--regex-plus)))
+  ;;(setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
 
-(setq ivy-use-virtual-buffers t
-      ivy-virtual-abbreviate 'full
-      ivy-magic-tilde nil
-      ivy-read-action-function #'ivy-hydra-read-action
-      ;; Trying this for a while, helps when you have long matches
-      ;; from something like counsel-ag.  Better fix might be to show
-      ;; the matching portion (somehow), or bind some kind of "scroll
-      ;; right"?  Below is fast and easy to try before those more
-      ;; involved ideas.
-      ivy-truncate-lines nil)
+  (setq ivy-use-virtual-buffers t
+        ivy-virtual-abbreviate 'full
+        ivy-magic-tilde nil
+        ivy-read-action-function #'ivy-hydra-read-action
+        ;; Trying this for a while, helps when you have long matches
+        ;; from something like counsel-ag.  Better fix might be to show
+        ;; the matching portion (somehow), or bind some kind of "scroll
+        ;; right"?  Below is fast and easy to try before those more
+        ;; involved ideas.
+        ivy-truncate-lines nil)
 
-(my:load-recipes 'ivy-dont-hide-collection-errors
-                 'ivy-fuzzy-regex-combo-matcher
-                 'ivy-regex-plus-or-literal-regex
-                 'ivy-rotate-preferred-builder-feedback
-                 'ivy-special-switch-buffers)
+  (my:load-recipes 'ivy-dont-hide-collection-errors
+                   'ivy-fuzzy-regex-combo-matcher
+                   'ivy-regex-plus-or-literal-regex
+                   'ivy-rotate-preferred-builder-feedback
+                   'ivy-special-switch-buffers)
 
-;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
-(setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
+  ;; Use `my:ivy--regex-regular-or-fuzzy' as our default regexp builder.
+  (setf (alist-get t ivy-re-builders-alist) #'my:ivy--regex-regular-or-fuzzy)
 
-;; First is my default, as above.  Second is `ivy--regex-ignore-order'
-;; because that is the matcher I most frequently use instead of fuzzy.
-;; Third is just "try and make a regexp if it looks like you have
-;; groups, otherwise `ivy--regex-plus'".
-;;
-;; This is used by `ivy-rotate-preferred-builders', which I have bound
-;; above.
-(setq ivy-preferred-re-builders
-      '((my:ivy--regex-regular-or-fuzzy . "auto-fuzzy")
-        (ivy--regex-ignore-order . "order")
-        (my:ivy--regex-plus-or-literal-regex . "regexp")))
+  ;; First is my default, as above.  Second is `ivy--regex-ignore-order'
+  ;; because that is the matcher I most frequently use instead of fuzzy.
+  ;; Third is just "try and make a regexp if it looks like you have
+  ;; groups, otherwise `ivy--regex-plus'".
+  ;;
+  ;; This is used by `ivy-rotate-preferred-builders', which I have bound
+  ;; above.
+  (setq ivy-preferred-re-builders
+        '((my:ivy--regex-regular-or-fuzzy . "auto-fuzzy")
+          (ivy--regex-ignore-order . "order")
+          (my:ivy--regex-plus-or-literal-regex . "regexp")))
 
-;; It's been a while since I wrote this, but IIRC, these commands
-;; don't work well with my fuzzy matcher, or probably with any out of
-;; order matcher such as `ivy--regex-ignore-order'.  And/or they were
-;; horribly slow with something like `ivy--regex-fuzzy'.  Hence
-;; forcing a different regexp builder here.
-(dolist (command '(counsel-rg swiper-isearch))
-  (setf (alist-get command ivy-re-builders-alist)
-        #'my:ivy--regex-plus-or-literal-regex))
+  ;; It's been a while since I wrote this, but IIRC, these commands
+  ;; don't work well with my fuzzy matcher, or probably with any out of
+  ;; order matcher such as `ivy--regex-ignore-order'.  And/or they were
+  ;; horribly slow with something like `ivy--regex-fuzzy'.  Hence
+  ;; forcing a different regexp builder here.
+  (dolist (command '(counsel-rg swiper-isearch))
+    (setf (alist-get command ivy-re-builders-alist)
+          #'my:ivy--regex-plus-or-literal-regex)))
 
 
 ;;; ivy-bibtex
 
-(setq ivy-bibtex-default-action 'ivy-bibtex-insert-key)
+(when (eq my:completion-framework 'ivy)
+  (setq ivy-bibtex-default-action 'ivy-bibtex-insert-key))
 
 
 ;;; ivy-xref
 
-(setq xref-show-definitions-function #'ivy-xref-show-defs
-      xref-show-xrefs-function #'ivy-xref-show-xrefs
-      ivy-xref-use-file-path t)
+(when (eq my:completion-framework 'ivy)
+  (setq xref-show-definitions-function #'ivy-xref-show-defs
+        xref-show-xrefs-function #'ivy-xref-show-xrefs
+        ivy-xref-use-file-path t))
 
 
 ;;; js2-mode
@@ -3539,12 +3570,13 @@ everything else."
 
 (defun my:org-roam-search ()
   (interactive)
-  (counsel-auto-grep nil org-roam-directory))
+  (cl-ecase my:completion-framework
+    (ivy (counsel-auto-grep nil org-roam-directory))
+    (vertico (consult-ripgrep org-roam-directory))))
 
 (bind-keys ("M-m r r" . org-roam-buffer-toggle)
            ("M-m r f" . org-roam-node-find)
            ("M-m r i" . org-roam-node-insert)
-           ("M-m r /" . my:org-roam-search)
            ("M-m r d d" . org-roam-dailies-find-directory)
            ("M-m r d f t" . org-roam-dailies-goto-today)
            ("M-m r d c t" . org-roam-dailies-capture-today)
@@ -3552,6 +3584,9 @@ everything else."
            ("M-m r d c y" . org-roam-dailies-capture-yesterday)
            ("M-m r d f d" . org-roam-dailies-goto-date)
            ("M-m r d c d" . org-roam-dailies-capture-date))
+
+(when (eq my:completion-framework 'ivy)
+  (bind-keys ("M-m r /" . my:org-roam-search)))
 
 (with-eval-after-load 'org-roam
   (org-roam-db-autosync-mode)
@@ -3597,36 +3632,41 @@ everything else."
 
 ;;; prescient.el
 
+;; prescient has support for vertico, but I don't know if I want to
+;; prescient has support for verticouse it yet, so I only enable this
+;; prescient has support for verticofor Ivy--even in company-mode.
+
 ;; NOTE: Package docs say that this must be loaded after counsel.
 ;; Thankfully not a problem as long as "c" comes before "p" in the
 ;; alphabet.
 
-(with-eval-after-load 'prescient
-  (prescient-persist-mode 1))
+(when (eq my:completion-framework 'ivy)
+  (with-eval-after-load 'prescient
+    (prescient-persist-mode 1))
 
-(with-eval-after-load 'company
-  (company-prescient-mode 1))
+  (with-eval-after-load 'company
+    (company-prescient-mode 1))
 
-(setq ivy-prescient-enable-filtering nil
-      ivy-prescient-retain-classic-highlighting t)
+  (setq ivy-prescient-enable-filtering nil
+        ivy-prescient-retain-classic-highlighting t)
 
-(ivy-prescient-mode 1)
+  (ivy-prescient-mode 1)
 
-(if (not (eq (car ivy-prescient-sort-commands) :not))
-    (warn (concat "`ivy-prescient-sort-commands' is no longer a :not"
-                  " by default, fix init.el"))
-  (cl-loop
-    for func in '(counsel-rg
-                  counsel-yank-pop
-                  ivy-yasnippet)
-    if (memq func ivy-prescient-sort-commands)
-    do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
-             func)
-    else
-    collect func into funcs-to-add
-    finally
-     (setq ivy-prescient-sort-commands (nconc ivy-prescient-sort-commands
-                                              funcs-to-add))))
+  (if (not (eq (car ivy-prescient-sort-commands) :not))
+      (warn (concat "`ivy-prescient-sort-commands' is no longer a :not"
+                    " by default, fix init.el"))
+    (cl-loop
+      for func in '(counsel-rg
+                    counsel-yank-pop
+                    ivy-yasnippet)
+      if (memq func ivy-prescient-sort-commands)
+      do (warn "`%S' is already in `ivy-prescient-sort-commands', fix init.el"
+               func)
+      else
+      collect func into funcs-to-add
+      finally
+       (setq ivy-prescient-sort-commands (nconc ivy-prescient-sort-commands
+                                                funcs-to-add)))))
 
 
 ;;; projectile
@@ -4659,10 +4699,11 @@ a string or comment."
 ;; `ivy--regex-ignore-order'.  Maybe because "isearch is not
 ;; line-based"?
 
-(bind-keys ("s-s" . swiper-isearch)
-           ("s-r" . swiper-isearch-backward))
+(when (eq my:completion-framework 'ivy)
+  (bind-keys ("s-s" . swiper-isearch)
+             ("s-r" . swiper-isearch-backward))
 
-(setq swiper-goto-start-of-match t)
+  (setq swiper-goto-start-of-match t))
 
 
 ;;; terraform-mode
@@ -5163,8 +5204,10 @@ for this command) must be an arrow key."
 ;; Spacemacs bindings.
 (bind-keys :map yas-minor-mode-map
            ("<tab>" . nil)
-           ("TAB" . nil)
-           ("M-m i s" . ivy-yasnippet))
+           ("TAB" . nil))
+
+(when (eq my:completion-framework 'ivy)
+  (bind-keys ("M-m i s" . ivy-yasnippet)))
 
 ;; Also let hippie-expand expand snippets.
 (with-eval-after-load 'hippie-exp
