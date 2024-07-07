@@ -330,7 +330,7 @@
 
 ;; Completion framework
 
-(defvar my:completion-framework 'ivy)
+(defvar my:completion-framework 'vertico)
 (cl-assert (memq my:completion-framework '(ivy vertico)))
 
 (cl-ecase my:completion-framework
@@ -918,6 +918,16 @@
 ;; These apparently don't get autoloaded.
 (autoload 'all-the-icons-alltheicon "all-the-icons")
 (autoload 'all-the-icons-fileicon "all-the-icons")
+
+
+;;; all-the-icons-completion
+
+(all-the-icons-completion-mode 1)
+
+(when (eq my:completion-framework 'vertico)
+  ;; README recommends setting this so that all-the-icons-completion
+  ;; is "on when `marginalia-mode' is on and is off when it's off".
+  (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
 
 
 ;;; amx
@@ -1530,6 +1540,15 @@ plugin."
     (counsel-projectile-mode 1)))
 
 
+;;; consult
+
+(when (eq my:completion-framework 'vertico)
+  (bind-keys ("s-s" . consult-line)
+             ("M-m j i" . consult-imenu)
+             ("M-m /" . consult-ripgrep)
+             ("C-x b" . consult-buffer)))
+
+
 ;;; cperl-mode
 
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . cperl-mode))
@@ -2009,6 +2028,17 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m d m" . macrostep-expand)))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; embark
+
+(when (eq my:completion-framework 'vertico)
+  (bind-keys ("C-." . embark-act)
+             ("C-;" . embark-dwim)
+             ("C-h b" . embark-bindings))
+
+  (bind-keys :map minibuffer-local-map
+             ("C-c C-o" . embark-export)))
 
 
 ;;; embrace
@@ -2696,7 +2726,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; imenu
 
-(bind-key "M-m j i" 'imenu)
+;; I use `consult-imenu' with Vertico.
+(unless (eq my:completion-framework 'vertico)
+  (bind-key "M-m j i" 'imenu))
 
 (setq imenu-auto-rescan t
       imenu-auto-rescan-maxout (* 1024 1024 10))
@@ -3102,6 +3134,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
     "j f" "unpulled")
 
 
+;;; marginalia
+
+(when (eq my:completion-framework 'vertico)
+  (marginalia-mode 1)
+
+  (bind-keys :map minibuffer-local-map
+             ("M-A" . marginalia-cycle)))
+
+
 ;;; markdown-mode
 
 ;; If you get
@@ -3150,7 +3191,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; minibuffer
 
-(setq completion-styles '(basic partial-completion initials flex))
+;; When we use vertico completion framework, we use orderless as well,
+;; which will set this variable itself.
+(unless (eq my:completion-framework 'vertico)
+  (setq completion-styles '(basic partial-completion initials flex)))
 
 (my:load-recipes 'minibuffer-flex-completion-ignore-long-candidates)
 
@@ -3293,6 +3337,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;;; olivetti
 
 (setq-default olivetti-body-width 80)
+
+
+;;; orderless
+
+(when (eq my:completion-framework 'vertico)
+  (require 'orderless)
+
+  (setq completion-styles '(orderless basic)
+        orderless-matching-styles '(orderless-literal orderless-flex)))
 
 
 ;;; org
@@ -4866,6 +4919,27 @@ a string or comment."
   (my:setq-local c-basic-offset 4))
 
 (add-hook 'vcl-mode-hook #'my:vcl-mode-hook)
+
+
+;;; vertico
+
+(when (eq my:completion-framework 'vertico)
+  (vertico-mode 1)
+  (savehist-mode 1)
+
+  (bind-keys :map vertico-map
+             ;; Avy-like selection for vertico
+             ("C-'" . vertico-quick-exit)
+             ;; Backspace in a file prompt works like Ivy did.
+             ("DEL" . vertico-directory-delete-char))
+
+  ;; `vertico-repeat' is like `ivy-occur': repeat the last...
+  ;; Vertico... thing, I guess.  It's probably not nearly 100%
+  ;; equivalent.
+
+  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
+
+  (bind-keys ("<f6>" . vertico-repeat)))
 
 
 ;;; volatile-highlights

@@ -16,6 +16,7 @@
 /eln-cache/
 /elpa
 /elpy
+/history
 /init-local.el
 /lisp/autoloads.el
 # This is probably created by lsp-mssql.
