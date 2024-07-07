@@ -1795,8 +1795,6 @@ adjusted transparently."
 
 ;;; dumb-jump
 
-(setq dumb-jump-selector 'ivy)
-
 ;; `dumb-jump-default-project' seems to default to "~", which I think
 ;; means it will search your entire home directory by default?  That
 ;; is... an interesting choice, one that I wish to avoid, personally.
@@ -3634,8 +3632,6 @@ everything else."
 ;;; projectile
 
 (projectile-mode 1)
-
-(setq projectile-completion-system 'ivy)
 
 (bind-keys ("C-c C-p" . projectile-command-map)
            ;; Spacemacs bindings, particularly useful when comint
