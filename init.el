@@ -146,6 +146,8 @@
     (require 'tex-site)
     (require 'preview-latex)))
 
+;; Let's install some packages.
+
 (straight-use-package '(org :repo "git@github-personal:dsedivec/org-mode.git"))
 (straight-use-package 'org-contrib)
 
