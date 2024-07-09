@@ -220,12 +220,19 @@
                             exec-path-from-shell
                             expand-region
                             fennel-mode
+                            ;; Need this recipe to get the dynamic
+                            ;; module in the "bin" directory.
+                            (flx-rs
+                             :repo "jcs-elpa/flx-rs"
+                             :fetcher github
+                             :files (:defaults "bin"))
                             flycheck
                             flycheck-clj-kondo
                             flycheck-haskell
                             flycheck-package
                             flycheck-pos-tip
                             free-keys
+                            fussy
                             go-mode
                             graphviz-dot-mode
                             groovy-mode
@@ -2262,6 +2269,14 @@ surround \"foo\" with (in this example) parentheses.  I want
     (add-to-list 'free-keys-modifiers mod t)))
 
 
+;;; flx-rs
+
+(with-eval-after-load 'fussy
+  (flx-rs-load-dyn)
+  (setq fussy-score-fn 'fussy-flx-rs-score))
+
+
+
 ;;; flycheck
 
 (setq flycheck-mode-line-prefix "✓"
@@ -3191,12 +3206,35 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; minibuffer
 
-;; When we use vertico completion framework, we use orderless as well,
-;; which will set this variable itself.
-(unless (eq my:completion-framework 'vertico)
-  (setq completion-styles '(basic partial-completion initials flex)))
 
-(my:load-recipes 'minibuffer-flex-completion-ignore-long-candidates)
+;; XXX lisp/recipe
+
+(defvar my:available-completion-styles
+  (seq-filter (lambda (style) (require style nil t))
+              '(fussy orderless)))
+
+(defun my:cycle-completion-style ()
+  (interactive)
+  (unless my:available-completion-styles
+    (user-error "No available completion styles"))
+  (let ((next-style (pop my:available-completion-styles)))
+    ;; Orderless recommended putting basic in the list always, so that
+    ;; TRAMP completion would work.  I'm taking this as general advice
+    ;; for any completion style (other than basic), which may be
+    ;; incorrect.
+    (setf completion-styles (list next-style 'basic)
+          my:available-completion-styles (nconc my:available-completion-styles (list next-style)))
+    (message "Using completion style %S" next-style)))
+
+(bind-keys ("C-S-l" . my:cycle-completion-style))
+
+(if my:available-completion-styles
+    ;; Call it once to set one of them up.
+    (my:cycle-completion-style)
+  ;; Vanilla Emacs styles.
+  (setq completion-styles '(basic partial-completion initials flex))
+  ;; Presumably still needed with flex style...?
+  (my:load-recipes 'minibuffer-flex-completion-ignore-long-candidates))
 
 ;;; minions
 
@@ -3341,11 +3379,12 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; orderless
 
-(when (eq my:completion-framework 'vertico)
-  (require 'orderless)
-
-  (setq completion-styles '(orderless basic)
-        orderless-matching-styles '(orderless-literal orderless-flex)))
+(with-eval-after-load 'orderless
+  (setf orderless-matching-styles '(orderless-literal orderless-flex)
+        (alist-get ?~ orderless-affix-dispatch-alist) 'orderless-regexp)
+  ;; Overriding file is probably necessary for TRAMP completion
+  ;; to work, per Orderless's README.
+  (setq completion-category-overrides '((file (styles basic partial-completion)))))
 
 
 ;;; org
