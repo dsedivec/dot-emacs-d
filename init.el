@@ -2721,6 +2721,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (my:load-recipes 'he-dabbrev-obey-dabbrev-skip-leading-regexp)
 
 
+;;; hl-line
+
+(global-hl-line-mode 1)
+
+
 ;;; hl-todo
 
 (global-hl-todo-mode 1)
