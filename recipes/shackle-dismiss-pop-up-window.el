@@ -25,11 +25,12 @@
   (cl-remf plist :custom)
   (prog1
       (shackle-display-buffer buffer alist plist)
-    (global-set-key [remap keyboard-quit] #'my:shackle-close-pop-up-windows)))
+    (global-set-key [remap keyboard-quit]
+                    #'my:shackle-close-pop-up-windows-or-keyboard-quit)))
 
 (defun my:shackle-close-pop-up-windows ()
+  "Returns non-nil if any pop-up windows were closed."
   (interactive)
-  (global-set-key [remap keyboard-quit] nil)
   (let ((deleted-any-windows nil))
     (dolist (window (window-list (selected-frame) 'nominibuf))
       (let ((buffer (window-buffer window)))
@@ -37,5 +38,10 @@
           (delete-window window)
           (bury-buffer buffer)
           (setq deleted-any-windows t))))
-    (unless deleted-any-windows
-      (keyboard-quit))))
+    deleted-any-windows))
+
+(defun my:shackle-close-pop-up-windows-or-keyboard-quit ()
+  (interactive)
+  (global-set-key [remap keyboard-quit] nil)
+  (unless (my:shackle-close-pop-up-windows)
+    (keyboard-quit)))

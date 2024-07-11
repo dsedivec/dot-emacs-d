@@ -4127,6 +4127,8 @@ everything else."
 
 (setq my:shackle-pop-up-buffer-predicate #'my:pop-up-buffer-p)
 
+(bind-keys ("S-<escape>" . my:shackle-close-pop-up-windows))
+
 (setq shackle-rules
       '(
         ((:custom my:pop-up-buffer-p)
