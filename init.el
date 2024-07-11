@@ -1553,7 +1553,15 @@ plugin."
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
              ("M-m /" . consult-ripgrep)
-             ("C-x b" . consult-buffer)))
+             ("C-x b" . consult-buffer)
+             ("C-x 4 b" . consult-buffer-other-window)
+             ("C-x 5 b" . consult-buffer-other-frame)
+             ("M-y" . consult-yank-pop))
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref))
+
 
 
 ;;; cperl-mode
