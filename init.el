@@ -3738,8 +3738,7 @@ everything else."
 ;;; prescient.el
 
 ;; prescient has support for vertico, but I don't know if I want to
-;; prescient has support for verticouse it yet, so I only enable this
-;; prescient has support for verticofor Ivy--even in company-mode.
+;; use it yet, so I only enable this for Ivy--even in company-mode.
 
 ;; NOTE: Package docs say that this must be loaded after counsel.
 ;; Thankfully not a problem as long as "c" comes before "p" in the
