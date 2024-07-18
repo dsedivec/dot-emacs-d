@@ -233,6 +233,7 @@
                             flycheck-pos-tip
                             free-keys
                             fussy
+                            git-link
                             go-mode
                             graphviz-dot-mode
                             groovy-mode
