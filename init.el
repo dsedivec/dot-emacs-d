@@ -1550,6 +1550,48 @@ plugin."
 
 ;;; consult
 
+;; XXX RECIPE
+
+(with-eval-after-load 'consult
+  (el-patch-feature consult)
+
+  ;; `consult-line' makes it so M-n brings up the line under point,
+  ;; not the symbol.  Make M-n bring up the symbol under point first.
+  (el-patch-defun consult-line (&optional initial start)
+    "Search for a matching line.
+
+Depending on the setting `consult-point-placement' the command
+jumps to the beginning or the end of the first match on the line
+or the line beginning.  The default candidate is the non-empty
+line next to point.  This command obeys narrowing.  Optional
+INITIAL input can be provided.  The search starting point is
+changed if the START prefix argument is set.  The symbol at point
+and the last `isearch-string' is added to the future history."
+    (interactive (list nil (not (not current-prefix-arg))))
+    (let* ((curr-line (line-number-at-pos (point) consult-line-numbers-widen))
+           (top (not (eq start consult-line-start-from-top)))
+           (candidates (consult--slow-operation "Collecting lines..."
+                         (consult--line-candidates top curr-line))))
+      (consult--read
+       candidates
+       :prompt (if top "Go to line from top: " "Go to line: ")
+       :annotate (consult--line-prefix curr-line)
+       :category 'consult-location
+       :sort nil
+       :require-match t
+       ;; Always add last `isearch-string' to future history
+       :add-history (list (thing-at-point 'symbol) isearch-string)
+       :history '(:input consult--line-history)
+       :lookup #'consult--line-match
+       (el-patch-remove :default (car candidates))
+       ;; Add `isearch-string' as initial input if starting from Isearch
+       :initial (or initial
+                    (and isearch-mode
+                         (prog1 isearch-string (isearch-done))))
+       :state (consult--location-state candidates))))
+
+  (el-patch-validate 'consult-line 'defun t))
+
 (when (eq my:completion-framework 'vertico)
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
