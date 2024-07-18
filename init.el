@@ -4287,6 +4287,9 @@ everything else."
 ;; default binding for `count-words-region'.  Put it elsewhere so I
 ;; can use it.
 (bind-key "C-M-=" 'count-words-region)
+;; Unbind the original binding, I don't want to be tempted by it in
+;; `describe-bindings'.
+(unbind-key "M-=")
 
 (with-eval-after-load 'simple
   (add-to-list 'which-key-replacement-alist
