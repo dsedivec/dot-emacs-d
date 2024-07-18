@@ -236,4 +236,17 @@ it returns the node that your EDIT-FORM changed)."
                        (treepy-root ,edit-form)))))
            (setq ,zip-var (treepy-next ,zip-var)))))))
 
+(defun my:makunbound (symbol)
+  ;; Interactive form copied from `debug-on-variable-change'.
+  (interactive
+   (let* ((var-at-point (variable-at-point))
+          (var (and (symbolp var-at-point) var-at-point))
+          (val (completing-read
+                (format-prompt "Variable to unbind" var)
+                obarray #'boundp
+                t nil nil (and var (symbol-name var)))))
+     (list (if (equal val "") var (intern val)))))
+  (makunbound symbol)
+  (message "Removed variable binding for `%S'." symbol))
+
 (provide 'dsedivec-utils)
