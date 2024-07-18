@@ -1550,7 +1550,17 @@ plugin."
 
 ;;; consult
 
-;; XXX RECIPE
+;; XXX RECIPES
+
+;; We have to follow this naming convention, see below (search for
+;; just "current-last").
+(defun consult--buffer-sort-current-last (buffers)
+  "Puts the current buffer last, but otherwise doesn't sort at all.
+Intention is that buffers are returned in MRU order."
+  (let ((current (current-buffer)))
+    (if (memq current buffers)
+        (nconc (remq current buffers) (list current))
+      buffers)))
 
 (with-eval-after-load 'consult
   (el-patch-feature consult)
@@ -1590,7 +1600,81 @@ and the last `isearch-string' is added to the future history."
                          (prog1 isearch-string (isearch-done))))
        :state (consult--location-state candidates))))
 
-  (el-patch-validate 'consult-line 'defun t))
+  (el-patch-validate 'consult-line 'defun t)
+
+  ;; `consult-buffer' provides no way to stop sorting visible buffers
+  ;; to the bottom of the list.  We have to define our own sort
+  ;; function and then patch it in to the compiled lambdas in all
+  ;; these variables.  I should probably contribute a patch to make
+  ;; this a setting.
+
+  (el-patch-defvar consult--source-project-buffer
+      `(:name     "Project Buffer"
+        :narrow   ?b
+        :category buffer
+        :face     consult-buffer
+        :history  buffer-name-history
+        :state    ,#'consult--buffer-state
+        :enabled  ,(lambda () consult-project-function)
+        :items
+        ,(lambda ()
+           (when-let (root (consult--project-root))
+             (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+                                    :directory root
+                                    :as #'consult--buffer-pair))))
+    "Project buffer candidate source for `consult-buffer'.")
+
+  (el-patch-validate 'consult--source-project-buffer 'defvar t)
+
+  (el-patch-defvar consult--source-hidden-buffer
+      `(:name     "Hidden Buffer"
+        :narrow   ?\s
+        :hidden   t
+        :category buffer
+        :face     consult-buffer
+        :history  buffer-name-history
+        :action   ,#'consult--buffer-action
+        :items
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+                                           :filter 'invert
+                                           :as #'consult--buffer-pair)))
+    "Hidden buffer candidate source for `consult-buffer'.")
+
+  (el-patch-validate 'consult--source-hidden-buffer 'defvar t)
+
+  (el-patch-defvar consult--source-modified-buffer
+      `(:name     "Modified Buffer"
+        :narrow   ?*
+        :hidden   t
+        :category buffer
+        :face     consult-buffer
+        :history  buffer-name-history
+        :state    ,#'consult--buffer-state
+        :items
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+                                           :as #'consult--buffer-pair
+                                           :predicate
+                                           (lambda (buf)
+                                             (and (buffer-modified-p buf)
+                                                  (buffer-file-name buf))))))
+    "Modified buffer candidate source for `consult-buffer'.")
+
+  (el-patch-validate 'consult--source-modified-buffer 'defvar t)
+
+  (el-patch-defvar consult--source-buffer
+      `(:name     "Buffer"
+        :narrow   ?b
+        :category buffer
+        :face     consult-buffer
+        :history  buffer-name-history
+        :state    ,#'consult--buffer-state
+        :default  t
+        :items
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+                                           :as #'consult--buffer-pair)))
+    "Buffer candidate source for `consult-buffer'.")
+
+  (el-patch-validate 'consult--source-buffer 'defvar t))
 
 (when (eq my:completion-framework 'vertico)
   (bind-keys ("s-s" . consult-line)
