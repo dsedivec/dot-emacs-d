@@ -117,6 +117,26 @@
 (auto-compile-on-load-mode)
 (auto-compile-on-save-mode)
 
+;; I'm (possibly) using emacs-lsp-booster and lsp-mode.  To use
+;; emacs-lsp-booster, I need lsp-mode to be compiled with plist
+;; support, apparently.  That means getting some of these variables
+;; set early.
+;;
+;; Make sure that I have my (probably) XDG user bin dir on `exec-path'
+;; so that I can find emacs-lsp-booster.
+(let ((xdg-user-bin (expand-file-name "~/.local/bin")))
+  (unless (seq-some (apply-partially #'string-match-p
+                                     (rx string-start
+                                         (literal xdg-user-bin)
+                                         (? ?/)
+                                         string-end))
+                    exec-path)
+    (push xdg-user-bin exec-path)))
+(defvar my:use-emacs-lsp-booster (executable-find "emacs-lsp-booster"))
+(when my:use-emacs-lsp-booster
+  (setenv "LSP_USE_PLISTS" "true")
+  (setq lsp-use-plists t))
+
 ;; As of Emacs 485622bbd1a you/I need AUCTeX > 13.0.5, or else you
 ;; get errors when reftex tries to create labels.
 ;;
@@ -2170,6 +2190,44 @@ surround \"foo\" with (in this example) parentheses.  I want
              ("M-m m d m" . macrostep-expand)))
 
 (my:load-recipe 'indent-elisp-like-common-lisp)
+
+
+;;; emacs-lsp-booster
+
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+
+(advice-add (if (progn (require 'json) (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)
+             ;; for check lsp-server-present?  see
+             ;; lsp-resolve-final-command, it would add extra shell
+             ;; wrapper
+             (not (file-remote-p default-directory))
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
 
 ;;; embark
