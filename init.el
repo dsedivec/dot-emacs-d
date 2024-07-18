@@ -2324,6 +2324,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (which-key-add-key-based-replacements "M-m j e" "emacs")
 
+(setq find-function-recenter-line nil)
+
 
 ;;; flash-full-path
 
