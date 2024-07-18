@@ -3365,7 +3365,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
     ;; incorrect.
     (setf completion-styles (list next-style 'basic)
           my:available-completion-styles (nconc my:available-completion-styles (list next-style)))
-    (message "Using completion style %S" next-style)))
+    (message "Using completion style %S" next-style)
+    (when (and (minibufferp)
+               (bound-and-true-p vertico--input))
+      ;; This seems to force Vertico to recompute candidates.
+      (setq vertico--input t))))
 
 (bind-keys ("C-S-l" . my:cycle-completion-style))
 
