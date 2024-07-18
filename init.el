@@ -5406,6 +5406,27 @@ for this command) must be an arrow key."
 ;; Note: Maybe I should ask upstream to make `xref-etags-mode'
 ;; autoloaded, since I do use it in a .dir-locals.el.
 
+(defun my:xref-find-definitions-or-references ()
+  "Find definition of symbol at point, or references if at a definition."
+  (interactive)
+  (let* ((buffer (current-buffer))
+         (pos (point))
+         (res (call-interactively #'xref-find-definitions)))
+    (if (and (equal (current-buffer) buffer)
+             (= (point) pos))
+        (call-interactively #'xref-find-references)
+      res)))
+
+;; Have to do this so xref doesn't force `xref-find-definitions' (and
+;; maybe `xref-find-references' too) to prompt.
+(with-eval-after-load 'xref
+  (when (eq (car xref-prompt-for-identifier) 'not)
+    (push 'my:xref-find-definitions-or-references
+          (cdr xref-prompt-for-identifier))))
+
+(keymap-global-set "<remap> <xref-find-definitions>"
+                   #'my:xref-find-definitions-or-references)
+
 ;; These are versions of `xref-next-line' and `xref-prev-line' that
 ;; just move the cursor to the next/previous location without also
 ;; actually jumping to that location.
