@@ -3348,7 +3348,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; minibuffer
 
-
 ;; XXX lisp/recipe
 
 (defvar my:available-completion-styles
