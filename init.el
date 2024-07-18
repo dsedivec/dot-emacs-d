@@ -5111,6 +5111,18 @@ a string or comment."
 
 ;;; vertico
 
+;; Recipe to make / enter a directory, like Ivy did.  Installed later
+;; with a key binding.
+;; https://github.com/minad/vertico/wiki#make-vertico-and-vertico-directory-behave-more-like-ivyido
+(defun my:vertico-magic-slash ()
+  (interactive)
+  (if (and (not (string-match-p "[/~:]$" (minibuffer-contents-no-properties)))
+           (>= vertico--index 0)
+           (eq 'file (vertico--metadata-get 'category))
+           (file-directory-p (vertico--candidate)))
+      (vertico-insert)
+    (self-insert-command 1 ?/)))
+
 (when (eq my:completion-framework 'vertico)
   (vertico-mode 1)
   (savehist-mode 1)
@@ -5119,7 +5131,12 @@ a string or comment."
              ;; Avy-like selection for vertico
              ("C-'" . vertico-quick-exit)
              ;; Backspace in a file prompt works like Ivy did.
-             ("DEL" . vertico-directory-delete-char))
+             ("DEL" . vertico-directory-delete-char)
+             ("/" . my:vertico-magic-slash))
+
+  ;; This is also necessary to make file prompts work like in Ivy,
+  ;; specifically my "magic slash".
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
   ;; `vertico-repeat' is like `ivy-occur': repeat the last...
   ;; Vertico... thing, I guess.  It's probably not nearly 100%
