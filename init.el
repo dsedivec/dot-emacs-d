@@ -5244,6 +5244,9 @@ a string or comment."
                     (memq 'meta modifiers)
                     (memq 'control modifiers))))
 
+(defun my:vterm-mode-hook ()
+  (setq-local global-hl-line-mode nil))
+
 (with-eval-after-load 'vterm
   (when (require 'eterm-256color nil t)
     ;; Private function of eterm-256color that checks that you have
@@ -5257,7 +5260,9 @@ a string or comment."
   (bind-keys :map vterm-mode-map
              ("C-c C-c" . vterm-send-C-c)
              ("C-q" . my:vterm-quote-next)
-             ("C-c C-t" . vterm-copy-mode)))
+             ("C-c C-t" . vterm-copy-mode))
+
+  (add-hook 'vterm-mode-hook #'my:vterm-mode-hook))
 
 
 ;;; web-mode
