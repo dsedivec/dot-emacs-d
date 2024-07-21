@@ -3216,7 +3216,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'lsp-file-watch-ignored-files
                (rx (char ?/ ?\\) (+ (not (any ?/ ?\\))) ".pyc" eos)))
 
-(setq lsp-keep-workspace-alive nil
+;; I had once set `lsp-keep-workspace-alive' to nil.  Its default is
+;; t.  I don't know why I ever wanted nil, it's a PITA to restart
+;; Python LSPs.  If anything I should write something to _eventually_
+;; kill off LSP servers with no buffers.
+(setq lsp-keep-workspace-alive t
       lsp-modeline-diagnostics-scope :file
       lsp-pyls-plugins-pylint-enabled t)
 
