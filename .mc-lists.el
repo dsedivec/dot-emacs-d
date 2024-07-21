@@ -52,6 +52,7 @@
         paredit-backward-kill-word
         paredit-backward-up
         paredit-close-square
+        paredit-delete-char
         paredit-doublequote
         paredit-forward
         paredit-forward-delete
