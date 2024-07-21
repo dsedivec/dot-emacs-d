@@ -525,14 +525,17 @@
 
 ;;; el-patch
 
-;; Setting this early, since after I switched to straight, something
-;; is hitting this all the time.  I strongly suspect it's el-patch.
-(setq vc-follow-symlinks t)
-
-;; This is way, way early because I'm about to use it to patch
+;; This package is way, way early because I'm about to use it to patch
 ;; `treepy-remove', and I needd my treepy-remove-fix recipe.  In
 ;; general, it needs to be early because I use this a decent number of
 ;; times throughout my init.el.
+
+;; Without this, `el-patch-defvar' rarely does anything for me.
+(setq el-patch-use-aggressive-defvar t)
+
+;; Setting this early, since after I switched to straight, something
+;; is hitting this all the time.  I strongly suspect it's el-patch.
+(setq vc-follow-symlinks t)
 
 (my:load-recipe 'el-patch-dont-kill-my-buffers)
 
