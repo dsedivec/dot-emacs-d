@@ -1018,7 +1018,7 @@ basically every time eldoc's idle hook runs.  Fuck me."
 
 ;;; apheleia
 
-(with-eval-after-load 'apheleia-core
+(with-eval-after-load 'apheleia
   (let ((have-isort (executable-find "isort"))
         (have-darker (executable-find "darker"))
         (python-modes '(python-mode python-ts-mode)))
@@ -1034,7 +1034,8 @@ basically every time eldoc's idle hook runs.  Fuck me."
                              (when have-isort "--isort")
                              "--quiet" "--stdout" 'file)))
        (dolist (mode python-modes)
-         (setf (alist-get mode apheleia-mode-alist) 'darker)))
+         (setf (alist-get mode apheleia-mode-alist) 'darker))
+       (message "apheleia set up to use darker for Python."))
       (have-isort
        (dolist (mode python-modes)
          (let* ((cell (assq mode apheleia-mode-alist))
@@ -1046,7 +1047,10 @@ basically every time eldoc's idle hook runs.  Fuck me."
                      mode)
              (setcdr cell (cons 'isort (if (consp current-checkers)
                                            current-checkers
-                                         (list current-checkers)))))))))))
+                                         (list current-checkers)))))))
+       (message "apheleia set up to use isort for Python."))
+      (t
+       (message "apheleia setup: neither darker nor isort available")))))
 
 
 ;;; atomic-chrome
