@@ -3352,7 +3352,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (setq magit-diff-refine-hunk 'all
       magit-diff-refine-ignore-whitespace nil
-      magit-bury-buffer-function 'magit-mode-quit-window)
+      magit-bury-buffer-function 'magit-mode-quit-window
+      magit-process-finish-apply-ansi-colors t)
 
 ;; `truncate-lines' does not work well for me when viewing diffs and
 ;; such.
