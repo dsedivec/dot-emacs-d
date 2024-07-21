@@ -2708,6 +2708,12 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (setq git-commit-summary-max-length 50)
 
 
+;;; git-link
+
+(with-eval-after-load 'git-link
+  (setq git-link-use-commit t))
+
+
 ;;; go-mode
 
 (defun my:gofmt--gofumpt-set-up-environment (orig-func &rest args)
