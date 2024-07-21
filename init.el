@@ -385,6 +385,7 @@
    (my:straight-use-packages '(
                                consult
                                consult-flycheck
+                               consult-lsp
                                embark
                                embark-consult
                                marginalia
