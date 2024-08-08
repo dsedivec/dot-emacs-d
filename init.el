@@ -3899,8 +3899,7 @@ everything else."
            ("M-m r d f d" . org-roam-dailies-goto-date)
            ("M-m r d c d" . org-roam-dailies-capture-date))
 
-(when (eq my:completion-framework 'ivy)
-  (bind-keys ("M-m r /" . my:org-roam-search)))
+(bind-keys ("M-m r /" . my:org-roam-search))
 
 (with-eval-after-load 'org-roam
   (org-roam-db-autosync-mode)
