@@ -1663,7 +1663,8 @@ and the last `isearch-string' is added to the future history."
         :history  buffer-name-history
         :action   ,#'consult--buffer-action
         :items
-        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
+                                                                'current-last)
                                            :filter 'invert
                                            :as #'consult--buffer-pair)))
     "Hidden buffer candidate source for `consult-buffer'.")
@@ -1679,7 +1680,8 @@ and the last `isearch-string' is added to the future history."
         :history  buffer-name-history
         :state    ,#'consult--buffer-state
         :items
-        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
+                                                                'current-last)
                                            :as #'consult--buffer-pair
                                            :predicate
                                            (lambda (buf)
@@ -1698,7 +1700,8 @@ and the last `isearch-string' is added to the future history."
         :state    ,#'consult--buffer-state
         :default  t
         :items
-        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+        ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
+                                                                'current-last)
                                            :as #'consult--buffer-pair)))
     "Buffer candidate source for `consult-buffer'.")
 
