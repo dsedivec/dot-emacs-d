@@ -1448,7 +1448,9 @@ plugin."
                     " can't make `counsel-company' end completion")))))
 
 (my:load-recipes 'company-dont-complete-numbers
-                 'company-dabbrev-code-work-with-other-prefixes
+                 ;; XXX Maybe not necessary after changes including
+                 ;; https://github.com/company-mode/company-mode/pull/1405
+                 ;; 'company-dabbrev-code-work-with-other-prefixes
                  'company-remove-duplicates-ignoring-annotations
                  'company-complete-or-other-backend)
 
@@ -3744,7 +3746,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
    'org-leave-blank-line-before-heading
    'org-make-dabbrev-ignore-emphasis
    'org-make-nice-id-from-headline-text
-   'org-property-drawer-fixes
+   ;; XXX may not be necessary anymore?  At least part 3?
+   ;; 'org-property-drawer-fixes
    )
 
   (bind-keys :map org-mode-map
