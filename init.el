@@ -3429,7 +3429,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (defvar my:available-completion-styles
   (seq-filter (lambda (style) (require style nil t))
-              '(fussy orderless)))
+              '(orderless fussy)))
 
 (defun my:cycle-completion-style ()
   (interactive)
