@@ -1708,6 +1708,13 @@ and the last `isearch-string' is added to the future history."
   (el-patch-validate 'consult--source-buffer 'defvar t))
 
 (when (eq my:completion-framework 'vertico)
+  ;; Reducing all these limits to try and make `consult-ripgrep' and
+  ;; friends more responsive, based on what I'm used to from Ivy.
+  (setq consult-async-refresh-delay 0.1
+        consult-async-input-throttle 0.25
+        consult-async-input-debounce 0.1
+        consult-async-min-input 2)
+
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
              ("M-m /" . consult-ripgrep)
