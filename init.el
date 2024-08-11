@@ -1981,7 +1981,7 @@ mode.
 When dtrt-indent mode is enabled, the proper indentation offset
 and `indent-tabs-mode' will be guessed for newly opened files and
 adjusted transparently."
-    :lighter " dtrt-indent"
+    :lighter dtrt-indent-lighter
     :group 'dtrt-indent
     (if dtrt-indent-mode
         (el-patch-splice 3 0
