@@ -20,6 +20,8 @@
 ;; https://github.com/company-mode/company-mode/issues/432
 ;; https://github.com/company-mode/company-mode/pull/509
 ;; Company commit 7779820493, and its revert in 395f846b05f
+;; https://github.com/company-mode/company-mode/issues/528
+;; (where I posted a link to this file)
 
 (defvar my:company-remove-duplicates-low-priority-backends
   '(company-dabbrev-code company-dabbrev))
