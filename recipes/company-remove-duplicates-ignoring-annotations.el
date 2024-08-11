@@ -21,6 +21,9 @@
 ;; https://github.com/company-mode/company-mode/pull/509
 ;; Company commit 7779820493, and its revert in 395f846b05f
 
+(defvar my:company-remove-duplicates-low-priority-backends
+  '(company-dabbrev-code company-dabbrev))
+
 (defun my:company-remove-duplicates-ignoring-annotations (candidates)
   "Reorder company candidates, removing any duplicates.
 cand-1 is a duplicate of cand-2 if (string= cand-1 cand-2).  Note
@@ -39,40 +42,38 @@ company-prescient).  If a `company-dabbrev-code' candidate has a
 duplicate later in the of candidates, the `company-dabbrev-code'
 candidate will be replaced by the candidate that appears later in
 the list."
-  (let* ((default-backend (if (listp company-backend)
-                              (car company-backend)
-                            company-backend))
-         (best-cands (make-hash-table :test #'equal))
-         has-duplicates)
-    ;; First pass: Put the best candidate in hash table best-cands.
-    ;; Candidates from `company-dabbrev-code' backend are worse than
-    ;; all other candidates.  Aside from that rule, first candidate ==
-    ;; best candidate.
+  ;; default-backend is here, I guess, because you could have a
+  ;; grouped backend with a low priority backend as first in the list,
+  ;; and IIRC the first backend in a grouped
+  ;; backend... maybe... doesn't get a company-backend property?  It's
+  ;; been a while.  I'm not sure this is correct, let alone useful.
+  (let ((default-backend (if (listp company-backend)
+                             (car company-backend)
+                           company-backend))
+        (candidates-ht (make-hash-table :test #'equal))
+        (idx 0)
+        has-duplicates)
     (dolist (cand candidates)
-      (pcase-let* ((cand-backend (or (get-text-property 0 'company-backend cand)
-                                     default-backend))
-                   (cand-prio (cond
-                                ((eq cand-backend 'company-dabbrev-code) -10)
-                                (t 0)))
-                   (`(,best-cand . ,best-prio) (gethash cand best-cands)))
-        (when best-cand
-          (setq has-duplicates t)
-          (when (> cand-prio best-prio)
-            (puthash cand (cons cand cand-prio) best-cands)))))
-    (if has-duplicates
-        ;; Second pass: Remove duplicates.  Replace the first instance
-        ;; of a given candidate with its best candidate, e.g. replace
-        ;; a `company-dabbrev-code' candidate with a duplicate
-        ;; candidate from any other backend.
-        (cl-loop
-          for cand in candidates
-          for (best-cand . best-prio) = (gethash cand best-cands)
-          if best-cand
-          collect best-cand
-          and do (remhash cand best-cands))
-      ;; There were no duplicates (maybe a common case), we can just
-      ;; return the original list.
-      candidates)))
+      (let* ((cand-backend (or (get-text-property 0 'company-backend cand) default-backend))
+             (low-priority-backend (memq cand-backend my:company-remove-duplicates-low-priority-backends))
+             (existing (gethash cand candidates-ht)))
+        (when existing
+          (setq has-duplicates t))
+        (when (or (not existing)
+                  (and (not low-priority-backend) (cdr existing)))
+          (puthash cand (cons idx low-priority-backend) candidates-ht)))
+      (cl-incf idx))
+    ;; Questionable premature optimization: Don't make the second pass
+    ;; and return candidates as-is if we didn't find any duplicates.
+    (if (not has-duplicates)
+        candidates
+      (setq idx 0)
+      (seq-filter (lambda (cand)
+                    (prog1
+                        (when-let ((ht-entry (gethash cand candidates-ht)))
+                          (= (car ht-entry) idx))
+                      (cl-incf idx)))
+                  candidates))))
 
 ;; Add our transformer.
 (with-eval-after-load 'company
