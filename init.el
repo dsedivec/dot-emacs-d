@@ -240,6 +240,7 @@
                             exec-path-from-shell
                             expand-region
                             fennel-mode
+                            filladapt
                             ;; Need this recipe to get the dynamic
                             ;; module in the "bin" directory.
                             (flx-rs
@@ -2377,21 +2378,10 @@ surround \"foo\" with (in this example) parentheses.  I want
                  'files-save-some-buffers-default-no-query)
 
 
-;;; fill
+;;; filladapt
 
-;; Make `adaptive-fill-mode' recognize numbered lists as well.
-
-(unless (equal (my:get-standard-value 'adaptive-fill-regexp)
-               "[-–!|#%;>*·•‣⁃◦ \t]*")
-  (warn "`adaptive-fill-regexp' changed from 30.0.50 value, check your mod"))
-
-(setq adaptive-fill-regexp
-      (rx (or
-           ;; Original regexp.
-           (* (any "[-–!|#%;>*·•‣⁃◦ \t]*"))
-           ;; Numbered lists.  I wonder why RMS took this out...  (See
-           ;; comment in fill.el.)
-           (: (1+ digit) ?.))))
+(require 'filladapt)
+(setq-default filladapt-mode t)
 
 
 ;;; find-func
