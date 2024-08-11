@@ -27,6 +27,7 @@
         insert-char
         insert-parentheses
         kill-sexp
+        kill-visual-line
         markdown-cycle
         markdown-insert-code
         markdown-outdent-or-delete
