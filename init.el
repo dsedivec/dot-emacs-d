@@ -1716,6 +1716,10 @@ and the last `isearch-string' is added to the future history."
         consult-async-input-debounce 0.1
         consult-async-min-input 2)
 
+  ;; `consult-line' starts from top, rather than current line, which
+  ;; looks weird once you get to the bottom of the matches.
+  (setq consult-line-start-from-top t)
+
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
              ("M-m /" . consult-ripgrep)
