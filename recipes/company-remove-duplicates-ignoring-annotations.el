@@ -56,8 +56,11 @@ the list."
         (idx 0)
         has-duplicates)
     (dolist (cand candidates)
-      (let* ((cand-backend (or (get-text-property 0 'company-backend cand) default-backend))
-             (low-priority-backend (memq cand-backend my:company-remove-duplicates-low-priority-backends))
+      (let* ((cand-backend (or (get-text-property 0 'company-backend cand)
+                               default-backend))
+             (low-priority-backend
+              (memq cand-backend
+                    my:company-remove-duplicates-low-priority-backends))
              (existing (gethash cand candidates-ht)))
         (when existing
           (setq has-duplicates t))
