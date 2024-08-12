@@ -2270,6 +2270,10 @@ surround \"foo\" with (in this example) parentheses.  I want
 (when (eq my:completion-framework 'vertico)
   (bind-keys ("C-." . embark-act)
              ("C-;" . embark-dwim)
+             ;; NOTE: You have to provide a prefix argument to see
+             ;; global bindings as well.  Otherwise it only shows you
+             ;; major/minor mode and local bindings, I believe.  Not
+             ;; sure I like this.
              ("C-h b" . embark-bindings))
 
   (bind-keys :map minibuffer-local-map
