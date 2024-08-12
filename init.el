@@ -3166,6 +3166,32 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (bind-key "C-c C-o" #'my:link-hint-multi-dispatch)
 
+;; Temporary fix for
+;; https://github.com/noctuid/link-hint.el/issues/231.
+
+(el-patch-feature 'link-hint)
+
+(with-eval-after-load 'link-hint
+  (el-patch-defun link-hint--next-widget (bound)
+    "Find the next widget location. Currently only used for custom mode.
+Only search the range between just after the point and BOUND."
+    (save-excursion
+      (save-restriction
+        (narrow-to-region (point) bound)
+        (ignore-errors
+          (el-patch-remove
+            (widget-forward 1)
+            (point))
+          (el-patch-add
+            (let* ((point-before (point))
+                   (point-after (progn
+                                  (widget-forward 1)
+                                  (point))))
+              (when (/= point-before point-after)
+                point-after)))))))
+
+  (el-patch-validate 'link-hint--next-widget 'defun t))
+
 
 ;;; lisp
 
