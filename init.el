@@ -408,6 +408,10 @@
 ;; this nil by default, anyway?)
 (setq print-circle t)
 
+;; Debugging faces, `symbol-plist' often needs to print quite a lot.
+;; 10 is the default as of this writing.
+(setq print-length 100)
+
 ;; Doubling these as I kept running out of undo history (at least, I
 ;; did with undo-tree).
 (setq undo-limit (* 2 80000)
