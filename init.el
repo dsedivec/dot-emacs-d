@@ -217,6 +217,7 @@
                             company-shell
                             company-terraform
                             company-web
+                            corfu
                             crontab-mode
                             crux
                             csv-mode
