@@ -752,7 +752,8 @@
 (setq wspc-hydra-buffer-local-whitespace-style t)
 
 (defun my:warn-white-space-mode ()
-  (wspc-hydra-apply-style 'warn-white-space))
+  (wspc-hydra-apply-style 'warn-white-space)
+  (display-fill-column-indicator-mode 1))
 
 
 ;;; exec-path-from-shell
@@ -1952,6 +1953,11 @@ and the last `isearch-string' is added to the future history."
             ext)
     (add-to-list 'dired-latex-unclean-extensions ext)
     (add-to-list 'dired-omit-extensions ext)))
+
+
+;;; display-fill-column-indicator-mode
+
+(setq-default display-fill-column-indicator-column 80)
 
 
 ;;; display-line-numbers
@@ -3482,6 +3488,38 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (setq modus-themes-paren-match '(intense)
       modus-themes-headings '((t . (regular))))
+
+;; The changes Modus makes to the `fill-column-indicator' face look
+;; like absolute ass on macOS terms.  It says you get a dotted line,
+;; but I assure you my FCI is very un-dotted and looks relatively
+;; awesome.
+;;
+;; Naturally I cannot, for the life of me, figure out how I'm supposed
+;; to change this face in a remotely sane way.  The documentation for
+;; Modus suggests doing something that simply doesn't work for me, at
+;; all.  Emacs faces and themes remain impenetrable.  I have inferred
+;; this magical spell through much trial and error, and yet I feel
+;; confident that it is wrong and/or bad.
+
+(defun my:modus-vivendi-reset-fci-face (theme)
+  (when (eq theme 'modus-vivendi)
+    ;; Note: The NOW argument for the specs here doesn't seem to work,
+    ;; I have to call `face-spec-recalc' myself.
+    (custom-theme-set-faces 'modus-vivendi
+                            '(fill-column-indicator
+                              ;; Facespec cribbed from defaults.
+                              ((t
+                                :inherit shadow
+                                :weight normal
+                                :slant normal))))
+    ;; NIL here means "current frame".  T does not work (e.g. for "all
+    ;; frames").  I have no idea if this matters.
+    (face-spec-recalc 'fill-column-indicator nil)))
+
+(add-hook 'enable-theme-functions #'my:modus-vivendi-reset-fci-face)
+
+;; (custom-theme-set-faces 'modus-vivendi
+;;                         '(fill-column-indicator (())))
 
 
 ;;; move-text
