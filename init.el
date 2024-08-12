@@ -3481,11 +3481,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; modus-vivendi-theme
 
-(when (featurep 'modus-vivendi-theme)
-  (warn (concat "modus-vivendi-theme has been loaded too early,"
-                " `modus-vivendi-theme-override-colors-alist' may not"
-                " be respected")))
-
 (setq modus-themes-paren-match '(intense)
       modus-themes-headings '((t . (regular))))
 
