@@ -2260,13 +2260,21 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; embark
 
+;; https://github.com/oantolin/embark?tab=readme-ov-file#quitting-the-minibuffer-after-an-action
+(defun my:embark-act-no-quit ()
+  "Run action but don't quit the minibuffer afterwards."
+  (interactive)
+  (let ((embark-quit-after-action nil))
+    (embark-act)))
+
 (when (eq my:completion-framework 'vertico)
   (bind-keys ("C-." . embark-act)
              ("C-;" . embark-dwim)
              ("C-h b" . embark-bindings))
 
   (bind-keys :map minibuffer-local-map
-             ("C-c C-o" . embark-export)))
+             ("C-c C-o" . embark-export)
+             ("C-M-." . my:embark-act-no-quit)))
 
 
 ;;; embrace
