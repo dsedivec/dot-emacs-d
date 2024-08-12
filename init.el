@@ -754,14 +754,6 @@
 (defun my:warn-white-space-mode ()
   (wspc-hydra-apply-style 'warn-white-space))
 
-(defun my:warn-whitespace-mode (&optional on)
-  (cl-assert (or (null on) (numberp on)))
-  (if (or (null on) (> on 0))
-      (my:warn-white-space-mode)
-    (whitespace-mode -1)))
-
-(make-obsolete 'my:warn-whitespace-mode 'my:warn-white-space-mode "2018-09-23")
-
 
 ;;; exec-path-from-shell
 
