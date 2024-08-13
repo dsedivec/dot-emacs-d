@@ -95,15 +95,18 @@ taken from the docstring of a minor mode function defined by
   (with-current-buffer (or buffer (current-buffer))
     (or (apply #'derived-mode-p additional-modes)
         (and
-         ;; `ivy-occur-grep-mode' is derived from `compilation-mode', but
-         ;; I don't want to treat it as pop-up.
-         (not (derived-mode-p 'ivy-occur-grep-mode))
-         (derived-mode-p 'bm-show-mode
-                         'bs-mode
-                         'compilation-mode
-                         'flycheck-error-list-mode
-                         'help-mode
-                         'osx-dictionary-mode))
+         ;; `ivy-occur-grep-mode' is derived from `grep-mode', which
+         ;; is in turn derived from `compilation-mode'.
+         ;; `embark-export' also has a good habit of making
+         ;; `grep-mode' buffers.  I don't want either of these to be
+         ;; treated as pop-ups.
+         (not (derived-mode-p 'grep-mode))
+         (derived-mode-p '(bm-show-mode
+                           bs-mode
+                           compilation-mode
+                           flycheck-error-list-mode
+                           help-mode
+                           osx-dictionary-mode)))
         (equal (buffer-name) "*Buttercup*"))))
 
 (defun my:highlight-line-after-movement ()
