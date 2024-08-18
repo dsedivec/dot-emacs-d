@@ -5330,7 +5330,8 @@ a string or comment."
                     (memq 'control modifiers))))
 
 (defun my:vterm-mode-hook ()
-  (setq-local global-hl-line-mode nil))
+  (setq-local global-hl-line-mode nil)
+  (display-line-numbers-mode -1))
 
 (with-eval-after-load 'vterm
   (when (require 'eterm-256color nil t)
