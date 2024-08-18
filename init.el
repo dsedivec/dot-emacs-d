@@ -5286,6 +5286,9 @@ a string or comment."
   (vertico-mode 1)
   (savehist-mode 1)
 
+  ;; Display more lines in my typically fairly tall windows.
+  (setq vertico-count 20)
+
   (bind-keys :map vertico-map
              ;; Avy-like selection for vertico
              ("C-'" . vertico-quick-exit)
