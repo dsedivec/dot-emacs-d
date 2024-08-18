@@ -3345,7 +3345,15 @@ Only search the range between just after the point and BOUND."
   ;; Pyright to offer you auto-import completions (along with this
   ;; setting).  See also:
   ;; https://github.com/fannheyward/coc-pyright/issues/90#issuecomment-813804148
-  (setq lsp-pyright-diagnostic-mode "workspace"))
+  (setq lsp-pyright-diagnostic-mode "workspace")
+
+  ;; Use basedpyright instead of pyright if installed.
+  ;;
+  ;; Note: This only overrides pyright for local use.  If you're using
+  ;; it over TRAMP, we'd need to modify the :new-connection slot of
+  ;; the pyright-remote LSP client definition.
+  (when (executable-find "basedpyright-langserver")
+    (lsp-dependency 'pyright '(:system "basedpyright-langserver"))))
 
 
 ;;; lsp-ui
