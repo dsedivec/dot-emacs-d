@@ -5697,11 +5697,14 @@ for this command) must be an arrow key."
 (defun my:xref-find-definitions-or-references ()
   "Find definition of symbol at point, or references if at a definition."
   (interactive)
-  (let* ((buffer (current-buffer))
-         (pos (point))
-         (res (call-interactively #'xref-find-definitions)))
-    (if (and (equal (current-buffer) buffer)
-             (= (point) pos))
+  (let (buf pos res)
+    (save-excursion
+      (beginning-of-thing 'symbol)
+      (setq buf (current-buffer)
+            pos (point)))
+    (setq res (call-interactively #'xref-find-definitions))
+    (if (and (equal (current-buffer) buf)
+             (eql (point) pos))
         (call-interactively #'xref-find-references)
       res)))
 
