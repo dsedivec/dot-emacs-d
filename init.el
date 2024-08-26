@@ -1696,6 +1696,27 @@ and the last `isearch-string' is added to the future history."
 
   (el-patch-validate 'consult--source-buffer 'defvar t))
 
+;; Replacement for my `counsel-auto-grep-ask-dir'.
+(defun my:consult-ripgrep-prompt ()
+  (interactive)
+  (consult-ripgrep t))
+
+(defun my:consult-grep-prompt ()
+  (interactive)
+  (consult-grep t))
+
+(defvar my:consult-ripgrep-available nil)
+
+(defun my:consult-autogrep (&optional dir initial-input)
+  (interactive "P")
+  (if my:consult-ripgrep-available
+      (consult-ripgrep dir initial-input)
+    (consult-grep dir initial-input)))
+
+(defun my:consult-autogrep-prompt ()
+  (interactive)
+  (my:consult-autogrep t))
+
 (when (eq my:completion-framework 'vertico)
   ;; Reducing all these limits to try and make `consult-ripgrep' and
   ;; friends more responsive, based on what I'm used to from Ivy.
@@ -1708,9 +1729,12 @@ and the last `isearch-string' is added to the future history."
   ;; looks weird once you get to the bottom of the matches.
   (setq consult-line-start-from-top t)
 
+  (setq my:consult-ripgrep-available (executable-find "rg"))
+
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
-             ("M-m /" . consult-ripgrep)
+             ("M-m /" . my:consult-autogrep)
+             ("M-m s f" . my:consult-autogrep-prompt)
              ("C-x b" . consult-buffer)
              ("C-x 4 b" . consult-buffer-other-window)
              ("C-x 5 b" . consult-buffer-other-frame)
