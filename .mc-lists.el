@@ -89,6 +89,7 @@
         counsel-projectile-find-file
         count-words-region
         describe-key-briefly
+        edebug-step-mode
         edit-indirect-region
         end-of-buffer
         frame-resize
