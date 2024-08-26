@@ -2372,7 +2372,9 @@ surround \"foo\" with (in this example) parentheses.  I want
 (with-eval-after-load 'fennel-mode
   (unbind-key "M-'" fennel-mode-map)
 
-  (add-hook 'fennel-mode-hook #'paredit-mode))
+  (my:add-hooks 'fennel-mode-hook
+    #'paredit-mode
+    #'my:warn-white-space-mode))
 
 
 ;;; files
