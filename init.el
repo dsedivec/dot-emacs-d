@@ -5201,6 +5201,29 @@ a string or comment."
 
 (global-treesit-auto-mode 1)
 
+;; You kind of need this if you want to upgrade an already installed
+;; grammar.
+(defun my:treesit-install-grammar (lang)
+  (interactive
+   (list
+    (let* ((treesit-language-source-alist
+            (treesit-auto--build-treesit-source-alist))
+           (langs (mapcar (lambda (lang) (symbol-name (car lang)))
+                          treesit-language-source-alist))
+           (current-mode-str (symbol-name major-mode))
+           (current-lang (save-match-data
+                           (and (string-match "^[^-]+" current-mode-str)
+                                (match-string 0 current-mode-str))))
+           (default-lang (and current-lang
+                              (car (assq (intern current-lang)
+                                         treesit-language-source-alist)))))
+      (completing-read "Language to install: "
+                       langs
+                       nil t nil nil default-lang))))
+  (let ((treesit-language-source-alist
+         (treesit-auto--build-treesit-source-alist)))
+    (treesit-install-language-grammar (intern lang))))
+
 
 ;;; two-column
 
