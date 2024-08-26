@@ -2689,6 +2689,14 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;;; flyspell
 
+(when (eq my:completion-framework 'vertico)
+  (with-eval-after-load 'flyspell
+    ;; Free up this key for `embark-act'.
+    (unbind-key "C-." flyspell-mode-map)
+    ;; C-. was bound to `flyspell-auto-correct-word'.  C-; is
+    ;; `flyspell-auto-correct-previous-word'.
+    (bind-key "C-;" 'flyspell-auto-correct-word flyspell-mode-map)))
+
 (add-hook 'text-mode-hook #'flyspell-mode)
 
 (add-hook 'prog-mode-hook #'flyspell-prog-mode)
