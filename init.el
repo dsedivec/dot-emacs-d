@@ -3627,6 +3627,79 @@ Only search the range between just after the point and BOUND."
 (advice-add 'mc/mark-more-like-this-extended :before
             #'my:mc/mark-more-like-this-extended-dwim-advice)
 
+;; XXX RECIPE
+;;
+;; Make `mc/mark-all-like-this' only match symbols, if possible, and
+;; not inside comments or string literals.  This is useful when using
+;; `mc/mark-all-like-this-dwim', which I actually have on a key.
+
+(el-patch-feature 'mc-mark-more)
+
+(with-eval-after-load 'mc-mark-more
+  (el-patch-defun mc/mark-all-like-this-dwim (arg)
+    "Tries to guess what you want to mark all of.
+Can be pressed multiple times to increase selection.
+
+With prefix, it behaves the same as original `mc/mark-all-like-this'"
+    (interactive "P")
+    (if arg
+        (mc/mark-all-like-this)
+      (if (and (not (use-region-p))
+               (derived-mode-p 'sgml-mode)
+               (mc--on-tag-name-p))
+          (mc/mark-sgml-tag-pair)
+        (let ((before (mc/num-cursors)))
+          (unless (eq last-command 'mc/mark-all-like-this-dwim)
+            (setq mc--restrict-mark-all-to-symbols nil))
+          (unless (use-region-p)
+            (mc--mark-symbol-at-point)
+            (setq mc--restrict-mark-all-to-symbols (el-patch-swap t 'strict)))
+          (if mc--restrict-mark-all-to-symbols
+              (mc/mark-all-symbols-like-this-in-defun)
+            (mc/mark-all-like-this-in-defun))
+          (el-patch-add
+            (when (and (<= (mc/num-cursors) before)
+                       (eq mc--restrict-mark-all-to-symbols 'strict))
+              (setq mc--restrict-mark-all-to-symbols t)
+              (mc/mark-all-symbols-like-this-in-defun)))
+          (when (<= (mc/num-cursors) before)
+            (if mc--restrict-mark-all-to-symbols
+                (mc/mark-all-symbols-like-this)
+              (mc/mark-all-like-this)))
+          (when (<= (mc/num-cursors) before)
+            (mc/mark-all-like-this))))))
+
+  (el-patch-validate 'mc/mark-all-like-this-dwim 'defun t)
+
+  (el-patch-defun mc/mark-all-like-this ()
+    "Find and mark all the parts of the buffer matching the currently active region"
+    (interactive)
+    (unless (region-active-p)
+      (error "Mark a region to match first."))
+    (mc/remove-fake-cursors)
+    (let ((master (point))
+          (case-fold-search nil)
+          (point-first (< (point) (mark)))
+          (re (regexp-opt (mc/region-strings) mc/enclose-search-term)))
+      (mc/save-excursion
+       (goto-char 0)
+       (while (search-forward-regexp re nil t)
+         (push-mark (match-beginning 0))
+         (when point-first (exchange-point-and-mark))
+         (unless (el-patch-wrap 1 1
+                   (or (= master (point))
+                       (and (eq mc/enclose-search-term 'symbols)
+                            (eq mc--restrict-mark-all-to-symbols 'strict)
+                            (let ((syntax (syntax-ppss)))
+                              (or (elt syntax 3) (elt syntax 4))))))
+           (mc/create-fake-cursor-at-point))
+         (when point-first (exchange-point-and-mark)))))
+    (if (> (mc/num-cursors) 1)
+        (multiple-cursors-mode 1)
+      (mc/disable-multiple-cursors-mode)))
+
+  (el-patch-validate 'mc/mark-all-like-this 'defun t))
+
 (bind-keys ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("<s-mouse-1>" . mc/add-cursor-on-click)
