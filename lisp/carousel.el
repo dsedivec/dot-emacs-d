@@ -106,21 +106,25 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
         (next-run (min carousel-file-buffer-max-age
                        carousel-non-file-buffer-max-age)))
     (dolist (buf (buffer-list))
+      ;; If the max-age variable for the type of buffer (file
+      ;; vs. non-file) is nil then we will not kill any buffers of
+      ;; that type.
       (let ((max-age (if (buffer-file-name buf)
                          carousel-file-buffer-max-age
                        carousel-non-file-buffer-max-age)))
-        (unless (or (not (buffer-live-p buf))
+        (unless (or (null max-age)
+                    (not (buffer-live-p buf))
                     ;; Buffers connected to a process/socket should
                     ;; never be killed.
                     (get-buffer-process buf)
+                    ;; Not going to kill a buffer that's going to
+                    ;; prompt us to save it anyway.
+                    (buffer-modified-p buf)
                     ;; midnight does this.  Not sure if it's necessary,
                     ;; but my guess is that maybe a buffer could be
                     ;; visible but not yet have its
                     ;; `buffer-display-time' set.
                     (get-buffer-window buf 'visible)
-                    ;; If the appropriate max-age variable is nil then
-                    ;; we don't kill these types of buffers.
-                    max-age
                     (let ((buf-name (buffer-name buf)))
                       (seq-some (lambda (regexp)
                                   (string-match-p regexp buf-name))
