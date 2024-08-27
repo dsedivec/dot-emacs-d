@@ -1978,8 +1978,6 @@ and the last `isearch-string' is added to the future history."
 
 ;;; display-line-numbers
 
-(setq display-line-numbers-width (+ 88 5))
-
 ;; If I just turn this on, Emacs crashes, so I turn it on like this.
 (add-hook 'after-init-hook #'global-display-line-numbers-mode t)
 
