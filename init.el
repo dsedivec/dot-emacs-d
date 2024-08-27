@@ -5655,6 +5655,68 @@ for this command) must be an arrow key."
            ("C-x <right>" . my:delete-window-that-direction))
 
 
+;;; window
+
+;; XXX RECIPES or lisp or something
+
+(defun my:describe-window-tree ()
+  (interactive)
+  (let ((buf (get-buffer-create "*window-tree*"))
+        win-stack)
+    (with-current-buffer buf
+      (fundamental-mode)
+      (setq-local buffer-read-only nil)
+      (widen)
+      (delete-region (point-min) (point-max))
+      (walk-window-tree
+       (lambda (win)
+         (let ((parent (window-parent win)))
+           (while (and win-stack (not (eq parent (car win-stack))))
+             (pop win-stack))
+           (dotimes (_ (length win-stack))
+             (insert "    "))
+           (insert (format "%S\n" win))
+           (push win win-stack)))
+       nil t))
+    (switch-to-buffer buf)
+    (special-mode)))
+
+;; Should keep this synced with the value I use for frame-resize.
+(defvar my:split-sensibly-min-width 95)
+
+;; Note: In the below code, a "vertical split" means to make another
+;; window to the left/right of the current window.  A "horizontal
+;; split" means to make a window above/below the current window.  I
+;; believe this is the opposite of the terminology used in
+;; e.g. `split-window-sensibly'.
+;;
+;; Fun note: I think errors here may be eaten, even with
+;; `debug-on-error'.  I was testing this and I had forgotten to define
+;; `my:split-sensibly-min-width'.  Edebug hit the variable reference
+;; and then immediately left with no notice.
+(defun my:split-window-sensibly (&optional window)
+  (let* ((window (or window (selected-window)))
+         (parent (window-parent window))
+         (available-width (if parent
+                              (window-total-width parent)
+                            (frame-width (window-frame window))))
+         (num-windows-horizontal (if parent
+                                     (window-combinations parent t)
+                                   1))
+         (if-vertical-min-width (/ (float available-width)
+                                   (1+ num-windows-horizontal))))
+    ;; Will adding another vertical split make the windows too small?
+    (if (> if-vertical-min-width my:split-sensibly-min-width)
+        ;; Nope, split vertically
+        (with-selected-window window
+          (split-window-right))
+      ;; Emacs default behavior
+      (split-window-sensibly window))))
+
+(setq split-window-preferred-function #'my:split-window-sensibly)
+;; (setq split-window-preferred-function #'split-window-sensibly)
+
+
 ;;; window-hydra
 
 ;; This is normally `split-line' which I have never knowingly used and
