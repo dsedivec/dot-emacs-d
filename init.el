@@ -5429,6 +5429,8 @@ a string or comment."
 
 ;;; volatile-highlights
 
+(setq vhl/use-occur-extension-p nil)
+
 (volatile-highlights-mode 1)
 
 
