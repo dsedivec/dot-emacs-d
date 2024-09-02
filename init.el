@@ -234,6 +234,7 @@
                             edit-indirect
                             editorconfig
                             el-patch
+                            ellama
                             embrace
                             emmet-mode
                             envrc
@@ -257,6 +258,7 @@
                             fussy
                             git-link
                             go-mode
+                            gptel
                             graphviz-dot-mode
                             groovy-mode
                             haskell-snippets
@@ -1055,6 +1057,14 @@ basically every time eldoc's idle hook runs.  Fuck me."
 ;;; atomic-chrome
 
 (atomic-chrome-start-server)
+
+
+;;; auth-source
+
+(with-eval-after-load 'auth-source
+  (when (eq system-type 'darwin)
+    ;; Original impetus for adding this was gptel.
+    (add-to-list 'auth-sources 'macos-keychain-internet)))
 
 
 ;;; auto-highlight-symbol
@@ -2230,6 +2240,22 @@ surround \"foo\" with (in this example) parentheses.  I want
 (my:load-recipe 'indent-elisp-like-common-lisp)
 
 
+;;; ellama
+
+(setopt ellama-keymap-prefix "M-m a e")
+
+(with-eval-after-load 'ellama
+  (require 'auth-source)
+  (require 'llm-claude)
+
+  (setopt ellama-providers
+          `(("claude-3.5-sonnet" . ,(my:llm-get-llm-claude-3.5-sonnet)))
+          ellama-provider
+          (cdar ellama-providers))
+  (setopt ellama-naming-provider (my:llm-get-llm-claude-3-haiku)
+          ellama-naming-scheme 'ellama-generate-name-by-llm))
+
+
 ;;; emacs-lsp-booster
 
 (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -2796,6 +2822,21 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (add-hook 'text-mode-hook #'goto-address-mode)
 
 
+;;; gptel
+
+(defvar my:gptel-model-anthropic
+  (gptel-make-anthropic "Anthropic Claude"
+    :stream t
+    ;; This :key value is kinda-sorta the default for OpenAI, but not
+    ;; for Anthropic.  Sort of makes sense once you read the code and
+    ;; see that it takes the host name from the default backend.
+    :key (apply-partially #'gptel-api-key-from-auth-source
+                          "api.anthropic.com")))
+
+(setq gptel-model "claude-3-5-sonnet-20240620"
+      gptel-backend my:gptel-model-anthropic)
+
+
 ;;; groovy-mode
 
 (defun my:groovy-mode-hook ()
@@ -3255,6 +3296,29 @@ Only search the range between just after the point and BOUND."
   #'paredit-mode
   #'aggressive-indent-mode
   #'my:lisp-mode-hook)
+
+
+;;; llm (used by ellama, maybe others some day)
+
+(setq llm-warn-on-nonfree nil)
+
+(defun my:llm-get-key-anthropic ()
+  (cond
+    ((eq system-type 'darwin)
+     (auth-source-pick-first-password :type 'macos-keychain-internet
+                                      :host "api.anthropic.com"
+                                      :user "apikey"
+                                      :require '(:secret)))
+    (t
+     (user-error "No Anthropic API key available."))))
+
+(defun my:llm-get-llm-claude-3.5-sonnet ()
+  (make-llm-claude :key (my:llm-get-key-anthropic)
+                   :chat-model "claude-3-5-sonnet-20240620"))
+
+(defun my:llm-get-llm-claude-3-haiku ()
+  (make-llm-claude :key (my:llm-get-key-anthropic)
+                   :chat-model "claude-3-haiku-20240307"))
 
 
 ;;; loccur
