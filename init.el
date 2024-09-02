@@ -2871,6 +2871,12 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (setq gptel-model "claude-3-5-sonnet-20240620"
       gptel-backend my:gptel-model-anthropic)
 
+(with-eval-after-load 'gptel
+  (setf (alist-get 'markdown-mode gptel-prompt-prefix-alist)
+        "**Request:** "
+        (alist-get 'markdown-mode gptel-response-prefix-alist)
+        "**Response:** "))
+
 
 ;;; groovy-mode
 
