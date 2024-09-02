@@ -134,6 +134,7 @@
  ("move-text" . "90ef0b078dbcb2dee47a15b0c6c6f417101e0c43")
  ("multiple-cursors.el" . "c870c18462461df19382ecd2f9374c8b902cd804")
  ("mwim.el" . "b4f3edb4c0fb8f8b71cecbf8095c2c25a8ffbf85")
+ ("nftables-mode" . "c34bcd2195b338d86a76e5878ec82b021445e35f")
  ("nhexl-mode" . "0b27339bdb3e5255353de457ad99724b0d83dcaf")
  ("nongnu-elpa" . "f6c211cdfafdc2f000589edb604c6e166de1216b")
  ("ns-copy-html" . "ce32c81418ea38edd5c86a4e10db96ea2fe47a28")

@@ -296,6 +296,7 @@
                             move-text
                             multiple-cursors
                             mwim
+                            nftables-mode
                             nhexl-mode
                             obsidian
                             olivetti
