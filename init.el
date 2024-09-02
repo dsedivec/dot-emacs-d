@@ -2439,7 +2439,41 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; filladapt
 
+;; NOTE: As of Emacs master 2024-09-01, trying to require filladapt
+;; without first defining `filladapt-mode' **as nil** seems to yield
+;; the error:
+;;
+;;     Eager macro-expansion failure: (void-variable filladapt-mode)
+;;
+;; I don't know why this wasn't happening with my master build from
+;; ca. 2024-08-11.  One problem seems to be that filladapt.el installs
+;; advice on `fill-region' that wants to know the value of
+;; `filladapt-mode', but the advice is added before the
+;; "(define-minor-mode filladapt-mode)" form is evaluated, so
+;; `filladapt-mode' has no value yet.  (There is a `defvar' form for
+;; it early on in filladapt.el, but it gives no value for the
+;; variable.)
+;;
+;; If you define the variable to be non-nil before requiring
+;; filladapt, you get another error that `filladapt-parse-prefixes' is
+;; undefined.  Again, I think this is because now
+;; `easy-mmode--arg-docstring' is being called via `define-minor-mode'
+;; to (I am assuming) fill the docstring for the minor mode, but again
+;; this function is being used before `filladapt-parse-prefixes' is
+;; defined (`filladapt-parse-prefixes' is below the
+;; `define-minor-mode' form).  Fortunately, `filladapt-parse-prefixes'
+;; is only called if `filladapt-mode' is non-nil, so we can
+;;
+;; 1. Bind `filladapt-mode' to nil
+;; 2. Load filladapt.el, and none of the filladapt code will be run
+;;    while loading the file
+;; 3. Set `filladapt-mode' to non-nil, which was my desire all along
+
+
+(setq-default filladapt-mode nil)
+
 (require 'filladapt)
+
 (setq-default filladapt-mode t)
 
 
