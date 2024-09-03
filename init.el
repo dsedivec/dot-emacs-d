@@ -2297,6 +2297,8 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; embark
 
+(defvar embark-quit-after-action)
+
 ;; https://github.com/oantolin/embark?tab=readme-ov-file#quitting-the-minibuffer-after-an-action
 (defun my:embark-act-no-quit ()
   "Run action but don't quit the minibuffer afterwards."
