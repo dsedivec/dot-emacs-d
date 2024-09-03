@@ -3288,6 +3288,64 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (bind-key "C-c C-o" #'my:link-hint-multi-dispatch)
 
+;; Temporary fix for Emacs's built-in `widget-move'.
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=72995
+
+(el-patch-feature wid-edit)
+
+(with-eval-after-load 'wid-edit
+  (el-patch-defun widget-move (arg &optional suppress-echo)
+    "Move point to the ARG next field or button.
+ARG may be negative to move backward.
+When the second optional argument is non-nil,
+nothing is shown in the echo area."
+    (let* ((wrapped 0)
+	   (number arg)
+           (fwd (> arg 0))              ; widget-forward is caller.
+           (bwd (< arg 0))              ; widget-backward is caller.
+	   (old (widget-tabable-at))
+           (tabable (if old 1 0))
+           pos
+           (el-patch-add moved-at-end))
+      (catch 'one
+        (while (> (abs arg) 0)
+          (cond ((or (and fwd (eobp)) (and bwd (bobp)))
+	         (goto-char (cond (fwd (point-min))
+                                  (bwd (point-max))))
+	         (setq wrapped (1+ wrapped)))
+	        (widget-use-overlay-change
+	         (goto-char (cond (fwd (next-overlay-change (point)))
+                                  (bwd (previous-overlay-change (point))))))
+	        (t
+	         (cond (fwd (forward-char 1))
+                       (bwd (backward-char 1)))))
+          (and (= wrapped 2)
+	       (eq arg number)
+               (if (= tabable 1)
+                   (progn
+                     (goto-char pos)
+                     (throw 'one (message "Only one tabable widget")))
+	         (error "No buttons or fields found")))
+          (let ((new (widget-tabable-at)))
+	    (when new
+	      (if (eq new old)
+                  (setq pos (point))
+                (cl-incf tabable)
+	        (setq arg (cond (fwd (1- arg))
+                                (bwd (1+ arg))))
+	        (setq old new))))))
+      (let ((new (widget-tabable-at)))
+        (while (and (eq (widget-tabable-at) new) (not (bobp)))
+	  (backward-char)
+          (el-patch-add
+            (setq moved-at-end t))))
+      (unless (el-patch-swap (bobp) (not moved-at-end)) (forward-char)))
+    (unless suppress-echo
+      (widget-echo-help (point)))
+    (run-hooks 'widget-move-hook))
+
+  (el-patch-validate 'widget-move 'defun t))
+
 ;; Temporary fix for
 ;; https://github.com/noctuid/link-hint.el/issues/231.
 
