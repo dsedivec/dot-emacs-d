@@ -3719,7 +3719,11 @@ Only search the range between just after the point and BOUND."
 ;;; modus-vivendi-theme
 
 (setq modus-themes-paren-match '(intense)
-      modus-themes-headings '((t . (regular))))
+      modus-themes-headings '((1 . (regular 2.0))
+                              (2 . (regular 1.7))
+                              (3 . (regular 1.4))
+                              (4 . (regular 1.2))
+                              (t . (regular))))
 
 ;; The changes Modus makes to the `fill-column-indicator' face look
 ;; like absolute ass on macOS terms.  It says you get a dotted line,
