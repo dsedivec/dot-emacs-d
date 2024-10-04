@@ -2563,6 +2563,51 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 (setq-default filladapt-mode t)
 
+;; XXX RECIPE?
+;;
+;; `markdown-mode' sets `fill-paragraph-function' to
+;; `markdown-fill-paragraph'.  `markdown-fill-paragraph' mostly just
+;; calls `fill-paragraph'.  Interesting fact about `fill-paragraph':
+;; when `fill-paragraph-function' is set, `fill-paragraph' let-binds
+;; `fill-paragraph-function' to t before calling the
+;; `fill-paragraph-function'.  This is **presumably** because (1)
+;; `fill-paragraph-function' may choose not to actually fill, in which
+;; case `fill-paragraph' is expected to do filling on its own; and (2)
+;; they know that some `fill-forward-paragraph-function' functions
+;; will call `fill-paragraph' themselves--just like
+;; `markdown-fill-paragraph' does.
+;;
+;; filladapt's main entry point (AFAIK) is "around" advice on a few
+;; functions, including `fill-paragrph'.  filladapt also keeps some
+;; global state (in at least some cases).  Thus if you re-enter
+;; `fill-paragraph', the filladapt advice gets called twice, and that
+;; global state gets *overwritten* on the second call, and my Markdown
+;; bulleted list item gets its bullet deleted, and I get mad.
+;;
+;; Test case for this:
+;;
+;; 1. Enter "* foo foo long line" into a `markdown-mode' buffer.  (But
+;;    actually make it long.)
+;; 2. Make sure `filladapt-mode' is on and M-q (e.g. `fill-paragraph').
+;;
+;; You will see the "* " at BOL is replaced with " " (two spaces); the
+;; bullet is lost by the second run of the filladapt advice.
+;;
+;; For more info, see `filladapt-adapt' where it sets
+;; `filladapt-old-line-prefix'.
+;;
+;; This just prevents filladapt from re-entering using the preexisting
+;; variable `filladapt--inside-filladapt'.
+;;
+;; I have a bad feeling this is going to introduce brand new bugs.
+;; Might need to restrict this to only applying in `markdown-mode' or
+;; something.
+
+(defun my:filladapt-adapt-prevent-reentrance (orig-fun &rest args)
+  (not filladapt--inside-filladapt))
+
+(advice-add 'filladapt-adapt :before-while
+            #'my:filladapt-adapt-prevent-reentrance)
 
 ;;; find-func
 
