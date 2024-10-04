@@ -1052,7 +1052,16 @@ basically every time eldoc's idle hook runs.  Fuck me."
                                          (list current-checkers)))))))
        (message "apheleia set up to use isort for Python."))
       (t
-       (message "apheleia setup: neither darker nor isort available")))))
+       (message "apheleia setup: neither darker nor isort available"))))
+
+  (setf (alist-get 'pandoc-markdown apheleia-formatters)
+        '("pandoc" "-f" "commonmark_x" "-t" "commonmark_x"
+          (if apheleia-formatters-respect-fill-column
+              (list "--columns" (format "%s" fill-column))
+            ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
+            '("--wrap" "preserve" "--columns" "99999999"))))
+
+  (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown))
 
 
 ;;; atomic-chrome
