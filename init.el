@@ -1991,10 +1991,25 @@ and the last `isearch-string' is added to the future history."
     (add-to-list 'dired-omit-extensions ext)))
 
 
-;;; display-fill-column-indicator-mode
+;;; display-fill-column-indicator
 
 (setq-default display-fill-column-indicator-column 80)
 
+(when (display-graphic-p)
+  ;; Fonts that look good with the Unicode vertical line
+  ;; thing--because not all fonts do.  (Monaco is an example: gaps
+  ;; between the lines.)
+  (catch 'found
+    (dolist (font '(
+                    "Andale Mono"
+                    "Menlo"
+                    "Fira Code"
+                    "Input Mono Narrow"
+                    "Courier New"
+                    ))
+      (when (x-list-fonts font)
+        (set-face-attribute 'fill-column-indicator nil :family font)
+        (throw 'found nil)))))
 
 ;;; display-line-numbers
 
