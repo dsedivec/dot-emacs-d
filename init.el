@@ -2387,13 +2387,73 @@ surround \"foo\" with (in this example) parentheses.  I want
 
 ;;; faces
 
-(when (display-graphic-p)
-  (when (x-list-fonts "Fira Mono")
-    (set-face-attribute 'default nil :font "Fira Mono 9")
+(defvar my:fonts '(
+                   ("Anonymous Pro" 10)
+                   ("Fira Mono" 9)
+                   ("Input Mono Narrow" 9 :weight regular)
+                   ("Cousine" 9)
+                   ("Hack" 9)
+                   ;; This one misses a nice backtick.
+                   ("PT Mono" 9)
+                   ;; Backtick again
+                   ("IBM Plex Mono" 8)
+                   ;; Looks a bit Comic Sans.
+                   ("Ubuntu Mono" 10)
+                   ;; Fallbacks
+                   ("Menlo" 8)
+                   ("Monoco" 8)
+                   ))
+
+;; Fonts I don't recommend because they have weird height in Emacs:
+;; Inconsolata 9 (Inconsolatazi4 from LaTeX is OK, but not great)
+;; Roboto Mono 8
+;; JetBrains Mono 8
+;; Source Code Pro 8
+;; Noto Sans Mono 8
+;; Oxygen Mono 8
+;; DM Mono 8
+;;
+;; Fonts that look positively broken:
+;; Red Hat Mono 8
+;; Noto Sans Mono 8
+;; Victor Mono 9
+;; Recursive 8: can't figure out how to select mono linear, FCI broken
+;; Iosevka 9: Too tall
+
+;; Test code:
+;;(set-face-attribute 'default nil :font "Recursive 8")
+;;(set-face-attribute 'default nil :font "Noto Sans Mono-8:height=")
+
+(defun my:font-get-default ()
+  (or (catch 'found
+        (dolist (font my:fonts)
+          (when (x-list-fonts (car font))
+            (throw 'found font))))
+      (user-error "Couldn't find any default font.")))
+
+(defun my:font-set-default ()
+  (interactive)
+  (pcase-let ((`(,name ,size . ,rest) (my:font-get-default)))
+    (apply #'set-face-attribute 'default nil
+           :font (format "%s %s" name size)
+           rest)
     ;; On macOS this was ending up as... Courier.
-    (cl-pushnew "Fira Mono" (alist-get "Monospace" face-font-family-alternatives
-                                       nil nil #'equal)
-                :test #'equal))
+    (cl-pushnew name (alist-get "Monospace" face-font-family-alternatives
+                                nil nil #'equal)
+                :test #'equal)
+    (message "Set font to %s %s." name size)))
+
+(defun my:font-set-bigger ()
+  (interactive)
+  (pcase-let* ((`(,name ,size . ,rest) (my:font-get-default))
+               (bigger-size (round (* size (/ 4.0 3)))))
+    (apply #'set-face-attribute 'default nil
+           :font (format "%s %s" name bigger-size)
+           rest)
+    (message "Set font to larger %s %s." name bigger-size)))
+
+(when (display-graphic-p)
+  (my:font-set-default)
 
   (when (x-list-fonts "Helvetica")
     (set-face-attribute 'variable-pitch nil :font "Helvetica 10"))
