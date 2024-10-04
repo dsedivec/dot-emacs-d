@@ -2746,6 +2746,13 @@ surround \"foo\" with (in this example) parentheses.  I want
                          (cons (car key-binding) "flycheck")
                        key-binding))))
 
+  ;; Make Flycheck's error "ID" column wider, for the sake of Pyright
+  ;; (for at least one example).
+  (if-let ((id-col (seq-find (lambda (elem) (equal (car elem) "ID"))
+                             flycheck-error-list-format)))
+      (setf (cadr id-col) 25)
+    (warn "Couldn't find the \"ID\" column in `flycheck-error-list-format'."))
+
   ;; Preference order of some Python checkers.
   (let ((preferred-python-checkers '(python-ruff python-mypy python-pyright python-pylint)))
     (setq flycheck-checkers
