@@ -3790,7 +3790,8 @@ Only search the range between just after the point and BOUND."
       markdown-header-scaling t)
 
 (defun my:markdown-mode-hook ()
-  (setq-local indent-tabs-mode nil)
+  (setq-local indent-tabs-mode nil
+              fill-column 78)
   (visual-line-mode 1))
 
 (my:add-hooks 'markdown-mode-hook
@@ -4078,7 +4079,8 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 ;;; olivetti
 
-(setq-default olivetti-body-width 80)
+(setq-default olivetti-body-width 0.5
+              olivetti-minimum-body-width 80)
 
 
 ;;; orderless
@@ -4547,6 +4549,7 @@ everything else."
 (defun my:python-mode-hook ()
   (my:setq-local indent-tabs-mode nil
                  tab-width 4
+                 fill-column 78
                  ;; No space inserted when I use M-(.
                  parens-require-spaces nil
 
