@@ -1054,8 +1054,9 @@ basically every time eldoc's idle hook runs.  Fuck me."
       (t
        (message "apheleia setup: neither darker nor isort available"))))
 
+  ;; --standalone is necessary to preserve YAML frontmatter.
   (setf (alist-get 'pandoc-markdown apheleia-formatters)
-        '("pandoc" "-f" "commonmark_x" "-t" "commonmark_x"
+        '("pandoc" "-f" "commonmark_x" "-t" "commonmark_x" "--standalone"
           (if apheleia-formatters-respect-fill-column
               (list "--columns" (format "%s" fill-column))
             ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
