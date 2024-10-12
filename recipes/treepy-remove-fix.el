@@ -18,17 +18,18 @@ walk."
         (if (> (length l) 0)
             (let ((nloc (treepy--with-meta (cons (car l)
                                                  (treepy--context-assoc context
-                                                                        ':l (cdr l)
-                                                                        ':changed? t))
+                                                     :l (cdr l)
+                                                     :changed? t))
                                            (treepy--meta loc)))
                   (el-patch-remove (child nil)))
               (el-patch-remove
-                (while (setq child (and (treepy-branch-p nloc) (treepy-children nloc)))
+                (while (setq child (and (treepy-branch-p nloc)
+                                        (treepy-children nloc)))
                   (setq nloc (treepy-rightmost child))))
               nloc)
           (treepy--with-meta
            (cons (treepy-make-node loc (car pnodes) r)
-                 (and ppath (treepy--context-assoc context ':changed? t)))
+                 (and ppath (treepy--context-assoc context :changed? t)))
            (treepy--meta loc))))))
 
   (el-patch-validate 'treepy-remove 'defun t))
