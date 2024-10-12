@@ -4054,6 +4054,12 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 (setq comment-empty-lines 'eol)
 
 
+;;; nftables-mode
+
+(my:add-hooks 'nftables-mode-hook
+  #'my:warn-white-space-mode)
+
+
 ;;; obsidian
 
 (obsidian-specify-path "~/Documents/Obsidian")
