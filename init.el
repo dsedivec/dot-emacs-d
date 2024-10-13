@@ -5686,6 +5686,11 @@ a string or comment."
 
 (with-eval-after-load 'vterm
   (when (require 'eterm-256color nil t)
+    ;; Surprisingly, to me, you have to do this to be able to send
+    ;; ctrl-c in vterm buffers.
+    (bind-keys :map vterm-mode-map
+               ("C-c C-c" . vterm--self-insert))
+
     ;; Private function of eterm-256color that checks that you have
     ;; the terminfo file for eterm-color installed in the right place.
     (eterm-256color-compile)
