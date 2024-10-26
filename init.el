@@ -3709,14 +3709,17 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil
               fill-column 78)
-  (visual-line-mode 1))
+  (auto-fill-mode (if visual-line-mode -1 1)))
 
 (my:add-hooks 'markdown-mode-hook
-  ;; I give up, GitHub Flavored Markdown is popular and treats line feed
-  ;; characters like <br>.  Default to visual-line-mode.
-  #'visual-line-mode
   #'electric-pair-local-mode
+  #'apheleia-mode
   #'my:markdown-mode-hook)
+
+(my:add-hooks 'gfm-mode-hook
+  ;; GitHub Flavored Markdown treats line feed characters like <br>.
+  #'turn-off-auto-fill
+  #'visual-line-mode)
 
 
 ;;; minibuffer
