@@ -227,6 +227,7 @@
                             diff-hl
                             dired-narrow
                             dired-ranger
+                            dired-subtree
                             dockerfile-mode
                             dotenv-mode
                             dtrt-indent
@@ -547,6 +548,164 @@
 (setq vc-follow-symlinks t)
 
 (my:load-recipe 'el-patch-dont-kill-my-buffers)
+
+
+;;; bind-key
+
+;; Temporary (hopefully) fix for #74660
+
+(el-patch-feature bind-key)
+
+(with-eval-after-load 'bind-key
+  (el-patch-defun bind-keys-form (args keymap)
+    "Bind multiple keys at once.
+
+Accepts keyword arguments:
+:map MAP               - a keymap into which the keybindings should be
+                         added
+:prefix KEY            - prefix key for these bindings
+:prefix-map MAP        - name of the prefix map that should be created
+                         for these bindings
+:prefix-docstring STR  - docstring for the prefix-map variable
+:menu-name NAME        - optional menu string for prefix map
+:repeat-docstring STR  - docstring for the repeat-map variable
+:repeat-map MAP        - name of the repeat map that should be created
+                         for these bindings. If specified, the
+                         `repeat-map' property of each command bound
+                         (within the scope of the `:repeat-map' keyword)
+                         is set to this map.
+:exit BINDINGS         - Within the scope of `:repeat-map' will bind the
+                         key in the repeat map, but will not set the
+                         `repeat-map' property of the bound command.
+:continue BINDINGS     - Within the scope of `:repeat-map' forces the
+                         same behaviour as if no special keyword had
+                         been used (that is, the command is bound, and
+                         it's `repeat-map' property set)
+:filter FORM           - optional form to determine when bindings apply
+
+The rest of the arguments are conses of keybinding string and a
+function symbol (unquoted)."
+    (let (map
+          prefix-doc
+          prefix-map
+          prefix
+          repeat-map
+          repeat-doc
+          repeat-type ;; Only used internally
+          filter
+          menu-name
+          pkg)
+
+      ;; Process any initial keyword arguments
+      (let ((cont t)
+            (arg-change-func 'cddr))
+        (while (and cont args)
+          (if (cond ((and (eq :map (car args))
+                          (not prefix-map))
+                     (setq map (cadr args)))
+                    ((eq :prefix-docstring (car args))
+                     (setq prefix-doc (cadr args)))
+                    ((and (eq :prefix-map (car args))
+                          (not (memq map '(global-map
+                                           override-global-map))))
+                     (setq prefix-map (cadr args)))
+                    ((eq :repeat-docstring (car args))
+                     (setq repeat-doc (cadr args)))
+                    ((and (eq :repeat-map (car args))
+                          (not (memq map '(global-map
+                                           override-global-map))))
+                     (setq repeat-map (cadr args))
+                     (setq map repeat-map))
+                    ((eq :continue (car args))
+                     (setq repeat-type :continue
+                           arg-change-func 'cdr))
+                    ((eq :exit (car args))
+                     (setq repeat-type :exit
+                           arg-change-func 'cdr))
+                    ((eq :prefix (car args))
+                     (setq prefix (cadr args)))
+                    ((eq :filter (car args))
+                     (setq filter (cadr args)) t)
+                    ((eq :menu-name (car args))
+                     (setq menu-name (cadr args)))
+                    ((eq :package (car args))
+                     (setq pkg (cadr args))))
+              (setq args (funcall arg-change-func args))
+            (setq cont nil))))
+
+      (when (or (and prefix-map (not prefix))
+                (and prefix (not prefix-map)))
+        (error "Both :prefix-map and :prefix must be supplied"))
+
+      (when repeat-type
+        (unless repeat-map
+          (error ":continue and :exit require specifying :repeat-map")))
+
+      (when (and menu-name (not prefix))
+        (error "If :menu-name is supplied, :prefix must be too"))
+
+      (unless map (setq map keymap))
+
+      ;; Process key binding arguments
+      (let (first next)
+        (while args
+          (if (keywordp (car args))
+              (progn
+                (setq next args)
+                (setq args nil))
+            (if first
+                (nconc first (list (car args)))
+              (setq first (list (car args))))
+            (setq args (cdr args))))
+
+        (cl-flet
+            ((wrap (map bindings)
+               (if (and map pkg (not (memq map '(global-map
+                                                 override-global-map))))
+                   `((if (boundp ',map)
+                         ,(macroexp-progn bindings)
+                       (eval-after-load
+                           ,(if (symbolp pkg) `',pkg pkg)
+                         ',(macroexp-progn bindings))))
+                 bindings)))
+
+          (append
+           (when prefix-map
+             `((defvar ,prefix-map)
+               ,@(when prefix-doc `((put ',prefix-map 'variable-documentation ,prefix-doc)))
+               ,@(if menu-name
+                     `((define-prefix-command ',prefix-map nil ,menu-name))
+                   `((define-prefix-command ',prefix-map)))
+               ,@(if (and map (not (eq map 'global-map)))
+                     (wrap map `((bind-key ,prefix ',prefix-map ,map ,filter)))
+                   `((bind-key ,prefix ',prefix-map nil ,filter)))))
+           (when repeat-map
+             `((el-patch-wrap 2 0
+                 (unless (boundp ',repeat-map)
+                   (defvar ,repeat-map (make-sparse-keymap)
+                     ,@(when repeat-doc `(,repeat-doc)))))))
+           (wrap map
+                 (cl-mapcan
+                  (lambda (form)
+                    (let ((fun (and (cdr form) (list 'function (cdr form)))))
+                      (if prefix-map
+                          `((bind-key ,(car form) ,fun ,prefix-map ,filter))
+                        (if (and map (not (eq map 'global-map)))
+                            ;; Only needed in this branch, since when
+                            ;; repeat-map is non-nil, map is always
+                            ;; non-nil
+                            `(,@(when (and repeat-map (not (eq repeat-type :exit)))
+                                  `((put ,fun 'repeat-map ',repeat-map)))
+                                (bind-key ,(car form) ,fun ,map ,filter))
+                          `((bind-key ,(car form) ,fun nil ,filter))))))
+                  first))
+           (when next
+             (bind-keys-form `(,@(when repeat-map `(:repeat-map ,repeat-map))
+                                 ,@(if pkg
+                                       (cons :package (cons pkg next))
+                                     next)) map)))))))
+
+  (el-patch-validate 'bind-keys-form 'defun t))
 
 
 ;;; Mode line mods
@@ -1972,6 +2131,38 @@ and the last `isearch-string' is added to the future history."
              ("W" . dired-ranger-copy)
              ("X" . dired-ranger-move)
              ("Y" . dired-ranger-paste)))
+
+
+;;; dired-subtree
+
+(defun my:dired-subtree-line-prefix (depth)
+  (concat (make-string (* 3 (1- depth)) ?\s) "  ├"))
+
+(setq dired-subtree-line-prefix #'my:dired-subtree-line-prefix)
+
+(with-eval-after-load 'dired
+  (bind-keys :map dired-mode-map
+             ("i" . dired-subtree-toggle))
+
+  (bind-keys :repeat-map my:dired-subtree-map
+             ("i" . dired-subtree-toggle)
+             ("c" . dired-subtree-cycle)
+             ("v" . dired-subtree-revert)
+             ("w" . dired-subtree-narrow)
+             ("u" . dired-subtree-up)
+             ("d" . dired-subtree-down)
+             ("n" . dired-subtree-next-sibling)
+             ("p" . dired-subtree-previous-sibling)
+             ("a" . dired-subtree-beginning)
+             ("e" . dired-subtree-end)
+             ("M" . dired-subtree-mark-subtree)
+             ("U" . dired-subtree-unmark-subtree)
+             ("C-f" . dired-subtree-only-this-file)
+             ("C-d" . dired-subtree-only-this-directory)
+             :exit
+             ("q" . ignore))
+
+  (keymap-set dired-mode-map "C-," my:dired-subtree-map))
 
 
 ;;; dired-x
@@ -4653,6 +4844,11 @@ everything else."
 (reformatter-define yapf-format
     :program "yapf"
     :lighter "Yapf")
+
+
+;;; repeat
+
+(repeat-mode 1)
 
 
 ;;; replace
