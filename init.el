@@ -202,7 +202,6 @@
                             auto-highlight-symbol
                             auto-yasnippet
                             avy
-                            bind-key
                             blackout
                             bm
                             buttercup
