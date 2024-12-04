@@ -28,6 +28,7 @@
         insert-parentheses
         kill-sexp
         kill-visual-line
+        lisp-comment-dwim
         markdown-cycle
         markdown-insert-code
         markdown-outdent-or-delete
