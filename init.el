@@ -812,18 +812,35 @@ function symbol (unquoted)."
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
 
-(load-theme 'dsedivec t)
+(defvar my:themes '(modus-operandi . modus-vivendi)
+  "(LIGHT-THEME . DARK-THEME)")
 
 (defun my:set-theme-for-macos-system-theme (&optional toggle force)
   (interactive "P")
   (let* ((scpt (concat "tell application \"System Events\" to"
                        " get the dark mode of appearance preferences"
                        " as integer"))
-         ;; `cl-equalp' does case insensitive string comparison.
-         ;; "White" is the default background color on Emacs/macOS.
-         (emacs-theme (if (cl-equalp (face-background 'default) "white")
-                          'light
-                        'dark))
+         (emacs-theme (cond
+                        ((and (boundp 'custom-enabled-themes) custom-enabled-themes)
+                         (cond
+                           ((> (length custom-enabled-themes) 1)
+                            (user-error (concat "More than one theme enabled,"
+                                                " can't determine current theme")))
+                           ((eq (car custom-enabled-themes) (car my:themes))
+                            'light)
+                           ((eq (car custom-enabled-themes) (cdr my:themes))
+                            'dark)
+                           (t
+                            (user-error "Unknown theme %S"
+                                        (car custom-enabled-themes)))))
+                        ((member (downcase (face-background 'default))
+                                 '("white" "#fff" "#ffffff"))
+                         'light)
+                        ;; When I originally wrote this, I just
+                        ;; defaulted to dark.  Don't know if that's
+                        ;; really appropriate, but it hasn't been a
+                        ;; problem yet.
+                        (t 'dark)))
          (target-theme (cond
                          (toggle (cl-ecase emacs-theme
                                    (light 'dark)
@@ -831,6 +848,7 @@ function symbol (unquoted)."
                          ((zerop (ns-do-applescript scpt))
                           'light)
                          (t 'dark))))
+    (cl-assert (memq emacs-theme '(light dark)))
     (cl-assert (memq target-theme '(light dark)))
     (if (and (not force) (eq emacs-theme target-theme))
         (message "Emacs already configured for %s theme, no changes." target-theme)
@@ -838,11 +856,11 @@ function symbol (unquoted)."
       (modify-all-frames-parameters `((ns-appearance . ,target-theme)))
       (cl-ecase target-theme
         (light
-         (disable-theme 'modus-vivendi)
-         (load-theme 'dsedivec t))
+         (disable-theme (cdr my:themes))
+         (load-theme (car my:themes) t))
         (dark
-         (disable-theme 'dsedivec)
-         (load-theme 'modus-vivendi t)))
+         (disable-theme (car my:themes))
+         (load-theme (cdr my:themes) t)))
       ;; Function `org-mode' sets up face org-hide based on the
       ;; current background color.  Changing the background color thus
       ;; requires restarting org-mode.  I think I can do this in just
