@@ -4190,8 +4190,13 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 ;;; nftables-mode
 
+(defun my:nftables-mode-hook ()
+  (setq indent-tabs-mode nil
+        tab-width 4))
+
 (my:add-hooks 'nftables-mode-hook
-  #'my:warn-white-space-mode)
+  #'my:warn-white-space-mode
+  #'my:nftables-mode-hook)
 
 
 ;;; obsidian
