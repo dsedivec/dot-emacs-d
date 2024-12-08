@@ -6297,13 +6297,22 @@ for this command) must be an arrow key."
       ;; behavior is probably preferable in any case.
       (back-to-indentation))))
 
+(defun my:yaml-mode-hook ()
+  ;; `dtrt-indent-mode' not DTRT here because FUCK YOU OFFSET IS
+  ;; ALWAYS 2.  (I don't necessarily *like* 2, but it's always 2.  I
+  ;; cannot remember the last time I saw an offset other than 2.)
+  (dtrt-indent-mode -1))
+
 (with-eval-after-load 'yaml-mode
   (bind-keys :map yaml-mode-map
              ("RET" . newline-and-indent)
              ("<backtab>" . my:yaml-backtab))
 
   (add-to-list 'yaml-imenu-generic-expression
-               '("Ansible" "^-\\s-+name: \\(.*\\)" 1)))
+               '("Ansible" "^-\\s-+name: \\(.*\\)" 1))
+
+  (my:add-hooks 'yaml-mode-hook
+    #'my:yaml-mode-hook))
 
 
 ;;; yasnippet
