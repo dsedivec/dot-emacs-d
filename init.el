@@ -1926,6 +1926,13 @@ and the last `isearch-string' is added to the future history."
   ;; looks weird once you get to the bottom of the matches.
   (setq consult-line-start-from-top t)
 
+  ;; Make wgrep and ripgrep work right!
+  ;; https://github.com/minad/consult/issues/748#issuecomment-2346984048
+  ;;
+  ;; If this doesn't do it, look into removing --max-columns from
+  ;; `consult-ripgrep-args'.
+  (setq consult-grep-max-columns nil)
+
   (setq my:consult-ripgrep-available (executable-find "rg"))
 
   (bind-keys ("s-s" . consult-line)
