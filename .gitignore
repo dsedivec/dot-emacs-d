@@ -17,6 +17,7 @@
 /elpa
 /elpy
 /history
+/ielm-history.eld
 /init-local.el
 /lisp/autoloads.el
 # This is probably created by lsp-mssql.
@@ -27,6 +28,8 @@
 /pbcopyhtml
 /places
 /private
+/projects
+/projectile.cache
 /projectile-bookmarks.eld
 /quelpa
 /recentf
@@ -37,4 +40,3 @@
 /tree-sitter/
 /url
 /var
-/ielm-history.eld
