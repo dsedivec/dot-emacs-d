@@ -3929,7 +3929,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
                    'markdown-mode-better-previous-line-indent
                    'markdown-mode-delete-trailing-space))
 
-(setq markdown-command "pandoc -f markdown -t html --standalone"
+(setq markdown-command "pandoc -f markdown -t html --standalone --mathml"
       markdown-enable-math t
       markdown-footnote-location 'immediately
       markdown-header-scaling t)
