@@ -2290,6 +2290,19 @@ adjusted transparently."
 ;; `fundamental-mode', which dtrt-indent doesn't hook into.
 (add-hook 'conf-mode-hook #'dtrt-indent-mode)
 
+(defun my:dtrt-indent-mode-hook ()
+  ;; In the year 2024, I've decided I mostly expect spaces instead of
+  ;; tabs when programming.  (Especially since that's what my
+  ;; colleagues expect.  Spaces won.  The fools.)  I'm putting this
+  ;; setting here in `dtrt-indent-mode-hook' so that it gets applied
+  ;; after dtrt-indent has had a chance to set this explicitly.
+  (when (and (not (local-variable-p 'indent-tabs-mode))
+             (derived-mode-p '(prog-mode))
+             (not (derived-mode-p '(makefile-mode))))
+    (my:setq-local indent-tabs-mode nil)))
+
+(my:add-hooks 'dtrt-indent-mode-hook #'my:dtrt-indent-mode-hook)
+
 
 ;;; dumb-jump
 
