@@ -1931,7 +1931,7 @@ and the last `isearch-string' is added to the future history."
   ;;
   ;; If this doesn't do it, look into removing --max-columns from
   ;; `consult-ripgrep-args'.
-  (setq consult-grep-max-columns nil)
+  (setq consult-grep-max-columns most-positive-fixnum)
 
   (setq my:consult-ripgrep-available (executable-find "rg"))
 
