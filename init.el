@@ -4022,11 +4022,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; this magical spell through much trial and error, and yet I feel
 ;; confident that it is wrong and/or bad.
 
-(defun my:modus-vivendi-reset-fci-face (theme)
-  (when (eq theme 'modus-vivendi)
+(defun my:modus-themes-reset-fci-face (theme)
+  (when (memq theme '(modus-vivendi modus-operandi))
     ;; Note: The NOW argument for the specs here doesn't seem to work,
     ;; I have to call `face-spec-recalc' myself.
-    (custom-theme-set-faces 'modus-vivendi
+    (custom-theme-set-faces theme
                             '(fill-column-indicator
                               ;; Facespec cribbed from defaults.
                               ((t
@@ -4037,7 +4037,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
     ;; frames").  I have no idea if this matters.
     (face-spec-recalc 'fill-column-indicator nil)))
 
-(add-hook 'enable-theme-functions #'my:modus-vivendi-reset-fci-face)
+(add-hook 'enable-theme-functions #'my:modus-themes-reset-fci-face)
 
 ;; (custom-theme-set-faces 'modus-vivendi
 ;;                         '(fill-column-indicator (())))
