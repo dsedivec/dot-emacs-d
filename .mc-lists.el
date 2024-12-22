@@ -26,6 +26,7 @@
         indent-region
         insert-char
         insert-parentheses
+        kill-sentence
         kill-sexp
         kill-visual-line
         lisp-comment-dwim
