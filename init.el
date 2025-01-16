@@ -577,7 +577,7 @@ Accepts keyword arguments:
                          key in the repeat map, but will not set the
                          `repeat-map' property of the bound command.
 :continue BINDINGS     - Within the scope of `:repeat-map' forces the
-                         same behaviour as if no special keyword had
+                         same behavior as if no special keyword had
                          been used (that is, the command is bound, and
                          it's `repeat-map' property set)
 :filter FORM           - optional form to determine when bindings apply
@@ -1823,7 +1823,7 @@ and the last `isearch-string' is added to the future history."
   ;; this a setting.
 
   (el-patch-defvar consult--source-project-buffer
-      `(:name     "Project Buffer"
+      `( :name     "Project Buffer"
         :narrow   ?b
         :category buffer
         :face     consult-buffer
@@ -1833,15 +1833,16 @@ and the last `isearch-string' is added to the future history."
         :items
         ,(lambda ()
            (when-let (root (consult--project-root))
-             (consult--buffer-query :sort (el-patch-swap 'visibility 'current-last)
+             (consult--buffer-query :sort (el-patch-swap 'visibility
+                                                         'current-last)
                                     :directory root
                                     :as #'consult--buffer-pair))))
-    "Project buffer candidate source for `consult-buffer'.")
+    "Project buffer source for `consult-buffer'.")
 
   (el-patch-validate 'consult--source-project-buffer 'defvar t)
 
   (el-patch-defvar consult--source-hidden-buffer
-      `(:name     "Hidden Buffer"
+      `( :name     "Hidden Buffer"
         :narrow   ?\s
         :hidden   t
         :category buffer
@@ -1853,12 +1854,12 @@ and the last `isearch-string' is added to the future history."
                                                                 'current-last)
                                            :filter 'invert
                                            :as #'consult--buffer-pair)))
-    "Hidden buffer candidate source for `consult-buffer'.")
+    "Hidden buffer source for `consult-buffer'.")
 
   (el-patch-validate 'consult--source-hidden-buffer 'defvar t)
 
   (el-patch-defvar consult--source-modified-buffer
-      `(:name     "Modified Buffer"
+      `( :name     "Modified Buffer"
         :narrow   ?*
         :hidden   t
         :category buffer
@@ -1873,12 +1874,12 @@ and the last `isearch-string' is added to the future history."
                                            (lambda (buf)
                                              (and (buffer-modified-p buf)
                                                   (buffer-file-name buf))))))
-    "Modified buffer candidate source for `consult-buffer'.")
+    "Modified buffer source for `consult-buffer'.")
 
   (el-patch-validate 'consult--source-modified-buffer 'defvar t)
 
   (el-patch-defvar consult--source-buffer
-      `(:name     "Buffer"
+      `( :name     "Buffer"
         :narrow   ?b
         :category buffer
         :face     consult-buffer
@@ -1889,7 +1890,7 @@ and the last `isearch-string' is added to the future history."
         ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
                                                                 'current-last)
                                            :as #'consult--buffer-pair)))
-    "Buffer candidate source for `consult-buffer'.")
+    "Buffer source for `consult-buffer'.")
 
   (el-patch-validate 'consult--source-buffer 'defvar t))
 
