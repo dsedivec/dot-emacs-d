@@ -18,7 +18,12 @@
 
 (defun my:edit-indirect-restore-parent-cloned-vars ()
   (pcase-dolist (`(,var . ,value) my:edit-indirect-cloned-parent-vars)
-    (set (make-local-variable var) value)))
+    ;; Unfortunately, sql-mode needs special handling of the product,
+    ;; apparently.
+    (pcase var
+      ((and 'sql-product (guard (derived-mode-p '(sql-mode))))
+       (sql-set-product value))
+      (_ (set (make-local-variable var) value)))))
 
 (put 'my:edit-indirect-restore-parent-cloned-vars 'permanent-local-hook t)
 
