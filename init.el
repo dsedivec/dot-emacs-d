@@ -4215,8 +4215,6 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 ;;; obsidian
 
-(obsidian-specify-path "~/Documents/Obsidian")
-
 (with-eval-after-load 'obsidian
   (bind-keys :map obsidian-mode-map
              ("C-c C-o" . obsidian-follow-link-at-point)
@@ -4226,8 +4224,11 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 (my:add-hooks 'obsidian-mode-hook
   #'idle-save-buffer-mode)
 
-;; Activate detection of Obsidian vault
-(global-obsidian-mode t)
+(setq obsidian-directory "~/Documents/Obsidian")
+
+(when (file-directory-p obsidian-directory)
+  ;; Activate detection of Obsidian vault
+  (global-obsidian-mode t))
 
 (defvar my:obsidian-daily-prefix (file-name-concat obsidian-directory "Main"))
 
