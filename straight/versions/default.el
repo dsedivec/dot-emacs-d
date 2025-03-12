@@ -90,7 +90,7 @@
  ("git-link" . "8d0f98cf36f6b9c31285329b054ae77f9a3d9b33")
  ("gnu-elpa-mirror" . "19e35415566cd4c0dfd1684172b9841abd6eef40")
  ("go-mode.el" . "602d73e22646b1b98b2eb97927fd426c0d1d2f92")
- ("gptel" . "ce042d692a5d31bb1aadcf5ad96817547b1b3045")
+ ("gptel" . "aef57c2d3f99b894938450ec6a241a9959966973")
  ("graphviz-dot-mode" . "8ff793b13707cb511875f56e167ff7f980a31136")
  ("groovy-emacs-modes" . "7b8520b2e2d3ab1d62b35c426e17ac25ed0120bb")
  ("haskell-mode" . "2163e0d8373885789f74c39c214c33a7ea7a59b5")
