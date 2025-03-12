@@ -3205,23 +3205,100 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; gptel
 
-(defvar my:gptel-model-anthropic
-  (gptel-make-anthropic "Anthropic Claude"
-    :stream t
-    ;; This :key value is kinda-sorta the default for OpenAI, but not
-    ;; for Anthropic.  Sort of makes sense once you read the code and
-    ;; see that it takes the host name from the default backend.
-    :key (apply-partially #'gptel-api-key-from-auth-source
-                          "api.anthropic.com")))
+(defvar my:gptel-backends nil)
 
-(setq gptel-model "claude-3-5-sonnet-20240620"
-      gptel-backend my:gptel-model-anthropic)
+(cl-defmacro my:gptel-make-backend (name
+                                    &rest args
+                                    &key
+                                      (key `',(intern (format "my:gptel-key-%s"
+                                                              (downcase name)))
+                                           explicit-key-p)
+                                      (check-key t)
+                                      (constructor (intern
+                                                    (format "gptel-make-%s"
+                                                            (downcase name))))
+                                      &allow-other-keys)
+  (declare (indent 1))
+  (when (or (not check-key)
+            (and (symbolp key) (bound-and-true-p key))
+            (and (memq (car-safe key) '(quote function))
+                 (functionp (cadr key))))
+    (dolist (prop '(:key :check-key :constructor))
+      (cl-remf args prop))
+    (when (and key (not explicit-key-p))
+      (setf (plist-get args :key) key))
+    `(setf (alist-get ',(intern (downcase name)) my:gptel-backends)
+           (,(if (memq (car-safe constructor) '(quote function))
+                 (cadr constructor)
+               constructor)
+             ,name
+             ,@args))))
+
+;; This is here for now.  I should move it later.
+(defmacro my:def-1password-getter (name url &optional field)
+  (declare (indent 1))
+  (let ((url (if field
+                 `(format "%s/%s" ,url ,field)
+               url))
+        (cache-var (gensym))
+        (status-var (gensym)))
+    `(let (,cache-var)
+       (defun ,name ()
+         (or ,cache-var
+             (with-temp-buffer
+               (let ((,status-var (call-process "op" nil t nil "read" ,url)))
+                 (unless (eq ,status-var 0)
+                   (error "1Password: op exited with status %S" ,status-var)))
+               (setq ,cache-var (buffer-substring-no-properties
+                                 (point-min)
+                                 ;; Remove newline at end of buffer.
+                                 (max (1- (point-max)) 0)))))))))
 
 (with-eval-after-load 'gptel
   (setf (alist-get 'markdown-mode gptel-prompt-prefix-alist)
         "**Request:** "
         (alist-get 'markdown-mode gptel-response-prefix-alist)
-        "**Response:** "))
+        "**Response:** ")
+
+  (setq gptel-api-key #'my:gptel-key-openai)
+
+  (my:gptel-make-backend "Gemini" :stream t)
+  (my:gptel-make-backend "Perplexity" :stream t)
+  (my:gptel-make-backend "Anthropic" :key #'my:gptel-key-anthropic :stream t)
+  ;; This is a stop gap recommended by gptel until it gets proper
+  ;; support for reasoning.
+  (my:gptel-make-backend "Claude-thinking"
+    :constructor #'gptel-make-anthropic
+    :key #'my:gptel-key-anthropic
+    :stream t
+    :models '(claude-3-7-sonnet-20250219)
+    :header (lambda () (when-let* ((key (gptel--get-api-key)))
+                         `(("x-api-key" . ,key)
+                           ("anthropic-version" . "2023-06-01")
+                           ("anthropic-beta" . "pdfs-2024-09-25")
+                           ("anthropic-beta" . "output-128k-2025-02-19")
+                           ("anthropic-beta" . "prompt-caching-2024-07-31"))))
+    :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
+                      :max_tokens 4096))
+  (my:gptel-make-backend "OpenRouter"
+    :constructor #'gptel-make-openai
+    :key #'my:gptel-key-openrouter
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :models '(anthropic/claude-3.7-sonnet:thinking
+              anthropic/claude-3.7-sonnet:beta
+              qwen/qwq-32b
+              qwen/qwen-max
+              deepseek/deepseek-chat))
+  (my:gptel-make-backend "OpenRouter-R1"
+    :constructor #'gptel-make-openai
+    :key #'my:gptel-key-openrouter
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :models '(deepseek/deepseek-r1)
+    :request-params '(:provider (:quantizations ["fp8"] :ignore ["Nebius"]))))
 
 
 ;;; groovy-mode
