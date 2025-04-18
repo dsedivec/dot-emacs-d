@@ -252,4 +252,20 @@ it returns the node that your EDIT-FORM changed)."
   (makunbound symbol)
   (message "Removed variable binding for `%S'." symbol))
 
+(defun my:copy-project-file-path-and-line (&optional path-only)
+  (interactive "P")
+  (unless buffer-file-name
+    (user-error "Buffer has no file name."))
+  (let ((project (project-current))
+        rel-path text)
+    (unless project
+      (user-error "Not in a project."))
+    (setq rel-path (file-relative-name buffer-file-name
+                                       (project-root project)))
+    (setq text (if path-only
+                   rel-path
+                 (format "%s:%d" rel-path (line-number-at-pos (point) t))))
+    (kill-new text)
+    (message "Placed %S on kill ring." text)))
+
 (provide 'dsedivec-utils)
