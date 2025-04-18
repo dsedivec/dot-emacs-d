@@ -3242,13 +3242,34 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
              ,name
              ,@args))))
 
+(defun my:gptel-mode-hook ()
+  (auto-fill-mode -1)
+  ;; Apheleia auto-formatting wreaks havoc with, for example,
+  ;; file-local variables gptel inserts at the bottom of Markdown.
+  (when (derived-mode-p '(markdown-mode))
+    (apheleia-mode -1)))
+
+(my:add-hooks 'gptel-mode-hook
+  #'my:gptel-mode-hook
+  #'visual-line-mode)
+
 (with-eval-after-load 'gptel
   (setf (alist-get 'markdown-mode gptel-prompt-prefix-alist)
         "**Request:** "
         (alist-get 'markdown-mode gptel-response-prefix-alist)
         "**Response:** ")
 
+  ;; Scroll while response is being inserted.
+  ;; This actually doesn't work great, it recenters or something.
+  ;;(add-hook 'gptel-post-stream-hook 'gptel-auto-scroll)
+
+  ;; Move to next prompt after the response is inserted.
+  (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
+
   (setq gptel-api-key #'my:gptel-key-openai)
+
+  ;; From https://github.com/karthink/gptel/issues/605#issuecomment-2629528058
+  (setf (plist-get (get 'o3-mini :request-params) :reasoning_effort) "high")
 
   (my:gptel-make-backend "Gemini" :stream t)
   (my:gptel-make-backend "Perplexity" :stream t)
