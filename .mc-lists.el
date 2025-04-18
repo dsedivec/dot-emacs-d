@@ -30,6 +30,7 @@
         kill-sexp
         kill-visual-line
         lisp-comment-dwim
+        lsp-signature-stop
         markdown-cycle
         markdown-insert-code
         markdown-outdent-or-delete
@@ -96,6 +97,7 @@
         end-of-buffer
         frame-resize
         goto-address-at-point
+        grep-edit-save-changes
         ivy-switch-buffer
         ivy-switch-buffer-other-window
         ivy-swp-switch-to-buffer-overload
