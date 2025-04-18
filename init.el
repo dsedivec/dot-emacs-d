@@ -3281,7 +3281,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :key #'my:gptel-key-anthropic
     :stream t
     :models '(claude-3-7-sonnet-20250219)
-    :header (lambda () (when-let* ((key (gptel--get-api-key)))
+    :header (lambda () (when-let* ((key (my:gptel-key-anthropic)))
                          `(("x-api-key" . ,key)
                            ("anthropic-version" . "2023-06-01")
                            ("anthropic-beta" . "pdfs-2024-09-25")
