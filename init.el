@@ -5818,8 +5818,11 @@ a string or comment."
 ;; It turns out that `yaml-ts-mode' is built-in, and somehow awful?
 ;; It has no indentation settings as of 2023-11-25?
 ;; https://redd.it/17gtxmr
+;;
+;; `markdown-ts-mode' doesn't have good font support, at least not
+;; with modus-themes.
 (setq treesit-auto-langs (seq-difference treesit-auto-langs
-                                         '(yaml)))
+                                         '(yaml markdown)))
 
 (global-treesit-auto-mode 1)
 
