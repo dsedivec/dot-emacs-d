@@ -27,10 +27,6 @@
 (require 'subr-x)
 (require 'seq)
 
-;; Load local init.el stuff early, since it might e.g. set up SSL
-;; settings or something.
-(load (expand-file-name "init-local" user-emacs-directory) t)
-
 
 ;;; Local packages
 
@@ -57,6 +53,15 @@
 (if (file-exists-p my:local-packages-autoload-file)
     (load my:local-packages-autoload-file)
   (my:update-local-package-autoloads))
+
+
+;;; init-local.el
+
+;; Load local init.el stuff early, since it might e.g. set up SSL
+;; settings or something.  Doing it after local packages are on the
+;; path, since this might use local packages (as in, it definitely
+;; does).
+(load (expand-file-name "init-local" user-emacs-directory) t)
 
 
 ;;; "Recipes"
@@ -3233,26 +3238,6 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                constructor)
              ,name
              ,@args))))
-
-;; This is here for now.  I should move it later.
-(defmacro my:def-1password-getter (name url &optional field)
-  (declare (indent 1))
-  (let ((url (if field
-                 `(format "%s/%s" ,url ,field)
-               url))
-        (cache-var (gensym))
-        (status-var (gensym)))
-    `(let (,cache-var)
-       (defun ,name ()
-         (or ,cache-var
-             (with-temp-buffer
-               (let ((,status-var (call-process "op" nil t nil "read" ,url)))
-                 (unless (eq ,status-var 0)
-                   (error "1Password: op exited with status %S" ,status-var)))
-               (setq ,cache-var (buffer-substring-no-properties
-                                 (point-min)
-                                 ;; Remove newline at end of buffer.
-                                 (max (1- (point-max)) 0)))))))))
 
 (with-eval-after-load 'gptel
   (setf (alist-get 'markdown-mode gptel-prompt-prefix-alist)
