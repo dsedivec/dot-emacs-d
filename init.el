@@ -1243,7 +1243,10 @@ basically every time eldoc's idle hook runs.  Fuck me."
             ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
             '("--wrap" "preserve" "--columns" "99999999"))))
 
-  (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown))
+  (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown)
+
+  (setf (alist-get 'json-mode apheleia-mode-alist) 'python3-json)
+  (setf (alist-get 'json-ts-mode apheleia-mode-alist) 'python3-json))
 
 
 ;;; atomic-chrome
