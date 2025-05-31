@@ -37,22 +37,11 @@
 (defvar my:local-packages-autoload-file
   (expand-file-name "autoloads.el" my:local-packages-dir))
 
-(defvar generated-autoload-file)
-
 (defun my:update-local-package-autoloads ()
   (interactive)
-  (let ((kill-buffer-after
-         (not (get-file-buffer my:local-packages-autoload-file))))
-    (let* ((generated-autoload-file my:local-packages-autoload-file))
-      (update-directory-autoloads my:local-packages-dir))
-    (when-let ((buf (and kill-buffer-after
-                         (get-file-buffer my:local-packages-autoload-file))))
-      (kill-buffer buf))
-    (load my:local-packages-autoload-file)))
+  (loaddefs-generate my:local-packages-dir my:local-packages-autoload-file))
 
-(if (file-exists-p my:local-packages-autoload-file)
-    (load my:local-packages-autoload-file)
-  (my:update-local-package-autoloads))
+(my:update-local-package-autoloads)
 
 
 ;;; init-local.el
