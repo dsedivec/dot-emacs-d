@@ -22,7 +22,7 @@
 
 ;; This is here for now.  I should move it later.  (Because it's kind
 ;; of a problem if someone tries to use it too soon.)
-(defmacro my:def-1password-getter (name url &optional field)
+(defmacro 1password-def-getter (name url &optional field)
   (declare (indent 1))
   (let ((url (if field
                  `(format "%s/%s" ,url ,field)
