@@ -22,6 +22,7 @@
 
 ;; This is here for now.  I should move it later.  (Because it's kind
 ;; of a problem if someone tries to use it too soon.)
+;;;###autoload
 (defmacro 1password-def-getter (name url &optional field)
   (declare (indent 1))
   (let ((url (if field
