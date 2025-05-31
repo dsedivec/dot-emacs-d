@@ -3269,15 +3269,17 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :constructor #'gptel-make-anthropic
     :key #'my:gptel-key-anthropic
     :stream t
-    :models '(claude-3-7-sonnet-20250219)
+    :models '(claude-3-7-sonnet-20250219
+              claude-sonnet-4-20250514
+              claude-opus-4-20250514)
     :header (lambda () (when-let* ((key (my:gptel-key-anthropic)))
                          `(("x-api-key" . ,key)
                            ("anthropic-version" . "2023-06-01")
                            ("anthropic-beta" . "pdfs-2024-09-25")
                            ("anthropic-beta" . "output-128k-2025-02-19")
                            ("anthropic-beta" . "prompt-caching-2024-07-31"))))
-    :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
-                      :max_tokens 4096))
+    :request-params '(:thinking (:type "enabled" :budget_tokens 10000)
+                      :max_tokens 64000))
   (my:gptel-make-backend "OpenRouter"
     :constructor #'gptel-make-openai
     :key #'my:gptel-key-openrouter
@@ -3286,17 +3288,24 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :stream t
     :models '(anthropic/claude-3.7-sonnet:thinking
               anthropic/claude-3.7-sonnet:beta
+              anthropic/claude-opus-4
+              anthropic/claude-sonnet-4
+              qwen/qwen3-235b-a22b
               qwen/qwq-32b
               qwen/qwen-max
-              deepseek/deepseek-chat))
+              qwen/qwen3-30b-a3b
+              deepseek/deepseek-chat)
+    :request-params '(:reasoning (:effort "high")))
   (my:gptel-make-backend "OpenRouter-R1"
     :constructor #'gptel-make-openai
     :key #'my:gptel-key-openrouter
     :host "openrouter.ai"
     :endpoint "/api/v1/chat/completions"
     :stream t
-    :models '(deepseek/deepseek-r1)
-    :request-params '(:provider (:quantizations ["fp8"] :ignore ["Nebius"]))))
+    :models '(deepseek/deepseek-r1
+              deepseek/deepseek-r1-0528)
+    :request-params '(:provider (:quantizations ["fp8"] :ignore ["Nebius"])
+                      :reasoning (:effort "high"))))
 
 
 ;;; groovy-mode
