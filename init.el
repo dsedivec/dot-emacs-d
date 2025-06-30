@@ -3992,7 +3992,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (bind-keys :map markdown-mode-map
              ("M-m m c e" . my:markdown-mode-copy-as-html-email)
              ;; This interferes with my global binding to link-hint.
-             ("C-c C-o" . nil))
+             ("C-c C-o" . nil)
+             ;; These are my IntelliJ compatible windmove keys.
+             ("C-M-}" . nil)
+             ("C-M-{" . nil))
 
   (my:load-recipes 'markdown-mode-copy-as-html-email
                    ;; Note that I do not wrap the loading of
@@ -6224,10 +6227,16 @@ for this command) must be an arrow key."
                (not (eq window-to-delete (selected-window))))
       (delete-window window-to-delete))))
 
-(bind-keys ("C-x <up>" . my:delete-window-that-direction)
-           ("C-x <down>" . my:delete-window-that-direction)
-           ("C-x <left>" . my:delete-window-that-direction)
-           ("C-x <right>" . my:delete-window-that-direction))
+(bind-keys
+ ("C-x <up>" . my:delete-window-that-direction)
+ ("C-x <down>" . my:delete-window-that-direction)
+ ("C-x <left>" . my:delete-window-that-direction)
+ ("C-x <right>" . my:delete-window-that-direction)
+ ;; IntelliJ compatible keys for moving between windows:
+ ("C-M-{" . windmove-left)
+ ("C-M-}" . windmove-right)
+ ("C-M-S-p" . windmove-up)
+ ("C-M-:" . windmove-down))
 
 
 ;;; window
