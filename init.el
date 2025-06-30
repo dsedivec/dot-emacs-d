@@ -1332,7 +1332,7 @@ plugin."
 
 ;;; avy
 
-(bind-keys ("C-'" . avy-goto-char)
+(bind-keys ("C-'" . avy-goto-char-timer)
            ("M-g g" . avy-goto-line)
            ("M-g M-g" . avy-goto-line)
            ;; IntelliJ's limitations have broken me.
