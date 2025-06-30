@@ -1338,6 +1338,22 @@ plugin."
            ;; IntelliJ's limitations have broken me.
            ("M-g M-l" . avy-goto-line))
 
+;; This is defconst'ed, but I do not think it makes sense.  Why would
+;; you want a rainbow of *repeating* characters for at-full style (the
+;; default style AFAIK).  Fun fact: If you ever find yourself with a
+;; tree of length >6 in Avy (and I don't know if that's possible,
+;; realistically or not), then you'll get an error with at-full
+;; because `avy-lead-faces' only has six elements by default.
+(setq avy-lead-faces '(avy-lead-face-0
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2
+                       avy-lead-face-2))
+
 
 ;;; bibtex
 
@@ -4104,6 +4120,21 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;; (custom-theme-set-faces 'modus-vivendi
 ;;                         '(fill-column-indicator (())))
+;; https://github.com/protesilaos/modus-themes/commit/42e161138bd287e3f39f8e9bb9fef88363fa99b3
+;; changed the Avy faces so that they're all the same.  This doesn't
+;; really make sense to me.
+
+(defun my:modus-themes-set-avy-faces (theme)
+  (when (string-match-p "^modus-" (symbol-name theme))
+    (modus-themes-with-colors
+      (custom-set-faces
+       `(avy-lead-face ((,c :inherit (bold modus-themes-reset-soft) :foreground "white"  :background ,red-intense)))
+       `(avy-lead-face-0 ((,c :inherit (modus-themes-reset-soft) :foreground "white" :background ,red-intense)))
+       `(avy-lead-face-1 ((,c :inherit (bold modus-themes-reset-soft) :background ,bg-inactive)))
+       `(avy-lead-face-2 ((,c :inherit (bold modus-themes-reset-soft) :background ,bg-yellow-intense)))
+       ))))
+
+(add-hook 'enable-theme-functions #'my:modus-themes-set-avy-faces)
 
 
 ;;; move-text
