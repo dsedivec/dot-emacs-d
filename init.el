@@ -1928,6 +1928,11 @@ and the last `isearch-string' is added to the future history."
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref))
 
+;; After restart, C-x b (`consult-buffer') is *super* slow.  Let's try
+;; just loading this thing up front, so that you don't say, "Oh, good,
+;; Emacs is ready", try to switch buffers, and then wait thirty
+;; seconds.
+(require 'consult)
 
 
 ;;; cperl-mode
