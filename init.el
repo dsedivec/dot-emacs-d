@@ -39,7 +39,8 @@
 
 (defun my:update-local-package-autoloads ()
   (interactive)
-  (loaddefs-generate my:local-packages-dir my:local-packages-autoload-file))
+  (loaddefs-generate my:local-packages-dir my:local-packages-autoload-file)
+  (load my:local-packages-autoload-file))
 
 (my:update-local-package-autoloads)
 
