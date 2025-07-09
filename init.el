@@ -4046,6 +4046,27 @@ Groups need to agree with `markdown-regex-tilde-fence-begin'.")
 
   (el-patch-validate 'markdown-regex-gfm-code-block-open 'defconst t))
 
+;; Pandoc will put spaces between comments, which will break file
+;; local variable blocks at EOF.  `modify-file-local-variable'
+;; forcibly sets `comment-style' to 'plain, so to get the file local
+;; variable block to use 'extra-line style (which Pandoc won't futz
+;; with), we have to hack `comment-styles' for the duration of
+;; `modify-file-local-variable'.
+
+(defun my:markdown-file-local-variables-single-comment (orig-fun &rest args)
+  (if (derived-mode-p 'markdown-mode)
+      (let ((comment-styles comment-styles)
+            (orig-plain (alist-get 'plain comment-styles)))
+        (setf (alist-get 'plain comment-styles)
+              (alist-get 'extra-line comment-styles))
+        (unwind-protect
+             (apply orig-fun args)
+          (setf (alist-get 'plain comment-styles) orig-plain)))
+    (apply orig-fun args)))
+
+(advice-add 'modify-file-local-variable
+            :around #'my:markdown-file-local-variables-single-comment)
+
 
 ;;; minibuffer
 
