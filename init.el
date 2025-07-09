@@ -1928,6 +1928,10 @@ and the last `isearch-string' is added to the future history."
 
   (setq my:consult-ripgrep-available (executable-find "rg"))
 
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
   (bind-keys ("s-s" . consult-line)
              ("M-m j i" . consult-imenu)
              ("M-m /" . my:consult-autogrep)
@@ -1935,11 +1939,7 @@ and the last `isearch-string' is added to the future history."
              ("C-x b" . consult-buffer)
              ("C-x 4 b" . consult-buffer-other-window)
              ("C-x 5 b" . consult-buffer-other-frame)
-             ("M-y" . consult-yank-pop))
-
-  ;; Use Consult to select xref locations with preview
-  (setq xref-show-xrefs-function #'consult-xref
-        xref-show-definitions-function #'consult-xref))
+             ("M-y" . consult-yank-pop)))
 
 ;; After restart, C-x b (`consult-buffer') is *super* slow.  Let's try
 ;; just loading this thing up front, so that you don't say, "Oh, good,
