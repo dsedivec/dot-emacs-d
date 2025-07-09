@@ -1319,15 +1319,19 @@ plugin."
 ;; tree of length >6 in Avy (and I don't know if that's possible,
 ;; realistically or not), then you'll get an error with at-full
 ;; because `avy-lead-faces' only has six elements by default.
-(setq avy-lead-faces '(avy-lead-face-0
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2
-                       avy-lead-face-2))
+;;
+;; Since this is set with `defconst', we have to set it after Avy has
+;; loaded, or else our value gets overwritten.
+(with-eval-after-load 'avy
+  (setq avy-lead-faces '(avy-lead-face-0
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2
+                         avy-lead-face-2)))
 
 
 ;;; bibtex
