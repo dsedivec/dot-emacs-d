@@ -4098,7 +4098,7 @@ Groups need to agree with `markdown-regex-tilde-fence-begin'.")
 (minions-mode 1)
 
 
-;;; modus-vivendi-theme
+;;; modus-themes
 
 (setq modus-themes-paren-match '(intense)
       modus-themes-headings '((1 . (regular 2.0))
