@@ -1928,6 +1928,15 @@ and the last `isearch-string' is added to the future history."
 
   (setq my:consult-ripgrep-available (executable-find "rg"))
 
+  ;; Manual preview in `my:consult-autogrep' because preview can be
+  ;; really slow when you're moving between a bunch of files.
+  ;;
+  ;; BTW, in case I ever want to be able to toggle preview on/off
+  ;; interactively within a command, maybe this would work:
+  ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
+  ;; (It's at least a starting point)
+  (consult-customize my:consult-autogrep :preview-key "M-.")
+
   ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
