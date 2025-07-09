@@ -4011,7 +4011,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil
-              fill-column 78)
+              fill-column 78
+              comment-style 'extra-line)
   (auto-fill-mode (if visual-line-mode -1 1)))
 
 (my:add-hooks 'markdown-mode-hook
