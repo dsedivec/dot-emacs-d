@@ -4024,6 +4024,28 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   #'turn-off-auto-fill
   #'visual-line-mode)
 
+;; Allow a space between GitHub-style fenced code blocks and the
+;; language identifier, because Pandoc insists on putting it there
+;; (e.g. in `apheleia-mode'), and the author of Pandoc says it's
+;; permitted.
+
+(el-patch-feature markdown-mode)
+
+(with-eval-after-load 'markdown-mode
+  (el-patch-defconst markdown-regex-gfm-code-block-open
+      (el-patch-swap
+        "^[[:blank:]]*\\(?1:```\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$"
+        "^[[:blank:]]*\\(?1:```\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)[[:blank:]]*\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$")
+    "Regular expression matching opening of GFM code blocks.
+Group 1 matches the opening three backquotes and any following whitespace.
+Group 2 matches the opening brace (optional) and surrounding whitespace.
+Group 3 matches the language identifier (optional).
+Group 4 matches the info string (optional).
+Group 5 matches the closing brace (optional), whitespace, and newline.
+Groups need to agree with `markdown-regex-tilde-fence-begin'.")
+
+  (el-patch-validate 'markdown-regex-gfm-code-block-open 'defconst t))
+
 
 ;;; minibuffer
 
