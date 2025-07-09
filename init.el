@@ -1311,6 +1311,8 @@ plugin."
            ;; IntelliJ's limitations have broken me.
            ("M-g M-l" . avy-goto-line))
 
+(setq avy-timeout-seconds 0.25)
+
 ;; This is defconst'ed, but I do not think it makes sense.  Why would
 ;; you want a rainbow of *repeating* characters for at-full style (the
 ;; default style AFAIK).  Fun fact: If you ever find yourself with a
