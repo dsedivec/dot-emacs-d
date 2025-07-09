@@ -1190,15 +1190,22 @@ basically every time eldoc's idle hook runs.  Fuck me."
       (t
        (message "apheleia setup: neither darker nor isort available"))))
 
-  ;; --standalone is necessary to preserve YAML frontmatter.
-  (setf (alist-get 'pandoc-markdown apheleia-formatters)
-        '("pandoc" "-f" "commonmark_x" "-t" "commonmark_x" "--standalone"
-          (if apheleia-formatters-respect-fill-column
-              (list "--columns" (format "%s" fill-column))
-            ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
-            '("--wrap" "preserve" "--columns" "99999999"))))
+  (when (executable-find "pandoc")
+    (defvar-local my:apheleia-markdown-pandoc-format "commonmark_x")
+    (put 'my:apheleia-markdown-pandoc-format 'safe-local-variable #'stringp)
 
-  (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown)
+    ;; --standalone is necessary to preserve YAML frontmatter.
+    (setf (alist-get 'pandoc-markdown apheleia-formatters)
+          '("pandoc"
+            "-f" my:apheleia-markdown-pandoc-format
+            "-t" my:apheleia-markdown-pandoc-format
+            "--standalone"
+            (if apheleia-formatters-respect-fill-column
+                (list "--columns" (format "%s" fill-column))
+              ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
+              '("--wrap" "preserve" "--columns" "99999999"))))
+
+    (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown))
 
   (setf (alist-get 'json-mode apheleia-mode-alist) 'python3-json)
   (setf (alist-get 'json-ts-mode apheleia-mode-alist) 'python3-json))
