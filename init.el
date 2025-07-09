@@ -5965,6 +5965,26 @@ a string or comment."
 (my:load-recipes 'vc-use-icons-in-mode-line
                  'vc-truncate-long-branch-names)
 
+;; Update `vc-annotate' colors when theme changes.  NOTE: I have not
+;; figured out how to refontify a vc-annotate buffer that was opened
+;; before the vc-* settings are changed by the function below.
+;; `jit-lock-refontify' didn't seem to work.  vc-annotate seems
+;; unprepared to recompute an annotate buffer (except that you can
+;; move forwards/backwards in history; maybe I should look further
+;; into how that works).
+
+(defun my:vc-annotate-update-faces (&rest _ignored)
+  (when (featurep 'vc-annotate)
+    ;; You need to do these one at a time, because the value of
+    ;; `vc-annotate-background-mode' influences the computed value of
+    ;; `vc-annotate-color-map'.
+    (setq vc-annotate-background-mode
+          (my:get-standard-value 'vc-annotate-background-mode))
+    (setq vc-annotate-color-map
+          (my:get-standard-value 'vc-annotate-color-map))))
+
+(add-hook 'enable-theme-functions #'my:vc-annotate-update-faces)
+
 
 ;;; vcl-mode
 
