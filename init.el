@@ -1948,13 +1948,22 @@ and the last `isearch-string' is added to the future history."
              ("C-x b" . consult-buffer)
              ("C-x 4 b" . consult-buffer-other-window)
              ("C-x 5 b" . consult-buffer-other-frame)
-             ("M-y" . consult-yank-pop)))
+             ("M-y" . consult-yank-pop))
 
-;; After restart, C-x b (`consult-buffer') is *super* slow.  Let's try
-;; just loading this thing up front, so that you don't say, "Oh, good,
-;; Emacs is ready", try to switch buffers, and then wait thirty
-;; seconds.
-(require 'consult)
+  ;; After restart, C-x b (`consult-buffer') is *super* slow.  Let's
+  ;; try just loading this thing up front, so that you don't say, "Oh,
+  ;; good, Emacs is ready", try to switch buffers, and then wait
+  ;; thirty seconds.
+  (require 'consult)
+
+  ;; Manual preview in `my:consult-autogrep' because preview can be
+  ;; really slow when you're moving between a bunch of files.
+  ;;
+  ;; BTW, in case I ever want to be able to toggle preview on/off
+  ;; interactively within a command, maybe this would work:
+  ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
+  ;; (It's at least a starting point)
+  (consult-customize my:consult-autogrep :preview-key "M-."))
 
 
 ;;; cperl-mode
