@@ -3276,7 +3276,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (setq gptel-api-key #'my:gptel-key-openai)
 
   ;; From https://github.com/karthink/gptel/issues/605#issuecomment-2629528058
-  (setf (plist-get (get 'o3-mini :request-params) :reasoning_effort) "high")
+  (dolist (model '(o3 o4-mini))
+    (setf (plist-get (get model :request-params) :reasoning_effort) "high"))
 
   (my:gptel-make-backend "Gemini" :stream t)
   (my:gptel-make-backend "Perplexity" :stream t)
@@ -3305,14 +3306,17 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :endpoint "/api/v1/chat/completions"
     :stream t
     :models '(anthropic/claude-3.7-sonnet:thinking
-              anthropic/claude-3.7-sonnet:beta
-              anthropic/claude-opus-4
               anthropic/claude-sonnet-4
+              anthropic/claude-opus-4
+              deepseek/deepseek-r1-0528
+              minimax/minimax-m1
+              moonshotai/kimi-k2
               qwen/qwen3-235b-a22b
               qwen/qwq-32b
               qwen/qwen-max
               qwen/qwen3-30b-a3b
-              deepseek/deepseek-chat)
+              x-ai/grok-3-mini
+              x-ai/grok-4)
     :request-params '(:reasoning (:effort "high")))
   (my:gptel-make-backend "OpenRouter-R1"
     :constructor #'gptel-make-openai
