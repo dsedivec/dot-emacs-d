@@ -3819,6 +3819,30 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq lsp-modeline-diagnostics-scope :file
       lsp-pyls-plugins-pylint-enabled t)
 
+;; By default LSP puts way too much in imenu, which makes imenu-list
+;; useless.  (Honestly the entries are probably useless full stop.)
+;; Find the list of possible values for this variable at its defcustom
+;; (and nowhere else, based on my Google search).
+(setq lsp-imenu-index-symbol-kinds '(
+                                     File
+                                     Module
+                                     Namespace
+                                     Package
+                                     Class
+                                     Method
+                                     Property
+                                     Field
+                                     Constructor
+                                     Enum
+                                     Interface
+                                     Function
+                                     ;; This is definitely the bad one:
+                                     ;; Variable
+                                     Constant
+                                     Struct
+                                     Event
+                                     ))
+
 ;; I had once set `lsp-keep-workspace-alive' to nil.  Its default is
 ;; t.  I don't know why I ever wanted nil, it's a PITA to restart
 ;; Python LSPs.  If anything I should write something to _eventually_
