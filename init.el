@@ -1973,6 +1973,10 @@ account.")
   ;; (It's at least a starting point)
   (consult-customize my:consult-autogrep :preview-key "M-.")
 
+  ;; Manual preview for recent files in `consult-buffer', too.  It's
+  ;; too slow to move through them otherwise.
+  (consult-customize consult--source-recent-file :preview-key "M-.")
+
   ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
