@@ -540,6 +540,9 @@ Accepts keyword arguments:
                          same behavior as if no special keyword had
                          been used (that is, the command is bound, and
                          it's `repeat-map' property set)
+:continue-only BINDINGS - Within the scope of `:repeat-map', will make
+                         the command continue but not enter the repeat
+                         map, via the `repeat-continue' property
 :filter FORM           - optional form to determine when bindings apply
 
 The rest of the arguments are conses of keybinding string and a
@@ -575,11 +578,8 @@ function symbol (unquoted)."
                                            override-global-map))))
                      (setq repeat-map (cadr args))
                      (setq map repeat-map))
-                    ((eq :continue (car args))
-                     (setq repeat-type :continue
-                           arg-change-func 'cdr))
-                    ((eq :exit (car args))
-                     (setq repeat-type :exit
+                    ((memq (car args) '(:continue :continue-only :exit))
+                     (setq repeat-type (car args)
                            arg-change-func 'cdr))
                     ((eq :prefix (car args))
                      (setq prefix (cadr args)))
@@ -598,7 +598,7 @@ function symbol (unquoted)."
 
       (when repeat-type
         (unless repeat-map
-          (error ":continue and :exit require specifying :repeat-map")))
+          (error ":continue(-only) and :exit require specifying :repeat-map")))
 
       (when (and menu-name (not prefix))
         (error "If :menu-name is supplied, :prefix must be too"))
@@ -653,9 +653,16 @@ function symbol (unquoted)."
                             ;; Only needed in this branch, since when
                             ;; repeat-map is non-nil, map is always
                             ;; non-nil
-                            `(,@(when (and repeat-map (not (eq repeat-type :exit)))
-                                  `((put ,fun 'repeat-map ',repeat-map)))
-                                (bind-key ,(car form) ,fun ,map ,filter))
+                            (if (eq repeat-type :continue-only)
+                                `((let ((cur (get ,fun 'repeat-continue)))
+                                    (when (and (listp cur)
+                                               (not (memq ',repeat-map cur)))
+                                      (put ,fun 'repeat-continue
+                                           (append cur (list ',repeat-map)))))
+                                  (bind-key ,(car form) ,fun ,map ,filter))
+                              `(,@(when (and repeat-map (not (eq repeat-type :exit)))
+                                    `((put ,fun 'repeat-map ',repeat-map)))
+                                  (bind-key ,(car form) ,fun ,map ,filter)))
                           `((bind-key ,(car form) ,fun nil ,filter))))))
                   first))
            (when next
@@ -1845,8 +1852,12 @@ and the last `isearch-string' is added to the future history."
         ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
                                                                 'current-last)
                                            :filter 'invert
-                                           :as #'consult--buffer-pair)))
-    "Hidden buffer source for `consult-buffer'.")
+                                           :as #'consult--buffer-pair
+                                           :buffer-list t)))
+    "Hidden buffer source for `consult-buffer'.
+The source is hidden by default and can be summoned via its narrow key.
+All buffers are taken into account, i.e., the entire `buffer-list' from
+all frames.")
 
   (el-patch-validate 'consult--source-hidden-buffer 'defvar t)
 
@@ -1866,7 +1877,10 @@ and the last `isearch-string' is added to the future history."
                                            (lambda (buf)
                                              (and (buffer-modified-p buf)
                                                   (buffer-file-name buf))))))
-    "Modified buffer source for `consult-buffer'.")
+    "Modified buffer source for `consult-buffer'.
+The source is hidden by default and can be summoned via its narrow key.
+Only buffers returned by the `consult-buffer-list-function' are taken
+into account.")
 
   (el-patch-validate 'consult--source-modified-buffer 'defvar t)
 
@@ -1882,7 +1896,9 @@ and the last `isearch-string' is added to the future history."
         ,(lambda () (consult--buffer-query :sort (el-patch-swap 'visibility
                                                                 'current-last)
                                            :as #'consult--buffer-pair)))
-    "Buffer source for `consult-buffer'.")
+    "Buffer source for `consult-buffer'.
+Only buffers returned by the `consult-buffer-list-function' are taken into
+account.")
 
   (el-patch-validate 'consult--source-buffer 'defvar t))
 
@@ -2282,10 +2298,12 @@ adjusted transparently."
     :group 'dtrt-indent
     (if dtrt-indent-mode
         (el-patch-splice 3 0
-          (if (and (featurep 'smie) (not (null smie-grammar)) (not (eq smie-grammar 'unset)))
+          (if (and (boundp 'smie-grammar) (not (null smie-grammar)) (not (eq smie-grammar 'unset)))
               (progn
-                (when (null smie-config--buffer-local) (smie-config-guess))
-                (when dtrt-indent-run-after-smie
+                (when (and (not (bound-and-true-p smie-config--buffer-local))
+                           (fboundp 'smie-config-guess))
+                  (smie-config-guess))
+                (when (bound-and-true-p dtrt-indent-run-after-smie)
                   (dtrt-indent-try-set-offset)))
             (dtrt-indent-try-set-offset)))
       (dtrt-indent-undo)))

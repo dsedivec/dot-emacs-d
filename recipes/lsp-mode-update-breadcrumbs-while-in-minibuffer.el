@@ -12,7 +12,7 @@
   (with-minibuffer-selected-window
     (when (and lsp-mode
                lsp-headerline-breadcrumb-mode)
-      (lsp-headerline--check-breadcrumb))))
+      (lsp-headerline-check-breadcrumb))))
 
 (defun my:lsp-start-updating-breadcrumbs-while-in-minibuffer ()
   (when (and my:lsp-breadcrumbs-while-in-minibuffer-timer
