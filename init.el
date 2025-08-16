@@ -1988,16 +1988,7 @@ account.")
              ("C-x b" . consult-buffer)
              ("C-x 4 b" . consult-buffer-other-window)
              ("C-x 5 b" . consult-buffer-other-frame)
-             ("M-y" . consult-yank-pop))
-
-  ;; Manual preview in `my:consult-autogrep' because preview can be
-  ;; really slow when you're moving between a bunch of files.
-  ;;
-  ;; BTW, in case I ever want to be able to toggle preview on/off
-  ;; interactively within a command, maybe this would work:
-  ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
-  ;; (It's at least a starting point)
-  (consult-customize my:consult-autogrep :preview-key "M-."))
+             ("M-y" . consult-yank-pop)))
 
 
 ;;; cperl-mode
