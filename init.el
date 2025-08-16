@@ -1816,10 +1816,24 @@ and the last `isearch-string' is added to the future history."
   (el-patch-validate 'consult-line 'defun t)
 
   ;; `consult-buffer' provides no way to stop sorting visible buffers
-  ;; to the bottom of the list.  We have to define our own sort
-  ;; function and then patch it in to the compiled lambdas in all
-  ;; these variables.  I should probably contribute a patch to make
-  ;; this a setting.
+  ;; to the bottom of the list, which has always been one of my chief
+  ;; complaints about Emacs's own `switch-to-buffer'.  That is, if I
+  ;; want to switch to a buffer, I don't care if it's visible in some
+  ;; other window--I want it in *this window too*.  Anyway, we have to
+  ;; define our own sort function and then patch it in to the compiled
+  ;; lambdas in all these variables.  I should probably contribute a
+  ;; patch to make this a setting.
+  ;;
+  ;; One fateful Friday night, I was convinced that something in Emacs
+  ;; changed, and that `buffer-list' should really return buffers in
+  ;; the MRU order for the current *window*, so that buffers displayed
+  ;; in this window would be above buffers never displayed in this
+  ;; window.  I now firmly believe that I'm wrong about that, and the
+  ;; only behavior you might see is that `switch-to-buffer' makes a
+  ;; point to make your one single most recent buffer (maybe buffer in
+  ;; this window) appear at the top of the switch list.  Other than
+  ;; that difference, I think Consult and stock Emacs are behaving the
+  ;; same way.
 
   (el-patch-defvar consult--source-project-buffer
       `( :name     "Project Buffer"
