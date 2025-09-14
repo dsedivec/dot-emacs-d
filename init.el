@@ -4924,6 +4924,24 @@ everything else."
                  ;;
                  ;; Hit `forward-sexp' or `kill-sexp'.  It ends up
                  ;; moving over/killing the entire line!
+                 ;;
+                 ;; tree-sitter offers the promise of making this
+                 ;; better, and indeed in `python-ts-mode' you get a
+                 ;; tree-sitter-based `forward-sexp-function'.
+                 ;; However, it seems to have exactly the same
+                 ;; problems as the Elisp version in `python-mode',
+                 ;; and I haven't yet figured out how to redefine the
+                 ;; "sexp thing" definition for tree-sitter to make it
+                 ;; work how I expect.
+                 ;;
+                 ;; The other test case you want, assuming you get the
+                 ;; above to work, is try moving over a triple-quoted
+                 ;; string.  I can make tree-sitter either consider
+                 ;; the whole "x, y, z = ..." thing from above a
+                 ;; single sexp, and then it gets triple-quoted
+                 ;; strings wrong; or I can get it to go over the
+                 ;; atoms of the "x, y, z" correctly but then it is
+                 ;; broken on triple-quoted strings again.
                  forward-sexp-function nil
 
                  electric-pair-inhibit-predicate
