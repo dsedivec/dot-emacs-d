@@ -1198,7 +1198,9 @@ basically every time eldoc's idle hook runs.  Fuck me."
        (message "apheleia setup: neither darker nor isort available"))))
 
   (when (executable-find "pandoc")
-    (defvar-local my:apheleia-markdown-pandoc-format "markdown")
+    ;; simple_tables disabled because markdown-mode doesn't deal with
+    ;; them nicely (AFAIK).
+    (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables")
     (put 'my:apheleia-markdown-pandoc-format 'safe-local-variable #'stringp)
 
     ;; --standalone is necessary to preserve YAML frontmatter.
