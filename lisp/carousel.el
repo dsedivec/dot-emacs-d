@@ -143,7 +143,12 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
                 (setq next-run (min next-run secs-left))
               (message "Carousel killing buffer %S" (buffer-name buf))
               (unless carousel-dry-run
-                (kill-buffer buf)))))))
+                (condition-case err
+                    (kill-buffer buf)
+                  (t
+                   (when carousel-debug
+                     (message "Carousel got %S trying to kill buffer %S: %S"
+                              (car err) (buffer-name buf) (cdr err)))))))))))
     (when carousel-mode
       (when (timerp carousel-timer)
         (cancel-timer carousel-timer))
