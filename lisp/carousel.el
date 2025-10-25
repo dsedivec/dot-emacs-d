@@ -150,10 +150,14 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
                      (message "Carousel got %S trying to kill buffer %S: %S"
                               (car err) (buffer-name buf) (cdr err)))))))))))
     (when carousel-mode
-      (when (timerp carousel-timer)
-        (cancel-timer carousel-timer))
-      (setq carousel-timer (run-at-time next-run nil
-                                        #'carousel-kill-buffers)))))
+      (let ((inhibit-quit t))
+        (when (timerp carousel-timer)
+          (cancel-timer carousel-timer))
+        ;; Repeat after 60 seconds in case we get interrupted before
+        ;; we can reschedule.  Then we'll just reschedule in the next
+        ;; repeat run.
+        (setq carousel-timer (run-at-time next-run 60
+                                          #'carousel-kill-buffers))))))
 
 (define-advice carousel-kill-buffers
     (:around (orig-fun &rest args) my:carousel-override-persp-mode)
