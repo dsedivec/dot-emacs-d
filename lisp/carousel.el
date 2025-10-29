@@ -64,7 +64,10 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
 
 (defcustom carousel-safe-buffer-modes
   '(dired-mode)
-  "List of major modes whose buffers will never be auto-killed."
+  "List of major modes whose buffers will never be auto-killed.  Note that
+the major mode must exactly `eq' these values, rather than using
+`derived-mode-p'.  (Whether this was an intentional choice or an
+accidental one has been lost to time.)"
   :type '(set symbol)
   :group 'carousel)
 
