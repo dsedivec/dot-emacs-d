@@ -87,7 +87,7 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
 (defvar carousel-mode)
 
 (defun carousel-buffer-last-used-time (buf)
-  (if-let ((buf-disp-time (buffer-local-value 'buffer-display-time buf)))
+  (if-let* ((buf-disp-time (buffer-local-value 'buffer-display-time buf)))
       (time-to-seconds buf-disp-time)
     (let ((buf-info (gethash buf carousel-never-viewed-buffer-info))
           (buf-mod-tick (buffer-modified-tick buf)))
