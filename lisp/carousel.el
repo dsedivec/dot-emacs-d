@@ -62,12 +62,21 @@ named *scratch*, *Messages*, *Warnings*, *ielm*, or *spacemacs*."
   :type '(set regexp)
   :group 'carousel)
 
-(defcustom carousel-safe-buffer-modes
+(defcustom carousel-safe-buffer-major-modes
   '(dired-mode)
   "List of major modes whose buffers will never be auto-killed.  Note that
 the major mode must exactly `eq' these values, rather than using
 `derived-mode-p'.  (Whether this was an intentional choice or an
 accidental one has been lost to time.)"
+  :type '(set symbol)
+  :group 'carousel)
+
+(defcustom carousel-safe-buffer-minor-modes
+  '(with-editor-mode)
+  "List of minor modes that will prevent auto-killing.  This was created
+for Magit's `with-editor-mode' COMMIT_EDITMSG buffers, which install a
+`kill-buffer-query-functions' function that prevents Carousel from killing
+them."
   :type '(set symbol)
   :group 'carousel)
 
@@ -135,7 +144,10 @@ accidental one has been lost to time.)"
                     (let ((buf-mode (buffer-local-value 'major-mode buf)))
                       (seq-some (lambda (mode)
                                   (eq mode buf-mode))
-                                carousel-safe-buffer-modes)))
+                                carousel-safe-buffer-major-modes))
+                    (seq-some (lambda (minor-mode)
+                                (buffer-local-value minor-mode buf))
+                              carousel-safe-buffer-minor-modes))
           (let* ((buf-used-time (or (carousel-buffer-last-used-time buf) now))
                  (secs-since-last-viewed (- now buf-used-time))
                  (secs-left (- max-age secs-since-last-viewed)))
