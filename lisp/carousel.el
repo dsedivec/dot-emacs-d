@@ -146,7 +146,9 @@ them."
                                   (eq mode buf-mode))
                                 carousel-safe-buffer-major-modes))
                     (seq-some (lambda (minor-mode)
-                                (buffer-local-value minor-mode buf))
+                                (condition-case nil
+                                    (buffer-local-value minor-mode buf)
+                                  (void-variable nil)))
                               carousel-safe-buffer-minor-modes))
           (let* ((buf-used-time (or (carousel-buffer-last-used-time buf) now))
                  (secs-since-last-viewed (- now buf-used-time))
