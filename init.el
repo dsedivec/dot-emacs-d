@@ -3955,12 +3955,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (setq lsp-pyright-diagnostic-mode "workspace")
 
   ;; Use basedpyright instead of pyright if installed.
-  ;;
-  ;; Note: This only overrides pyright for local use.  If you're using
-  ;; it over TRAMP, we'd need to modify the :new-connection slot of
-  ;; the pyright-remote LSP client definition.
   (when (executable-find "basedpyright-langserver")
-    (lsp-dependency 'pyright '(:system "basedpyright-langserver"))))
+    (setq lsp-pyright-langserver-command "basedpyright")))
 
 
 ;;; lsp-ui
