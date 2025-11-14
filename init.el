@@ -4442,18 +4442,12 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   #'visual-line-mode
   #'idle-save-buffer-mode)
 
-(setq obsidian-directory "~/Documents/Obsidian")
+(setq obsidian-directory "~/Documents/Obsidian/Main"
+      obsidian-daily-notes-directory "Daily")
 
 (when (file-directory-p obsidian-directory)
   ;; Activate detection of Obsidian vault
   (global-obsidian-mode t))
-
-(defvar my:obsidian-daily-prefix (file-name-concat obsidian-directory "Main"))
-
-(defun my:obsidian-daily ()
-  (interactive)
-  (let ((date-file-name (format-time-string "%Y-%m-%d.md")))
-    (find-file (expand-file-name date-file-name my:obsidian-daily-prefix))))
 
 
 ;;; olivetti
