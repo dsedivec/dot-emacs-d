@@ -4417,7 +4417,29 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
              ("C-c C-l" . obsidian-insert-wikilink)
              ("C-c C-b" . obsidian-backlink-jump)))
 
+(defun my:obsidian-mode-hook ()
+  (my:setq-local markdown-enable-wiki-links t
+                 ;; apheleia-mode reformatting makes my default delay
+                 ;; of 1 second too annoying.
+                 idle-save-buffer-delay 5)
+
+  ;; (my:setq-local my:apheleia-markdown-pandoc-format
+  ;;                "gfm-simple_tables-smart+wikilinks_title_after_pipe")
+
+  ;; Pandoc is incapable of leaving fenced code blocks alone, so no
+  ;; formatting for you.  It ends up fighting with Obsidian's linter
+  ;; over whether ISO dates should be quoted or not in YAML
+  ;; frontmatter.
+  (apheleia-mode -1)
+
+  ;; Obsidian editing looks/works stupid with hard wrapped lines in
+  ;; paragraphs.  I think this is the path of least resistance, as
+  ;; long as I can keep markdown-mode from completely killing itself.
+  (auto-fill-mode -1))
+
 (my:add-hooks 'obsidian-mode-hook
+  #'my:obsidian-mode-hook
+  #'visual-line-mode
   #'idle-save-buffer-mode)
 
 (setq obsidian-directory "~/Documents/Obsidian")
