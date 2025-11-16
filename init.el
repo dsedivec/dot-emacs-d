@@ -4413,7 +4413,9 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 (with-eval-after-load 'obsidian
   (bind-keys :map obsidian-mode-map
-             ("C-c C-o" . obsidian-follow-link-at-point)
+             ;; I think my default link-hint binding should be
+             ;; sufficient.
+             ;; ("C-c C-o" . obsidian-follow-link-at-point)
              ("C-c C-l" . obsidian-insert-wikilink)
              ("C-c C-b" . obsidian-backlink-jump)))
 
