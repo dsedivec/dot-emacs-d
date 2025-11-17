@@ -1969,15 +1969,19 @@ account.")
   ;; Manual preview in `my:consult-autogrep' because preview can be
   ;; really slow when you're moving between a bunch of files.
   ;;
+  ;; Actually, same thing with "recent files" in C-x b.
+  ;;
   ;; BTW, in case I ever want to be able to toggle preview on/off
   ;; interactively within a command, maybe this would work:
   ;; https://github.com/minad/consult/wiki#toggle-preview-during-active-completion-session
   ;; (It's at least a starting point)
-  (consult-customize my:consult-autogrep :preview-key "M-.")
-
+  ;;
   ;; Manual preview for recent files in `consult-buffer', too.  It's
   ;; too slow to move through them otherwise.
-  (consult-customize consult--source-recent-file :preview-key "M-.")
+  (consult-customize my:consult-autogrep
+                     consult--source-recent-file
+                     consult--source-project-recent-file
+                     :preview-key "M-.")
 
   ;; Use Consult to select xref locations with preview
   (setq xref-show-xrefs-function #'consult-xref
