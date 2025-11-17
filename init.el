@@ -4074,7 +4074,9 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (setq markdown-command "pandoc -f markdown -t html --standalone --mathml"
       markdown-enable-math t
       markdown-footnote-location 'immediately
-      markdown-header-scaling t)
+      markdown-header-scaling t
+      ;; Use C-c C-a r (`markdown-insert-link') to edit a URL.
+      markdown-hide-urls t)
 
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil
