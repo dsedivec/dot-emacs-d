@@ -315,6 +315,7 @@
                             wgrep
                             which-key
                             winum
+                            yaml
                             yaml-mode
                             yasnippet
                             yasnippet-snippets
