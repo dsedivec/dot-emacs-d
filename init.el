@@ -1197,24 +1197,40 @@ basically every time eldoc's idle hook runs.  Fuck me."
       (t
        (message "apheleia setup: neither darker nor isort available"))))
 
-  (when (executable-find "pandoc")
-    ;; simple_tables disabled because markdown-mode doesn't deal with
-    ;; them nicely (AFAIK).
-    (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables")
-    (put 'my:apheleia-markdown-pandoc-format 'safe-local-variable #'stringp)
+  ;; simple_tables disabled because markdown-mode doesn't deal with
+  ;; them nicely (AFAIK).
+  (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables")
+  (put 'my:apheleia-markdown-pandoc-format 'safe-local-variable #'stringp)
 
-    ;; --standalone is necessary to preserve YAML frontmatter.
-    (setf (alist-get 'pandoc-markdown apheleia-formatters)
-          '("pandoc"
-            "-f" my:apheleia-markdown-pandoc-format
-            "-t" my:apheleia-markdown-pandoc-format
-            "--standalone"
-            (if apheleia-formatters-respect-fill-column
-                (list "--columns" (format "%s" fill-column))
-              ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
-              '("--wrap" "preserve" "--columns" "99999999"))))
+  ;; --standalone is necessary to preserve YAML frontmatter.
+  (setf (alist-get 'pandoc-markdown apheleia-formatters)
+        '("pandoc"
+          "-f" my:apheleia-markdown-pandoc-format
+          "-t" my:apheleia-markdown-pandoc-format
+          "--standalone"
+          (if apheleia-formatters-respect-fill-column
+              (list "--columns" (format "%s" fill-column))
+            ;; Use very wide wrapping so that Pandoc doesn't wrap tables.
+            '("--wrap" "preserve" "--columns" "99999999"))))
 
-    (setf (alist-get 'markdown-mode apheleia-mode-alist) 'pandoc-markdown))
+  (defvar-local my:apheleia-markdownlint-config-file nil)
+  ;; This variable probably shouldn't be safe, I don't trust what
+  ;; sorts of things could be specified in a markdownlint config file.
+
+  ;; Using inplace until
+  ;; https://github.com/DavidAnson/markdownlint-cli2/issues/715 gets
+  ;; fixed.
+  (setf (alist-get 'markdownlint-markdown apheleia-formatters)
+        '("markdownlint-cli2" "--fix" inplace
+          (when my:apheleia-markdownlint-config-file
+            (list "--config" my:apheleia-markdownlint-config-file))))
+
+  (when-let* ((apheleia-markdown-formatter
+               (cond
+                 ((executable-find "markdownlint-cli2") 'markdownlint-markdown)
+                 ((executable-find "pandoc") 'pandoc-markdown))))
+    (setf (alist-get 'markdown-mode apheleia-mode-alist)
+          apheleia-markdown-formatter))
 
   (setf (alist-get 'json-mode apheleia-mode-alist) 'python3-json)
   (setf (alist-get 'json-ts-mode apheleia-mode-alist) 'python3-json))
