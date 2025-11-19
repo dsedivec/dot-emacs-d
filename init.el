@@ -1817,7 +1817,7 @@ and the last `isearch-string' is added to the future history."
       (consult--read
        candidates
        :prompt (if top "Go to line from top: " "Go to line: ")
-       :annotate (consult--line-prefix curr-line)
+       :annotate (consult--line-fontify curr-line)
        :category 'consult-location
        :sort nil
        :require-match t
