@@ -4433,6 +4433,67 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 ;;; obsidian
 
+(defvar my:obsidian-markdown-min-modified-seconds 60)
+
+;; XXX RECIPE
+(defun my:obsidian-markdown-add-frontmatter ()
+  (with-demoted-errors
+      "Error updating YAML frontmatter: %S"
+    (save-excursion
+      (goto-char (point-min))
+      (cl-labels
+          ((get-create-date ()
+             (format-time-string time-stamp-format
+                                 (if (buffer-file-name)
+                                     (nth 5 (file-attributes (buffer-file-name)))
+                                   (current-time)))))
+        (let* ((time-stamp-format "%FT%T%z")
+               (now (current-time))
+               (frontmatter-start
+                (when (and (looking-at (markdown-get-yaml-metadata-start-border))
+                           (zerop (forward-line 1)))
+                  (point)))
+               (frontmatter-end
+                (when-let* ((frontmatter-start)
+                            (end-regex (markdown-get-yaml-metadata-end-border nil))
+                            ((re-search-forward end-regex nil t)))
+                  (match-beginning 0))))
+          (if frontmatter-end
+              (let* ((frontmatter (yaml-parse-string
+                                   (buffer-substring-no-properties
+                                    frontmatter-start
+                                    frontmatter-end)
+                                   :object-type 'alist))
+                     (last-modified
+                      (when-let* ((time-str (alist-get 'date_modified
+                                                       frontmatter)))
+                        (ignore-errors
+                          (encode-time (iso8601-parse time-str)))))
+                     (needs-update nil))
+                (unless (assoc 'date_created frontmatter)
+                  (setf (alist-get 'date_created frontmatter)
+                        (get-create-date)
+                        needs-update t))
+                (when (or (not last-modified)
+                          (>= (float-time (time-subtract now last-modified))
+                              my:obsidian-markdown-min-modified-seconds))
+                  (setf (alist-get 'date_modified frontmatter)
+                        (format-time-string time-stamp-format now)
+                        needs-update t))
+                (when needs-update
+                  (delete-region frontmatter-start frontmatter-end)
+                  (goto-char frontmatter-start)
+                  (insert (yaml-encode frontmatter) "\n")))
+            (goto-char (point-min))
+            (insert "---\n"
+                    (yaml-encode `((date_created . ,(get-create-date))
+                                   (date_modified . ,(format-time-string
+                                                      time-stamp-format
+                                                      now))))
+                    "\n---\n")
+            (unless (equal (char-after) ?\n)
+              (insert "\n"))))))))
+
 (with-eval-after-load 'obsidian
   (bind-keys :map obsidian-mode-map
              ;; I think my default link-hint binding should be
@@ -4462,7 +4523,9 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   ;; Obsidian editing looks/works stupid with hard wrapped lines in
   ;; paragraphs.  I think this is the path of least resistance, as
   ;; long as I can keep markdown-mode from completely killing itself.
-  (auto-fill-mode -1))
+  (auto-fill-mode -1)
+
+  (add-hook 'before-save-hook #'my:obsidian-markdown-add-frontmatter 0 t))
 
 (my:add-hooks 'obsidian-mode-hook
   #'my:obsidian-mode-hook
