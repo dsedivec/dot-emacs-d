@@ -4450,11 +4450,14 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   ;; (my:setq-local my:apheleia-markdown-pandoc-format
   ;;                "gfm-simple_tables-smart+wikilinks_title_after_pipe")
 
-  ;; Pandoc is incapable of leaving fenced code blocks alone, so no
-  ;; formatting for you.  It ends up fighting with Obsidian's linter
-  ;; over whether ISO dates should be quoted or not in YAML
-  ;; frontmatter.
-  (apheleia-mode -1)
+  (when (and apheleia-mode
+             (eq (alist-get 'markdown-mode apheleia-mode-alist)
+                 'pandoc-markdown))
+    ;; Pandoc is incapable of leaving fenced code blocks alone, so no
+    ;; formatting for you.  It ends up fighting with Obsidian's linter
+    ;; over whether ISO dates should be quoted or not in YAML
+    ;; frontmatter.
+    (apheleia-mode -1))
 
   ;; Obsidian editing looks/works stupid with hard wrapped lines in
   ;; paragraphs.  I think this is the path of least resistance, as
