@@ -4548,7 +4548,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   #'idle-save-buffer-mode
   #'company-mode)
 
-(setq obsidian-directory "~/Documents/Obsidian/Main"
+(setq obsidian-directory (expand-file-name "~/Documents/Obsidian/Main")
       obsidian-daily-notes-directory "Daily")
 
 (when (file-directory-p obsidian-directory)
