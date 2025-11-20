@@ -4513,6 +4513,10 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   ;;                "gfm-simple_tables-smart+wikilinks_title_after_pipe")
 
   (when (and apheleia-mode
+             ;; Amusingly, turning on `apheleia-mode' does not cause
+             ;; Apheleia to get loaded, and thus `apheleia-mode-alist'
+             ;; won't be defined, so just eagerly load it here.
+             (require 'apheleia nil t)
              (eq (alist-get 'markdown-mode apheleia-mode-alist)
                  'pandoc-markdown))
     ;; Pandoc is incapable of leaving fenced code blocks alone, so no
