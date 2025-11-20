@@ -4432,9 +4432,9 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 ;;; obsidian
 
+;; XXX RECIPE
 (defvar my:obsidian-markdown-min-modified-seconds 60)
 
-;; XXX RECIPE
 (defun my:obsidian-markdown-add-frontmatter ()
   (with-demoted-errors
       "Error updating YAML frontmatter: %S"
@@ -4446,8 +4446,11 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
               (when (and (looking-at (markdown-get-yaml-metadata-start-border))
                          (zerop (forward-line 1)))
                 (point)))
+             ;; frontmatter-end will only be set if frontmatter-start
+             ;; could be set first.
              (frontmatter-end
               (when-let* ((frontmatter-start)
+                          ;; This should always be non-nil.
                           (end-regex (markdown-get-yaml-metadata-end-border nil))
                           ((re-search-forward end-regex nil t)))
                 (match-beginning 0))))
@@ -4458,6 +4461,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
                                        (nth 5 (file-attributes (buffer-file-name)))
                                      (current-time)))))
           (if frontmatter-end
+              ;; Update existing frontmatter.
               (let* ((frontmatter (yaml-parse-string
                                    (buffer-substring-no-properties
                                     frontmatter-start
@@ -4469,10 +4473,14 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
                         (ignore-errors
                           (encode-time (iso8601-parse time-str)))))
                      (needs-update nil))
+                ;; If there's already a date_created, keep it.
                 (unless (assoc 'date_created frontmatter)
                   (setf (alist-get 'date_created frontmatter)
                         (get-create-date)
                         needs-update t))
+                ;; Only update date_modified if it's older than
+                ;; `my:obsidian-markdown-min-modified-seconds'
+                ;; seconds.
                 (when (or (not last-modified)
                           (>= (float-time (time-subtract now last-modified))
                               my:obsidian-markdown-min-modified-seconds))
@@ -4483,6 +4491,7 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
                   (delete-region frontmatter-start frontmatter-end)
                   (goto-char frontmatter-start)
                   (insert (yaml-encode frontmatter) "\n")))
+            ;; Add new frontmatter.
             (goto-char (point-min))
             (insert "---\n"
                     (yaml-encode `((date_created . ,(get-create-date))
@@ -4490,6 +4499,8 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
                                                       time-stamp-format
                                                       now))))
                     "\n---\n")
+            ;; Always make sure there's a blank line after the new
+            ;; frontmatter.
             (unless (equal (char-after) ?\n)
               (insert "\n"))))))))
 
