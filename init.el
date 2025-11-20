@@ -4538,13 +4538,15 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
   (add-hook 'before-save-hook #'my:obsidian-markdown-add-frontmatter 0 t)
 
-  (add-hook 'after-revert-hook #'obsidian-mode nil t))
+  (add-hook 'after-revert-hook #'obsidian-mode nil t)
 
+  (push 'obsidian--tags-backend (my:buffer-local-value 'company-backends)))
 
 (my:add-hooks 'obsidian-mode-hook
   #'my:obsidian-mode-hook
   #'visual-line-mode
-  #'idle-save-buffer-mode)
+  #'idle-save-buffer-mode
+  #'company-mode)
 
 (setq obsidian-directory "~/Documents/Obsidian/Main"
       obsidian-daily-notes-directory "Daily")
