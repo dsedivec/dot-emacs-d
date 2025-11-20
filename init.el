@@ -4244,8 +4244,6 @@ Groups need to agree with `markdown-regex-tilde-fence-begin'.")
 
 (add-hook 'enable-theme-functions #'my:modus-themes-reset-fci-face)
 
-;; (custom-theme-set-faces 'modus-vivendi
-;;                         '(fill-column-indicator (())))
 ;; https://github.com/protesilaos/modus-themes/commit/42e161138bd287e3f39f8e9bb9fef88363fa99b3
 ;; changed the Avy faces so that they're all the same.  This doesn't
 ;; really make sense to me.
@@ -4508,9 +4506,6 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
                  ;; apheleia-mode reformatting makes my default delay
                  ;; of 1 second too annoying.
                  idle-save-buffer-delay 5)
-
-  ;; (my:setq-local my:apheleia-markdown-pandoc-format
-  ;;                "gfm-simple_tables-smart+wikilinks_title_after_pipe")
 
   (when (and apheleia-mode
              ;; Amusingly, turning on `apheleia-mode' does not cause
