@@ -4632,7 +4632,8 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
 
 (setq obsidian-directory (expand-file-name "~/Documents/Obsidian/Main")
       obsidian-daily-notes-directory "Daily"
-      obsidian-links-use-vault-path t)
+      obsidian-links-use-vault-path t
+      obsidian-include-hidden-files nil)
 
 (when (file-directory-p obsidian-directory)
   ;; Activate detection of Obsidian vault
