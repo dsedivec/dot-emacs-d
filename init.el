@@ -4536,7 +4536,10 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   ;; long as I can keep markdown-mode from completely killing itself.
   (auto-fill-mode -1)
 
-  (add-hook 'before-save-hook #'my:obsidian-markdown-add-frontmatter 0 t))
+  (add-hook 'before-save-hook #'my:obsidian-markdown-add-frontmatter 0 t)
+
+  (add-hook 'after-revert-hook #'obsidian-mode nil t))
+
 
 (my:add-hooks 'obsidian-mode-hook
   #'my:obsidian-mode-hook
