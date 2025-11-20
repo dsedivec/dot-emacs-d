@@ -4442,23 +4442,23 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
       "Error updating YAML frontmatter: %S"
     (save-excursion
       (goto-char (point-min))
-      (cl-labels
-          ((get-create-date ()
-             (format-time-string time-stamp-format
-                                 (if (buffer-file-name)
-                                     (nth 5 (file-attributes (buffer-file-name)))
-                                   (current-time)))))
-        (let* ((time-stamp-format "%FT%T%z")
-               (now (current-time))
-               (frontmatter-start
-                (when (and (looking-at (markdown-get-yaml-metadata-start-border))
-                           (zerop (forward-line 1)))
-                  (point)))
-               (frontmatter-end
-                (when-let* ((frontmatter-start)
-                            (end-regex (markdown-get-yaml-metadata-end-border nil))
-                            ((re-search-forward end-regex nil t)))
-                  (match-beginning 0))))
+      (let* ((time-stamp-format "%FT%T%z")
+             (now (current-time))
+             (frontmatter-start
+              (when (and (looking-at (markdown-get-yaml-metadata-start-border))
+                         (zerop (forward-line 1)))
+                (point)))
+             (frontmatter-end
+              (when-let* ((frontmatter-start)
+                          (end-regex (markdown-get-yaml-metadata-end-border nil))
+                          ((re-search-forward end-regex nil t)))
+                (match-beginning 0))))
+        (cl-labels
+            ((get-create-date ()
+               (format-time-string time-stamp-format
+                                   (if (buffer-file-name)
+                                       (nth 5 (file-attributes (buffer-file-name)))
+                                     (current-time)))))
           (if frontmatter-end
               (let* ((frontmatter (yaml-parse-string
                                    (buffer-substring-no-properties
