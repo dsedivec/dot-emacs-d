@@ -4549,7 +4549,8 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
   #'company-mode)
 
 (setq obsidian-directory (expand-file-name "~/Documents/Obsidian/Main")
-      obsidian-daily-notes-directory "Daily")
+      obsidian-daily-notes-directory "Daily"
+      obsidian-links-use-vault-path t)
 
 (when (file-directory-p obsidian-directory)
   ;; Activate detection of Obsidian vault
