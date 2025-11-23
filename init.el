@@ -4155,6 +4155,87 @@ Groups need to agree with `markdown-regex-tilde-fence-begin'.")
 (advice-add 'modify-file-local-variable
             :around #'my:markdown-file-local-variables-single-comment)
 
+;; XXX RECIPE
+;;
+;; Make Markdown inline images default to window width.  Unfortunately
+;; I think this width will only be evaluated at the time the image
+;; overlay is inserted, so resizing the window (or maybe switching
+;; between displays with different pixel densities?) will require you
+;; to toggle images off/on.  Maybe I could catch some kind of resizing
+;; events, via some hook perhaps?
+;;
+;; TODO: Probably el-patch the defcustom to allow 'dynamic.
+
+(el-patch-feature markdown-mode)
+
+(with-eval-after-load 'markdown-mode
+  (el-patch-defun markdown-display-inline-images ()
+    "Add inline image overlays to image links in the buffer.
+This can be toggled with `markdown-toggle-inline-images'
+or \\[markdown-toggle-inline-images]."
+    (interactive)
+    (unless (display-images-p)
+      (error "Cannot show images"))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (while (re-search-forward markdown-regex-link-inline nil t)
+          (let* ((start (match-beginning 0))
+                 (imagep (match-beginning 1))
+                 (end (match-end 0))
+                 (file (match-string-no-properties 6)))
+            (when (and imagep
+                       (not (zerop (length file))))
+              (unless (file-exists-p file)
+                (let* ((download-file (funcall markdown-translate-filename-function file))
+                       (valid-url (ignore-errors
+                                    (member (downcase (url-type (url-generic-parse-url download-file)))
+                                            markdown-remote-image-protocols))))
+                  (if (and markdown-display-remote-images valid-url)
+                      (setq file (markdown--get-remote-image download-file))
+                    (when (not valid-url)
+                      ;; strip query parameter
+                      (setq file (replace-regexp-in-string "?.+\\'" "" file))
+                      (unless (file-exists-p file)
+                        (setq file (url-unhex-string file)))))))
+              (when (file-exists-p file)
+                (let* ((abspath (if (file-name-absolute-p file)
+                                    file
+                                  (concat default-directory file)))
+                       (el-patch-add
+                         (max-size (if (eq markdown-max-image-size 'dynamic)
+                                       (cons (- (window-body-width nil t)
+                                                (line-number-display-width t))
+                                             (window-body-height nil t))
+                                     markdown-max-image-size)))
+                       (image
+                        (cond ((and (el-patch-swap markdown-max-image-size
+                                                   max-size)
+                                    (image-type-available-p 'imagemagick))
+                               (create-image
+                                abspath 'imagemagick nil
+                                :max-width (car (el-patch-swap markdown-max-image-size
+                                                               max-size))
+                                :max-height (cdr (el-patch-swap markdown-max-image-size
+                                                                max-size))))
+                              ((el-patch-swap markdown-max-image-size max-size)
+                               (create-image abspath nil nil
+                                             :max-width (car (el-patch-swap markdown-max-image-size
+                                                                            max-size))
+                                             :max-height (cdr (el-patch-swap markdown-max-image-size
+                                                                             max-size))))
+                              (t (create-image abspath)))))
+                  (when image
+                    (let ((ov (make-overlay start end)))
+                      (overlay-put ov 'display image)
+                      (overlay-put ov 'face 'default)
+                      (push ov markdown-inline-image-overlays)))))))))))
+
+  (el-patch-validate 'markdown-display-inline-images 'defun t)
+
+  (setq markdown-max-image-size 'dynamic))
+
 
 ;;; minibuffer
 
