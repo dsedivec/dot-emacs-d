@@ -4111,6 +4111,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   #'turn-off-auto-fill
   #'visual-line-mode)
 
+;; XXX RECIPE
 ;; Allow a space between GitHub-style fenced code blocks and the
 ;; language identifier, because Pandoc insists on putting it there
 ;; (e.g. in `apheleia-mode'), and the author of Pandoc says it's
