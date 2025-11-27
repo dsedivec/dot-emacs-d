@@ -4586,12 +4586,56 @@ With prefix, it behaves the same as original `mc/mark-all-like-this'"
             (unless (equal (char-after) ?\n)
               (insert "\n"))))))))
 
+;; XXX RECIPE
+;;
+;; I hate getting prompted for the link description.
+
+(defvar my:obsidian-use-default-wikilink-description nil
+  "Let-bind this non-nil to skip prompting for description when inserting
+a new wikilink in an Obsidian buffer.")
+
+(el-patch-feature obsidian)
+
+(with-eval-after-load 'obsidian
+  (el-patch-defun obsidian--request-link (&optional toggle-path)
+    "Service function to request user for link input.
+
+TOGGLE-PATH is a boolean that will toggle the behavior of
+`obsidian-links-use-vault-path' for this single link insertion."
+    (let* ((all-files (->> (obsidian-files)
+                           (-map (lambda (f) (file-relative-name f obsidian-directory)))))
+           (region (when (use-region-p)
+                     (buffer-substring-no-properties (region-beginning) (region-end))))
+           (chosen-file (completing-read "Link: " all-files))
+           (verified-file (obsidian--verify-link chosen-file))
+           (default-description (el-patch-wrap 2 0
+                                  (or region
+                                      (-> verified-file
+                                          file-name-nondirectory
+                                          file-name-sans-extension))))
+           (description (el-patch-wrap 3 0
+                          (if (and my:obsidian-use-default-wikilink-description
+                                   default-description)
+                              default-description
+                            (->> (el-patch-splice 2 0
+                                   (or region default-description))
+                                 (read-from-minibuffer "Description (optional): ")))))
+           (file-link (obsidian-format-link verified-file toggle-path)))
+      (list :file file-link :description description)))
+
+  (el-patch-validate 'obsidian--request-link 'defun t))
+
+(defun my:obsidian-insert-wikilink (&optional prompt-description)
+  (interactive "P")
+  (let ((my:obsidian-use-default-wikilink-description (not prompt-description)))
+    (obsidian-insert-wikilink)))
+
 (with-eval-after-load 'obsidian
   (bind-keys :map obsidian-mode-map
              ;; I think my default link-hint binding should be
              ;; sufficient.
              ;; ("C-c C-o" . obsidian-follow-link-at-point)
-             ("C-c C-l" . obsidian-insert-wikilink)
+             ("C-c C-l" . my:obsidian-insert-wikilink)
              ("C-c C-b" . obsidian-backlink-jump)))
 
 (defun my:obsidian-mode-hook ()
