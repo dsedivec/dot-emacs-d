@@ -1218,11 +1218,10 @@ basically every time eldoc's idle hook runs.  Fuck me."
   ;; This variable probably shouldn't be safe, I don't trust what
   ;; sorts of things could be specified in a markdownlint config file.
 
-  ;; Using inplace until
-  ;; https://github.com/DavidAnson/markdownlint-cli2/issues/715 gets
-  ;; fixed.
+  ;; Make sure you have markdownlint-cli2 >= 0.19.1.
+  ;; https://github.com/DavidAnson/markdownlint-cli2/issues/715
   (setf (alist-get 'markdownlint-markdown apheleia-formatters)
-        '("markdownlint-cli2" "--fix" inplace
+        '("markdownlint-cli2" "--format"
           (when my:apheleia-markdownlint-config-file
             (list "--config" my:apheleia-markdownlint-config-file))))
 
