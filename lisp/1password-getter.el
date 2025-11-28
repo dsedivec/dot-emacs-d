@@ -41,7 +41,8 @@
                  `(format "%s/%s" ,url ,field)
                url))
         (cache-var (gensym))
-        (status-var (gensym)))
+        (status-var (gensym))
+        (output-buffer-var (gensym)))
     `(let (,cache-var)
        (defun ,name ()
          (or ,cache-var
@@ -53,7 +54,16 @@
                         (call-process "op" nil t nil "read" ,url))))
 
                  (unless (eq ,status-var 0)
-                   (error "1Password: op exited with status %S" ,status-var)))
+                   (let ((,output-buffer-var
+                          (get-buffer-create "*1password-getter-output*")))
+                     (with-current-buffer ,output-buffer-var
+                       (without-restriction
+                         (goto-char (point-max))
+                         (unless (bobp)
+                           (insert "\n\n"))))
+                     (insert-into-buffer ,output-buffer-var)
+                     (error "1Password: op exited with status %S, see %s for details."
+                            ,status-var (buffer-name ,output-buffer-var)))))
                (setq ,cache-var (buffer-substring-no-properties
                                  (point-min)
                                  ;; Remove newline at end of buffer.
