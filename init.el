@@ -3772,8 +3772,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 ;;; json-mode
 
 (with-eval-after-load 'json-mode
-  (my:load-recipes 'json-mode-show-path
-                   'json-mode-beautify)
+  (my:load-recipes 'json-mode-show-path)
 
   (bind-keys :map json-mode-map
              ("C-c C-p" . my:json-mode-show-path-jq)))
