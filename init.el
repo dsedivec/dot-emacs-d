@@ -4045,6 +4045,20 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     "j p" "unpushed"
     "j f" "unpulled")
 
+;; I don't know exactly what's going on here, but commit 9d188ca77b5
+;; added `magit-blob-mode' to `magit-find-index-hook'.  The result is
+;; that, when doing `magit-ediff-dwim' to edit the index (that's what
+;; I use it for 99.9% of the time), if you hit "n" to go to the next
+;; hunk, a very minimal keymap gets added in that region which
+;; includes "p", "n", "q".  Then you go to type something like "flip",
+;; and when you get to the "p" your cursor goes into orbit rather than
+;; just inserting "p".  That seems exceedingly dumb, so we're going to
+;; back this out.  I have no idea why I would ever want this--and I
+;; definitively do not want it when I'm trying to edit files in the
+;; index.
+(with-eval-after-load 'magit-files
+  (remove-hook 'magit-find-index-hook 'magit-blob-mode))
+
 
 ;;; marginalia
 
