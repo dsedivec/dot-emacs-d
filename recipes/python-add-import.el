@@ -107,27 +107,30 @@
 (defun my:python-add-import (import)
   (interactive
    (list
-    (let (defaults)
-      (save-excursion
-        (skip-chars-backward "[[:space:]].")
-        (let* ((start (point))
-               (name (progn
-                       (skip-chars-backward "[:word:]_.")
-                       (buffer-substring-no-properties (point) start))))
-          (while (not (zerop (length name)))
-            (push (concat "import " name) defaults)
-            (setq name
-                  (substring name 0
-                             (or (string-match-p "\\(^\\|\\.\\)[[:word:]_]+$"
-                                                 name)
-                                 0))))))
+    (let* ((substr
+            (save-excursion
+              (buffer-substring-no-properties (progn
+                                                (unless (looking-at-p "[[:word:]_.]")
+                                                  (skip-chars-backward "[[:space:]]"))
+                                                (skip-chars-backward "[[:word:]_.]")
+                                                (point))
+                                              (progn (skip-chars-forward "[[:word:]_.")
+                                                     (point)))))
+           (symbols (string-split substr "\\." t "[ \r\n\t]+"))
+           (default-names (when symbols (list (car symbols))))
+           default-imports)
+      (dolist (symbol (cdr symbols))
+        (cl-pushnew (concat (car symbols) "." symbol) default-names))
+      (setq default-imports (mapcar (lambda (name) (concat "import " name))
+                                    (nreverse default-names)))
       (completing-read "Import: "
-                       (my:python-find-imports-in-all-buffers)
+                       (nconc default-imports
+                              (my:python-find-imports-in-all-buffers))
                        nil
                        nil
                        nil
                        'my:python-add-import-history
-                       defaults))))
+                       default-imports))))
   (when (symbolp import)
     (setq import (symbol-name import)))
   (unless (and (stringp import) (> (length import) 0))
