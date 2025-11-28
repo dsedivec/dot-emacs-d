@@ -20,6 +20,18 @@
 
 ;;; Code:
 
+;; I am stupidly paranoid, and in ways that don't really help things
+;; very much.  Enjoy.
+(let (1password-getter-service-account-key)
+  (defun 1password-getter-get-service-account-key ()
+    (or 1password-getter-service-account-key
+        (setq 1password-getter-service-account-key
+              (read-passwd "Enter 1Password service account key: "))))
+
+  (defun 1password-getter-forget-service-account-key ()
+    (interactive)
+    (setq 1password-getter-service-account-key nil)))
+
 ;; This is here for now.  I should move it later.  (Because it's kind
 ;; of a problem if someone tries to use it too soon.)
 ;;;###autoload
@@ -34,7 +46,12 @@
        (defun ,name ()
          (or ,cache-var
              (with-temp-buffer
-               (let ((,status-var (call-process "op" nil t nil "read" ,url)))
+               (let ((,status-var
+                      (with-environment-variables
+                          (("OP_SERVICE_ACCOUNT_TOKEN"
+                            (1password-getter-get-service-account-key)))
+                        (call-process "op" nil t nil "read" ,url))))
+
                  (unless (eq ,status-var 0)
                    (error "1Password: op exited with status %S" ,status-var)))
                (setq ,cache-var (buffer-substring-no-properties
