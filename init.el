@@ -3322,6 +3322,14 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   ;; Move to next prompt after the response is inserted.
   (add-hook 'gptel-post-response-functions 'gptel-end-of-response)
 
+  ;; LLMs leave tons of trailing white space to fuck with me.
+
+  (defun my:gptel-remove-trailing-white-space-in-response (start end)
+    (delete-trailing-whitespace start end))
+
+  (add-hook 'gptel-post-response-functions
+            #'my:gptel-remove-trailing-white-space-in-response)
+
   (setq gptel-api-key #'my:gptel-key-openai)
 
   ;; From https://github.com/karthink/gptel/issues/605#issuecomment-2629528058
