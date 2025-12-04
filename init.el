@@ -4112,11 +4112,46 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       markdown-hide-urls t
       markdown-disable-tooltip-prompt t)
 
+(defconst my:markdownlint-cli2-config-file-precedence
+  '(".markdownlint-cli2.jsonc"
+    ".markdownlint-cli2.yaml"
+    ".markdownlint-cli2.cjs"
+    ".markdownlint-cli2.mjs"
+    "package.json"
+    ".markdownlint.jsonc"
+    ".markdownlint.json"
+    ".markdownlint.yaml"
+    ".markdownlint.yml"
+    ".markdownlint.cjs"
+    ".markdownlint.mjs"))
+
+(defconst my:markdownlint-cli2-config-file-regexp
+  (rx string-start
+      (eval `(or ,@my:markdownlint-cli2-config-file-precedence))
+      string-end))
+
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil
               fill-column 78
               comment-style 'extra-line)
-  (auto-fill-mode (if visual-line-mode -1 1)))
+  (auto-fill-mode (if visual-line-mode -1 1))
+  ;; Look for a markdownlint-cli2 config file.
+  (let (config-files
+        (lowest-index (length my:markdownlint-cli2-config-file-precedence)))
+    (when (locate-dominating-file
+           default-directory
+           (lambda (dir)
+             (setq config-files
+                   (directory-files dir
+                                    t
+                                    my:markdownlint-cli2-config-file-regexp
+                                    t))))
+      (dolist (config-file config-files)
+        (let ((index (seq-position my:markdownlint-cli2-config-file-precedence
+                                   (file-name-nondirectory config-file))))
+          (when (< index lowest-index)
+            (setq-local my:apheleia-markdownlint-config-file config-file)
+            (setq lowest-index index)))))))
 
 (my:add-hooks 'markdown-mode-hook
   #'electric-pair-local-mode
