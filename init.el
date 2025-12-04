@@ -3362,18 +3362,16 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :host "openrouter.ai"
     :endpoint "/api/v1/chat/completions"
     :stream t
-    :models '(anthropic/claude-3.7-sonnet:thinking
-              anthropic/claude-sonnet-4
-              anthropic/claude-opus-4
-              deepseek/deepseek-r1-0528
-              minimax/minimax-m1
-              moonshotai/kimi-k2
-              qwen/qwen3-235b-a22b
-              qwen/qwq-32b
-              qwen/qwen-max
-              qwen/qwen3-30b-a3b
-              x-ai/grok-3-mini
-              x-ai/grok-4)
+    :models '(moonshotai/kimi-k2-thinking
+              x-ai/grok-4
+              x-ai/grok-4.1-fast
+              minimax/minimax-m2
+              openai/gpt-oss-120b:exacto
+              openai/gpt-oss-120b
+              qwen/qwen3-235b-a22b-thinking-2507
+              deepseek/deepseek-v3.2-exp
+              z-ai/glm-4.6:exacto
+              z-ai/glm-4.6)
     :request-params '(:reasoning (:effort "high")))
   (my:gptel-make-backend "OpenRouter-R1"
     :constructor #'gptel-make-openai
@@ -3381,8 +3379,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
     :host "openrouter.ai"
     :endpoint "/api/v1/chat/completions"
     :stream t
-    :models '(deepseek/deepseek-r1
-              deepseek/deepseek-r1-0528)
+    :models '(deepseek/deepseek-r1-0528)
     :request-params '(:provider (:quantizations ["fp8"] :ignore ["Nebius"])
                       :reasoning (:effort "high"))))
 
