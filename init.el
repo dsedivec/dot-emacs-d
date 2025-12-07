@@ -1161,6 +1161,42 @@ basically every time eldoc's idle hook runs.  Fuck me."
   (bind-keys :map anaconda-mode-map
              ("M-," . nil)))
 
+;; I think the only I things I have related to the pythonic Emacs
+;; package are all for anaconda-mode or its companions.  Jedi, and
+;; therefore anaconda-mode, doesn't work on Python 3.14 as of
+;; 2025-12-07, yet Python 3.14 is now the default Python interpreter
+;; in Homebrew.  We're going to check for this version and try and
+;; roll back to some earlier version until Jedi and anaconda-mode get
+;; updated.
+(with-eval-after-load 'pythonic
+  (unless pythonic-interpreter
+    (message "`pythonic-interpreter' not set, setting it to python3.")
+    (setq pythonic-interpreter "python3"))
+  (let ((python-version
+         (with-temp-buffer
+           (when (zerop (process-file pythonic-interpreter nil t nil "-c" "
+               import sys;
+               print(sys.version_info.major, sys.version_info.minor, sep='.')"))
+             (goto-char (point-min))
+             (buffer-substring-no-properties (point-min)
+                                             (line-end-position 1))))))
+    (cond ((not python-version)
+           (message "Can't check version of `python-interpreter' for pythonic."))
+          ((version< "3.13" python-version)
+           (cl-loop
+             for minor from 13 downto 0
+             for interpreter = (format "python3.%S" minor)
+             for interpreter-found = (executable-find interpreter)
+             until interpreter-found
+             finally
+              (if (not interpreter-found)
+                  (warn (concat "`pythonic-interpreter' points to 3.14 or"
+                                " newer and no earlier interpreter was found."))
+                (setq pythonic-interpreter interpreter)
+                (message (concat "`pythonic-interpreter' was 3.14 or newer,"
+                                 " changed to %S.")
+                         pythonic-interpreter)))))))
+
 
 ;;; apheleia
 
