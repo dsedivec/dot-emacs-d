@@ -3251,10 +3251,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 ;;; git-commit
 
-(with-eval-after-load 'git-commit
-  (add-to-list 'git-commit-style-convention-checks
-               'overlong-summary-line))
-
+;; I no longer warn on this during commit because I violate it too
+;; often.
 (setq git-commit-summary-max-length 50)
 
 
