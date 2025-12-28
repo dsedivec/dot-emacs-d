@@ -3184,7 +3184,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   ;; Chain Pyright after Ruff.
   (flycheck-add-next-checker 'python-ruff 'python-pyright)
 
-  (my:add-to-list-before 'flycheck-checkers 'python-ruff 'python-pylint))
+  (my:add-to-list-before 'flycheck-checkers 'python-ruff 'python-pylint)
+
+  ;; Run proselint after markdownlint-cli2.
+  (flycheck-add-next-checker 'markdown-markdownlint-cli2 'proselint))
 
 
 ;;; flycheck-clj-kondo
