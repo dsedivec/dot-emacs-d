@@ -436,18 +436,67 @@
   (clear-face-cache)
 
   ;; Per NEWS.28, this should get me Emoji support?  Please?
-  (set-fontset-font t 'emoji '("Apple Color Emoji" . "iso10646-1") nil 'prepend)
-  ;; Per people (rightfully?) bitching in
-  ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=54970, it seems I
-  ;; also need to do this for the "symbol script".  (You can see this
-  ;; in `describe-char' output.)
-  (set-fontset-font t 'symbol '("Apple Color Emoji" . "iso10646-1") nil 'prepend)
-  ;; I added these two when I found the SQUARED LATIN CAPITAL LETTER M
-  ;; (U+1F13C) (🄼) was no longer displaying, maybe after I upgraded to
-  ;; Ventura.  Apple Symbols has it, but I *think* I prefer the SF Pro
-  ;; version of it.
-  (set-fontset-font t 'symbol '("Apple Symbols" . "iso10646-1") nil 'prepend)
-  (set-fontset-font t 'symbol '("SF Pro" . "iso10646-1") nil 'prepend)
+  ;;
+  ;; (Actually, NEWS.28 says to set it to
+  ;;
+  ;;     '("Apple Color Emoji" . "iso10646-1")
+  ;;
+  ;; but I think maybe on macOS + Core Text that's not great or
+  ;; something?  So I'm leaving it off.  See further note below.)
+  (set-fontset-font t 'emoji "Apple Color Emoji" nil 'prepend)
+
+  ;; So I really want → (U+2192 RIGHTWARDS ARROW) to display, and I
+  ;; want it to display with SF Pro if possible, since that has the
+  ;; nicest arrow I've found.  I also need 🄼 (U+1F13C SQUARED LATIN
+  ;; CAPITAL LETTER M) to display.  If you see a fucking monochrome
+  ;; car there then... FUCK!  Restart Emacs, probably.  I have no
+  ;; fucking idea.  Restarting worked before.
+  ;;
+  ;; We're calling `set-fontset-font' with 'prepend in reverse order
+  ;; of preference for these fonts:
+  ;;
+  ;; - Maybe SF Pro isn't everywhere, so add Apple Symbols.  Maybe it
+  ;;   has more glyphs?
+  ;;
+  ;; - https://debbugs.gnu.org/cgi/bugreport.cgi?bug=54970 is a kind
+  ;;   of insane conversation, but a lot of it seems to come down to,
+  ;;   "No one quite understands the font code".  (Something like this
+  ;;   is literally said in this thread by, I think Eli Z., or maybe
+  ;;   Alan Third, or maybe both.  At the end, it just seems like you
+  ;;   have to add Apple Color Emoji to the symbol fontset for some
+  ;;   emoji to display as emoji.  That was back in the days of Emacs
+  ;;   28, and I'm running pre-31 right now, so maybe it's been fixed.
+  ;;   However, we're still going to add it in the list, just in case.
+  ;;   We'll put it under Apple Symbols, because it might be
+  ;;   disturbing to get a color "emoji" where you expected a more
+  ;;   staid "symbol".
+  ;;
+  ;; We're using 'prepend because that seems to be what everyone uses,
+  ;; including the docs.  I guess we want to leave the initial fonts
+  ;; in the fontset?  Maybe this will make things better on the day
+  ;; when I try to bring this config up under Linux?  I have no idea.
+  ;;
+  ;; If your emoji aren't displaying correctly, try putting U+FEOF
+  ;; VARIATION SELECTOR 16 in front of it, per the above bug.
+  ;;
+  ;; If all else fails, you can set a range of code points to use a
+  ;; specific font, such as:
+  ;;
+  ;;     (set-fontset-font t '(#x2190 . #x21FF) "SF Pro" nil 'prepend)
+  ;;
+  ;; All the original incantations of this used e.g.
+  ;;
+  ;;     '("SF Pro" . "iso10646-1")
+  ;;
+  ;; rather than just "SF Pro".  In the aforementioned bug, Eli
+  ;; Z. seems to say that no one is quite sure why putting
+  ;; "iso10646-1" here is necessary ("if you figure that out, please
+  ;; be sure to tell us"--that's the Eli Z. comment I was trying to
+  ;; remember above).  I can tell you this: When *I* include that, my
+  ;; `set-fontset-font' seems to be ignored.  When I leave off
+  ;; "iso10646-1", my font is used.  Sigh.
+  (dolist (font-name '("Apple Color Emoji" "Apple Symbols" "SF Pro"))
+    (set-fontset-font t 'symbol font-name nil 'prepend))
 
   ;; As of 9370a4763aac, `ns-popup-font-panel' is apparently gone.
   ;; The menu bar has its own `menu-set-font' that I'm going to crib
