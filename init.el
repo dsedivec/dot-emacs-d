@@ -4776,7 +4776,9 @@ TOGGLE-PATH is a boolean that will toggle the behavior of
 ;;; olivetti
 
 (setq-default olivetti-body-width 0.5
-              olivetti-minimum-body-width 80)
+              ;; I think we have to leave room here for
+              ;; `display-line-numbers-mode'.
+              olivetti-minimum-body-width 85)
 
 
 ;;; orderless
