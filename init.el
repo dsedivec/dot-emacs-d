@@ -1312,8 +1312,8 @@ basically every time eldoc's idle hook runs.  Fuck me."
 
   (when-let* ((apheleia-markdown-formatter
                (cond
-                 ((executable-find "markdownlint-cli2") 'markdownlint-markdown)
-                 ((executable-find "pandoc") 'pandoc-markdown))))
+                 ((executable-find "pandoc") 'pandoc-markdown)
+                 ((executable-find "markdownlint-cli2") 'markdownlint-markdown))))
     (setf (alist-get 'markdown-mode apheleia-mode-alist)
           apheleia-markdown-formatter))
 
