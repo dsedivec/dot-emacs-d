@@ -1938,7 +1938,7 @@ and the last `isearch-string' is added to the future history."
   ;; that difference, I think Consult and stock Emacs are behaving the
   ;; same way.
 
-  (el-patch-defvar consult--source-project-buffer
+  (el-patch-defvar consult-source-project-buffer
       `( :name     "Project Buffer"
         :narrow   ?b
         :category buffer
@@ -1955,9 +1955,9 @@ and the last `isearch-string' is added to the future history."
                                     :as #'consult--buffer-pair))))
     "Project buffer source for `consult-buffer'.")
 
-  (el-patch-validate 'consult--source-project-buffer 'defvar t)
+  (el-patch-validate 'consult-source-project-buffer 'defvar t)
 
-  (el-patch-defvar consult--source-hidden-buffer
+  (el-patch-defvar consult-source-hidden-buffer
       `( :name     "Hidden Buffer"
         :narrow   ?\s
         :hidden   t
@@ -1976,9 +1976,9 @@ The source is hidden by default and can be summoned via its narrow key.
 All buffers are taken into account, i.e., the entire `buffer-list' from
 all frames.")
 
-  (el-patch-validate 'consult--source-hidden-buffer 'defvar t)
+  (el-patch-validate 'consult-source-hidden-buffer 'defvar t)
 
-  (el-patch-defvar consult--source-modified-buffer
+  (el-patch-defvar consult-source-modified-buffer
       `( :name     "Modified Buffer"
         :narrow   ?*
         :hidden   t
@@ -1999,9 +1999,9 @@ The source is hidden by default and can be summoned via its narrow key.
 Only buffers returned by the `consult-buffer-list-function' are taken
 into account.")
 
-  (el-patch-validate 'consult--source-modified-buffer 'defvar t)
+  (el-patch-validate 'consult-source-modified-buffer 'defvar t)
 
-  (el-patch-defvar consult--source-buffer
+  (el-patch-defvar consult-source-buffer
       `( :name     "Buffer"
         :narrow   ?b
         :category buffer
@@ -2017,7 +2017,7 @@ into account.")
 Only buffers returned by the `consult-buffer-list-function' are taken into
 account.")
 
-  (el-patch-validate 'consult--source-buffer 'defvar t))
+  (el-patch-validate 'consult-source-buffer 'defvar t))
 
 ;; Replacement for my `counsel-auto-grep-ask-dir'.
 (defun my:consult-ripgrep-prompt ()
@@ -2080,8 +2080,8 @@ account.")
   ;; Manual preview for recent files in `consult-buffer', too.  It's
   ;; too slow to move through them otherwise.
   (consult-customize my:consult-autogrep
-                     consult--source-recent-file
-                     consult--source-project-recent-file
+                     consult-source-recent-file
+                     consult-source-project-recent-file
                      :preview-key "M-.")
 
   ;; Use Consult to select xref locations with preview
