@@ -3140,6 +3140,10 @@ surround \"foo\" with (in this example) parentheses.  I want
                                (memq checker preferred-python-checkers))
                              flycheck-checkers))))
 
+  ;; Use basedpyright in preference to pyright, if available.
+  (when (executable-find "basedpyright")
+    (setq flycheck-python-pyright-executable "basedpyright"))
+
   ;; pylint is expensive to run, only run it on save.
   (setf (flycheck-checker-get 'python-pylint 'predicate) #'flycheck-buffer-saved-p)
 
