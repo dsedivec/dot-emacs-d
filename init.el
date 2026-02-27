@@ -4056,23 +4056,36 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
   (warn "Feature lsp-pyright present, set `lsp-pyright-multi-root' too late."))
 
 (my:with-eval-after-all-load '(python lsp-mode)
-  (require 'lsp-pyright)
+  ;; lsp-pyright calls `lsp-dependency' with
+  ;; `lsp-pyright-langserver-command' at load time, so if it's set to
+  ;; "pyright" then lsp-mode will not choose lsp-pyright unless you
+  ;; have pyright installed, which you might not have if you've
+  ;; instead installed basedpyright.  Like me.
+  (when (featurep 'lsp-pyright)
+    (warn "Probably too late to have lsp-pyright use basedpyright."))
 
-  ;; Prevent other language servers from being used for Python.
-  ;; (Pyright is the least bad, *probably*, for now.)
-  (dolist (server '(pyls pylsp))
-    (cl-pushnew server (alist-get 'python-mode lsp-disabled-clients)))
+  (let* ((basedpyright-available (executable-find "basedpyright-langserver"))
+         (pyright-available (or basedpyright-available
+                                (executable-find "pyright-langserver"))))
+    (when pyright-available
+      ;; Prevent other language servers from being used for Python.
+      ;; (Pyright is the least bad, *probably*, for now.)
+      (dolist (server '(pyls pylsp))
+        (cl-pushnew server (alist-get 'python-mode lsp-disabled-clients)))
+
+      (when basedpyright-available
+        ;; Use basedpyright instead of pyright if installed.
+        (setq lsp-pyright-langserver-command "basedpyright"))))
+
+  ;; See above for why this is way down here.
+  (require 'lsp-pyright)
 
   ;; You get better import completion with this.  I still think some
   ;; file in the project has to be using a given import in order for
   ;; Pyright to offer you auto-import completions (along with this
   ;; setting).  See also:
   ;; https://github.com/fannheyward/coc-pyright/issues/90#issuecomment-813804148
-  (setq lsp-pyright-diagnostic-mode "workspace")
-
-  ;; Use basedpyright instead of pyright if installed.
-  (when (executable-find "basedpyright-langserver")
-    (setq lsp-pyright-langserver-command "basedpyright")))
+  (setq lsp-pyright-diagnostic-mode "workspace"))
 
 
 ;;; lsp-ui
