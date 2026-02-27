@@ -3960,6 +3960,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
                (rx (char ?/ ?\\) (+ (not (any ?/ ?\\))) ".pyc" eos)))
 
 (setq lsp-modeline-diagnostics-scope :file
+      lsp-copilot-enabled t
+      lsp-inline-completion-idle-delay 0.2
       lsp-pyls-plugins-pylint-enabled t)
 
 ;; By default LSP puts way too much in imenu, which makes imenu-list
