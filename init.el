@@ -2900,7 +2900,8 @@ surround \"foo\" with (in this example) parentheses.  I want
                      'sql-mode)))
 
 (my:load-recipes 'files-delete-auto-save-after-revert-buffer
-                 'files-save-some-buffers-default-no-query)
+                 'files-save-some-buffers-default-no-query
+                 'files-insert-directory-sort-c)
 
 
 ;;; filladapt
