@@ -4141,6 +4141,7 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 
 (setq magit-diff-refine-hunk 'all
       magit-diff-refine-ignore-whitespace nil
+      magit-diff-extra-stat-arguments #'magit-diff-use-window-width-as-stat-width
       magit-bury-buffer-function 'magit-mode-quit-window
       magit-process-finish-apply-ansi-colors t)
 
