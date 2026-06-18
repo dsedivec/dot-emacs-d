@@ -159,6 +159,7 @@
 (my:straight-use-packages '(
                             ace-window
                             adaptive-wrap
+                            agent-shell
                             aggressive-indent
                             all-the-icons
                             all-the-icons-completion
