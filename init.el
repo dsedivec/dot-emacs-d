@@ -615,31 +615,41 @@ function symbol (unquoted)."
         (while (and cont args)
           (if (cond ((and (eq :map (car args))
                           (not prefix-map))
-                     (setq map (cadr args)))
+                     (setq map (cadr args))
+                     t)
                     ((eq :prefix-docstring (car args))
-                     (setq prefix-doc (cadr args)))
+                     (setq prefix-doc (cadr args))
+                     t)
                     ((and (eq :prefix-map (car args))
                           (not (memq map '(global-map
                                            override-global-map))))
-                     (setq prefix-map (cadr args)))
+                     (setq prefix-map (cadr args))
+                     t)
                     ((eq :repeat-docstring (car args))
-                     (setq repeat-doc (cadr args)))
+                     (setq repeat-doc (cadr args))
+                     t)
                     ((and (eq :repeat-map (car args))
                           (not (memq map '(global-map
                                            override-global-map))))
                      (setq repeat-map (cadr args))
-                     (setq map repeat-map))
+                     (setq map repeat-map)
+                     t)
                     ((memq (car args) '(:continue :continue-only :exit))
                      (setq repeat-type (car args)
-                           arg-change-func 'cdr))
+                           arg-change-func 'cdr)
+                     t)
                     ((eq :prefix (car args))
-                     (setq prefix (cadr args)))
+                     (setq prefix (cadr args))
+                     t)
                     ((eq :filter (car args))
-                     (setq filter (cadr args)) t)
+                     (setq filter (cadr args))
+                     t)
                     ((eq :menu-name (car args))
-                     (setq menu-name (cadr args)))
+                     (setq menu-name (cadr args))
+                     t)
                     ((eq :package (car args))
-                     (setq pkg (cadr args))))
+                     (setq pkg (cadr args))
+                     t))
               (setq args (funcall arg-change-func args))
             (setq cont nil))))
 
@@ -1949,7 +1959,7 @@ and the last `isearch-string' is added to the future history."
         :enabled  ,(lambda () consult-project-function)
         :items
         ,(lambda ()
-           (when-let (root (consult--project-root))
+           (when-let* ((root (consult--project-root)))
              (consult--buffer-query :sort (el-patch-swap 'visibility
                                                          'current-last)
                                     :directory root
@@ -4282,10 +4292,10 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (with-eval-after-load 'markdown-mode
   (el-patch-defconst markdown-regex-gfm-code-block-open
       (el-patch-swap
-        "^[[:blank:]]*\\(?1:```\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$"
-        "^[[:blank:]]*\\(?1:```\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)[[:blank:]]*\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$")
+        "^[[:blank:]]*\\(?1:`\\{3,\\}\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$"
+        "^[[:blank:]]*\\(?1:`\\{3,\\}\\)\\(?2:[[:blank:]]*{?[[:blank:]]*\\)[[:blank:]]*\\(?3:[^`[:space:]]+?\\)?\\(?:[[:blank:]]+\\(?4:.+?\\)\\)?\\(?5:[[:blank:]]*}?[[:blank:]]*\\)$")
     "Regular expression matching opening of GFM code blocks.
-Group 1 matches the opening three backquotes and any following whitespace.
+Group 1 matches the opening three or more backquotes.
 Group 2 matches the opening brace (optional) and surrounding whitespace.
 Group 3 matches the language identifier (optional).
 Group 4 matches the info string (optional).

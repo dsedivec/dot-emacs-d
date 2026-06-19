@@ -33,15 +33,17 @@ unless OK-IF-ALREADY-EXISTS is non-nil."
       (dired-handle-overwrite newname)
       (dired-maybe-create-dirs (file-name-directory newname))
       (if (and dired-vc-rename-file
-               (vc-backend file)
+               (if file-is-dir-p
+                   (ignore-errors (vc-responsible-backend file))
+                 (vc-backend file))
                (ignore-errors (vc-responsible-backend newname)))
-          (vc-rename-file file newname)
+          (vc-rename-file file newname ok-if-already-exists)
         ;; error is caught in -create-files
         (rename-file file newname ok-if-already-exists))
       ;; Silently rename the visited file of any buffer visiting this file.
       (and (get-file-buffer file)
            (with-current-buffer (get-file-buffer file)
-             (set-visited-file-name newname nil t)))
+	     (set-visited-file-name newname nil t)))
       (dired-remove-file file)
       ;; See if it's an inserted subdir, and rename that, too.
       (when file-is-dir-p
