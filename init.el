@@ -295,7 +295,6 @@
                             systemd
                             terraform-doc
                             terraform-mode
-                            transpose-frame
                             treemacs
                             treemacs-projectile
                             treepy
@@ -3051,9 +3050,11 @@ surround \"foo\" with (in this example) parentheses.  I want
                   org-roam-buffer
                   org-roam-buffer-display-dedicated
                   org-roam-buffer-toggle
-                  transpose-frame
                   treemacs
                   treemacs-quit
+                  window-layout-rotate-anticlockwise
+                  window-layout-rotate-clockwise
+                  window-layout-transpose
                   winner-undo
                   ))
     (add-to-list 'auto-frame-resize-commands func)))

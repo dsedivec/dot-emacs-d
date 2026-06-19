@@ -4,7 +4,7 @@
 
 ;; Author: Dale Sedivec <dale@codefu.org>
 ;; Version: 1
-;; Package-Requires: ((emacs "24") (ace-window "0.7") (transpose-frame "0.1.0") (hydra "0.15.0"))
+;; Package-Requires: ((emacs "24") (ace-window "0.7") (hydra "0.15.0"))
 ;; Keywords: convenience
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -60,9 +60,9 @@
   ("2" split-window-below)
   ("b" balance-windows)
   ("o" ace-window)
-  ("\\" transpose-frame)
-  ("[" rotate-frame-anticlockwise)
-  ("]" rotate-frame-clockwise)
+  ("\\" window-layout-transpose)
+  ("[" window-layout-rotate-anticlockwise)
+  ("]" window-layout-rotate-clockwise)
   ("w" ace-swap-window)
   ("<left>" winner-undo)
   ("0" delete-window)
