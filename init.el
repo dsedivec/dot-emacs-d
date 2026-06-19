@@ -298,7 +298,6 @@
                             treemacs
                             treemacs-projectile
                             treepy
-                            treesit-auto
                             typescript-mode
                             undo-tree
                             unfill
@@ -6381,46 +6380,7 @@ a string or comment."
 (setf (alist-get 'jsonnet treesit-language-source-alist)
       '("https://github.com/sourcegraph/tree-sitter-jsonnet"))
 
-
-;;; treesit-auto
-
-(require 'treesit-auto)
-
-(setq treesit-auto-install 'prompt)
-
-;; It turns out that `yaml-ts-mode' is built-in, and somehow awful?
-;; It has no indentation settings as of 2023-11-25?
-;; https://redd.it/17gtxmr
-;;
-;; `markdown-ts-mode' doesn't have good font support, at least not
-;; with modus-themes.
-(setq treesit-auto-langs (seq-difference treesit-auto-langs
-                                         '(yaml markdown)))
-
-(global-treesit-auto-mode 1)
-
-;; You kind of need this if you want to upgrade an already installed
-;; grammar.
-(defun my:treesit-install-grammar (lang)
-  (interactive
-   (list
-    (let* ((treesit-language-source-alist
-            (treesit-auto--build-treesit-source-alist))
-           (langs (mapcar (lambda (lang) (symbol-name (car lang)))
-                          treesit-language-source-alist))
-           (current-mode-str (symbol-name major-mode))
-           (current-lang (save-match-data
-                           (and (string-match "^[^-]+" current-mode-str)
-                                (match-string 0 current-mode-str))))
-           (default-lang (and current-lang
-                              (car (assq (intern current-lang)
-                                         treesit-language-source-alist)))))
-      (completing-read "Language to install: "
-                       langs
-                       nil t nil nil default-lang))))
-  (let ((treesit-language-source-alist
-         (treesit-auto--build-treesit-source-alist)))
-    (treesit-install-language-grammar (intern lang))))
+(setq treesit-enabled-modes t)
 
 
 ;;; two-column
