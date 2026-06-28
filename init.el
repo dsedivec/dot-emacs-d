@@ -1294,7 +1294,7 @@ basically every time eldoc's idle hook runs.  Fuck me."
 
   ;; simple_tables disabled because markdown-mode doesn't deal with
   ;; them nicely (AFAIK).
-  (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables")
+  (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables-smart")
   (put 'my:apheleia-markdown-pandoc-format 'safe-local-variable #'stringp)
 
   ;; --standalone is necessary to preserve YAML frontmatter.
