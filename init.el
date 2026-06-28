@@ -6380,7 +6380,7 @@ a string or comment."
 (setf (alist-get 'jsonnet treesit-language-source-alist)
       '("https://github.com/sourcegraph/tree-sitter-jsonnet"))
 
-(setq treesit-enabled-modes t)
+(setopt treesit-enabled-modes t)
 
 
 ;;; two-column
