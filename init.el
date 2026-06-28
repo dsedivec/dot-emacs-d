@@ -4248,19 +4248,16 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
       (eval `(or ,@my:markdownlint-cli2-config-file-precedence))
       string-end))
 
-(defun my:markdown-mode-hook ()
-  (setq-local indent-tabs-mode nil
-              fill-column 78
-              comment-style 'extra-line)
-  (auto-fill-mode (if visual-line-mode -1 1))
-  ;; Look for a markdownlint-cli2 config file.
-  (let (config-files
-        (lowest-index (length my:markdownlint-cli2-config-file-precedence)))
+;; Look for a markdownlint-cli2 config file.
+(defun my:markdown-set-apheleia-markdownlint-cli2-config-file (&optional dir)
+  (let ((dir (or dir default-directory))
+        (lowest-index (length my:markdownlint-cli2-config-file-precedence))
+        config-files)
     (when (locate-dominating-file
-           default-directory
-           (lambda (dir)
+           dir
+           (lambda (search-dir)
              (setq config-files
-                   (directory-files dir
+                   (directory-files search-dir
                                     t
                                     my:markdownlint-cli2-config-file-regexp
                                     t))))
@@ -4270,6 +4267,13 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
           (when (< index lowest-index)
             (setq-local my:apheleia-markdownlint-config-file config-file)
             (setq lowest-index index)))))))
+
+(defun my:markdown-mode-hook ()
+  (setq-local indent-tabs-mode nil
+              fill-column 78
+              comment-style 'extra-line)
+  (auto-fill-mode (if visual-line-mode -1 1))
+  (my:markdown-set-apheleia-markdownlint-cli2-config-file))
 
 (my:add-hooks 'markdown-mode-hook
   #'electric-pair-local-mode
@@ -4405,6 +4409,19 @@ or \\[markdown-toggle-inline-images]."
   (el-patch-validate 'markdown-display-inline-images 'defun t)
 
   (setq markdown-max-image-size 'dynamic))
+
+
+;;; markdown-ts-mode
+
+(defun my:markdown-ts-mode-hook ()
+  (setq-local fill-column 80
+              comment-style 'extra-line)
+  (my:markdown-set-apheleia-markdownlint-cli2-config-file))
+
+(my:add-hooks 'markdown-ts-mode-hook
+  #'electric-pair-local-mode
+  #'apheleia-mode
+  #'my:markdown-ts-mode-hook)
 
 
 ;;; minibuffer
