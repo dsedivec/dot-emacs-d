@@ -1292,6 +1292,15 @@ basically every time eldoc's idle hook runs.  Fuck me."
       (t
        (message "apheleia setup: neither darker nor isort available"))))
 
+  (setf (alist-get 'flowmark-markdown apheleia-formatters)
+        '("flowmark"
+          ;; These switches are like --auto without --inplace.
+          ;; See reference at https://github.com/jlevy/flowmark.
+          "--semantic" "--cleanups" "--smartquotes" "--ellipses"
+          (if apheleia-formatters-respect-fill-column
+              (list "--width" (format "%s" fill-column)))
+          "-"))
+
   ;; simple_tables disabled because markdown-mode doesn't deal with
   ;; them nicely (AFAIK).
   (defvar-local my:apheleia-markdown-pandoc-format "markdown-simple_tables-smart")
@@ -1321,6 +1330,7 @@ basically every time eldoc's idle hook runs.  Fuck me."
 
   (when-let* ((apheleia-markdown-formatter
                (cond
+                 ((executable-find "flowmark") 'flowmark-markdown)
                  ((executable-find "pandoc") 'pandoc-markdown)
                  ((executable-find "markdownlint-cli2") 'markdownlint-markdown))))
     (setf (alist-get 'markdown-mode apheleia-mode-alist)
