@@ -4423,6 +4423,8 @@ or \\[markdown-toggle-inline-images]."
 
 ;;; markdown-ts-mode
 
+(setq markdown-enable-highlighting-syntax t)
+
 (defun my:markdown-ts-mode-hook ()
   (setq-local fill-column 80
               comment-style 'extra-line)
