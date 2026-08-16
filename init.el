@@ -225,6 +225,7 @@
                             flycheck-pos-tip
                             free-keys
                             fussy
+                            ghostty
                             git-link
                             go-mode
                             gptel
@@ -303,7 +304,6 @@
                             unfill
                             vcl-mode
                             volatile-highlights
-                            vterm
                             web-beautify
                             web-mode
                             ;; Seems like these folks have changed the
@@ -6556,48 +6556,6 @@ a string or comment."
 (setq vhl/use-occur-extension-p nil)
 
 (volatile-highlights-mode 1)
-
-
-;;; vterm
-
-(setq vterm-max-scrollback 100000
-      ;; vterm-kill-buffer-on-exit nil
-      vterm-buffer-name-string "vterm: %s")
-
-(defun my:vterm-quote-next (char)
-  (interactive (list (let ((inhibit-quit t)) (read-char))))
-  (let ((base-char (event-basic-type char))
-        (modifiers (event-modifiers char)))
-    (vterm-send-key (string base-char)
-                    (memq 'shift modifiers)
-                    (memq 'meta modifiers)
-                    (memq 'control modifiers))))
-
-(defun my:vterm-mode-hook ()
-  (setq-local global-hl-line-mode nil)
-  (display-line-numbers-mode -1))
-
-(with-eval-after-load 'vterm
-  (when (require 'eterm-256color nil t)
-    ;; Surprisingly, to me, you have to do this to be able to send
-    ;; ctrl-c in vterm buffers.
-    (bind-keys :map vterm-mode-map
-               ("C-c C-c" . vterm--self-insert))
-
-    ;; Private function of eterm-256color that checks that you have
-    ;; the terminfo file for eterm-color installed in the right place.
-    (eterm-256color-compile)
-    (setq vterm-term-environment-variable "eterm-color"))
-  (customize-set-variable 'vterm-keymap-exceptions
-                          (cons "M-m" (seq-difference vterm-keymap-exceptions
-                                                      '("C-l" "C-u"))))
-
-  (bind-keys :map vterm-mode-map
-             ("C-c C-c" . vterm-send-C-c)
-             ("C-q" . my:vterm-quote-next)
-             ("C-c C-t" . vterm-copy-mode))
-
-  (add-hook 'vterm-mode-hook #'my:vterm-mode-hook))
 
 
 ;;; web-mode
