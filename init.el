@@ -4298,7 +4298,8 @@ See URL `https://www.terraform.io/docs/commands/validate.html'."
 (defun my:markdown-mode-hook ()
   (setq-local indent-tabs-mode nil
               fill-column 78
-              comment-style 'extra-line)
+              comment-style 'extra-line
+              apheleia-formatters-respect-fill-column t)
   (auto-fill-mode (if visual-line-mode -1 1))
   (my:markdown-set-apheleia-markdownlint-cli2-config-file))
 
@@ -4444,7 +4445,8 @@ or \\[markdown-toggle-inline-images]."
 
 (defun my:markdown-ts-mode-hook ()
   (setq-local fill-column 80
-              comment-style 'extra-line)
+              comment-style 'extra-line
+              apheleia-formatters-respect-fill-column t)
   (my:markdown-set-apheleia-markdownlint-cli2-config-file))
 
 (my:add-hooks 'markdown-ts-mode-hook
