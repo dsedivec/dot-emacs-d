@@ -6425,6 +6425,11 @@ a string or comment."
 
 ;;; treesit
 
+;; We can't update `treesit-language-source-alist' until we load
+;; treesit.  Setting `treesit-enabled-modes' (only via `setopt') is
+;; about to load it anyway, so go ahead and explicitly load it here.
+(require 'treesit)
+
 (setf (alist-get 'jsonnet treesit-language-source-alist)
       '("https://github.com/sourcegraph/tree-sitter-jsonnet"))
 
