@@ -225,7 +225,7 @@
                             flycheck-pos-tip
                             free-keys
                             fussy
-                            ghostty
+                            ghostel
                             git-link
                             go-mode
                             gptel
