@@ -107,6 +107,7 @@
         my:delete-window-that-direction
         my:link-hint-multi-dispatch
         my:save-some-buffers-default-no-query
+        push-button
         sql-product-interactive
         sql-send-paragraph
         toggle-debug-on-error
