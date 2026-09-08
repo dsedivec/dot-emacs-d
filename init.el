@@ -1292,6 +1292,22 @@ basically every time eldoc's idle hook runs.  Fuck me."
       (t
        (message "apheleia setup: neither darker nor isort available"))))
 
+  ;; For some reason, Apheleia doesn't include wrapping in its
+  ;; Prettier definitions.  Also, `apheleia-formatters-fill-column'
+  ;; seems to only allow one single flag, but Prettier is going to
+  ;; need two.
+  (let ((prettier-fill-sexp `(when (and apheleia-formatters-respect-fill-column
+                                        fill-column)
+                               (list "--print-width"
+                                     (number-to-string fill-column)
+                                     "--prose-wrap" "always"))))
+    (dolist (formatter-name '(prettier-markdown))
+      (if-let* ((formatter-cmd (alist-get formatter-name apheleia-formatters)))
+          (unless (member formatter-cmd prettier-fill-sexp)
+            (setf (alist-get formatter-name apheleia-formatters)
+                  (append formatter-cmd (list prettier-fill-sexp))))
+        (warn "Apheleia formatter `%S' doesn't exist, can't be modified."))))
+
   (setf (alist-get 'flowmark-markdown apheleia-formatters)
         '("flowmark"
           ;; These switches are like --auto without --inplace.
